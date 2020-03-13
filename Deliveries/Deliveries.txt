@@ -1,0 +1,1 @@
+Directory per prodotti intermedi di progetto (UML, documentazione, report, etc.)
