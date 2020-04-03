@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Unit test for GameRoom class, aimed to verify it works properly
+ */
 class GameRoomTest {
     private GameRoom gameRoom;
     private String playerName = "cpu1";
@@ -36,7 +39,7 @@ class GameRoomTest {
      * Black Box and White Box
      */
     @Test
-    void addPlayer() {
+    void addPlayerTest() {
         boolean playerFound = false;
         playerFound = gameRoom.addPlayer(playerName);
 
@@ -49,7 +52,7 @@ class GameRoomTest {
      * Black Box and White Box
      */
     @Test
-    void removePlayer() {
+    void removePlayerTest() {
         boolean playerFound = false;
 
         // add a new player
@@ -72,7 +75,7 @@ class GameRoomTest {
      * Black Box and White Box
      */
     @Test
-    void getPlayers() {
+    void getPlayersTest() {
         boolean playerFound = false;
         List<String> name = new ArrayList<>();
         List<String> foundNames = new ArrayList<>();
@@ -104,18 +107,49 @@ class GameRoomTest {
     }
 
     @Test
-    void setupGame() {
+    void setupGameTest() {
     }
 
+    /**
+     * Check if the chosen Challenger Player is set correctly
+     *
+     * Black Box and White Box
+     */
     @Test
-    void chooseChallenger() {
+    void chooseChallengerTest() {
+        gameRoom.addPlayer(playerName);
+        gameRoom.chooseChallenger(playerName);
+
+        assertEquals(gameRoom.getChallenger().getNickname(), playerName);
     }
 
+    /**
+     * Check if the chosen Starting Player is set correctly
+     *
+     * Black Box and White Box
+     */
     @Test
-    void chooseStartingPlayer() {
+    void chooseStartingPlayerTest() {
+        gameRoom.addPlayer(playerName);
+        gameRoom.chooseStartingPlayer(playerName);
+
+        assertEquals(gameRoom.getStartingPlayer().getNickname(), playerName);
     }
 
+    /**
+     * Check if, given an index, the method returns a certain Player
+     *
+     * Black Box and White Box
+     */
     @Test
-    void getPlayer() {
+    void getPlayerTest() {
+        Integer index;
+
+        // initialize players list
+        for(Integer i=0;i<5;i++)
+            gameRoom.addPlayer(("cpu" + i.toString()));
+
+        index = 1;
+        assertEquals(gameRoom.getPlayer(index).getNickname(),"cpu" + index.toString());
     }
 }

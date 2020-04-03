@@ -2,6 +2,8 @@ package it.polimi.ingsw.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class GameRoom extends GeneralGameRoom {
     public GameRoom() {
@@ -81,7 +83,6 @@ public class GameRoom extends GeneralGameRoom {
     }
 
     // TODO: maybe useless method, to remove
-
     /**
      * Given an index, this method returns a reference to
      * a Player object
@@ -92,6 +93,32 @@ public class GameRoom extends GeneralGameRoom {
     @Override
     public Player getPlayer(int n) {
         return players.get(n);
+    }
+
+    /**
+     *
+     * @return a reference to the challenger Player
+     */
+    @Override
+    public Player getChallenger() {
+        for(Player obj : players)
+            if(obj.isChallenger())
+                return obj;
+
+        return null;
+    }
+
+    /**
+     *
+     * @return a reference to the starting Player
+     */
+    @Override
+    public Player getStartingPlayer() {
+        for(Player obj : players)
+            if(obj.isStartingPlayer())
+                return obj;
+
+        return null;
     }
 
     /**

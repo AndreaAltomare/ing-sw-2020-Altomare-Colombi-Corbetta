@@ -11,10 +11,12 @@ public abstract class GeneralGameRoom {
     public abstract boolean addPlayer(String nickname);
     public abstract void removePlayer(String nickname);
     public abstract Iterator<Player> getPlayers();
+    public abstract Player getPlayer(int n);
+    public abstract Player getChallenger();
+    public abstract Player getStartingPlayer();
 
     // Game settings
     public abstract void setupGame();
     public abstract void chooseChallenger(String nickname);
     public abstract void chooseStartingPlayer(String nickname);
-    public abstract Player getPlayer(int n);
 }
