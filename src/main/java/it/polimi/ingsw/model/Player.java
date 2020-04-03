@@ -4,13 +4,17 @@ public class Player {
     private String nickname;
     private boolean challenger;
     private boolean startingPlayer;
-    // TODO: add turn (state pattern) attribute
+    private TurnManager turn;
+    private MovementManager movementState;
+    private ConstructionManager constructionState;
 
     public Player(String nickname) {
         this.nickname = nickname;
         this.challenger = false;
         this.startingPlayer = false;
-        // TODO: add turn istanciation
+        this.movementState = new MovementManager(1);
+        this.constructionState = new ConstructionManager(0);
+        this.turn = movementState; // initial turn State
     }
 
     public String getNickname() {
@@ -31,5 +35,9 @@ public class Player {
 
     public void setStartingPlayer(boolean startingPlayer) {
         this.startingPlayer = startingPlayer;
+    }
+
+    public void changeState(TurnManager nextState) {
+        this.turn = nextState;
     }
 }

@@ -3,6 +3,10 @@ package it.polimi.ingsw.model;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * This class model the concept of a waiting room during
+ * the connection phase and the game room when the match starts
+ */
 public abstract class GeneralGameRoom {
     protected List<Player> players;
     // TODO: to add AbstractGameBox attribute
