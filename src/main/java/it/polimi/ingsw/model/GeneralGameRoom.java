@@ -8,7 +8,7 @@ public abstract class GeneralGameRoom {
     // TODO: to add AbstractGameBox attribute
 
     // Player list manipulation
-    public abstract void addPlayer(String nickname);
+    public abstract boolean addPlayer(String nickname);
     public abstract void removePlayer(String nickname);
     public abstract Iterator<Player> getPlayers();
 

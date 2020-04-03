@@ -17,8 +17,8 @@ public class GameRoom extends GeneralGameRoom {
      * @param nickname (Player's nickname)
      */
     @Override
-    public void addPlayer(String nickname) {
-        players.add(new Player(nickname));
+    public boolean addPlayer(String nickname) {
+        return players.add(new Player(nickname));
     }
 
     /**
