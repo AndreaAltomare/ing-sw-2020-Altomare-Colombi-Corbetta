@@ -51,10 +51,10 @@ public class MyMove {
 
     private boolean beyondAdjacentCells(Cell a, Cell b) {
         // x axis check
-        if(!((move.getSelectedCell().getX() <= (worker.position().getX() + 1)) && (move.getSelectedCell().getX() >= (worker.position().getX() - 1))))
+        if(!((a.getX() <= (b.getX() + 1)) && (a.getX() >= (b.getX() - 1))))
             return true;
         // y axis check
-        if(!((move.getSelectedCell().getY() <= (worker.position().getY() + 1)) && (move.getSelectedCell().getY() >= (worker.position().getY() - 1))))
+        if(!((a.getY() <= (b.getY() + 1)) && (a.getY() >= (b.getY() - 1))))
             return true;
 
         return false; // not beyond adjacent cells
