@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model;
 
 public class MyMove {
-    // TODO: [MAYBE USELESS] Add attribute "Cell" for startingPosition (or just check it up by reference in methods)
+    private Cell startingPosition; // once the turn starts, Worker's starting position is saved
     private Move lastMove;
     private int movesLeft;
     private boolean specialRules; // tell if a power change the basic rules
