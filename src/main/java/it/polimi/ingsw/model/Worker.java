@@ -1,12 +1,16 @@
 package it.polimi.ingsw.model;
 
+/**
+ * This class is assumed to represent the workers on to the board.
+ *
+ * @author Giorgio Corbetta
+ */
 public class Worker extends Placeable {
 
     private Player owner;
 
     /**
      * Class constructor.
-     * @author Giorgio Corbetta
      *
      * @param owner (The player to which the worker belongs to)
      */
@@ -18,7 +22,6 @@ public class Worker extends Placeable {
     /**
      * Constructor with specified destination.
      * When called create the object and sets the position to be the passed destination
-     * @author Giorgio Corbetta.
      *
      * @param destination (Cell where the Block is; it'll be returned by the getPosition()).
      * @param owner (The player to which the worker belongs to).
@@ -32,7 +35,6 @@ public class Worker extends Placeable {
 
     /**
      * Method that puts the Worker on the Cell
-     * @author Giorgio Corbetta
      *
      * @param destination (Cell on which the Worker has to be put)
      * @return (had the method's invocation success? true: false)
@@ -48,7 +50,6 @@ public class Worker extends Placeable {
 
     /**
      * This method returns true iif this is a worker
-     * @author Giorgio Corbetta
      *
      * @return true
      */
@@ -60,7 +61,6 @@ public class Worker extends Placeable {
 
     /**
      * Method that returns the owner of the worker
-     * @author Giorgio Corbetta
      *
      * @return (The owner of the Worker)
      */

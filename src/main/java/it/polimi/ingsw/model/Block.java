@@ -1,10 +1,14 @@
 package it.polimi.ingsw.model;
 
+/**
+ * This class is intended to represent the Block on the Board
+ *
+ * @author Giorgio Corbetta
+ */
 public class Block extends Placeable {
 
     /**
      * Class constructor.
-     * @author Giorgio Corbetta
      */
     public Block(){
         super();
@@ -13,7 +17,6 @@ public class Block extends Placeable {
     /**
      * Constructor with specified destination.
      * When called create the object and sets the position to be the passed destination
-     * @author Giorgio Corbetta
      *
      * @param destination (Cell where the Block is; it'll be returned by the getPosition())
      */
@@ -24,7 +27,6 @@ public class Block extends Placeable {
 
     /**
      * Method that puts the Block on the Cell
-     * @author Giorgio Corbetta
      *
      * @param destination (Cell on which the Block has to be put)
      * @return (had the method's invocation success? true: false)
@@ -40,7 +42,6 @@ public class Block extends Placeable {
 
     /**
      * This method returns true iif this is a block
-     * @author Giorgio Corbetta
      *
      * @return true
      */

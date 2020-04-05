@@ -3,6 +3,8 @@ package it.polimi.ingsw.model;
 /**
  * This class is the superclass of Block, Dome, Worker.
  * Informally: They are the only "things" that can be put on the Cells of the Board.
+ *
+ * @author Giorgio Corbetta
  */
 public abstract class Placeable {
 
@@ -13,7 +15,6 @@ public abstract class Placeable {
 
     /**
      * Class Constructor
-     * @author Giorgio Corbetta
      */
     public Placeable(){
         myPosition = null;
@@ -22,7 +23,6 @@ public abstract class Placeable {
 
     /**
      * Method to place this Placeable on the destination Cell
-     * @author Giorgio Corbetta
      *
      * @param destination (Cell on which place the Placeable)
      * @return (had the method's invocation success? true: false)
@@ -31,7 +31,6 @@ public abstract class Placeable {
 
     /**
      * This method sets the position
-     * @author Giorgio Corbetta
      *
      * @param position (Cell on which the Placeable is)
      */
@@ -41,7 +40,6 @@ public abstract class Placeable {
 
     /**
      * This method returns the Cell on which this is
-     * @author Giorgio Corbetta
      *
      * @return (the Cell on which this is)
      */
@@ -51,7 +49,6 @@ public abstract class Placeable {
 
     /**
      * This method returns true iif this is a block
-     * @author Giorgio Corbetta
      *
      * @return ((is this a Block)? true : false)
      */
@@ -61,7 +58,6 @@ public abstract class Placeable {
 
     /**
      * This method returns true iif this is a dome
-     * @author Giorgio Corbetta
      *
      * @return ((is this a Dome)? true : false)
      */
@@ -71,7 +67,6 @@ public abstract class Placeable {
 
     /**
      * This method returns true iif this is a worker
-     * @author Giorgio Corbetta
      *
      * @return ((is this a worker)? true : false)
      */
