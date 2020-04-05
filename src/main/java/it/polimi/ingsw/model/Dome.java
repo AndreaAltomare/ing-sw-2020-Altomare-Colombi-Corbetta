@@ -1,5 +1,10 @@
 package it.polimi.ingsw.model;
 
+/**
+ * This Class is used to represent the Domes on the board
+ *
+ * @author Giorgio Corbetta
+ */
 public class Dome extends Placeable {
 
     /**
@@ -12,7 +17,6 @@ public class Dome extends Placeable {
     /**
      * Constructor with specified destination.
      * When called create the object and sets the position to be the passed destination
-     * @author Giorgio Corbetta
      *
      * @param destination (Cell where the Dome is; it'll be returned by the getPosition())
      */
@@ -23,7 +27,6 @@ public class Dome extends Placeable {
 
     /**
      * Method that puts the Dome on the Cell
-     * @author Giorgio Corbetta
      *
      * @param destination (Cell on which the Dome has to be put)
      * @return (had the method's invocation success? true: false)
@@ -39,7 +42,6 @@ public class Dome extends Placeable {
 
     /**
      * This method returns true iif this is a dome
-     * @author Giorgio Corbetta
      *
      * @return true
      */
