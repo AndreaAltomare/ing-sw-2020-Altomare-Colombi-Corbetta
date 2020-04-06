@@ -37,7 +37,7 @@ public class Dome extends Placeable {
             this.setPosition(destination);
             return true;
         }
-        return true;
+        return false;
     }
 
     /**
