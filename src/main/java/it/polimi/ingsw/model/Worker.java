@@ -45,7 +45,7 @@ public class Worker extends Placeable {
             this.setPosition(destination);
             return true;
         }
-        return true;
+        return false;
     }
 
     /**
