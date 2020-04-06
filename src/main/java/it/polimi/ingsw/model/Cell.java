@@ -7,7 +7,7 @@ import java.util.NoSuchElementException;
 /**
  * This Class is ued to represent the Cells on the board.
  *
- * @author giorgio r
+ * @author giorgio
  */
 public class Cell {
 
@@ -21,45 +21,110 @@ public class Cell {
     /**
      * Enum used to catch the status of the actual Cell.
      */
-    //TODO commentare questa parte di codice
     public enum PossibleStatus {
+        /**
+         * Used to characterise a Cell that will be reachable but is blocked by opponent's rules.
+         */
         BLOCKED(true, true),
-        REACHABLE(true, false),
-        UNREACHABLE(false, true),
-        UNREACHBLOCKED(false, false);
 
+        /**
+         * Used to characterise a Cell that is reachable.
+         */
+        REACHABLE(true, false),
+        /**
+         * Used to characterise a Cell that has not been checked yet.
+         */
+        UNCHECKED(false, false),
+        /**
+         * Used to characterise a Cell that is not reachable.
+         */
+        UNREACHABLE(false, false),
+        /**
+         * Used to characterise a Cell not reachable and blocked (yep, it's redundant, BTW it'll be somehow useful).
+         */
+        UNREACHBLOCKED(false, true);
+
+        /**
+         * Boolean that contains the info weather the cell is reachable or not.
+         */
         private final boolean reachable;
+        /**
+         * Boolean that contains the info weather the cell is blocked or not.
+         */
         private final boolean blocked;
 
+        /**
+         * Enum Constructor
+         *
+         * @param reachable (is ths status reachable?)
+         * @param blocked (is this status blocked?)
+         */
         PossibleStatus(boolean reachable, boolean blocked) {
             this.reachable = reachable;
             this.blocked = blocked;
         }
 
+        /**
+         * Method that returns the reachability of the Cell.
+         *
+         * @return reachable
+         */
         public boolean isReachable() {
             return reachable;
         }
 
+        /**
+         * Method that returns the bocked status of the Cell.
+         *
+         * @return blocked
+         */
         public boolean isBloked() {
             return blocked;
         }
 
+        /**
+         * Method that initialise the status to default value (UNCHECKED)
+         *
+         * @return (UNCHECKED)
+         */
         public static PossibleStatus clear() {
-            return UNREACHABLE;
+            return UNCHECKED;
         }
 
+        /**
+         * Method that sets the status of the Cell to be reachable
+         *
+         * @return (new status reachable)
+         */
         public PossibleStatus setReachable(){
-            if(blocked)
-                return BLOCKED;
-            else
-                return REACHABLE;
+            return blocked ? BLOCKED : REACHABLE;
         }
 
+        /**
+         * Method that sets the status of the Cell to be blocked
+         *
+         * @return (new status reachable)
+         */
         public PossibleStatus setBlocked(){
-            if(reachable)
-                return BLOCKED;
-            else
-                return UNREACHBLOCKED;
+            return reachable ? BLOCKED : UNREACHBLOCKED;
+        }
+
+        /**
+         * Method that sets the status of the Cell to be not reachable
+         *
+         * @return (new status reachable)
+         */
+        public PossibleStatus setNotReachable(){
+            return blocked ? UNREACHBLOCKED : UNREACHABLE;
+        }
+
+        /**
+         * Method that sets the status of the Cell to be not blocked
+         *
+         * @return (new status reachable)
+         */
+        public PossibleStatus setNotBlocked(){
+            return reachable ? REACHABLE : UNREACHABLE;
         }
     }
 
