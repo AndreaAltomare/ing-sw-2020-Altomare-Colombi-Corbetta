@@ -1,9 +1,6 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.controller;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * This class's aim is to provide a unique entry point
@@ -21,10 +18,8 @@ import java.io.IOException;
  * @author AndreaAltomare
  */
 public class FileManager {
-    // TODO: REFACTOR THIS CLASS INTO CONTROLLER PACKAGE
     private static FileManager fileManagerIstance; // may this class be synchronized upon this static attribute
     private String filePath;
-    private String jsonData; // JSON data to be read/write
 
     private FileManager() {}
 
@@ -46,18 +41,22 @@ public class FileManager {
      * string
      *
      * @param cardName
-     * @param jsonFile
+     * @param jsonData
      */
-    public void saveNewCard(String cardName, String jsonFile) {
-        filePath = "/" + cardName + ".config";
+    public void saveNewCard(String cardName, String jsonData) {
+        filePath = cardName + ".config";
         File cardFile;
         FileWriter fw;
         BufferedWriter bw;
-        // TODO: Finish implementation with BufferedReader
+
+        // create a new file and write on it
         try {
             cardFile = new File(filePath);
             fw = new FileWriter(cardFile);
             bw = new BufferedWriter(fw);
+            bw.write(jsonData);
+            bw.flush();
+            bw.close();
         }
         catch(IOException ex) {
             ex.printStackTrace();
@@ -71,7 +70,24 @@ public class FileManager {
      * @return jsonData (JSON data read from File)
      */
     public String getCard(String cardName) {
-        // TODO: Use BufferedReader to read from file efficiently
+        String jsonData = "";
+        filePath = cardName + ".config";
+        File cardFile;
+        FileReader fr;
+        BufferedReader br;
+
+        try {
+            cardFile = new File(filePath);
+            fr = new FileReader(cardFile);
+            br = new BufferedReader(fr);
+
+            jsonData = br.readLine();
+            br.close();
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
         return jsonData;
     }
 }
