@@ -62,21 +62,34 @@ class FileManagerTest {
      */
     @Test
     void saveNewCard() {
+        fileManager = FileManager.getIstance(); // todo: to remove when done with card generation
         godPower = new GodPower();
 
         /* SET A CARD'S PROPERTIES */
+        newCardName = "pan";
+
+        godPower.setName("Pan");
+        godPower.setEpithet("God of the Wild");
+        godPower.setDescription("Win Condition: You also win if your Worker moves down two or more levels.");
+
         godPower.setMovementsLeft(1);
         godPower.setConstructionLeft(1);
+        godPower.setMustObey(true);
+        godPower.setStartingSpaceDenied(false);
         godPower.setSameSpaceDenied(false);
 
-        godPower.setHotLastMoveDirection(LevelDirection.UP);
-        godPower.setMoveIntoOpponentSpace(true);
-        godPower.setForceOpponentInto(FloorDirection.NORTH);
-        godPower.setDeniedDirection(LevelDirection.SAME);
+        godPower.setActiveOnMyMovement(false);
+        godPower.setHotLastMoveDirection(LevelDirection.DOWN);
+        godPower.setMoveIntoOpponentSpace(false);
+        godPower.setForceOpponentInto(FloorDirection.NONE);
+        godPower.setDeniedDirection(LevelDirection.NONE);
 
-        godPower.setOpponentDeniedDirection(LevelDirection.DOWN);
+        godPower.setActiveOnOpponentMovement(false);
+        godPower.setOpponentDeniedDirection(LevelDirection.NONE);
 
-        godPower.setDomeAtAnyLevel(true);
+        godPower.setActiveOnMyConstruction(false);
+        godPower.setBuildBeforeMovement(false);
+        godPower.setDomeAtAnyLevel(false);
         godPower.setForceConstructionOnSameSpace(false);
 
         godPower.setNewVictoryCondition(true);
@@ -90,7 +103,6 @@ class FileManagerTest {
         System.out.println(json);
 
         /* WRITE ON FILE */
-        newCardName = "GreekGod";
         fileManager = FileManager.getIstance(); // try if Singleton pattern works properly
         fileManager.saveNewCard(newCardName, json);
 
