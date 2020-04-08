@@ -7,7 +7,7 @@ public class MyConstruction {
     private GodPower godPower; // state of chosen God's power
     private int constructionLeft; // todo: needs to be renewed every turn starting
 
-    // TODO: WRITE METHOD TO MAKE THE ACTUAL MOVE (NOT JUST TO CHECK IF IT IS POSSIBLE)
+    // TODO: WRITE METHOD TO MAKE THE ACTUAL CONSTRUCTION (NOT JUST TO CHECK IF IT IS POSSIBLE)
 
     public MyConstruction(GodPower godPower) {
         this.godPower = godPower;
@@ -73,58 +73,6 @@ public class MyConstruction {
         return true; // everything ok
     }
 
-    private Cell calculateNextCell(BuildMove move) {
-        Cell nextCell = null;
-        int currentX = 0;
-        int currentY = 0;
-
-        currentX = move.getSelectedCell().getX();
-        currentY = move.getSelectedCell().getY();
-        switch(move.getFloorDirection()) {
-            case FloorDirection.NORTH:
-                nextCell = Board.getCellAt(currentX - 1, currentY);
-                break;
-            case FloorDirection.SOUTH:
-                nextCell = Board.getCellAt(currentX + 1, currentY);
-                break;
-            case FloorDirection.EAST:
-                nextCell = Board.getCellAt(currentX, currentY + 1);
-                break;
-            case FloorDirection.WEST:
-                nextCell = Board.getCellAt(currentX, currentY - 1);
-                break;
-            case FloorDirection.NORTH_EAST:
-                nextCell = Board.getCellAt(currentX - 1, currentY + 1);
-                break;
-            case FloorDirection.NORTH_WEST:
-                nextCell = Board.getCellAt(currentX - 1, currentY - 1);
-                break;
-            case FloorDirection.SOUTH_EAST:
-                nextCell = Board.getCellAt(currentX + 1, currentY + 1);
-                break;
-            case FloorDirection.SOUTH_WEST:
-                nextCell = Board.getCellAt(currentX + 1, currentY - 1);
-                break;
-            default:
-                //todo: maybe throw an exception here (or maybe delete this default section)
-                break;
-        }
-
-        return nextCell;
-    }
-
-    private boolean checkNextCell(Cell nextOpponentCell) {
-        /* cannot go if there is another Worker */
-        if(occupiedCell(nextOpponentCell))
-            return false;
-
-        /* cannot go if there is another Worker */
-        if(domedCell(nextOpponentCell))
-            return false;
-
-        return true; // everything ok
-    }
-
     private boolean checkDefaultRules(BuildMove move, Worker worker) {
         // TODO: some statements (check if there is all the code needed)
         /* check if the Player can make a construction in the first place */
@@ -172,10 +120,6 @@ public class MyConstruction {
             return true;
 
         return false; // not beyond adjacent cells
-    }
-
-    private boolean tooHighCell(Cell a, Cell b) {
-        return a.getLevel() > (b.getLevel() + 1);
     }
 
     private boolean occupiedCell(Cell cell) {

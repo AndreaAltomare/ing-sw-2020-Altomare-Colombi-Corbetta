@@ -61,7 +61,13 @@ public class MyMove {
                 if (godPower.getForceOpponentInto() != FloorDirection.ANY) {
                     // todo: minotaur (just to check, REMOVE THIS COMMENT)
                     // check if the opponent's Worker can be moved into the right cell (as with Minotaur Card's power)
-                    Cell nextOpponentCell = calculateNextCell(move);
+                    Cell nextOpponentCell;
+                    try {
+                        nextOpponentCell = calculateNextCell(move);
+                    }
+                    catch(OutOfBoardException ex) {
+                        return false;
+                    }
                     checkResult = checkNextCell(nextOpponentCell); // check if opponent's Worker can be forced into the next calculated Cell
                     if (checkResult == false)
                         return false;
@@ -89,37 +95,39 @@ public class MyMove {
         return true; // everything ok
     }
 
-    private Cell calculateNextCell(Move move) {
+    private Cell calculateNextCell(Move move) throws OutOfBoardException {
+        Board board;
         Cell nextCell = null;
         int currentX = 0;
         int currentY = 0;
 
+        board = move.getSelectedCell().getBoard();
         currentX = move.getSelectedCell().getX();
         currentY = move.getSelectedCell().getY();
         switch(move.getFloorDirection()) {
-            case FloorDirection.NORTH:
-                nextCell = Board.getCellAt(currentX - 1, currentY);
+            case NORTH:
+                nextCell = board.getCellAt(currentX - 1, currentY);
                 break;
-            case FloorDirection.SOUTH:
-                nextCell = Board.getCellAt(currentX + 1, currentY);
+            case SOUTH:
+                nextCell = board.getCellAt(currentX + 1, currentY);
                 break;
-            case FloorDirection.EAST:
-                nextCell = Board.getCellAt(currentX, currentY + 1);
+            case EAST:
+                nextCell = board.getCellAt(currentX, currentY + 1);
                 break;
-            case FloorDirection.WEST:
-                nextCell = Board.getCellAt(currentX, currentY - 1);
+            case WEST:
+                nextCell = board.getCellAt(currentX, currentY - 1);
                 break;
-            case FloorDirection.NORTH_EAST:
-                nextCell = Board.getCellAt(currentX - 1, currentY + 1);
+            case NORTH_EAST:
+                nextCell = board.getCellAt(currentX - 1, currentY + 1);
                 break;
-            case FloorDirection.NORTH_WEST:
-                nextCell = Board.getCellAt(currentX - 1, currentY - 1);
+            case NORTH_WEST:
+                nextCell = board.getCellAt(currentX - 1, currentY - 1);
                 break;
-            case FloorDirection.SOUTH_EAST:
-                nextCell = Board.getCellAt(currentX + 1, currentY + 1);
+            case SOUTH_EAST:
+                nextCell = board.getCellAt(currentX + 1, currentY + 1);
                 break;
-            case FloorDirection.SOUTH_WEST:
-                nextCell = Board.getCellAt(currentX + 1, currentY - 1);
+            case SOUTH_WEST:
+                nextCell = board.getCellAt(currentX + 1, currentY - 1);
                 break;
             default:
                 //todo: maybe throw an exception here (or maybe delete this default section)
