@@ -218,4 +218,8 @@ public class MyMove {
     public GodPower getGodPower() {
         return godPower;
     }
+
+    public Move getLastMove() {
+        return lastMove;
+    }
 }

@@ -6,6 +6,10 @@ public class Card {
     private MyMove myMove;
     private MyConstruction myConstruction;
 
+    public MyMove getMyMove() {
+        return myMove;
+    }
+
     public MyConstruction getMyConstruction() {
         return myConstruction;
     }
