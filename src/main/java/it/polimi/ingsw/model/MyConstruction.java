@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import jdk.javadoc.internal.doclets.formats.html.markup.HtmlTag;
+
 public class MyConstruction {
     // TODO: Delete unused methods
     //private Cell startingPosition; // once the turn starts, Worker's starting position is saved
@@ -14,6 +16,30 @@ public class MyConstruction {
         //this.startingPosition = null;
         this.lastMove = null;
         this.constructionLeft = godPower.getConstructionLeft(); // todo: ensure that every Turn starting, constructionLeft attribute is "renewed"
+    }
+
+    public boolean executeMove(BuildMove move, Worker worker) throws OutOfBoardException {
+        boolean moveAllowed;
+
+        moveAllowed = checkMove(move, worker);
+        /* perform the construction just if it's allowed */
+        if(moveAllowed) {
+            if(!godPower.isActiveOnMyConstruction()) {
+                /* default construction execution */
+                if(move.getBlockType() == PlaceableType.BLOCK)
+                    move.getSelectedCell().placeOn(new Block());
+                else if(move.getBlockType() == PlaceableType.DOME)
+                    move.getSelectedCell().placeOn(new Dome());
+                // TODO: notify observers
+            }
+            else {
+                /* special rules when performing a Movement */
+                // todo: all construction-based Gods (atlas, demeter, hephaestus, and prometheus) just need to check if the move is possible, befor executing it (just to check, REMOVE THIS COMMENT)
+                // TODO: notify observers
+            }
+        }
+
+        return moveAllowed; // true if the move was executed
     }
 
     public boolean checkMove(BuildMove move, Worker worker) {

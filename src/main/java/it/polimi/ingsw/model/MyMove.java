@@ -49,10 +49,11 @@ public class MyMove {
                     // todo: artemis (just to check, REMOVE THIS COMMENT)
                     worker.place(move.getSelectedCell());
                 }
+                // TODO: notify observers
             }
         }
 
-        return moveAllowed;
+        return moveAllowed; // true if the move was executed
     }
 
     public boolean checkMove(Move move, Worker worker) {
