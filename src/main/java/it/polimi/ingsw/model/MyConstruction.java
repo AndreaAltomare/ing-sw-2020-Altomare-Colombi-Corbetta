@@ -1,26 +1,25 @@
 package it.polimi.ingsw.model;
 
-public class MyMove {
-    private Cell startingPosition; // once the turn starts, Worker's starting position is saved
-    private Move lastMove;
+public class MyConstruction {
+    // TODO: Delete unused methods
+    //private Cell startingPosition; // once the turn starts, Worker's starting position is saved
+    private BuildMove lastMove;
     private GodPower godPower; // state of chosen God's power
-    private Card parentCard;
-    private int movesLeft; // todo: needs to be renewed every turn starting
+    private int constructionLeft; // todo: needs to be renewed every turn starting
 
     // TODO: WRITE METHOD TO MAKE THE ACTUAL MOVE (NOT JUST TO CHECK IF IT IS POSSIBLE)
 
-    public MyMove(Card parentCard, GodPower godPower) {
-        this.parentCard = parentCard;
-        this.godPower = godPower; // TODO: maybe refactor this to be only on Card class, so to remuve duplicated code
-        this.startingPosition = null;
+    public MyConstruction(GodPower godPower) {
+        this.godPower = godPower;
+        //this.startingPosition = null;
         this.lastMove = null;
-        this.movesLeft = godPower.getMovementsLeft(); // todo: ensure that every Turn starting, movementsLeft attribute is "renewed"
+        this.constructionLeft = godPower.getConstructionLeft(); // todo: ensure that every Turn starting, constructionLeft attribute is "renewed"
     }
 
-    public boolean checkMove(Move move, Worker worker) {
+    public boolean checkMove(BuildMove move, Worker worker) {
         boolean moveAllowed = false;
         // TODO: add operation to check for the move correctness
-        if(!godPower.isActiveOnMyMovement())
+        if(!godPower.isActiveOnMyConstruction())
             moveAllowed = checkDefaultRules(move, worker);
         else
             moveAllowed = checkSpecialRules(move, worker);
@@ -28,68 +27,53 @@ public class MyMove {
         return moveAllowed;
     }
 
-    private boolean checkSpecialRules(Move move, Worker worker) {
+    private boolean checkSpecialRules(BuildMove move, Worker worker) {
         boolean checkResult = true;
 
-        /* check if the Player can make a move in the first place */
-        if(this.movesLeft <= 0)
+        /* check if the Player can make a construction in the first place */
+        if(this.constructionLeft <= 0)
             return false;
 
-        /* cannot move into the same position */
+        /* cannot build into the same position */
         if(isSameCell(move.getSelectedCell(), worker.position()))
             return false;
 
-        /* cannot move beyond adjoining cells */
+        /* cannot build beyond adjoining cells */
         if(beyondAdjacentCells(move.getSelectedCell(), worker.position()))
             return false;
 
-        /* cannot go more than one level up*/
-        if(tooHighCell(move.getSelectedCell(), worker.position()))
+        /* cannot build if there is another Worker */
+        if(occupiedCell(move.getSelectedCell()))
             return false;
 
-        /* cannot go if there is another Worker */
-        // todo: apollo and minotaur (just to check, REMOVE THIS COMMENT)
-        if(!godPower.isMoveIntoOpponentSpace()) {
-            if (occupiedCell(move.getSelectedCell()))
-                return false;
-        }
-        else {
-            // perform additional controls only in cas the selectedCell is already occupied
-            if(occupiedCell(move.getSelectedCell())) {
-                // just apollo can have ANY as a FloorDirection (it means to move the worker into the vacant Cell)
-                // todo: apollo (just to check, REMOVE THIS COMMENT)
-                if (godPower.getForceOpponentInto() != FloorDirection.ANY) {
-                    // todo: minotaur (just to check, REMOVE THIS COMMENT)
-                    // check if the opponent's Worker can be moved into the right cell (as with Minotaur Card's power)
-                    Cell nextOpponentCell = calculateNextCell(move);
-                    checkResult = checkNextCell(nextOpponentCell); // check if opponent's Worker can be forced into the next calculated Cell
-                    if (checkResult == false)
-                        return false;
-                }
-            }
-        }
-
-        /* cannot go if there is a Dome */
+        /* cannot build if there is a Dome */
         if(domedCell(move.getSelectedCell()))
             return false;
 
-        /* cannot move back into the initial space */
-        // todo: artemis (just to check, REMOVE THIS COMMENT)
-        if(godPower.isStartingSpaceDenied())
-            if(isSameCell(move.getSelectedCell(), startingPosition))
+        /* cannot build a Dome at any level */
+        // todo: atlas (just to check, REMOVE THIS COMMENT)
+        if(!godPower.isDomeAtAnyLevel())
+            if(move.getBlockType() == PlaceableType.DOME && move.getSelectedCell().getLevel() < 3)
                 return false;
 
-        /* check for denied move Direction when performing Construction before Movement */
-        // todo: prometheus (just to check, REMOVE THIS COMMENT)
-        if(godPower.getHotLastMoveDirection() != LevelDirection.NONE)
-            if(parentCard.getMyConstruction().getConstructionLeft() <= 1)
-                if(move.getLevelDirection() == godPower.getHotLastMoveDirection())
-                    return false;
+        /* cannot build on the same space (for additional-time constructions) */
+        // todo: demeter (just to check, REMOVE THIS COMMENT)
+        if(godPower.isSameSpaceDenied())
+            if(move.getSelectedCell().equals(lastMove.getSelectedCell()))
+                return false;
+
+        /* force build on the same space (for additional-time constructions) */
+        // todo: hephaestus (just to check, REMOVE THIS COMMENT)
+        if(godPower.isForceConstructionOnSameSpace())
+            if(!move.getSelectedCell().equals(lastMove.getSelectedCell()))
+                return false;
+
+        // todo: prometheus is implemented by changing the order of State Pattern - Turn Manager (just to check, REMOVE THIS COMMENT)
 
         return true; // everything ok
     }
 
-    private Cell calculateNextCell(Move move) {
+    private Cell calculateNextCell(BuildMove move) {
         Cell nextCell = null;
         int currentX = 0;
         int currentY = 0;
@@ -141,30 +125,32 @@ public class MyMove {
         return true; // everything ok
     }
 
-    private boolean checkDefaultRules(Move move, Worker worker) {
+    private boolean checkDefaultRules(BuildMove move, Worker worker) {
         // TODO: some statements (check if there is all the code needed)
-        /* check if the Player can make a move in the first place */
-        if(this.movesLeft <= 0)
+        /* check if the Player can make a construction in the first place */
+        if(this.constructionLeft <= 0)
             return false;
 
-        /* cannot move into the same position */
+        /* cannot build into the same position */
         if(isSameCell(move.getSelectedCell(), worker.position()))
             return false;
 
-        /* cannot move beyond adjoining cells */
+        /* cannot build beyond adjoining cells */
         if(beyondAdjacentCells(move.getSelectedCell(), worker.position()))
             return false;
 
-        /* cannot go more than one level up*/
-        if(tooHighCell(move.getSelectedCell(), worker.position()))
-            return false;
+        /* Workers can build at any level height, by default rules */
 
-        /* cannot go if there is another Worker */
+        /* cannot build if there is another Worker */
         if(occupiedCell(move.getSelectedCell()))
             return false;
 
-        /* cannot go if there is a Dome */
+        /* cannot build if there is a Dome */
         if(domedCell(move.getSelectedCell()))
+            return false;
+
+        /* cannot build a Dome at any level */
+        if(move.getBlockType() == PlaceableType.DOME && move.getSelectedCell().getLevel() < 3)
             return false;
 
         return true; // everything ok
@@ -209,5 +195,9 @@ public class MyMove {
      */
     public GodPower getGodPower() {
         return godPower;
+    }
+
+    public int getConstructionLeft() {
+        return constructionLeft;
     }
 }

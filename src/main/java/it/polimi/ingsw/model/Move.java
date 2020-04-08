@@ -1,10 +1,14 @@
 package it.polimi.ingsw.model;
 
+/**
+ * This class represent properties for a type-agnostic
+ * move (both Movement and Construction type)
+ */
 public class Move {
-    private FloorDirection floorDirection;
-    private LevelDirection levelDirection;
-    private int levelDepth; // depth of level UP/DOWN
-    private Cell selectedCell; // Cell where the Player wants to move
+    protected FloorDirection floorDirection;
+    protected LevelDirection levelDirection;
+    protected int levelDepth; // depth of level UP/DOWN
+    protected Cell selectedCell; // Cell where the Player wants to move
 
     public Move(Cell currentPosition, Cell selectedCell) {
         this.floorDirection = Move.calculateFloorDirection(currentPosition, selectedCell);
