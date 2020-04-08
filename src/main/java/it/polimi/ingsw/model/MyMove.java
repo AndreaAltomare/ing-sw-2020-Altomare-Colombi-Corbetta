@@ -17,6 +17,44 @@ public class MyMove {
         this.movesLeft = godPower.getMovementsLeft(); // todo: ensure that every Turn starting, movementsLeft attribute is "renewed"
     }
 
+    public boolean executeMove(Move move, Worker worker) throws OutOfBoardException {
+        boolean moveAllowed;
+
+        moveAllowed = checkMove(move, worker);
+        /* perform the movement just if it's allowed */
+        if(moveAllowed) {
+            if(!godPower.isActiveOnMyMovement()) {
+                /* default movement execution */
+                worker.place(move.getSelectedCell());
+                // TODO: notify observers
+            }
+            else {
+                /* special rules when performing a Movement */
+                // if the Cell is occupied, force the opponent's Worker into another Cell otherwise perform the Movement
+                if(occupiedCell(move.getSelectedCell())) {
+                    // todo: apollo (just to check, REMOVE THIS COMMENT)
+                    if (godPower.getForceOpponentInto() == FloorDirection.ANY) {
+                        Worker opponentWorker = move.getSelectedCell().removeWorker(); // get opponent's Worker from its Cell
+                        Cell myWorkerCurrentPosition = worker.position();
+                        worker.place(move.getSelectedCell()); // place my Worker into the selected Cell
+                        forceMove(opponentWorker,myWorkerCurrentPosition); // force movement for opponent's worker
+                    }
+                    else if(godPower.getForceOpponentInto() == FloorDirection.SAME) { // todo: minotaur (just to check, REMOVE THIS COMMENT)
+                        Worker opponentWorker = move.getSelectedCell().getWorker(); // get opponent's Worker
+                        forceMove(opponentWorker,calculateNextCell(move)); // force movement for opponent's worker
+                        worker.place(move.getSelectedCell()); // place my Worker into the selected Cell
+                    }
+                }
+                else {
+                    // todo: artemis (just to check, REMOVE THIS COMMENT)
+                    worker.place(move.getSelectedCell());
+                }
+            }
+        }
+
+        return moveAllowed;
+    }
+
     public boolean checkMove(Move move, Worker worker) {
         boolean moveAllowed = false;
         // TODO: add operation to check for the move correctness
@@ -208,8 +246,8 @@ public class MyMove {
         return cell.isDomed();
     }
 
-    private void forceMove() {
-
+    private void forceMove(Worker opponentWorker, Cell destinationCell) {
+        opponentWorker.place(destinationCell);
     }
 
     /**
