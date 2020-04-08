@@ -19,7 +19,7 @@ public class IslandBoard extends Board {
         board = new Cell[xDim][yDim];
         for(int y=0; y<yDim; y++)
             for(int x=0; x<xDim; x++)
-                board[y][x] = new Cell(x, y);
+                board[x][y] = new Cell(x, y, this);
     }
 
 
@@ -33,7 +33,7 @@ public class IslandBoard extends Board {
     @Override
     public Cell getCellAt(int x, int y) throws OutOfBoardException {
         if (x<0||y<0||x>=xDim||y>=yDim) throw new OutOfBoardException("trying to access a Cell out of bounds");
-        return board[y][x];
+        return board[x][y];
     }
 
     /**
