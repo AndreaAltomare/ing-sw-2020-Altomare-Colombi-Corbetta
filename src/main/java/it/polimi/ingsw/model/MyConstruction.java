@@ -22,6 +22,7 @@ public class MyConstruction {
         boolean moveAllowed;
 
         moveAllowed = checkMove(move, worker);
+        // TODO: here, must notify adversary observers in order to check if the actual execution is allowed
         /* perform the construction just if it's allowed */
         if(moveAllowed) {
             if(!godPower.isActiveOnMyConstruction()) {

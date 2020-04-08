@@ -17,16 +17,17 @@ public class MyMove {
         this.movesLeft = godPower.getMovementsLeft(); // todo: ensure that every Turn starting, movementsLeft attribute is "renewed"
     }
 
-    public boolean executeMove(Move move, Worker worker) throws OutOfBoardException {
+    public boolean executeMove(Move move, Worker worker) throws OutOfBoardException, WinException {
         boolean moveAllowed;
 
         moveAllowed = checkMove(move, worker);
+        // TODO: here, must notify adversary observers in order to check if the actual execution is allowed
         /* perform the movement just if it's allowed */
         if(moveAllowed) {
             if(!godPower.isActiveOnMyMovement()) {
                 /* default movement execution */
                 worker.place(move.getSelectedCell());
-                // TODO: notify observers
+                // TODO: notify observers (for example: to make them register my current move [it could be useful])
             }
             else {
                 /* special rules when performing a Movement */
@@ -51,6 +52,10 @@ public class MyMove {
                 }
                 // TODO: notify observers
             }
+
+            // check if there is a win condition
+            if(parentCard.getMyVictory().checkMove(move, worker))
+                throw new WinException(worker.getOwner());
         }
 
         return moveAllowed; // true if the move was executed
