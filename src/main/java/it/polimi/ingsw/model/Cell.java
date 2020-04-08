@@ -17,6 +17,7 @@ public class Cell {
 
     private final int x;
     private final int y;
+    private final Board board;
 
     /**
      * Enum used to catch the status of the actual Cell.
@@ -132,13 +133,14 @@ public class Cell {
 
     /**
      * Class constructor.
-     *
-     * @param x (x coordinate of the Cell)
+     *  @param x (x coordinate of the Cell)
      * @param y (y coordinate of the cell)
+     * @param board (the board in which the Cell is)
      */
-    public Cell(int x, int y){
+    public Cell(int x, int y, Board board){
         this.x = x;
         this.y = y;
+        this.board = board;
         status = PossibleStatus.clear();
     }
 
@@ -341,7 +343,6 @@ public class Cell {
         //If this.building has reached the max height of Blocks
         if (this.getLevel() > maxBlockHeighth)
             return false;
-        building.addFirst(new Block(this));
         return true;
     }
 
@@ -420,6 +421,15 @@ public class Cell {
                 return false;
             }
         return true;
+    }
+
+    /**
+     * Method that returns theboard of this Cell
+     *
+     * @return (the board of this Cell)
+     */
+    public Board getBoard() {
+        return board;
     }
 
 }
