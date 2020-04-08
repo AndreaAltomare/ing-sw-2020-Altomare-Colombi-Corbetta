@@ -52,14 +52,18 @@ public class MyMove {
                 return false;
         }
         else {
-            // todo: minotaur (just to check, REMOVE THIS COMMENT)
-            // just apollo can have ANY as a FloorDirection (it means to move the worker into the vacant Cell)
-            if(godPower.getForceOpponentInto() != FloorDirection.ANY) {
-                // check if the opponent's Worker can be moved into the right cell (as with Minotaur Card's power)
-                Cell nextOpponentCell = calculateNextCell(move);
-                checkResult = checkNextCell(nextOpponentCell);
-                if(checkResult == false)
-                    return false;
+            // perform additional controls only in cas the selectedCell is already occupied
+            if(occupiedCell(move.getSelectedCell())) {
+                // just apollo can have ANY as a FloorDirection (it means to move the worker into the vacant Cell)
+                // todo: apollo (just to check, REMOVE THIS COMMENT)
+                if (godPower.getForceOpponentInto() != FloorDirection.ANY) {
+                    // todo: minotaur (just to check, REMOVE THIS COMMENT)
+                    // check if the opponent's Worker can be moved into the right cell (as with Minotaur Card's power)
+                    Cell nextOpponentCell = calculateNextCell(move);
+                    checkResult = checkNextCell(nextOpponentCell); // check if opponent's Worker can be forced into the next calculated Cell
+                    if (checkResult == false)
+                        return false;
+                }
             }
         }
 
@@ -79,12 +83,55 @@ public class MyMove {
     }
 
     private Cell calculateNextCell(Move move) {
-        Cell nextCell;
+        Cell nextCell = null;
+        int currentX = 0;
+        int currentY = 0;
 
+        currentX = move.getSelectedCell().getX();
+        currentY = move.getSelectedCell().getY();
         switch(move.getFloorDirection()) {
             case FloorDirection.NORTH:
-                nextCell = ... // todo: to write
+                nextCell = Board.getCellAt(currentX - 1, currentY);
+                break;
+            case FloorDirection.SOUTH:
+                nextCell = Board.getCellAt(currentX + 1, currentY);
+                break;
+            case FloorDirection.EAST:
+                nextCell = Board.getCellAt(currentX, currentY + 1);
+                break;
+            case FloorDirection.WEST:
+                nextCell = Board.getCellAt(currentX, currentY - 1);
+                break;
+            case FloorDirection.NORTH_EAST:
+                nextCell = Board.getCellAt(currentX - 1, currentY + 1);
+                break;
+            case FloorDirection.NORTH_WEST:
+                nextCell = Board.getCellAt(currentX - 1, currentY - 1);
+                break;
+            case FloorDirection.SOUTH_EAST:
+                nextCell = Board.getCellAt(currentX + 1, currentY + 1);
+                break;
+            case FloorDirection.SOUTH_WEST:
+                nextCell = Board.getCellAt(currentX + 1, currentY - 1);
+                break;
+            default:
+                //todo: maybe throw an exception here (or maybe delete this default section)
+                break;
         }
+
+        return nextCell;
+    }
+
+    private boolean checkNextCell(Cell nextOpponentCell) {
+        /* cannot go if there is another Worker */
+        if(occupiedCell(nextOpponentCell))
+            return false;
+
+        /* cannot go if there is another Worker */
+        if(domedCell(nextOpponentCell))
+            return false;
+
+        return true; // everything ok
     }
 
     private boolean checkDefaultRules(Move move, Worker worker) {

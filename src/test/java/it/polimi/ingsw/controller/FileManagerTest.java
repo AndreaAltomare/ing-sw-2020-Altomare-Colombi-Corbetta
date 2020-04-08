@@ -62,7 +62,6 @@ class FileManagerTest {
      */
     @Test
     void saveNewCard() {
-        fileManager = FileManager.getIstance(); // todo: to remove when done with card generation
         godPower = new GodPower();
 
         /* SET A CARD'S PROPERTIES */
@@ -125,7 +124,7 @@ class FileManagerTest {
      */
     @Test
     void getCard() {
-        newCardName = "GreekGod";
+        newCardName = "pan";
 
         /* READ FROM FILE */
         fileManager = FileManager.getIstance(); // try if Singleton pattern works properly
@@ -139,11 +138,11 @@ class FileManagerTest {
         godPowerRead = gson.fromJson(json, GodPower.class);
 
         // check if everything is ok
-        if(godPowerRead.getForceOpponentInto() == FloorDirection.NORTH)
+        if(godPowerRead.getForceOpponentInto() == FloorDirection.NONE)
             System.out.println("\n\nEnum types are converted correctly!");
         else
             System.out.println("\n\nError with Enum type conversion!");
 
-        assertEquals(FloorDirection.NORTH, godPowerRead.getForceOpponentInto());
+        assertEquals(FloorDirection.NONE, godPowerRead.getForceOpponentInto());
     }
 }
