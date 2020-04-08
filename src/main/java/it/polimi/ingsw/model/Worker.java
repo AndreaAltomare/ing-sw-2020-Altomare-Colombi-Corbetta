@@ -34,13 +34,16 @@ public class Worker extends Placeable {
 
 
     /**
-     * Method that puts the Worker on the Cell
+     * Method that puts the Worker on the Cell and removes from previous one
      *
      * @param destination (Cell on which the Worker has to be put)
      * @return (had the method's invocation success? true: false)
      */
     @Override
     public boolean place(Cell destination) {
+
+        position().removeThisWorker(this);
+
         if (destination.placeOn(this)){
             this.setPosition(destination);
             return true;

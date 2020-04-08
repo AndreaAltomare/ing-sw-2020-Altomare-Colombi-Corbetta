@@ -432,4 +432,42 @@ public class Cell {
         return board;
     }
 
+    /**
+     * Method that returns the worker on the Cell (or null if there is none)
+     *
+     * @return (the worker on this cell)
+     */
+    public Worker getWorker(){
+        Placeable ret = getTop();
+        if(ret == null)
+            return null;
+        if(ret.isWorker())
+            return (Worker) ret;
+        else
+            return null;
+    }
+
+    /**
+     * Method that removes the worker on this
+     *
+     * @return (the worker on this -if any-)
+     */
+    public Worker removeWorker(){
+        Worker ret = getWorker();
+        if(ret != null)
+            building.pop();
+        return ret;
+    }
+
+    /**
+     * Method that removes Worker arg from building, if there is arg worker on it
+     *
+     * @param arg (The Worker to be removed)
+     */
+    public void removeThisWorker(Worker arg){
+        Worker ret = getWorker();
+        if(ret.equals(arg))
+            building.pop();
+    }
+
 }
