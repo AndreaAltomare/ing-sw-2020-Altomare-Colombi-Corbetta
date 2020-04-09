@@ -4,22 +4,46 @@ import java.util.ArrayList;
 
 public class ConstructionManager extends TurnManager {
 
-    public ConstructionManager(int initialMoves) {
+    public ConstructionManager(Card card) {
+        this.card = card;
         observers = new ArrayList<>();
-        this.movesLeft = initialMoves; // CONSTRUCTION moves left
+        //this.movesLeft = initialMoves; // MOVEMENT moves left todo: maybe to remove
     }
 
     @Override
-    public void handle() {
-        buildBlock();
+    public boolean handle(Move move, Worker worker) {
+        return build(move, worker);
     }
 
     @Override
     public int getMovesLeft() {
-        return movesLeft;
+        return card.getMyConstruction().getConstructionLeft();
     }
 
-    private void buildBlock() {
-        // TODO: add statements to build a block (or a dome)
+    private boolean build(Move move, Worker worker) {
+        moveAllowed = true;
+        // TODO: add statements to make a Construction
+        /* 1- Check if my Card allow this move */
+        moveAllowed = card.getMyConstruction().checkMove((BuildMove)move, worker);
+
+        /* 2- Check if my opponent's Card allow this move */
+        if(moveAllowed)
+            notifyObservers(move, worker); // if the move is denied by my opponents, moveAllowed is changed to false todo: for Construciton movement, there shouldn't be any observer (just to check, REMOVE THIS COMMENT)
+
+        /* 3- Execute this move */
+        if(moveAllowed) {
+            try {
+                card.getMyConstruction().executeMove((BuildMove)move, worker);
+            }
+            catch(OutOfBoardException ex) {
+                moveAllowed = false;
+            }
+        }
+
+        /* Once the move is executed, decrease the number of Constructions left */
+        if(moveAllowed)
+            card.getMyConstruction().decreaseConstructionLeft();
+
+        return moveAllowed;
     }
 }

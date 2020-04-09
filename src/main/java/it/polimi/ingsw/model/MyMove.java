@@ -266,4 +266,12 @@ public class MyMove {
     public Move getLastMove() {
         return lastMove;
     }
+
+    public int getMovesLeft() {
+        return movesLeft;
+    }
+
+    public void decreaseMovesLeft() {
+        movesLeft -= 1;
+    }
 }

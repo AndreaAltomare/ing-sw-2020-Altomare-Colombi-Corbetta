@@ -11,15 +11,22 @@ import java.util.List;
  */
 public abstract class TurnManager {
     protected Card card;
-    protected int movesLeft;
+    //protected int movesLeft; // todo: check if implementation by calculation is possible
     protected List<TurnObserver> observers;
+    protected boolean moveAllowed;
 
-    public abstract void handle();
+    public abstract boolean handle(Move move, Worker worker) throws WinException,LoseException;
     public abstract int getMovesLeft();
 
-    public void notifyObservers() {
-        for(TurnObserver obs : observers)
-            obs.check();
+    public void notifyObservers(Move move, Worker worker) {
+        for(TurnObserver obs : observers) {
+            try {
+                obs.check(move, worker);
+            }
+            catch(DeniedMoveException ex) {
+                moveAllowed = false; // todo: to renew with "true" value every Turn starting
+            }
+        }
     }
 
     public void registerObservers(TurnObserver observer) {

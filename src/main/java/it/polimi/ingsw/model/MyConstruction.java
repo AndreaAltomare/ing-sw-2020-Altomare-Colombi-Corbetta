@@ -7,11 +7,13 @@ public class MyConstruction {
     //private Cell startingPosition; // once the turn starts, Worker's starting position is saved
     private BuildMove lastMove;
     private GodPower godPower; // state of chosen God's power
+    private Card parentCard;
     private int constructionLeft; // todo: needs to be renewed every turn starting
 
     // TODO: WRITE METHOD TO MAKE THE ACTUAL CONSTRUCTION (NOT JUST TO CHECK IF IT IS POSSIBLE)
 
-    public MyConstruction(GodPower godPower) {
+    public MyConstruction(Card parentCard, GodPower godPower) {
+        this.parentCard = parentCard;
         this.godPower = godPower;
         //this.startingPosition = null;
         this.lastMove = null;
@@ -36,6 +38,10 @@ public class MyConstruction {
             else {
                 /* special rules when performing a Movement */
                 // todo: all construction-based Gods (atlas, demeter, hephaestus, and prometheus) just need to check if the move is possible, befor executing it (just to check, REMOVE THIS COMMENT)
+                if(move.getBlockType() == PlaceableType.BLOCK)
+                    move.getSelectedCell().placeOn(new Block());
+                else if(move.getBlockType() == PlaceableType.DOME)
+                    move.getSelectedCell().placeOn(new Dome());
                 // TODO: notify observers
             }
         }
@@ -157,10 +163,6 @@ public class MyConstruction {
         return cell.isDomed();
     }
 
-    private void forceMove() {
-
-    }
-
     /**
      * @return godPower (bean class, the only possible way)
      */
@@ -170,5 +172,9 @@ public class MyConstruction {
 
     public int getConstructionLeft() {
         return constructionLeft;
+    }
+
+    public void decreaseConstructionLeft() {
+        constructionLeft -= 1;
     }
 }
