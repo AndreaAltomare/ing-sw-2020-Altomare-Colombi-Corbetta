@@ -12,7 +12,7 @@ public class MovementManager extends TurnManager {
     }
 
     @Override
-    public boolean handle(Move move, Worker worker) throws WinException,LoseException {
+    public boolean handle(Move move, Worker worker) throws WinException,LoseException,RunOutMovesException {
         return moveWorker(move, worker);
     }
 
@@ -21,8 +21,12 @@ public class MovementManager extends TurnManager {
         return card.getMyMove().getMovesLeft();
     }
 
-    private boolean moveWorker(Move move, Worker worker) throws WinException,LoseException {
+    private boolean moveWorker(Move move, Worker worker) throws WinException,LoseException,RunOutMovesException {
         moveAllowed = true;
+
+        if(this.getMovesLeft() < 1)
+            throw new RunOutMovesException(StateType.MOVEMENT);
+
         // TODO: add statements to make a Worker move
         /* 1- Check if my Card allow this move */
         moveAllowed = card.getMyMove().checkMove(move,worker);
@@ -43,8 +47,10 @@ public class MovementManager extends TurnManager {
         }
 
         /* Once the move is executed, decrease the number of Moves left */
-        if(moveAllowed)
+        if(moveAllowed) {
+            card.setMovementExecuted(true);
             card.getMyMove().decreaseMovesLeft();
+        }
 
         return moveAllowed;
     }

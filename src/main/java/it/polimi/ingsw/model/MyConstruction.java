@@ -1,7 +1,5 @@
 package it.polimi.ingsw.model;
 
-import jdk.javadoc.internal.doclets.formats.html.markup.HtmlTag;
-
 public class MyConstruction {
     // TODO: Delete unused methods
     //private Cell startingPosition; // once the turn starts, Worker's starting position is saved

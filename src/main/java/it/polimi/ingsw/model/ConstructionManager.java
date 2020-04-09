@@ -8,10 +8,11 @@ public class ConstructionManager extends TurnManager {
         this.card = card;
         observers = new ArrayList<>();
         //this.movesLeft = initialMoves; // MOVEMENT moves left todo: maybe to remove
+        moveAllowed = true;
     }
 
     @Override
-    public boolean handle(Move move, Worker worker) {
+    public boolean handle(Move move, Worker worker) throws RunOutMovesException,BuildBeforeMoveException {
         return build(move, worker);
     }
 
@@ -20,8 +21,20 @@ public class ConstructionManager extends TurnManager {
         return card.getMyConstruction().getConstructionLeft();
     }
 
-    private boolean build(Move move, Worker worker) {
+    private boolean build(Move move, Worker worker) throws RunOutMovesException,BuildBeforeMoveException {
         moveAllowed = true;
+
+        if(this.getMovesLeft() < 1)
+            throw new RunOutMovesException(StateType.CONSTRUCTION);
+
+        /* Check if the Player has already made a Movement.
+        * If not: check if the Player can make a Build before a Movement.
+        *     If not: throw an Exception
+        */
+        if(!card.hasExecutedMovement())
+            if(!card.getGodPower().isBuildBeforeMovement())
+                throw new BuildBeforeMoveException();
+
         // TODO: add statements to make a Construction
         /* 1- Check if my Card allow this move */
         moveAllowed = card.getMyConstruction().checkMove((BuildMove)move, worker);

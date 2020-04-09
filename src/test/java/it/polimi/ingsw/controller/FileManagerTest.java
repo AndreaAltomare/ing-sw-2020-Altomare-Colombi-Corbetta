@@ -65,20 +65,20 @@ class FileManagerTest {
         godPower = new GodPower();
 
         /* SET A CARD'S PROPERTIES */
-        newCardName = "pan";
+        newCardName = "default";
 
-        godPower.setName("Pan");
-        godPower.setEpithet("God of the Wild");
-        godPower.setDescription("Win Condition: You also win if your Worker moves down two or more levels.");
+        godPower.setName("Default");
+        godPower.setEpithet("Default");
+        godPower.setDescription("Default");
 
         godPower.setMovementsLeft(1);
         godPower.setConstructionLeft(1);
-        godPower.setMustObey(true);
+        godPower.setMustObey(false);
         godPower.setStartingSpaceDenied(false);
         godPower.setSameSpaceDenied(false);
 
         godPower.setActiveOnMyMovement(false);
-        godPower.setHotLastMoveDirection(LevelDirection.DOWN);
+        godPower.setHotLastMoveDirection(LevelDirection.NONE);
         godPower.setMoveIntoOpponentSpace(false);
         godPower.setForceOpponentInto(FloorDirection.NONE);
         godPower.setDeniedDirection(LevelDirection.NONE);
@@ -91,7 +91,7 @@ class FileManagerTest {
         godPower.setDomeAtAnyLevel(false);
         godPower.setForceConstructionOnSameSpace(false);
 
-        godPower.setNewVictoryCondition(true);
+        godPower.setNewVictoryCondition(false);
 
 
         /* JSON SERIALIZATION WITH GSON */

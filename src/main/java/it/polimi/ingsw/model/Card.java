@@ -14,6 +14,7 @@ public class Card {
     private MyConstruction myConstruction;
     private MyVictory myVictory;
     private AdversaryMove adversaryMove;
+    private boolean movementExecuted; // tells if at least one movement was executed
 
     public Card(GodPower godPower) {
         this.godPower = godPower;
@@ -36,5 +37,17 @@ public class Card {
 
     public MyVictory getMyVictory() {
         return myVictory;
+    }
+
+    public boolean hasExecutedMovement() {
+        return movementExecuted;
+    }
+
+    public void setMovementExecuted(boolean movementExecuted) {
+        this.movementExecuted = movementExecuted;
+    }
+
+    public GodPower getGodPower() {
+        return godPower;
     }
 }
