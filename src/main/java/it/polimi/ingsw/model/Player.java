@@ -12,6 +12,7 @@ public class Player {
     private String nickname;
     private boolean challenger;
     private boolean startingPlayer;
+    private Card card;
     private TurnManager turn;
     private MovementManager movementState;
     private ConstructionManager constructionState;
@@ -20,6 +21,7 @@ public class Player {
         this.nickname = nickname;
         this.challenger = false;
         this.startingPlayer = false;
+        this.card = null;
         this.movementState = null;
         this.constructionState = null;
         this.turn = movementState; // initial turn State
@@ -79,7 +81,7 @@ public class Player {
         GodPower godPower = gson.fromJson(json, GodPower.class);
 
         /* Card initialization */
-        Card card = new Card(godPower);
+        this.card = new Card(godPower);
         this.movementState = new MovementManager(card);
         this.constructionState = new ConstructionManager(card);
         this.turn = movementState;
@@ -103,5 +105,17 @@ public class Player {
 
     public void setStartingPlayer(boolean startingPlayer) {
         this.startingPlayer = startingPlayer;
+    }
+
+    public Card getCard() {
+        return card;
+    }
+
+    public MovementManager getMovementManager() {
+        return movementState;
+    }
+
+    public ConstructionManager getConstructionManager() {
+        return constructionState;
     }
 }

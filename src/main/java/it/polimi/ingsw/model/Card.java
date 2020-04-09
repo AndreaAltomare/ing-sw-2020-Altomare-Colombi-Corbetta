@@ -39,6 +39,10 @@ public class Card {
         return myVictory;
     }
 
+    public AdversaryMove getAdversaryMove() {
+        return adversaryMove;
+    }
+
     public boolean hasExecutedMovement() {
         return movementExecuted;
     }

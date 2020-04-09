@@ -135,4 +135,29 @@ public class GameRoom extends GeneralGameRoom {
         }
         return null;
     }
+
+    /**
+     * This method is called when the Cards assignment is over:
+     * Cards whose power is active on opponents turn, must be
+     * registered as Turn Observers in their respective Turn Managers
+     */
+    private void registerObservers() {
+        /* 1- Take all the AdversaryMove objects */ // TODO: Check if Lambda expression works fine
+        List<Player> selectedPlayers = players.stream().filter(x -> x.getCard().getGodPower().isActiveOnOpponentMovement()).collect(Collectors.toList());
+
+        /* 2- Get all the AdversaryMove object */
+        List<AdversaryMove> adversaryMoveObservers = new ArrayList<>();
+        for(Player playerObj : selectedPlayers)
+            adversaryMoveObservers.add(playerObj.getCard().getAdversaryMove());
+
+        /* 3- Create MovementObserver objects from AdversaryMove ones */
+        List<MovementObserver> movementObservers = new ArrayList<>();
+        for(AdversaryMove adversaryMoveObj : adversaryMoveObservers)
+            movementObservers.add(new MovementObserver(adversaryMoveObj));
+
+        /* 4- Register each AdversaryMove element in every Player's appropriate Turn Observer */
+        for(MovementObserver movementObs : movementObservers)
+            for(Player playerObj : players)
+                playerObj.getMovementManager().registerObservers(movementObs);
+    }
 }
