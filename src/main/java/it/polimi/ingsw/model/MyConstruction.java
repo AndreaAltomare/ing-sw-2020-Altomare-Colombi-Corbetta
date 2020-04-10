@@ -175,4 +175,12 @@ public class MyConstruction {
     public void decreaseConstructionLeft() {
         constructionLeft -= 1;
     }
+
+    /**
+     * This method reset the Constructions Left with the Player's
+     * Card provided value
+     */
+    public void resetConstructionLeft() {
+        constructionLeft = godPower.getConstructionLeft();
+    }
 }

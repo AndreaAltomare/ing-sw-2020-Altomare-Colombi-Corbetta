@@ -54,4 +54,16 @@ public class Card {
     public GodPower getGodPower() {
         return godPower;
     }
+
+    /**
+     * This method reset conditions when a new Turn starts
+     */
+    public void resetForStart() {
+        /* Reset the number of Moves Left */
+        myMove.resetMovesLeft();
+        myConstruction.resetConstructionLeft();
+
+        /* Reset Movement executed */
+        movementExecuted = false;
+    }
 }

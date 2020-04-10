@@ -274,4 +274,12 @@ public class MyMove {
     public void decreaseMovesLeft() {
         movesLeft -= 1;
     }
+
+    /**
+     * This method reset the Moves Left with the Player's
+     * Card provided value
+     */
+    public void resetMovesLeft() {
+        movesLeft = godPower.getMovementsLeft();
+    }
 }

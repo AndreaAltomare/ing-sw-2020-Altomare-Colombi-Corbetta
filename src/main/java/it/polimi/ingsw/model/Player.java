@@ -42,6 +42,19 @@ public class Player {
     }
 
     /**
+     * This method is called when a Player's Turn starts.
+     * It sets the initial conditions both for the Turn
+     * and for its Move Managers.
+     */
+    public void startTurn() {
+        /* 1- Reset Player's Move Manager values */
+        card.resetForStart();
+
+        /* 2- Get to the initial State */
+        chooseState(StateType.MOVEMENT);
+    }
+
+    /**
      * This method is intended for Players usage
      * to choose what move (generally) they want to perform
      * (HEART OF STATE TURN FLOW)

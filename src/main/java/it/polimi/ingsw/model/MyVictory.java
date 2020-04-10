@@ -4,7 +4,7 @@ import java.util.logging.Level;
 
 public class MyVictory {
     // TODO: Delete unused methods
-    private Move lastMove; // TODO: maybe useless, to remove
+    //private Move lastMove; // TODO: maybe useless, to remove
     private GodPower godPower; // state of chosen God's power
     private Card parentCard;
     private final int panLevelDepth = -2;
@@ -14,7 +14,7 @@ public class MyVictory {
     public MyVictory(Card parentCard, GodPower godPower) {
         this.parentCard = parentCard;
         this.godPower = godPower;
-        this.lastMove = null;
+        //this.lastMove = null;
     }
 
     public boolean checkMove(Move move, Worker worker) {
