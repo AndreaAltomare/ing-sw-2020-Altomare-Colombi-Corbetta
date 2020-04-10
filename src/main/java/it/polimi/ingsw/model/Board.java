@@ -1,5 +1,9 @@
 package it.polimi.ingsw.model;
 
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Class to abstractly model the Board
  * @author giorgio
@@ -30,6 +34,30 @@ public abstract class Board {
      * @return (the y dimension of the board)
      */
     public abstract int getYDim();
+
+    /**
+     * Method that returns the adjacents Cell to the one given.
+     *
+     * @param cell (Cell to check the adjacent)
+     * @return (list of all the adjacent Cells)
+     */
+    public List<Cell> getAdjacentCells(Cell cell){
+        int x = cell.getX();
+        int y = cell.getY();
+        if(cell.getBoard()!=this)
+            throw new InvalidParameterException("getAdjacentCell has been called with a Cell of another Board");
+        List<Cell> ret = new ArrayList<Cell>();
+        for(int i=-1; i<2; i++)
+            for(int j=-1; j<2; j++){
+                if(i==j&& i==0) continue;
+                try {
+                    ret.add(this.getCellAt(x+i, y+j));
+                } catch (OutOfBoardException e){
+
+                }
+            }
+        return ret;
+    }
 
     public void clearCells(){
         int xDim = getXDim();
