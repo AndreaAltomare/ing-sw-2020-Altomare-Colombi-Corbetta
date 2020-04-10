@@ -42,6 +42,9 @@ public class MyConstruction {
                     move.getSelectedCell().placeOn(new Dome());
                 // TODO: notify observers
             }
+
+            /* Register the executed move */
+            registerLastMove(move);
         }
 
         return moveAllowed; // true if the move was executed
@@ -182,5 +185,14 @@ public class MyConstruction {
      */
     public void resetConstructionLeft() {
         constructionLeft = godPower.getConstructionLeft();
+    }
+
+    /**
+     * Register last (Build)Move executed
+     *
+     * @param move
+     */
+    private void registerLastMove(BuildMove move) {
+        this.lastMove = move;
     }
 }

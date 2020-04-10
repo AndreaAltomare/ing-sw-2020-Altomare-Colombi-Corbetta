@@ -11,7 +11,7 @@ public class MyMove {
 
     public MyMove(Card parentCard, GodPower godPower) {
         this.parentCard = parentCard;
-        this.godPower = godPower; // TODO: maybe refactor this to be only on Card class, so to remuve duplicated code
+        this.godPower = godPower; // TODO: maybe refactor this to be only on Card class, so to remove duplicated code
         this.startingPosition = null;
         this.lastMove = null;
         this.movesLeft = godPower.getMovementsLeft(); // todo: ensure that every Turn starting, movementsLeft attribute is "renewed"
@@ -52,6 +52,9 @@ public class MyMove {
                 }
                 // TODO: notify observers
             }
+
+            /* Register the executed move */
+            registerLastMove(move);
 
             // check if there is a win condition
             if(parentCard.getMyVictory().checkMove(move, worker))
@@ -125,9 +128,16 @@ public class MyMove {
 
         /* cannot move back into the initial space */
         // todo: artemis (just to check, REMOVE THIS COMMENT)
-        if(godPower.isStartingSpaceDenied())
-            if(isSameCell(move.getSelectedCell(), startingPosition))
-                return false;
+        if(godPower.isStartingSpaceDenied()) {
+            /* Check if a movement has already occurred with the selected Worker */
+            if(parentCard.hasExecutedMovement()) {
+                if (isSameCell(move.getSelectedCell(), startingPosition))
+                    return false;
+            }
+            else { /* Otherwise, just register the starting position */
+                this.startingPosition = worker.position();
+            }
+        }
 
         /* check for denied move Direction when performing Construction before Movement */
         // todo: prometheus (just to check, REMOVE THIS COMMENT)
@@ -281,5 +291,14 @@ public class MyMove {
      */
     public void resetMovesLeft() {
         movesLeft = godPower.getMovementsLeft();
+    }
+
+    /**
+     * Register last Move executed
+     *
+     * @param move
+     */
+    private void registerLastMove(Move move) {
+        this.lastMove = move;
     }
 }
