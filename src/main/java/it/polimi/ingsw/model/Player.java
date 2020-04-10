@@ -51,7 +51,11 @@ public class Player {
      * It sets the initial conditions both for the Turn
      * and for its Move Managers.
      */
-    public void startTurn() {
+    public void startTurn() throws LoseException {
+        /* 0- Check if there is a Lose Condition */
+        if(checkForLostByMovement())
+            throw new LoseException(this, "Player " + nickname + "has lost! (Cannot perform any Movement)");
+
         /* 1- Reset Player's Move Manager values */
         card.resetForStart();
 
@@ -71,7 +75,7 @@ public class Player {
      *
      * @param state (Chosen State type)
      */
-    public void chooseState(StateType state) {
+    public void chooseState(StateType state) throws LoseException {
         switch(state) {
             case MOVEMENT:
                 this.switchState(movementState);
@@ -84,9 +88,20 @@ public class Player {
         }
     }
 
-    public void switchState(TurnManager nextState) {
+    public void switchState(TurnManager nextState) throws LoseException {
+        // TODO: maybe REFACTOR this check into a method in MovementManager class
+        /* Check if a Lose Condition (by denied movements) occurs */
+        if(nextState.state() == StateType.MOVEMENT)
+            if(checkForLostByMovement())
+                throw new LoseException(this, "Player " + nickname + "has lost! (Cannot perform any Movement)");
+
+        if(nextState.state() == StateType.CONSTRUCTION)
+            if(checkForLostByConstruction())
+                throw new LoseException(this, "Player " + nickname + "has lost! (Cannot perform any Construction)");
+
         this.turn = nextState;
     }
+
 
     /**
      * Instantiate a new Card and initialize Turn Managers
@@ -177,5 +192,61 @@ public class Player {
         }
 
         return false;
+    }
+
+
+    /**
+     * This method tells whether a Player has lost the game
+     * because he/she cannot perform any Movement
+     *
+     * @return (Player cannot perform any Movement ? true : false)
+     */
+    private boolean checkForLostByMovement() {
+        List<Cell> adjacentCells;
+
+        // TODO: this method shouldn't work with God Athena. Decide what to do (REMOVE THIS COMMENT LATER...)
+        /* For each worker check if a Move can be performed */
+        for(Worker workerObj : workers) {
+            /* 1- Get adjacent Cells from the one the Worker is placed on */
+            adjacentCells = workerObj.position().getBoard().getAdjacentCells(workerObj.position());
+
+            /* 2- For each Cell, check if a Move is possible */
+            for(Cell cell : adjacentCells) {
+                Move moveToCheck = new Move(workerObj.position(),cell);
+
+                // If at least one Movement is allowed, Player has not lost.
+                if(card.getMyMove().checkMove(moveToCheck, workerObj))
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * This method tells whether a Player has lost the game
+     * because he/she cannot perform any Construction
+     *
+     * @return (Player cannot perform any Construction ? true : false)
+     */
+    private boolean checkForLostByConstruction() {
+        List<Cell> adjacentCells;
+
+        /* For each worker check if a Move can be performed */
+        for(Worker workerObj : workers) {
+            /* 1- Get adjacent Cells from the one the Worker is placed on */
+            adjacentCells = workerObj.position().getBoard().getAdjacentCells(workerObj.position());
+
+            /* 2- For each Cell, check if a Construction is possible */
+            for(Cell cell : adjacentCells) {
+                BuildMove moveToCheck = new BuildMove(workerObj.position(),cell,PlaceableType.ANY);
+
+                // If at least one Movement is allowed, Player has not lost.
+                if(card.getMyMove().checkMove(moveToCheck, workerObj))
+                    return false;
+            }
+        }
+
+        return true;
     }
 }

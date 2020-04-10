@@ -14,6 +14,7 @@ public abstract class TurnManager {
     //protected int movesLeft; // todo: check if implementation by calculation is possible
     protected List<TurnObserver> observers;
     protected boolean moveAllowed;
+    protected StateType state;
 
     public abstract boolean handle(Move move, Worker worker) throws WinException,LoseException,RunOutMovesException,BuildBeforeMoveException,WrongWorkerException;
     public abstract int getMovesLeft();
@@ -35,5 +36,9 @@ public abstract class TurnManager {
 
     public void unregisterObservers(TurnObserver observer) {
         observers.remove(observer);
+    }
+
+    public StateType state() {
+        return state;
     }
 }

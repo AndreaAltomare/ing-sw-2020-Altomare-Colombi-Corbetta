@@ -15,6 +15,7 @@ public class Card {
     private MyVictory myVictory;
     private AdversaryMove adversaryMove;
     private boolean movementExecuted; // tells if at least one movement was executed
+    private boolean constructionExecuted; // tells if at least one construction was executed
 
     public Card(GodPower godPower) {
         this.godPower = godPower;
@@ -25,6 +26,8 @@ public class Card {
         this.myConstruction = new MyConstruction(this, godPower);
         this.myVictory = new MyVictory(this, godPower);
         this.adversaryMove = new AdversaryMove(this, godPower);
+        this.movementExecuted = false;
+        this.constructionExecuted = false;
     }
 
     public MyMove getMyMove() {
@@ -51,6 +54,14 @@ public class Card {
         this.movementExecuted = movementExecuted;
     }
 
+    public boolean hasExecutedConstruction() {
+        return constructionExecuted;
+    }
+
+    public void setConstructionExecuted(boolean constructionExecuted) {
+        this.constructionExecuted = constructionExecuted;
+    }
+
     public GodPower getGodPower() {
         return godPower;
     }
@@ -63,7 +74,8 @@ public class Card {
         myMove.resetMovesLeft();
         myConstruction.resetConstructionLeft();
 
-        /* Reset Movement executed */
+        /* Reset Movement and Construction executed */
         movementExecuted = false;
+        constructionExecuted = false;
     }
 }

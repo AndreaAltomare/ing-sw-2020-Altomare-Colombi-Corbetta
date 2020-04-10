@@ -9,6 +9,7 @@ public class MovementManager extends TurnManager {
         observers = new ArrayList<>();
         //this.movesLeft = initialMoves; // MOVEMENT moves left todo: maybe to remove
         moveAllowed = true;
+        state = StateType.MOVEMENT;
     }
 
     @Override

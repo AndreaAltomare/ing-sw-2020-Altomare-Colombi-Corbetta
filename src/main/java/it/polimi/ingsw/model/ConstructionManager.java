@@ -8,7 +8,8 @@ public class ConstructionManager extends TurnManager {
         this.card = card;
         observers = new ArrayList<>();
         //this.movesLeft = initialMoves; // MOVEMENT moves left todo: maybe to remove
-        moveAllowed = true;
+        moveAllowed = true; // todo: copy-pasted from MovementManager class, maybe it's to remove
+        state = StateType.CONSTRUCTION;
     }
 
     @Override
@@ -33,10 +34,16 @@ public class ConstructionManager extends TurnManager {
         /* Check if the Player has already made a Movement.
         * If not: check if the Player can make a Build before a Movement.
         *     If not: throw an Exception
+        *
+        * If the Player can make a Build before a movement, but he/she have already
+        * made one, the Player must now perform a Movement.
         */
-        if(!card.hasExecutedMovement())
-            if(!card.getGodPower().isBuildBeforeMovement())
+        if(!card.hasExecutedMovement()) {
+            if (!card.getGodPower().isBuildBeforeMovement())
                 throw new BuildBeforeMoveException();
+            else if(card.getGodPower().isBuildBeforeMovement() && card.hasExecutedConstruction())
+                throw new BuildBeforeMoveException("Player has already made a Construction! Need to perform a Movement now.");
+        }
 
         // TODO: add statements to make a Construction
         /* 1- Check if my Card allow this move */
@@ -57,8 +64,10 @@ public class ConstructionManager extends TurnManager {
         }
 
         /* Once the move is executed, decrease the number of Constructions left */
-        if(moveAllowed)
+        if(moveAllowed) {
+            card.setConstructionExecuted(true);
             card.getMyConstruction().decreaseConstructionLeft();
+        }
 
         return moveAllowed;
     }
