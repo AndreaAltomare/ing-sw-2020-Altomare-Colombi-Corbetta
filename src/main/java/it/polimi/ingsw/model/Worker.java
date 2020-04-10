@@ -8,6 +8,7 @@ package it.polimi.ingsw.model;
 public class Worker extends Placeable {
 
     private Player owner;
+    private ChooseType chosen; // tell whether a Worker can either be chosen for a turn or not, or it has already been chosen
 
     /**
      * Class constructor.
@@ -17,6 +18,7 @@ public class Worker extends Placeable {
     public Worker(Player owner){
         super();
         this.owner = owner;
+        this.chosen = ChooseType.CAN_BE_CHOSEN;
     }
 
     /**
@@ -30,6 +32,7 @@ public class Worker extends Placeable {
         super();
         this.setPosition(destination);
         this.owner = owner;
+        this.chosen = ChooseType.CAN_BE_CHOSEN;
     }
 
 
@@ -71,4 +74,35 @@ public class Worker extends Placeable {
         return this.owner;
     }
 
+
+    /**
+     * Tell if the Worker is the Chosen one
+     * for the Turn that is being played
+     *
+     * @return (chosen == ChooseType.CHOSEN)
+     * @author AndreaAltomare
+     */
+    public boolean isChosen() {
+        return (chosen == ChooseType.CHOSEN);
+    }
+
+    /**
+     * Get the choose status for the Worker
+     *
+     * @return chosen (ChooseType status)
+     * @author AndreaAltomare
+     */
+    public ChooseType getChosenStatus() {
+        return chosen;
+    }
+
+    /**
+     * Set the Choose status for the Worker
+     *
+     * @param chosen
+     * @author AndreaAltomare
+     */
+    public void setChosen(ChooseType chosen) {
+        this.chosen = chosen;
+    }
 }

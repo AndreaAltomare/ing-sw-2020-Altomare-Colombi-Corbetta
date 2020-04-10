@@ -3,6 +3,9 @@ package it.polimi.ingsw.model;
 import com.google.gson.Gson;
 import it.polimi.ingsw.controller.FileManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Class representing a Player
  *
@@ -16,6 +19,7 @@ public class Player {
     private TurnManager turn;
     private MovementManager movementState;
     private ConstructionManager constructionState;
+    private List<Worker> workers;
 
     public Player(String nickname) {
         this.nickname = nickname;
@@ -25,6 +29,7 @@ public class Player {
         this.movementState = null;
         this.constructionState = null;
         this.turn = movementState; // initial turn State
+        this.workers = new ArrayList<>();
     }
 
     /**
@@ -37,7 +42,7 @@ public class Player {
      * @throws LoseException (Exception handled by Controller)
      * @throws RunOutMovesException (Exception handled by Controller)
      */
-    public void executeMove(Move move,Worker worker) throws WinException,LoseException,RunOutMovesException,BuildBeforeMoveException {
+    public void executeMove(Move move,Worker worker) throws WinException,LoseException,RunOutMovesException,BuildBeforeMoveException,WrongWorkerException {
         turn.handle(move, worker);
     }
 
@@ -50,7 +55,10 @@ public class Player {
         /* 1- Reset Player's Move Manager values */
         card.resetForStart();
 
-        /* 2- Get to the initial State */
+        /* 2- Reset Workers Turn values */
+        workers.forEach(x -> x.setChosen(ChooseType.CAN_BE_CHOSEN));
+
+        /* 3- Get to the initial State */
         chooseState(StateType.MOVEMENT);
     }
 
@@ -130,5 +138,44 @@ public class Player {
 
     public ConstructionManager getConstructionManager() {
         return constructionState;
+    }
+
+    /**
+     * Method called when a Worker needs to be register among
+     * a Player's Workers List
+     *
+     * @param worker
+     */
+    public void registerWorker(Worker worker) {
+        workers.add(worker);
+    }
+
+    //TODO: if a Worker is in a Lose condition, don't let the Player to select it
+
+    /**
+     * This method lets the Player choose a Worker and to set
+     * it to the chosen one for this Turn
+     *
+     * @param worker (Worker to choose)
+     * @return (Worker has been correctly chosen ? true : false)
+     */
+    public boolean chooseWorker(Worker worker) {
+        /* 1- Check if the selected Worker belongs to the Player (by nickname, because it's unique among Players) */
+        if(!worker.getOwner().getNickname().equals(this.nickname))
+            return false;
+
+        if(worker.getChosenStatus() == ChooseType.CAN_BE_CHOSEN || worker.isChosen()) {
+            /* 1- Set the Worker status to CHOSEN */
+            worker.setChosen(ChooseType.CHOSEN);
+
+            /* 2- Other Player's Workers status must be set to NOT_CHOSEN */
+            for (Worker workerObj : workers)
+                if (!workerObj.isChosen())
+                    workerObj.setChosen(ChooseType.NOT_CHOSEN);
+
+            return true;
+        }
+
+        return false;
     }
 }

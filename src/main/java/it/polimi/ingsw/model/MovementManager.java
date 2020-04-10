@@ -12,7 +12,10 @@ public class MovementManager extends TurnManager {
     }
 
     @Override
-    public boolean handle(Move move, Worker worker) throws WinException,LoseException,RunOutMovesException {
+    public boolean handle(Move move, Worker worker) throws WinException,LoseException,RunOutMovesException,WrongWorkerException {
+        if(!worker.isChosen())
+            throw new WrongWorkerException();
+
         return moveWorker(move, worker);
     }
 

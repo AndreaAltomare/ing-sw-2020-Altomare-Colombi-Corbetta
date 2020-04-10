@@ -12,7 +12,10 @@ public class ConstructionManager extends TurnManager {
     }
 
     @Override
-    public boolean handle(Move move, Worker worker) throws RunOutMovesException,BuildBeforeMoveException {
+    public boolean handle(Move move, Worker worker) throws RunOutMovesException,BuildBeforeMoveException,WrongWorkerException {
+        if(!worker.isChosen())
+            throw new WrongWorkerException();
+
         return build(move, worker);
     }
 
@@ -41,7 +44,7 @@ public class ConstructionManager extends TurnManager {
 
         /* 2- Check if my opponent's Card allow this move */
         if(moveAllowed)
-            notifyObservers(move, worker); // if the move is denied by my opponents, moveAllowed is changed to false todo: for Construciton movement, there shouldn't be any observer (just to check, REMOVE THIS COMMENT)
+            notifyObservers(move, worker); // if the move is denied by my opponents, moveAllowed is changed to false todo: for Construciton movement, there shouldn't be any observer (maybe for the Advenced Gods, let's wait) (just to check, REMOVE THIS COMMENT)
 
         /* 3- Execute this move */
         if(moveAllowed) {
