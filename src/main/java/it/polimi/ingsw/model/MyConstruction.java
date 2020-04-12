@@ -93,13 +93,13 @@ public class MyConstruction {
         /* cannot build on the same space (for additional-time constructions) */
         // todo: demeter (just to check, REMOVE THIS COMMENT)
         if(godPower.isSameSpaceDenied())
-            if(move.getSelectedCell().equals(lastMove.getSelectedCell()))
+            if(lastMove != null && move.getSelectedCell().equals(lastMove.getSelectedCell()))
                 return false;
 
         /* force build on the same space (for additional-time constructions) */
         // todo: hephaestus (just to check, REMOVE THIS COMMENT)
         if(godPower.isForceConstructionOnSameSpace())
-            if(!move.getSelectedCell().equals(lastMove.getSelectedCell()))
+            if(lastMove != null && !move.getSelectedCell().equals(lastMove.getSelectedCell()))
                 return false;
 
         // todo: prometheus is implemented by changing the order of State Pattern - Turn Manager (just to check, REMOVE THIS COMMENT)

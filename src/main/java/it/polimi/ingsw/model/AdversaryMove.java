@@ -36,7 +36,7 @@ public class AdversaryMove {
         * in this case, check the opponent's move
         */
         // todo: athena (just to check, REMOVE THIS COMMENT)
-        if(myLastMove.getLevelDirection() == godPower.getHotLastMoveDirection())
+        if(myLastMove != null && myLastMove.getLevelDirection() == godPower.getHotLastMoveDirection())
             if(move.getLevelDirection() == godPower.getHotLastMoveDirection()) {
                 if(godPower.isMustObey()) {
                     // if the God's power must be obeyed, and it's not, trigger a Lose Condition
