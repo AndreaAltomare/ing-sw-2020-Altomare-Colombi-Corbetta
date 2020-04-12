@@ -19,7 +19,7 @@ public abstract class TurnManager {
     public abstract boolean handle(Move move, Worker worker) throws WinException,LoseException,RunOutMovesException,BuildBeforeMoveException,WrongWorkerException;
     public abstract int getMovesLeft();
 
-    public void notifyObservers(Move move, Worker worker) {
+    public void notifyObservers(Move move, Worker worker) throws LoseException {
         for(TurnObserver obs : observers) {
             try {
                 obs.check(move, worker);

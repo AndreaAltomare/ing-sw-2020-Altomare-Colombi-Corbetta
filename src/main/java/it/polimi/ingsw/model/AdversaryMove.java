@@ -19,7 +19,7 @@ public class AdversaryMove {
      * @param worker (Opponent's Worker)
      * @return moveAllowed (Whether the opponent's move is allowed or not)
      */
-    public boolean checkMove(Move move, Worker worker) {
+    public boolean checkMove(Move move, Worker worker) throws LoseException {
         boolean moveAllowed = true;
         // TODO: add operation to check for the move correctness
         /* move can be denied only if the God's power has to be applied to opponent's move */
@@ -29,7 +29,7 @@ public class AdversaryMove {
         return moveAllowed;
     }
 
-    private boolean checkSpecialRules(Move move, Worker worker) {
+    private boolean checkSpecialRules(Move move, Worker worker) throws LoseException {
         Move myLastMove = parentCard.getMyMove().getLastMove();
 
         /* check if my last move was one of the Hot Last Moves checked by my God's power:
@@ -37,8 +37,15 @@ public class AdversaryMove {
         */
         // todo: athena (just to check, REMOVE THIS COMMENT)
         if(myLastMove.getLevelDirection() == godPower.getHotLastMoveDirection())
-            if(move.getLevelDirection() == godPower.getHotLastMoveDirection())
-                return false;
+            if(move.getLevelDirection() == godPower.getHotLastMoveDirection()) {
+                if(godPower.isMustObey()) {
+                    // if the God's power must be obeyed, and it's not, trigger a Lose Condition
+                    throw new LoseException(worker.getOwner(),"Player " + worker.getOwner().getNickname() + "has lost! (By not respecting Opponent Card's power)");
+                }
+                else {
+                    return false;
+                }
+            }
 
         return true; // everything ok
     }
