@@ -9,9 +9,8 @@ import java.util.List;
  */
 public abstract class GeneralGameRoom {
     protected List<Player> players;
-    // TODO: to add AbstractGameBox attribute
 
-    // Player list manipulation
+    /* Player list manipulation */
     public abstract boolean addPlayer(String nickname);
     public abstract void removePlayer(String nickname);
     public abstract Iterator<Player> getPlayers();
@@ -19,7 +18,7 @@ public abstract class GeneralGameRoom {
     public abstract Player getChallenger();
     public abstract Player getStartingPlayer();
 
-    // Game settings
+    /* Game settings */
     public abstract void setupGame();
     public abstract void chooseChallenger(String nickname);
     public abstract void chooseStartingPlayer(String nickname);

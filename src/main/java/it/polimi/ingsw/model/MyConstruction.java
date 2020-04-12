@@ -2,27 +2,24 @@ package it.polimi.ingsw.model;
 
 public class MyConstruction {
     // TODO: Delete unused methods
-    //private Cell startingPosition; // once the turn starts, Worker's starting position is saved
+    //private Cell startingPosition; // once the turn starts, Worker's starting position is saved TODO: maybe it's useful for Advanced Gods. Let's wait...
     private BuildMove lastMove;
     private GodPower godPower; // state of chosen God's power
     private Card parentCard;
-    private int constructionLeft; // todo: needs to be renewed every turn starting
-
-    // TODO: WRITE METHOD TO MAKE THE ACTUAL CONSTRUCTION (NOT JUST TO CHECK IF IT IS POSSIBLE)
+    private int constructionLeft;
 
     public MyConstruction(Card parentCard, GodPower godPower) {
         this.parentCard = parentCard;
         this.godPower = godPower;
-        //this.startingPosition = null;
         this.lastMove = null;
-        this.constructionLeft = godPower.getConstructionLeft(); // todo: ensure that every Turn starting, constructionLeft attribute is "renewed"
+        this.constructionLeft = godPower.getConstructionLeft();
     }
 
     public boolean executeMove(BuildMove move, Worker worker) throws OutOfBoardException {
         boolean moveAllowed;
 
         moveAllowed = checkMove(move, worker);
-        // TODO: here, must notify adversary observers in order to check if the actual execution is allowed
+
         /* perform the construction just if it's allowed */
         if(moveAllowed) {
             if(!godPower.isActiveOnMyConstruction()) {
@@ -31,16 +28,14 @@ public class MyConstruction {
                     move.getSelectedCell().placeOn(new Block());
                 else if(move.getBlockType() == PlaceableType.DOME)
                     move.getSelectedCell().placeOn(new Dome());
-                // TODO: notify observers
             }
             else {
                 /* special rules when performing a Movement */
-                // todo: all construction-based Gods (atlas, demeter, hephaestus, and prometheus) just need to check if the move is possible, befor executing it (just to check, REMOVE THIS COMMENT)
+                // todo: all construction-based Gods (atlas, demeter, hephaestus, and prometheus) just need to check if the move is possible, before executing it (just to check, REMOVE THIS COMMENT)
                 if(move.getBlockType() == PlaceableType.BLOCK)
                     move.getSelectedCell().placeOn(new Block());
                 else if(move.getBlockType() == PlaceableType.DOME)
                     move.getSelectedCell().placeOn(new Dome());
-                // TODO: notify observers
             }
 
             /* Register the executed move */
@@ -52,7 +47,7 @@ public class MyConstruction {
 
     public boolean checkMove(BuildMove move, Worker worker) {
         boolean moveAllowed = false;
-        // TODO: add operation to check for the move correctness
+
         if(!godPower.isActiveOnMyConstruction())
             moveAllowed = checkDefaultRules(move, worker);
         else
@@ -102,13 +97,10 @@ public class MyConstruction {
             if(lastMove != null && !move.getSelectedCell().equals(lastMove.getSelectedCell()))
                 return false;
 
-        // todo: prometheus is implemented by changing the order of State Pattern - Turn Manager (just to check, REMOVE THIS COMMENT)
-
         return true; // everything ok
     }
 
     private boolean checkDefaultRules(BuildMove move, Worker worker) {
-        // TODO: some statements (check if there is all the code needed)
         /* check if the Player can make a construction in the first place */
         if(this.constructionLeft <= 0)
             return false;

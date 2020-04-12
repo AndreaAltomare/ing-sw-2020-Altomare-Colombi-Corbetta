@@ -11,7 +11,6 @@ import java.util.List;
  */
 public abstract class TurnManager {
     protected Card card;
-    //protected int movesLeft; // todo: check if implementation by calculation is possible
     protected List<TurnObserver> observers;
     protected boolean moveAllowed;
     protected StateType state;
@@ -25,7 +24,7 @@ public abstract class TurnManager {
                 obs.check(move, worker);
             }
             catch(DeniedMoveException ex) {
-                moveAllowed = false; // todo: to renew with "true" value every Turn starting
+                moveAllowed = false;
             }
         }
     }

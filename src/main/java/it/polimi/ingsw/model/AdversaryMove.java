@@ -8,7 +8,7 @@ public class AdversaryMove {
 
     public AdversaryMove(Card parentCard, GodPower godPower) {
         this.parentCard = parentCard;
-        this.godPower = godPower; // TODO: maybe refactor this to be only on Card class, so to remuve duplicated code
+        this.godPower = godPower; // TODO: maybe refactor this to be only on Card class, so to remove duplicated code
         this.startingPosition = null;
         //this.lastMove = null;
     }
@@ -21,7 +21,7 @@ public class AdversaryMove {
      */
     public boolean checkMove(Move move, Worker worker) throws LoseException {
         boolean moveAllowed = true;
-        // TODO: add operation to check for the move correctness
+
         /* move can be denied only if the God's power has to be applied to opponent's move */
         if(godPower.isActiveOnOpponentMovement())
             moveAllowed = checkSpecialRules(move, worker);

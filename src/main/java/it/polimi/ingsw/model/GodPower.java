@@ -7,7 +7,6 @@ import java.io.Serializable;
  * by JSON files
  */
 public class GodPower implements Serializable {
-    // todo: switch to private access modifier
     /* General */
     private String name; // God's name
     private String epithet; // God's epithet

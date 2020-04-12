@@ -7,8 +7,7 @@ public class ConstructionManager extends TurnManager {
     public ConstructionManager(Card card) {
         this.card = card;
         observers = new ArrayList<>();
-        //this.movesLeft = initialMoves; // MOVEMENT moves left todo: maybe to remove
-        moveAllowed = true; // todo: copy-pasted from MovementManager class, maybe it's to remove
+        moveAllowed = true;
         state = StateType.CONSTRUCTION;
     }
 
@@ -45,13 +44,12 @@ public class ConstructionManager extends TurnManager {
                 throw new BuildBeforeMoveException("Player has already made a Construction! Need to perform a Movement now.");
         }
 
-        // TODO: add statements to make a Construction
         /* 1- Check if my Card allow this move */
         moveAllowed = card.getMyConstruction().checkMove((BuildMove)move, worker);
 
         /* 2- Check if my opponent's Card allow this move */
         if(moveAllowed)
-            notifyObservers(move, worker); // if the move is denied by my opponents, moveAllowed is changed to false todo: for Construciton movement, there shouldn't be any observer (maybe for the Advenced Gods, let's wait) (just to check, REMOVE THIS COMMENT)
+            notifyObservers(move, worker); // if the move is denied by my opponents, moveAllowed is changed to false todo: for Construction movement, there shouldn't be any observer (maybe for the Advenced Gods, let's wait) (just to check, REMOVE THIS COMMENT)
 
         /* 3- Execute this move */
         if(moveAllowed) {

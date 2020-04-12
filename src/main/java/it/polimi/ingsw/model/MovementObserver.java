@@ -9,7 +9,6 @@ public class MovementObserver extends TurnObserver {
 
     @Override
     public void check(Move move, Worker worker) throws DeniedMoveException,LoseException {
-        // TODO: implement actual code to notify other players
         if(adversaryMoveObserver.checkMove(move, worker) == false)
             throw new DeniedMoveException("Move denied by other Player's Card!");
     }

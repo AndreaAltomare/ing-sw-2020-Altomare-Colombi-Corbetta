@@ -8,10 +8,12 @@ import java.util.stream.Collectors;
 public class GameRoom extends GeneralGameRoom {
     public GameRoom() {
         players = new ArrayList<Player>();
-        // TODO: add abstract game box istances
+
     }
 
-    // Player list manipulation
+    // TODO: add abstract game box methods
+
+    /* Player list manipulation */
 
     /**
      * Add a player to the players list
@@ -48,7 +50,7 @@ public class GameRoom extends GeneralGameRoom {
         return players.iterator();
     }
 
-    // Game settings
+    /* Game settings */
     @Override
     public void setupGame() {
         // TODO: add game setup operations
@@ -82,7 +84,6 @@ public class GameRoom extends GeneralGameRoom {
             player.setStartingPlayer(true);
     }
 
-    // TODO: maybe useless method, to remove
     /**
      * Given an index, this method returns a reference to
      * a Player object

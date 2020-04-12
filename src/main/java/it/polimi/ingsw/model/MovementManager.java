@@ -7,7 +7,6 @@ public class MovementManager extends TurnManager {
     public MovementManager(Card card) {
         this.card = card;
         observers = new ArrayList<>();
-        //this.movesLeft = initialMoves; // MOVEMENT moves left todo: maybe to remove
         moveAllowed = true;
         state = StateType.MOVEMENT;
     }
@@ -31,7 +30,6 @@ public class MovementManager extends TurnManager {
         if(this.getMovesLeft() < 1)
             throw new RunOutMovesException(StateType.MOVEMENT);
 
-        // TODO: add statements to make a Worker move
         /* 1- Check if my Card allow this move */
         moveAllowed = card.getMyMove().checkMove(move,worker);
 

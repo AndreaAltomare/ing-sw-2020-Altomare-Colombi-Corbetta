@@ -5,29 +5,26 @@ public class MyMove {
     private Move lastMove;
     private GodPower godPower; // state of chosen God's power
     private Card parentCard;
-    private int movesLeft; // todo: needs to be renewed every turn starting
-
-    // TODO: WRITE METHOD TO MAKE THE ACTUAL MOVE (NOT JUST TO CHECK IF IT IS POSSIBLE)
+    private int movesLeft;
 
     public MyMove(Card parentCard, GodPower godPower) {
         this.parentCard = parentCard;
         this.godPower = godPower; // TODO: maybe refactor this to be only on Card class, so to remove duplicated code
         this.startingPosition = null;
         this.lastMove = null;
-        this.movesLeft = godPower.getMovementsLeft(); // todo: ensure that every Turn starting, movementsLeft attribute is "renewed"
+        this.movesLeft = godPower.getMovementsLeft();
     }
 
     public boolean executeMove(Move move, Worker worker) throws OutOfBoardException, WinException {
         boolean moveAllowed;
 
         moveAllowed = checkMove(move, worker);
-        // TODO: here, must notify adversary observers in order to check if the actual execution is allowed
+
         /* perform the movement just if it's allowed */
         if(moveAllowed) {
             if(!godPower.isActiveOnMyMovement()) {
                 /* default movement execution */
                 worker.place(move.getSelectedCell());
-                // TODO: notify observers (for example: to make them register my current move [it could be useful])
             }
             else {
                 /* special rules when performing a Movement */
@@ -50,7 +47,6 @@ public class MyMove {
                     // todo: artemis (just to check, REMOVE THIS COMMENT)
                     worker.place(move.getSelectedCell());
                 }
-                // TODO: notify observers
             }
 
             /* Register the executed move */
@@ -66,7 +62,7 @@ public class MyMove {
 
     public boolean checkMove(Move move, Worker worker) {
         boolean moveAllowed = false;
-        // TODO: add operation to check for the move correctness
+
         if(!godPower.isActiveOnMyMovement())
             moveAllowed = checkDefaultRules(move, worker);
         else
@@ -184,8 +180,8 @@ public class MyMove {
                 nextCell = board.getCellAt(currentX + 1, currentY - 1);
                 break;
             default:
-                //todo: maybe throw an exception here (or maybe delete this default section)
-                break;
+                throw new OutOfBoardException("ERROR: Cannot calculate next Cell.");
+                //break;
         }
 
         return nextCell;
@@ -204,7 +200,6 @@ public class MyMove {
     }
 
     private boolean checkDefaultRules(Move move, Worker worker) {
-        // TODO: some statements (check if there is all the code needed)
         /* check if the Player can make a move in the first place */
         if(this.movesLeft <= 0)
             return false;

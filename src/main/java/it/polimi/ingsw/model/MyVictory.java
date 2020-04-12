@@ -4,12 +4,9 @@ import java.util.logging.Level;
 
 public class MyVictory {
     // TODO: Delete unused methods
-    //private Move lastMove; // TODO: maybe useless, to remove
     private GodPower godPower; // state of chosen God's power
     private Card parentCard;
     private final int panLevelDepth = -2;
-
-    // TODO: WRITE METHOD TO MAKE THE ACTUAL MOVE (NOT JUST TO CHECK IF IT IS POSSIBLE)
 
     public MyVictory(Card parentCard, GodPower godPower) {
         this.parentCard = parentCard;
@@ -19,7 +16,7 @@ public class MyVictory {
 
     public boolean checkMove(Move move, Worker worker) {
         boolean isVictory = false;
-        // TODO: add operation to check for the move correctness
+
         if(!godPower.isNewVictoryCondition())
             isVictory = checkDefaultRules(move, worker);
         else
@@ -44,7 +41,7 @@ public class MyVictory {
     }
 
     private boolean checkDefaultRules(Move move, Worker worker) {
-        // TODO: some statements (check if there is all the code needed)
+
         /* Default rules: a player win if and only if its Worker moves up on top of level 3 */
         // check if the Worker was on a lower level before the move (by checking its last move was on UP Direction)
         if(move.getLevelDirection() != LevelDirection.UP)

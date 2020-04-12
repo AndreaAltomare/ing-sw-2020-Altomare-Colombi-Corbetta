@@ -165,8 +165,6 @@ public class Player {
         workers.add(worker);
     }
 
-    //TODO: if a Worker is in a Lose condition, don't let the Player to select it
-
     /**
      * This method lets the Player choose a Worker and to set
      * it to the chosen one for this Turn
@@ -175,15 +173,19 @@ public class Player {
      * @return (Worker has been correctly chosen ? true : false)
      */
     public boolean chooseWorker(Worker worker) {
-        /* 1- Check if the selected Worker belongs to the Player (by nickname, because it's unique among Players) */
+        /* 1- if a Worker is in a Lose condition, don't let the Player to select it */
+        if(checkForWorkerLost(worker))
+            return false;
+
+        /* 2- Check if the selected Worker belongs to the Player (by nickname, because it's unique among Players) */
         if(!worker.getOwner().getNickname().equals(this.nickname))
             return false;
 
         if(worker.getChosenStatus() == ChooseType.CAN_BE_CHOSEN || worker.isChosen()) {
-            /* 1- Set the Worker status to CHOSEN */
+            /* 2.1- Set the Worker status to CHOSEN */
             worker.setChosen(ChooseType.CHOSEN);
 
-            /* 2- Other Player's Workers status must be set to NOT_CHOSEN */
+            /* 2.2- Other Player's Workers status must be set to NOT_CHOSEN */
             for (Worker workerObj : workers)
                 if (!workerObj.isChosen())
                     workerObj.setChosen(ChooseType.NOT_CHOSEN);
@@ -204,7 +206,6 @@ public class Player {
     private boolean checkForLostByMovement() {
         List<Cell> adjacentCells;
 
-        // TODO: this method shouldn't work with God Athena. Decide what to do (REMOVE THIS COMMENT LATER...)
         /* For each worker check if a Move can be performed */
         for(Worker workerObj : workers) {
             /* 1- Get adjacent Cells from the one the Worker is placed on */
@@ -233,18 +234,33 @@ public class Player {
         List<Cell> adjacentCells;
 
         /* For each worker check if a Move can be performed */
-        for(Worker workerObj : workers) {
-            /* 1- Get adjacent Cells from the one the Worker is placed on */
-            adjacentCells = workerObj.position().getBoard().getAdjacentCells(workerObj.position());
+        for(Worker workerObj : workers)
+            if(!checkForWorkerLost(workerObj))
+                return false;
 
-            /* 2- For each Cell, check if a Construction is possible */
-            for(Cell cell : adjacentCells) {
-                BuildMove moveToCheck = new BuildMove(workerObj.position(),cell,PlaceableType.ANY);
+        return true;
+    }
 
-                // If at least one Movement is allowed, Player has not lost.
-                if(card.getMyMove().checkMove(moveToCheck, workerObj))
-                    return false;
-            }
+    /**
+     * Given a Worker, this method tells if the Worker
+     * is in a Lose because it cannot make any move.
+     *
+     * @param worker
+     * @return (Worker cannot make any Movement ? true : false)
+     */
+    private boolean checkForWorkerLost(Worker worker) {
+        List<Cell> adjacentCells;
+
+        /* 1- Get adjacent Cells from the one the Worker is placed on */
+        adjacentCells = worker.position().getBoard().getAdjacentCells(worker.position());
+
+        /* 2- For each Cell, check if a Construction is possible */
+        for(Cell cell : adjacentCells) {
+            BuildMove moveToCheck = new BuildMove(worker.position(),cell,PlaceableType.ANY);
+
+            // If at least one Movement is allowed, Player has not lost.
+            if(card.getMyMove().checkMove(moveToCheck, worker))
+                return false;
         }
 
         return true;
