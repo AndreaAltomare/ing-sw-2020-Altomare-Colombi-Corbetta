@@ -74,6 +74,11 @@ class WorkerTest {
         assertTrue( worker.isWorker() );
     }
 
+    /**
+     * Check if getOwner() can return the correct Player after initialization
+     *
+     * Black Box and White Box
+     */
     @Test
     void getOwner() {
 
@@ -82,4 +87,57 @@ class WorkerTest {
         worker = new Worker(null);
         assertTrue( worker.getOwner() == null );
     }
+
+    /**
+     * Check if isChosen() can return the correct value after initialization and after set
+     * Methods used:    setChosen( ChooseType )         of  Worker
+     *
+     * Black Box and White Box
+     */
+    @Test
+    void isChosen() {
+        boolean check;
+
+        check = worker.isChosen();
+        assertTrue( !check );
+
+        worker.setChosen( ChooseType.CHOSEN );
+        check = worker.isChosen();
+        assertTrue( check );
+
+    }
+
+    /**
+     * Check if getChosenStatus() can return the correct ChooseType after initialization and after set
+     * Methods used:    setChosen( ChooseType )         of  Worker
+     *
+     * Black Box and White Box
+     */
+    @Test
+    void getChosenStatus() {
+
+        assertTrue( worker.getChosenStatus() == ChooseType.CAN_BE_CHOSEN );
+
+        worker.setChosen( ChooseType.CHOSEN );
+        assertTrue( worker.getChosenStatus() == ChooseType.CHOSEN);
+
+    }
+
+    /**
+     * Check if setChosen( ChooseType ) can correctly set
+     * Methods used:    getChosenStatus()       of  Worker
+     *
+     * Black Box and White Box
+     */
+    @Test
+    void setChosen() {
+
+        worker.setChosen( ChooseType.NOT_CHOSEN );
+        assertTrue( worker.getChosenStatus() == ChooseType.NOT_CHOSEN );
+
+        worker.setChosen( ChooseType.CHOSEN);
+        assertTrue( worker.getChosenStatus() == ChooseType.CHOSEN );
+
+    }
 }
+
