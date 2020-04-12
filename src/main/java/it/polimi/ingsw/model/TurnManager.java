@@ -16,7 +16,7 @@ public abstract class TurnManager {
     protected boolean moveAllowed;
     protected StateType state;
 
-    public abstract boolean handle(Move move, Worker worker) throws WinException,LoseException,RunOutMovesException,BuildBeforeMoveException,WrongWorkerException;
+    public abstract boolean handle(Move move, Worker worker) throws WinException,LoseException,RunOutMovesException,BuildBeforeMoveException,WrongWorkerException,TurnOverException;
     public abstract int getMovesLeft();
 
     public void notifyObservers(Move move, Worker worker) throws LoseException {

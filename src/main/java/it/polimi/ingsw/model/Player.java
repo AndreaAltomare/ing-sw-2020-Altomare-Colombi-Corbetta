@@ -42,7 +42,7 @@ public class Player {
      * @throws LoseException (Exception handled by Controller)
      * @throws RunOutMovesException (Exception handled by Controller)
      */
-    public void executeMove(Move move,Worker worker) throws WinException,LoseException,RunOutMovesException,BuildBeforeMoveException,WrongWorkerException {
+    public void executeMove(Move move,Worker worker) throws WinException,LoseException,RunOutMovesException,BuildBeforeMoveException,WrongWorkerException,TurnOverException {
         turn.handle(move, worker);
     }
 

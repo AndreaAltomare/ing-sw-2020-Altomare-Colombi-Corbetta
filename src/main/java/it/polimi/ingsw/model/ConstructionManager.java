@@ -13,7 +13,7 @@ public class ConstructionManager extends TurnManager {
     }
 
     @Override
-    public boolean handle(Move move, Worker worker) throws RunOutMovesException,BuildBeforeMoveException,WrongWorkerException {
+    public boolean handle(Move move, Worker worker) throws LoseException,RunOutMovesException,BuildBeforeMoveException,WrongWorkerException,TurnOverException {
         if(!worker.isChosen())
             throw new WrongWorkerException();
 
@@ -25,7 +25,7 @@ public class ConstructionManager extends TurnManager {
         return card.getMyConstruction().getConstructionLeft();
     }
 
-    private boolean build(Move move, Worker worker) throws RunOutMovesException,BuildBeforeMoveException {
+    private boolean build(Move move, Worker worker) throws LoseException,RunOutMovesException,BuildBeforeMoveException,TurnOverException {
         moveAllowed = true;
 
         if(this.getMovesLeft() < 1)
@@ -68,6 +68,10 @@ public class ConstructionManager extends TurnManager {
             card.setConstructionExecuted(true);
             card.getMyConstruction().decreaseConstructionLeft();
         }
+
+        /* If Construction Moves are over, trigger an Exception to switch the Player */
+        if(card.getMyConstruction().getConstructionLeft() < 1)
+            throw new TurnOverException(); // TODO: check if the Exception to switch the Player works fine (just to check, REMOVE THIS COMMENT)
 
         return moveAllowed;
     }
