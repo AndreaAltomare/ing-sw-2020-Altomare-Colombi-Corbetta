@@ -53,7 +53,7 @@ class PlaceableTest {
     void setPosition() {
 
         placeable.setPosition(cell);
-        assertTrue( placeable.position().equals(cell));
+        assertTrue( placeable.position() == cell );
 
         placeable.setPosition(null);
         assertTrue(placeable.position() == null);
@@ -72,7 +72,7 @@ class PlaceableTest {
         assertTrue( placeable.position() == null);
 
         placeable.setPosition(cell);
-        assertTrue(placeable.position().equals(cell));
+        assertTrue(placeable.position() == cell );
 
     }
 

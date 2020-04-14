@@ -53,13 +53,13 @@ class WorkerTest {
 
         check = worker.place( cell1 );
         assertTrue( check );
-        assertTrue( worker.position().equals( cell1 ) );
+        assertTrue( worker.position() == cell1  );
 
         check = true;
         dome.place( cell2 );
         check = worker.place( cell2 );
         assertTrue( !check );
-        assertTrue( worker.position().equals( cell1 ) );
+        assertTrue( worker.position() == cell1  );
 
     }
 

@@ -53,7 +53,7 @@ class DomeTest {
 
         check = dome.place( cell );
         assertTrue( check );
-        assertTrue( dome.position().equals( cell ) );
+        assertTrue( dome.position() == cell  );
 
         check = true;
         check = dome1.place( cell );
