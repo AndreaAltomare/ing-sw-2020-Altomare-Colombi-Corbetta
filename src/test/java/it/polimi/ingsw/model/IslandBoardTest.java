@@ -232,7 +232,7 @@ class IslandBoardTest {
             assertTrue( cellList.size() == 3 );
             assertTrue( !(cellList.contains( cornerCell )) );
             assertTrue( cellList.contains( new Cell(0,1, board)) );
-            assertTrue( cellList.contains( new Cell(1,1, board)) );
+            assertTrue( cellList.contains( new Cell(1,0, board)) );
             assertTrue( cellList.contains( new Cell(1,1, board)) );
         }
         catch (InvalidParameterException e)
@@ -334,8 +334,8 @@ class IslandBoardTest {
         try
         {
             cornerUpLeft =  board.getCellAt(0,0 );
-            cornerUpRight =  board.getCellAt( (xDim - 1),0 );
-            cornerDownLeft =  board.getCellAt(0, (yDim - 1) );
+            cornerDownLeft =  board.getCellAt( (xDim - 1),0 );
+            cornerUpRight =  board.getCellAt(0, (yDim - 1) );
             cornerDownRight =  board.getCellAt((xDim- 1), (yDim- 1) );
             centreCell = board.getCellAt( (xDim - 1)/2, (yDim -1)/2 );
             cornerUpLeft.setStatus( Cell.PossibleStatus.REACHABLE );
