@@ -99,7 +99,7 @@ public class Worker extends Placeable {
     /**
      * Set the Choose status for the Worker
      *
-     * @param chosen
+     * @param chosen (ChooseType status to set)
      * @author AndreaAltomare
      */
     public void setChosen(ChooseType chosen) {

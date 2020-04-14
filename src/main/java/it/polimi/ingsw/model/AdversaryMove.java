@@ -1,5 +1,11 @@
 package it.polimi.ingsw.model;
 
+/**
+ * Class representing a Player's Adversary Movement Observer and providing
+ * all the operations it needs to evaluate an Opponent's Movement move correctness.
+ *
+ * @author AndreaAltomare
+ */
 public class AdversaryMove {
     private Cell startingPosition; // once the turn starts, Worker's starting position is saved
     //private Move lastMove; // opponent's last move
@@ -14,10 +20,13 @@ public class AdversaryMove {
     }
 
     /**
+     * This method check for the correctness of the Opponent's move provided.
+     * If the Card's power does not modify the rule set, any Opponent's move
+     * is allowed by default (by others Player point of view).
      *
-     * @param move (Opponent's move)
-     * @param worker (Opponent's Worker)
-     * @return moveAllowed (Whether the opponent's move is allowed or not)
+     * @param move (Opponent's move to check)
+     * @param worker (Opponent's Worker who has executed the move)
+     * @return (Opponent move is allowed ? true : false)
      */
     public boolean checkMove(Move move, Worker worker) throws LoseException {
         boolean moveAllowed = true;
@@ -29,6 +38,14 @@ public class AdversaryMove {
         return moveAllowed;
     }
 
+    /**
+     * This method is called when a Card's power modifies basic game rules.
+     *
+     * @param move (Opponent's move to check)
+     * @param worker (Opponent's Worker who has executed the move)
+     * @return (Opponent move is allowed ? true : false)
+     * @throws LoseException (Exception handled by Controller)
+     */
     private boolean checkSpecialRules(Move move, Worker worker) throws LoseException {
         Move myLastMove = parentCard.getMyMove().getLastMove();
 

@@ -1,5 +1,11 @@
 package it.polimi.ingsw.model;
 
+/**
+ * Enumeration representing possible Cardinal directions
+ * when performing a Move.
+ *
+ * @author AndreaAltomare
+ */
 public enum FloorDirection {
     NORTH,
     SOUTH,

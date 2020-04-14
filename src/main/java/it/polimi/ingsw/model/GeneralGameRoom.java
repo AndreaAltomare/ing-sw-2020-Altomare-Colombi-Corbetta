@@ -5,7 +5,9 @@ import java.util.List;
 
 /**
  * This class model the concept of a waiting room during
- * the connection phase and the game room when the match starts
+ * the connection phase and the game room when the match starts.
+ *
+ * @author AndreaAltomare
  */
 public abstract class GeneralGameRoom {
     protected List<Player> players;

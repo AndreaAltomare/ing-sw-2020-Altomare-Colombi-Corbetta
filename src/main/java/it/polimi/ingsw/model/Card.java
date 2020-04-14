@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model;
 
 /**
- * Class representing game Cards with their powers
+ * Class representing game Cards with their powers.
  *
  * @author AndreaAltomare
  */
@@ -28,6 +28,19 @@ public class Card {
         this.adversaryMove = new AdversaryMove(this, godPower);
         this.movementExecuted = false;
         this.constructionExecuted = false;
+    }
+
+    /**
+     * This method reset conditions when a new Turn starts
+     */
+    public void resetForStart() {
+        /* Reset the number of Moves Left */
+        myMove.resetMovesLeft();
+        myConstruction.resetConstructionLeft();
+
+        /* Reset Movement and Construction executed */
+        movementExecuted = false;
+        constructionExecuted = false;
     }
 
     public MyMove getMyMove() {
@@ -64,18 +77,5 @@ public class Card {
 
     public GodPower getGodPower() {
         return godPower;
-    }
-
-    /**
-     * This method reset conditions when a new Turn starts
-     */
-    public void resetForStart() {
-        /* Reset the number of Moves Left */
-        myMove.resetMovesLeft();
-        myConstruction.resetConstructionLeft();
-
-        /* Reset Movement and Construction executed */
-        movementExecuted = false;
-        constructionExecuted = false;
     }
 }

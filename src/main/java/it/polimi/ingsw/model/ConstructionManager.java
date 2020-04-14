@@ -2,6 +2,12 @@ package it.polimi.ingsw.model;
 
 import java.util.ArrayList;
 
+/**
+ * Concrete class for the Construction state of the FSM
+ * modelling the Turn flow.
+ *
+ * @author AndreaAltomare
+ */
 public class ConstructionManager extends TurnManager {
 
     public ConstructionManager(Card card) {
@@ -11,6 +17,18 @@ public class ConstructionManager extends TurnManager {
         state = StateType.CONSTRUCTION;
     }
 
+    /**
+     * Overridden method to handle a Construction move by a Player's Worker.
+     *
+     * @param move (Move to handle)
+     * @param worker (Worker who made the move)
+     * @return (Move was actually executed ? true : false)
+     * @throws LoseException (Exception handled by Controller)
+     * @throws RunOutMovesException (Exception handled by Controller)
+     * @throws BuildBeforeMoveException (Exception handled by Controller)
+     * @throws WrongWorkerException (Exception handled by Controller)
+     * @throws TurnOverException (Exception handled by Controller)
+     */
     @Override
     public boolean handle(Move move, Worker worker) throws LoseException,RunOutMovesException,BuildBeforeMoveException,WrongWorkerException,TurnOverException {
         if(!worker.isChosen())
@@ -19,11 +37,27 @@ public class ConstructionManager extends TurnManager {
         return build(move, worker);
     }
 
+    /**
+     *
+     * @return Construction moves left
+     */
     @Override
     public int getMovesLeft() {
         return card.getMyConstruction().getConstructionLeft();
     }
 
+    /**
+     * Private method called when handling a Move provided by a Player
+     * through the Turn's interface.
+     *
+     * @param move (Move to be executed)
+     * @param worker (Worker by which execute the move)
+     * @return (Move was actually executed ? true : false)
+     * @throws LoseException (Exception handled by Controller)
+     * @throws RunOutMovesException (Exception handled by Controller)
+     * @throws BuildBeforeMoveException (Exception handled by Controller)
+     * @throws TurnOverException (Exception handled by Controller)
+     */
     private boolean build(Move move, Worker worker) throws LoseException,RunOutMovesException,BuildBeforeMoveException,TurnOverException {
         moveAllowed = true;
 

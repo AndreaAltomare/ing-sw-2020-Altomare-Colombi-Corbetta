@@ -2,7 +2,7 @@ package it.polimi.ingsw.model;
 
 /**
  * Specialized Exception to notify when a Player
- * runs out of moves for a specific State
+ * runs out of moves for a specific State.
  *
  * @author AndreaAltomare
  */

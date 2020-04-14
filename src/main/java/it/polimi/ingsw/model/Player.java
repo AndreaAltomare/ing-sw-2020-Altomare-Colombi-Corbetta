@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class representing a Player
+ * Class representing a Player.
  *
  * @author AndreaAltomare
  */
@@ -36,8 +36,8 @@ public class Player {
      * Execute a move within a specific Turn
      * (HEART OF MOVE EXECUTION)
      *
-     * @param move
-     * @param worker
+     * @param move (Move to be executed)
+     * @param worker (Worker by which perform the Move)
      * @throws WinException (Exception handled by Controller)
      * @throws LoseException (Exception handled by Controller)
      * @throws RunOutMovesException (Exception handled by Controller)
@@ -50,6 +50,8 @@ public class Player {
      * This method is called when a Player's Turn starts.
      * It sets the initial conditions both for the Turn
      * and for its Move Managers.
+     *
+     * @throws LoseException (Exception handled by Controller)
      */
     public void startTurn() throws LoseException {
         /* 0- Check if there is a Lose Condition */
@@ -68,12 +70,13 @@ public class Player {
 
     /**
      * This method is intended for Players usage
-     * to choose what move (generally) they want to perform
+     * to choose what move (generally) they want to perform.
      * (HEART OF STATE TURN FLOW)
      *
      * This method shall be called by the Controller
      *
      * @param state (Chosen State type)
+     * @throws LoseException (Exception handled by Controller)
      */
     public void chooseState(StateType state) throws LoseException {
         switch(state) {
@@ -88,6 +91,13 @@ public class Player {
         }
     }
 
+    /**
+     * This method switches the States for the (abstract) FSM
+     * that controls the Turn flow.
+     *
+     * @param nextState (Next FSM State to go in)
+     * @throws LoseException (Exception handled by Controller)
+     */
     public void switchState(TurnManager nextState) throws LoseException {
         // TODO: maybe REFACTOR this check into a method in MovementManager class
         /* Check if a Lose Condition (by denied movements) occurs */
@@ -123,43 +133,11 @@ public class Player {
         this.turn = movementState;
     }
 
-    public String getNickname() {
-        return nickname;
-    }
-
-    public boolean isChallenger() {
-        return challenger;
-    }
-
-    public boolean isStartingPlayer() {
-        return startingPlayer;
-    }
-
-    public void setChallenger(boolean challenger) {
-        this.challenger = challenger;
-    }
-
-    public void setStartingPlayer(boolean startingPlayer) {
-        this.startingPlayer = startingPlayer;
-    }
-
-    public Card getCard() {
-        return card;
-    }
-
-    public MovementManager getMovementManager() {
-        return movementState;
-    }
-
-    public ConstructionManager getConstructionManager() {
-        return constructionState;
-    }
-
     /**
      * Method called when a Worker needs to be register among
-     * a Player's Workers List
+     * a Player's Workers List.
      *
-     * @param worker
+     * @param worker (Worker to be registered)
      */
     public void registerWorker(Worker worker) {
         workers.add(worker);
@@ -167,7 +145,7 @@ public class Player {
 
     /**
      * This method lets the Player choose a Worker and to set
-     * it to the chosen one for this Turn
+     * it to the chosen one for this Turn.
      *
      * @param worker (Worker to choose)
      * @return (Worker has been correctly chosen ? true : false)
@@ -199,7 +177,7 @@ public class Player {
 
     /**
      * This method tells whether a Player has lost the game
-     * because he/she cannot perform any Movement
+     * because he/she cannot perform any Movement.
      *
      * @return (Player cannot perform any Movement ? true : false)
      */
@@ -226,7 +204,7 @@ public class Player {
 
     /**
      * This method tells whether a Player has lost the game
-     * because he/she cannot perform any Construction
+     * because he/she cannot perform any Construction.
      *
      * @return (Player cannot perform any Construction ? true : false)
      */
@@ -245,7 +223,7 @@ public class Player {
      * Given a Worker, this method tells if the Worker
      * is in a Lose because it cannot make any move.
      *
-     * @param worker
+     * @param worker (Worker whose Lose condition has to be checked)
      * @return (Worker cannot make any Movement ? true : false)
      */
     private boolean checkForWorkerLost(Worker worker) {
@@ -264,5 +242,37 @@ public class Player {
         }
 
         return true;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public boolean isChallenger() {
+        return challenger;
+    }
+
+    public boolean isStartingPlayer() {
+        return startingPlayer;
+    }
+
+    public void setChallenger(boolean challenger) {
+        this.challenger = challenger;
+    }
+
+    public void setStartingPlayer(boolean startingPlayer) {
+        this.startingPlayer = startingPlayer;
+    }
+
+    public Card getCard() {
+        return card;
+    }
+
+    public MovementManager getMovementManager() {
+        return movementState;
+    }
+
+    public ConstructionManager getConstructionManager() {
+        return constructionState;
     }
 }

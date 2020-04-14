@@ -4,7 +4,9 @@ import java.io.Serializable;
 
 /**
  * Bean class to enable serialization/deserialization of Card's power
- * by JSON files
+ * by JSON files, and to encapsulate the Card's power properties.
+ *
+ * @author AndreaAltomare
  */
 public class GodPower implements Serializable {
     /* General */

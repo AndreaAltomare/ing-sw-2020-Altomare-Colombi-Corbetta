@@ -2,6 +2,12 @@ package it.polimi.ingsw.model;
 
 import java.util.ArrayList;
 
+/**
+ * Concrete class for the Movement state of the FSM
+ * modelling the Turn flow.
+ *
+ * @author AndreaAltomare
+ */
 public class MovementManager extends TurnManager {
 
     public MovementManager(Card card) {
@@ -11,6 +17,17 @@ public class MovementManager extends TurnManager {
         state = StateType.MOVEMENT;
     }
 
+    /**
+     * Overridden method to handle a Movement move by a Player's Worker.
+     *
+     * @param move (Move to handle)
+     * @param worker (Worker who made the move)
+     * @return (Move was actually executed ? true : false)
+     * @throws WinException (Exception handled by Controller)
+     * @throws LoseException (Exception handled by Controller)
+     * @throws RunOutMovesException (Exception handled by Controller)
+     * @throws WrongWorkerException (Exception handled by Controller)
+     */
     @Override
     public boolean handle(Move move, Worker worker) throws WinException,LoseException,RunOutMovesException,WrongWorkerException {
         if(!worker.isChosen())
@@ -19,11 +36,26 @@ public class MovementManager extends TurnManager {
         return moveWorker(move, worker);
     }
 
+    /**
+     *
+     * @return Movement moves left
+     */
     @Override
     public int getMovesLeft() {
         return card.getMyMove().getMovesLeft();
     }
 
+    /**
+     * Private method called when handling a Move provided by a Player
+     * through the Turn's interface.
+     *
+     * @param move (Move to be executed)
+     * @param worker (Worker by which execute the move)
+     * @return (Move was actually executed ? true : false)
+     * @throws WinException (Exception handled by Controller)
+     * @throws LoseException (Exception handled by Controller)
+     * @throws RunOutMovesException (Exception handled by Controller)
+     */
     private boolean moveWorker(Move move, Worker worker) throws WinException,LoseException,RunOutMovesException {
         moveAllowed = true;
 
