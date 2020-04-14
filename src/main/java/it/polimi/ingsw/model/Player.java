@@ -36,11 +36,14 @@ public class Player {
      * Execute a move within a specific Turn
      * (HEART OF MOVE EXECUTION)
      *
-     * @param move (Move to be executed)
+     * @param move (Move to execute)
      * @param worker (Worker by which perform the Move)
      * @throws WinException (Exception handled by Controller)
      * @throws LoseException (Exception handled by Controller)
      * @throws RunOutMovesException (Exception handled by Controller)
+     * @throws BuildBeforeMoveException (Exception handled by Controller)
+     * @throws WrongWorkerException (Exception handled by Controller)
+     * @throws TurnOverException (Exception handled by Controller)
      */
     public void executeMove(Move move,Worker worker) throws WinException,LoseException,RunOutMovesException,BuildBeforeMoveException,WrongWorkerException,TurnOverException {
         turn.handle(move, worker);
