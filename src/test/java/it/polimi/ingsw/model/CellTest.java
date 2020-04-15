@@ -105,31 +105,6 @@ class CellTest {
     }
 
     /**
-     * Check if getTopNotNull() can read the correct block when the there aren't, when there is one and when there are some
-     * Methods used:    placeOn( Placeable )        of  Cell
-     *
-     * Black Box and White Box
-     */
-    @Test
-    void getTopNotNull() {
-        Placeable block = new Block();
-        Placeable dome = new Dome();
-        Placeable placeable;
-
-        placeable = cell.getTop();
-        assertTrue( placeable != null );
-
-        cell.placeOn( block );
-        placeable = cell.getTop();
-        assertTrue( placeable.equals( block ) );
-
-        cell.placeOn( dome );
-        placeable = cell.getTop();
-        assertTrue( placeable.equals(dome) );
-
-    }
-
-    /**
      * Check if getHeigth() can return the correct height when there aren't Placeables and when there are some
      * Methods used:    placeOn( Placeable)     of  Cell
      *
