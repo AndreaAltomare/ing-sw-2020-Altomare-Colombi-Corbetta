@@ -222,6 +222,10 @@ class IslandBoardTest {
         Cell sideCell = new Cell(4,3, board );
         Cell middleCell = new Cell(1,3, board);
         Cell otherCell = new Cell(1,1, board1);
+        Cell cornerOutCell = new Cell( 5, -1 , board );
+        Cell nearCornerOutCell = new Cell( -1, 4, board );
+        Cell sideOutCell = new Cell( 2, -1, board );
+        Cell outCell = new Cell(2, 6, board);
         boolean check;
 
         try
@@ -304,7 +308,71 @@ class IslandBoardTest {
         }
         assertTrue( !check );
 
-        //TODO: add the tests when the coordinates of cell are out the board
+        //tests when the coordinates of cell are out the board
+
+        try
+        {
+            cellList = board.getAdjacentCells( cornerOutCell );
+            check = true;
+            assertTrue( !(cellList.isEmpty()) );
+            assertTrue( cellList.size() == 1 );
+            assertTrue( !(cellList.contains( cornerCell )) );
+            assertTrue( cellList.contains( new Cell(4,1, board)) );
+        }
+        catch (InvalidParameterException e)
+        {
+            check = false;
+        }
+        assertTrue( check );
+
+
+        try
+        {
+            cellList = board.getAdjacentCells( nearCornerOutCell );
+            check = true;
+            assertTrue( !(cellList.isEmpty()) );
+            assertTrue( cellList.size() == 2 );
+            assertTrue( !(cellList.contains( nearCornerOutCell )) );
+            assertTrue( cellList.contains( new Cell(0,3, board)) );
+            assertTrue( cellList.contains( new Cell(0,4, board)) );
+        }
+        catch (InvalidParameterException e)
+        {
+            check = false;
+        }
+        assertTrue( check );
+
+
+        try
+        {
+            cellList = board.getAdjacentCells( sideOutCell );
+            check = true;
+            assertTrue( !(cellList.isEmpty()) );
+            assertTrue( cellList.size() == 3 );
+            assertTrue( !(cellList.contains( sideOutCell )) );
+            assertTrue( cellList.contains( new Cell(1,0, board)) );
+            assertTrue( cellList.contains( new Cell(2,0, board)) );
+            assertTrue( cellList.contains( new Cell(3,0, board)) );
+        }
+        catch (InvalidParameterException e)
+        {
+            check = false;
+        }
+        assertTrue( check );
+
+
+        try
+        {
+            cellList = board.getAdjacentCells( outCell );
+            check = true;
+            assertTrue( (cellList.isEmpty()) );
+        }
+        catch (InvalidParameterException e)
+        {
+            check = false;
+        }
+        assertTrue( check );
+
     }
 
     /**
