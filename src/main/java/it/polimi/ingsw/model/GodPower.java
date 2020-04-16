@@ -79,6 +79,7 @@ public class GodPower implements Serializable {
     }
 
     public void setMovementsLeft(Integer movementsLeft) {
+        //todo: add control per negative value
         this.movementsLeft = movementsLeft;
     }
 
@@ -87,6 +88,7 @@ public class GodPower implements Serializable {
     }
 
     public void setConstructionLeft(Integer constructionLeft) {
+        //todo: add control per negative value
         this.constructionLeft = constructionLeft;
     }
 
