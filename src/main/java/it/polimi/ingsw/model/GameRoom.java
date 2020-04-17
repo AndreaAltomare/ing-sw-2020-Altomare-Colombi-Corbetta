@@ -5,18 +5,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Concrete class for the Game Room concept.
+ *
+ * @author AndreaAltomare
+ */
 public class GameRoom extends GeneralGameRoom {
+
     public GameRoom() {
         players = new ArrayList<Player>();
-        // TODO: add abstract game box istances
     }
 
-    // Player list manipulation
+    // TODO: add abstract game box methods
+
+    /* Player list manipulation */
 
     /**
      * Add a player to the players list
      *
      * @param nickname (Player's nickname)
+     * @return (The Player provided by argument was added ? true : false)
      */
     @Override
     public boolean addPlayer(String nickname) {
@@ -48,7 +56,12 @@ public class GameRoom extends GeneralGameRoom {
         return players.iterator();
     }
 
-    // Game settings
+    /* Game settings */
+
+    /**
+     * This method setup the Game scenario to let a new
+     * match begin.
+     */
     @Override
     public void setupGame() {
         // TODO: add game setup operations
@@ -82,7 +95,6 @@ public class GameRoom extends GeneralGameRoom {
             player.setStartingPlayer(true);
     }
 
-    // TODO: maybe useless method, to remove
     /**
      * Given an index, this method returns a reference to
      * a Player object
@@ -97,7 +109,7 @@ public class GameRoom extends GeneralGameRoom {
 
     /**
      *
-     * @return a reference to the challenger Player
+     * @return A reference to the challenger Player
      */
     @Override
     public Player getChallenger() {
@@ -110,7 +122,7 @@ public class GameRoom extends GeneralGameRoom {
 
     /**
      *
-     * @return a reference to the starting Player
+     * @return A reference to the starting Player
      */
     @Override
     public Player getStartingPlayer() {

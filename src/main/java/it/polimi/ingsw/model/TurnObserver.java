@@ -12,5 +12,5 @@ package it.polimi.ingsw.model;
  */
 public abstract class TurnObserver {
 
-    public abstract void check(Move move, Worker worker) throws DeniedMoveException;
+    public abstract void check(Move move, Worker worker) throws DeniedMoveException,LoseException;
 }

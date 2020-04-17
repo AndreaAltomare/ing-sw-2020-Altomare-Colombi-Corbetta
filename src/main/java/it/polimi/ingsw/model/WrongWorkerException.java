@@ -3,7 +3,7 @@ package it.polimi.ingsw.model;
 /**
  * Specialized Exception to notify when a Player
  * wants to make a Move with a Worker he/she has
- * not chosen at the Turn's start
+ * not chosen at the Turn's start.
  *
  * @author AndreaAltomare
  */

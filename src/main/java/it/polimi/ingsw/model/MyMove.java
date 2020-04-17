@@ -1,33 +1,46 @@
 package it.polimi.ingsw.model;
 
+/**
+ * Class representing a Player's Movement and providing
+ * all the operations it needs to evaluate a Movement move correctness.
+ *
+ * @author AndreaAltomare
+ */
 public class MyMove {
     private Cell startingPosition; // once the turn starts, Worker's starting position is saved
     private Move lastMove;
     private GodPower godPower; // state of chosen God's power
     private Card parentCard;
-    private int movesLeft; // todo: needs to be renewed every turn starting
-
-    // TODO: WRITE METHOD TO MAKE THE ACTUAL MOVE (NOT JUST TO CHECK IF IT IS POSSIBLE)
+    private int movesLeft;
 
     public MyMove(Card parentCard, GodPower godPower) {
         this.parentCard = parentCard;
         this.godPower = godPower; // TODO: maybe refactor this to be only on Card class, so to remove duplicated code
         this.startingPosition = null;
         this.lastMove = null;
-        this.movesLeft = godPower.getMovementsLeft(); // todo: ensure that every Turn starting, movementsLeft attribute is "renewed"
+        this.movesLeft = godPower.getMovementsLeft();
     }
 
+    /**
+     * This method check for the correctness of the move provided,
+     * then actually executes it.
+     *
+     * @param move (Move to execute)
+     * @param worker (Worker who has executed the move)
+     * @return (Move was successfully executed ? true : false)
+     * @throws OutOfBoardException (Exception handled by Controller)
+     * @throws WinException (Exception handled by Controller)
+     */
     public boolean executeMove(Move move, Worker worker) throws OutOfBoardException, WinException {
         boolean moveAllowed;
 
         moveAllowed = checkMove(move, worker);
-        // TODO: here, must notify adversary observers in order to check if the actual execution is allowed
+
         /* perform the movement just if it's allowed */
         if(moveAllowed) {
             if(!godPower.isActiveOnMyMovement()) {
                 /* default movement execution */
                 worker.place(move.getSelectedCell());
-                // TODO: notify observers (for example: to make them register my current move [it could be useful])
             }
             else {
                 /* special rules when performing a Movement */
@@ -50,7 +63,6 @@ public class MyMove {
                     // todo: artemis (just to check, REMOVE THIS COMMENT)
                     worker.place(move.getSelectedCell());
                 }
-                // TODO: notify observers
             }
 
             /* Register the executed move */
@@ -64,9 +76,16 @@ public class MyMove {
         return moveAllowed; // true if the move was executed
     }
 
+    /**
+     * This method check for the correctness of the move provided.
+     *
+     * @param move (Move to check)
+     * @param worker (Worker who has executed the move)
+     * @return (Move is allowed ? true : false)
+     */
     public boolean checkMove(Move move, Worker worker) {
         boolean moveAllowed = false;
-        // TODO: add operation to check for the move correctness
+
         if(!godPower.isActiveOnMyMovement())
             moveAllowed = checkDefaultRules(move, worker);
         else
@@ -75,6 +94,13 @@ public class MyMove {
         return moveAllowed;
     }
 
+    /**
+     * This method is called when a Card's power modifies basic game rules.
+     *
+     * @param move (Move to check)
+     * @param worker (Worker who has executed the move)
+     * @return (Move is allowed ? true : false)
+     */
     private boolean checkSpecialRules(Move move, Worker worker) {
         boolean checkResult = true;
 
@@ -135,7 +161,7 @@ public class MyMove {
                     return false;
             }
             else { /* Otherwise, just register the starting position */
-                this.startingPosition = worker.position();
+                this.startingPosition = worker.position(); // TODO: Maybe make a new method to encapsulate this operation
             }
         }
 
@@ -149,6 +175,50 @@ public class MyMove {
         return true; // everything ok
     }
 
+    /**
+     * This method is called when only basic rules apply.
+     *
+     * @param move (Move to check)
+     * @param worker (Worker who has executed the move)
+     * @return (Move is allowed ? true : false)
+     */
+    private boolean checkDefaultRules(Move move, Worker worker) {
+        /* check if the Player can make a move in the first place */
+        if(this.movesLeft <= 0)
+            return false;
+
+        /* cannot move into the same position */
+        if(isSameCell(move.getSelectedCell(), worker.position()))
+            return false;
+
+        /* cannot move beyond adjoining cells */
+        if(beyondAdjacentCells(move.getSelectedCell(), worker.position()))
+            return false;
+
+        /* cannot go more than one level up*/
+        if(tooHighCell(move.getSelectedCell(), worker.position()))
+            return false;
+
+        /* cannot go if there is another Worker */
+        if(occupiedCell(move.getSelectedCell()))
+            return false;
+
+        /* cannot go if there is a Dome */
+        if(domedCell(move.getSelectedCell()))
+            return false;
+
+        return true; // everything ok
+    }
+
+    /**
+     * Given a Move performed by a worker, this method calculate
+     * the next Cell on the same Cardinal direction on which
+     * the Move occurs.
+     *
+     * @param move (Move on which perform the calculation)
+     * @return Next Cell on the same Cardinal direction on which Move occurs. (Calculated)
+     * @throws OutOfBoardException (Exception handled by Controller)
+     */
     private Cell calculateNextCell(Move move) throws OutOfBoardException {
         Board board;
         Cell nextCell = null;
@@ -184,13 +254,23 @@ public class MyMove {
                 nextCell = board.getCellAt(currentX + 1, currentY - 1);
                 break;
             default:
-                //todo: maybe throw an exception here (or maybe delete this default section)
-                break;
+                throw new OutOfBoardException("ERROR: Cannot calculate next Cell.");
+                //break;
         }
 
         return nextCell;
     }
 
+    /**
+     * Method used when playing with Minotaur Card.
+     *
+     * Tells if the (calculated) next Cell in which
+     * the Opponent's Worker would be forced into is
+     * allowed.
+     *
+     * @param nextOpponentCell (Cell to check)
+     * @return (Cell is free and allowed to make the Opponent's Worker to move into ? true : false)
+     */
     private boolean checkNextCell(Cell nextOpponentCell) {
         /* cannot go if there is another Worker */
         if(occupiedCell(nextOpponentCell))
@@ -203,42 +283,26 @@ public class MyMove {
         return true; // everything ok
     }
 
-    private boolean checkDefaultRules(Move move, Worker worker) {
-        // TODO: some statements (check if there is all the code needed)
-        /* check if the Player can make a move in the first place */
-        if(this.movesLeft <= 0)
-            return false;
 
-        /* cannot move into the same position */
-        if(isSameCell(move.getSelectedCell(), worker.position()))
-            return false;
-
-        /* cannot move beyond adjoining cells */
-        if(beyondAdjacentCells(move.getSelectedCell(), worker.position()))
-            return false;
-
-        /* cannot go more than one level up*/
-        if(tooHighCell(move.getSelectedCell(), worker.position()))
-            return false;
-
-        /* cannot go if there is another Worker */
-        if(occupiedCell(move.getSelectedCell()))
-            return false;
-
-        /* cannot go if there is a Dome */
-        if(domedCell(move.getSelectedCell()))
-            return false;
-
-        return true; // everything ok
-    }
-
-
-
-
+    /**
+     * Given two Cells, tells if they are the same
+     * (same position on the Board).
+     *
+     * @param a (First provided Cell)
+     * @param b (Second provided Cell)
+     * @return (Cell a and Cell b are equal ? true : false)
+     */
     private boolean isSameCell(Cell a, Cell b) {
         return a.equals(b);
     }
 
+    /**
+     * Given two Cells, tells if they are adjacent.
+     *
+     * @param a (First provided Cell)
+     * @param b (Second provided Cell)
+     * @return (Cell a and Cell b are adjacent ? true : false)
+     */
     private boolean beyondAdjacentCells(Cell a, Cell b) {
         // x axis check
         if(!((a.getX() <= (b.getX() + 1)) && (a.getX() >= (b.getX() - 1))))
@@ -250,26 +314,56 @@ public class MyMove {
         return false; // not beyond adjacent cells
     }
 
+    /**
+     * Given two Cells, tells if the first one is more than one Level
+     * higher than the second one.
+     *
+     * @param a (First provided Cell)
+     * @param b (Second provided Cell)
+     * @return (Cell a is more than one Level higher than Cell b ? true : false)
+     */
     private boolean tooHighCell(Cell a, Cell b) {
         return a.getLevel() > (b.getLevel() + 1);
     }
 
+    /**
+     * Given a Cell, tells if it is occupied.
+     *
+     * @param cell (Provided Cell)
+     * @return (Cell is occupied ? true : false)
+     */
     private boolean occupiedCell(Cell cell) {
         return cell.isOccupied();
     }
 
+    /**
+     * Given a Cell, tells if there is a Dome on it.
+     *
+     * @param cell (Provided Cell)
+     * @return (There is a Dome on the Cell ? true : false)
+     */
     private boolean domedCell(Cell cell) {
         return cell.isDomed();
     }
 
+    /**
+     * Force an Opponent's Worker into another Cell.
+     *
+     * @param opponentWorker (Opponent's Worker)
+     * @param destinationCell (Cell into which force the Opponent's Worker)
+     */
     private void forceMove(Worker opponentWorker, Cell destinationCell) {
         opponentWorker.place(destinationCell);
     }
 
     /**
-     * @return godPower (bean class, the only possible way)
+     *
+     * @return The bean class which provides the God's power.
      */
     public GodPower getGodPower() {
+        /* This is the only possible way to both work with this bean class
+        * and to encapsulate the state of the chosen God Cards power
+        */
         return godPower;
     }
 
@@ -281,22 +375,25 @@ public class MyMove {
         return movesLeft;
     }
 
+    /**
+     * Decrease the Moves Left for this kind.
+     */
     public void decreaseMovesLeft() {
         movesLeft -= 1;
     }
 
     /**
-     * This method reset the Moves Left with the Player's
-     * Card provided value
+     * Reset the Moves Left with the Player's
+     * Card provided value.
      */
     public void resetMovesLeft() {
         movesLeft = godPower.getMovementsLeft();
     }
 
     /**
-     * Register last Move executed
+     * Register last Move executed.
      *
-     * @param move
+     * @param move (Executed Move, to be registered)
      */
     private void registerLastMove(Move move) {
         this.lastMove = move;

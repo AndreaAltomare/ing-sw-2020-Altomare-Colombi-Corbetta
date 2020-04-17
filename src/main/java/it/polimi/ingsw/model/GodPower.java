@@ -4,10 +4,11 @@ import java.io.Serializable;
 
 /**
  * Bean class to enable serialization/deserialization of Card's power
- * by JSON files
+ * by JSON files, and to encapsulate the Card's power properties.
+ *
+ * @author AndreaAltomare
  */
 public class GodPower implements Serializable {
-    // todo: switch to private access modifier
     /* General */
     private String name; // God's name
     private String epithet; // God's epithet
@@ -78,6 +79,7 @@ public class GodPower implements Serializable {
     }
 
     public void setMovementsLeft(Integer movementsLeft) {
+        //todo: add control per negative value
         this.movementsLeft = movementsLeft;
     }
 
@@ -86,6 +88,7 @@ public class GodPower implements Serializable {
     }
 
     public void setConstructionLeft(Integer constructionLeft) {
+        //todo: add control per negative value
         this.constructionLeft = constructionLeft;
     }
 

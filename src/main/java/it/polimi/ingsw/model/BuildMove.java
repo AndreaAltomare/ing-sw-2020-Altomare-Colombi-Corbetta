@@ -2,7 +2,9 @@ package it.polimi.ingsw.model;
 
 /**
  * This class extends Move class in order to specify
- * information useful when a Construction move occurs
+ * information useful when a Construction move occurs.
+ *
+ * @author AndreaAltomare
  */
 public class BuildMove extends Move {
     private PlaceableType blockType;

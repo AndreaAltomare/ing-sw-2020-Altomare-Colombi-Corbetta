@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class representing a Player
+ * Class representing a Player.
  *
  * @author AndreaAltomare
  */
@@ -36,13 +36,16 @@ public class Player {
      * Execute a move within a specific Turn
      * (HEART OF MOVE EXECUTION)
      *
-     * @param move
-     * @param worker
+     * @param move (Move to execute)
+     * @param worker (Worker by which perform the Move)
      * @throws WinException (Exception handled by Controller)
      * @throws LoseException (Exception handled by Controller)
      * @throws RunOutMovesException (Exception handled by Controller)
+     * @throws BuildBeforeMoveException (Exception handled by Controller)
+     * @throws WrongWorkerException (Exception handled by Controller)
+     * @throws TurnOverException (Exception handled by Controller)
      */
-    public void executeMove(Move move,Worker worker) throws WinException,LoseException,RunOutMovesException,BuildBeforeMoveException,WrongWorkerException {
+    public void executeMove(Move move,Worker worker) throws WinException,LoseException,RunOutMovesException,BuildBeforeMoveException,WrongWorkerException,TurnOverException {
         turn.handle(move, worker);
     }
 
@@ -50,6 +53,8 @@ public class Player {
      * This method is called when a Player's Turn starts.
      * It sets the initial conditions both for the Turn
      * and for its Move Managers.
+     *
+     * @throws LoseException (Exception handled by Controller)
      */
     public void startTurn() throws LoseException {
         /* 0- Check if there is a Lose Condition */
@@ -68,12 +73,13 @@ public class Player {
 
     /**
      * This method is intended for Players usage
-     * to choose what move (generally) they want to perform
+     * to choose what move (generally) they want to perform.
      * (HEART OF STATE TURN FLOW)
      *
      * This method shall be called by the Controller
      *
      * @param state (Chosen State type)
+     * @throws LoseException (Exception handled by Controller)
      */
     public void chooseState(StateType state) throws LoseException {
         switch(state) {
@@ -88,6 +94,13 @@ public class Player {
         }
     }
 
+    /**
+     * This method switches the States for the (abstract) FSM
+     * that controls the Turn flow.
+     *
+     * @param nextState (Next FSM State to go in)
+     * @throws LoseException (Exception handled by Controller)
+     */
     public void switchState(TurnManager nextState) throws LoseException {
         // TODO: maybe REFACTOR this check into a method in MovementManager class
         /* Check if a Lose Condition (by denied movements) occurs */
@@ -123,6 +136,117 @@ public class Player {
         this.turn = movementState;
     }
 
+    /**
+     * Method called when a Worker needs to be register among
+     * a Player's Workers List.
+     *
+     * @param worker (Worker to be registered)
+     */
+    public void registerWorker(Worker worker) {
+        workers.add(worker);
+    }
+
+    /**
+     * This method lets the Player choose a Worker and to set
+     * it to the chosen one for this Turn.
+     *
+     * @param worker (Worker to choose)
+     * @return (Worker has been correctly chosen ? true : false)
+     */
+    public boolean chooseWorker(Worker worker) {
+        /* 1- if a Worker is in a Lose condition, don't let the Player to select it */
+        if(checkForWorkerLost(worker))
+            return false;
+
+        /* 2- Check if the selected Worker belongs to the Player (by nickname, because it's unique among Players) */
+        if(!worker.getOwner().getNickname().equals(this.nickname))
+            return false;
+
+        if(worker.getChosenStatus() == ChooseType.CAN_BE_CHOSEN || worker.isChosen()) {
+            /* 2.1- Set the Worker status to CHOSEN */
+            worker.setChosen(ChooseType.CHOSEN);
+
+            /* 2.2- Other Player's Workers status must be set to NOT_CHOSEN */
+            for (Worker workerObj : workers)
+                if (!workerObj.isChosen())
+                    workerObj.setChosen(ChooseType.NOT_CHOSEN);
+
+            return true;
+        }
+
+        return false;
+    }
+
+
+    /**
+     * This method tells whether a Player has lost the game
+     * because he/she cannot perform any Movement.
+     *
+     * @return (Player cannot perform any Movement ? true : false)
+     */
+    private boolean checkForLostByMovement() {
+        List<Cell> adjacentCells;
+
+        /* For each worker check if a Move can be performed */
+        for(Worker workerObj : workers) {
+            /* 1- Get adjacent Cells from the one the Worker is placed on */
+            adjacentCells = workerObj.position().getBoard().getAdjacentCells(workerObj.position());
+
+            /* 2- For each Cell, check if a Move is possible */
+            for(Cell cell : adjacentCells) {
+                Move moveToCheck = new Move(workerObj.position(),cell);
+
+                // If at least one Movement is allowed, Player has not lost.
+                if(card.getMyMove().checkMove(moveToCheck, workerObj))
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * This method tells whether a Player has lost the game
+     * because he/she cannot perform any Construction.
+     *
+     * @return (Player cannot perform any Construction ? true : false)
+     */
+    private boolean checkForLostByConstruction() {
+        List<Cell> adjacentCells;
+
+        /* For each worker check if a Move can be performed */
+        for(Worker workerObj : workers)
+            if(!checkForWorkerLost(workerObj))
+                return false;
+
+        return true;
+    }
+
+    /**
+     * Given a Worker, this method tells if the Worker
+     * is in a Lose because it cannot make any move.
+     *
+     * @param worker (Worker whose Lose condition has to be checked)
+     * @return (Worker cannot make any Movement ? true : false)
+     */
+    private boolean checkForWorkerLost(Worker worker) {
+        List<Cell> adjacentCells;
+
+        /* 1- Get adjacent Cells from the one the Worker is placed on */
+        adjacentCells = worker.position().getBoard().getAdjacentCells(worker.position());
+
+        /* 2- For each Cell, check if a Construction is possible */
+        for(Cell cell : adjacentCells) {
+            BuildMove moveToCheck = new BuildMove(worker.position(),cell,PlaceableType.ANY);
+
+            // If at least one Movement is allowed, Player has not lost.
+            if(card.getMyMove().checkMove(moveToCheck, worker))
+                return false;
+        }
+
+        return true;
+    }
+
     public String getNickname() {
         return nickname;
     }
@@ -153,100 +277,5 @@ public class Player {
 
     public ConstructionManager getConstructionManager() {
         return constructionState;
-    }
-
-    /**
-     * Method called when a Worker needs to be register among
-     * a Player's Workers List
-     *
-     * @param worker
-     */
-    public void registerWorker(Worker worker) {
-        workers.add(worker);
-    }
-
-    //TODO: if a Worker is in a Lose condition, don't let the Player to select it
-
-    /**
-     * This method lets the Player choose a Worker and to set
-     * it to the chosen one for this Turn
-     *
-     * @param worker (Worker to choose)
-     * @return (Worker has been correctly chosen ? true : false)
-     */
-    public boolean chooseWorker(Worker worker) {
-        /* 1- Check if the selected Worker belongs to the Player (by nickname, because it's unique among Players) */
-        if(!worker.getOwner().getNickname().equals(this.nickname))
-            return false;
-
-        if(worker.getChosenStatus() == ChooseType.CAN_BE_CHOSEN || worker.isChosen()) {
-            /* 1- Set the Worker status to CHOSEN */
-            worker.setChosen(ChooseType.CHOSEN);
-
-            /* 2- Other Player's Workers status must be set to NOT_CHOSEN */
-            for (Worker workerObj : workers)
-                if (!workerObj.isChosen())
-                    workerObj.setChosen(ChooseType.NOT_CHOSEN);
-
-            return true;
-        }
-
-        return false;
-    }
-
-
-    /**
-     * This method tells whether a Player has lost the game
-     * because he/she cannot perform any Movement
-     *
-     * @return (Player cannot perform any Movement ? true : false)
-     */
-    private boolean checkForLostByMovement() {
-        List<Cell> adjacentCells;
-
-        // TODO: this method shouldn't work with God Athena. Decide what to do (REMOVE THIS COMMENT LATER...)
-        /* For each worker check if a Move can be performed */
-        for(Worker workerObj : workers) {
-            /* 1- Get adjacent Cells from the one the Worker is placed on */
-            adjacentCells = workerObj.position().getBoard().getAdjacentCells(workerObj.position());
-
-            /* 2- For each Cell, check if a Move is possible */
-            for(Cell cell : adjacentCells) {
-                Move moveToCheck = new Move(workerObj.position(),cell);
-
-                // If at least one Movement is allowed, Player has not lost.
-                if(card.getMyMove().checkMove(moveToCheck, workerObj))
-                    return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * This method tells whether a Player has lost the game
-     * because he/she cannot perform any Construction
-     *
-     * @return (Player cannot perform any Construction ? true : false)
-     */
-    private boolean checkForLostByConstruction() {
-        List<Cell> adjacentCells;
-
-        /* For each worker check if a Move can be performed */
-        for(Worker workerObj : workers) {
-            /* 1- Get adjacent Cells from the one the Worker is placed on */
-            adjacentCells = workerObj.position().getBoard().getAdjacentCells(workerObj.position());
-
-            /* 2- For each Cell, check if a Construction is possible */
-            for(Cell cell : adjacentCells) {
-                BuildMove moveToCheck = new BuildMove(workerObj.position(),cell,PlaceableType.ANY);
-
-                // If at least one Movement is allowed, Player has not lost.
-                if(card.getMyMove().checkMove(moveToCheck, workerObj))
-                    return false;
-            }
-        }
-
-        return true;
     }
 }

@@ -48,18 +48,19 @@ class BlockTest {
     @Test
     void place() {
         Cell cell = new Cell(0,0,null);
+        Block block1 = new Block();
         Dome dome = new Dome();
         boolean check = false;
 
         check = block.place( cell );
         assertTrue( check );
-        assertTrue( block.position().equals( cell ) );
+        assertTrue( block.position() == cell  );
 
         check = true;
         dome.place( cell );
-        check = block.place( cell );
+        check = block1.place( cell );
         assertTrue( !check );
-        assertTrue( block.position() == null );
+        assertTrue( block1.position() == null );
 
     }
 

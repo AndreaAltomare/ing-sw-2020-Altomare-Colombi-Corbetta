@@ -2,7 +2,9 @@ package it.polimi.ingsw.model;
 
 /**
  * This class represent properties for a type-agnostic
- * move (both Movement and Construction type)
+ * move (both Movement and Construction type).
+ *
+ * @author AndreaAltomare
  */
 public class Move {
     protected FloorDirection floorDirection;
@@ -17,24 +19,12 @@ public class Move {
         this.selectedCell = selectedCell;
     }
 
-    public FloorDirection getFloorDirection() {
-        return floorDirection;
-    }
-
-    public LevelDirection getLevelDirection() {
-        return levelDirection;
-    }
-
-    public Cell getSelectedCell() {
-        return selectedCell;
-    }
-
     /**
-     * Class method: Given two Cells, calculate the direction between them
+     * Class method: Given two Cells, calculate the Cardinal direction between them.
      *
-     * @param currentCell
-     * @param nextCell
-     * @return floor direction (calculated direction)
+     * @param currentCell (Cell from which calculate the Cardinal direction)
+     * @param nextCell (Cell by which calculate the Cardinal direction starting from the currentCell)
+     * @return Floor direction (calculated direction)
      */
     private static FloorDirection calculateFloorDirection(Cell currentCell, Cell nextCell) {
         FloorDirection direction;
@@ -62,11 +52,11 @@ public class Move {
     }
 
     /**
-     * Class method: Given two Cells, calculate the direction between them
+     * Class method: Given two Cells, calculate the Level direction between them.
      *
-     * @param currentCell
-     * @param nextCell
-     * @return level direction (calculated direction)
+     * @param currentCell (Cell from which calculate the Level direction)
+     * @param nextCell (Cell by which calculate the Level direction starting from the currentCell)
+     * @return Level direction (calculated direction)
      */
     private static LevelDirection calculateLevelDirection(Cell currentCell, Cell nextCell) {
         LevelDirection direction = LevelDirection.NONE;
@@ -85,13 +75,25 @@ public class Move {
     }
 
     /**
-     * Class method: Given two Cells, calculate the direction between them
+     * Class method: Given two Cells, calculate the Level depth between them.
      *
-     * @param currentCell
-     * @param nextCell
+     * @param currentCell (Cell from which calculate the Level depth)
+     * @param nextCell (Cell by which calculate the Level depth starting from the currentCell)
      * @return level depth (calculated)
      */
     private static int calculateLevelDepth(Cell currentCell, Cell nextCell) {
         return nextCell.getLevel() - currentCell.getLevel();
+    }
+
+    public FloorDirection getFloorDirection() {
+        return floorDirection;
+    }
+
+    public LevelDirection getLevelDirection() {
+        return levelDirection;
+    }
+
+    public Cell getSelectedCell() {
+        return selectedCell;
     }
 }

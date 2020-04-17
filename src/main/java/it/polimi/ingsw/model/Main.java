@@ -5,6 +5,8 @@ import it.polimi.ingsw.controller.FileManager;
 
 /**
  * Main class for the Model package
+ *
+ * @author AndreaAltomare
  */
 public class Main {
     // TODO: maybe to remove

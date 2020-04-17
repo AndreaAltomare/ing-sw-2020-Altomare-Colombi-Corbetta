@@ -2,30 +2,63 @@ package it.polimi.ingsw.model;
 
 import java.util.ArrayList;
 
+/**
+ * Concrete class for the Construction state of the FSM
+ * modelling the Turn flow.
+ *
+ * @author AndreaAltomare
+ */
 public class ConstructionManager extends TurnManager {
 
     public ConstructionManager(Card card) {
         this.card = card;
         observers = new ArrayList<>();
-        //this.movesLeft = initialMoves; // MOVEMENT moves left todo: maybe to remove
-        moveAllowed = true; // todo: copy-pasted from MovementManager class, maybe it's to remove
+        moveAllowed = true;
         state = StateType.CONSTRUCTION;
     }
 
+    /**
+     * Overridden method to handle a Construction move by a Player's Worker.
+     *
+     * @param move (Move to handle)
+     * @param worker (Worker who made the move)
+     * @return (Move was actually executed ? true : false)
+     * @throws LoseException (Exception handled by Controller)
+     * @throws RunOutMovesException (Exception handled by Controller)
+     * @throws BuildBeforeMoveException (Exception handled by Controller)
+     * @throws WrongWorkerException (Exception handled by Controller)
+     * @throws TurnOverException (Exception handled by Controller)
+     */
     @Override
-    public boolean handle(Move move, Worker worker) throws RunOutMovesException,BuildBeforeMoveException,WrongWorkerException {
+    public boolean handle(Move move, Worker worker) throws LoseException,RunOutMovesException,BuildBeforeMoveException,WrongWorkerException,TurnOverException {
         if(!worker.isChosen())
             throw new WrongWorkerException();
 
         return build(move, worker);
     }
 
+    /**
+     *
+     * @return Construction moves left
+     */
     @Override
     public int getMovesLeft() {
         return card.getMyConstruction().getConstructionLeft();
     }
 
-    private boolean build(Move move, Worker worker) throws RunOutMovesException,BuildBeforeMoveException {
+    /**
+     * Private method called when handling a Move provided by a Player
+     * through the Turn's interface.
+     *
+     * @param move (Move to be executed)
+     * @param worker (Worker by which execute the move)
+     * @return (Move was actually executed ? true : false)
+     * @throws LoseException (Exception handled by Controller)
+     * @throws RunOutMovesException (Exception handled by Controller)
+     * @throws BuildBeforeMoveException (Exception handled by Controller)
+     * @throws TurnOverException (Exception handled by Controller)
+     */
+    private boolean build(Move move, Worker worker) throws LoseException,RunOutMovesException,BuildBeforeMoveException,TurnOverException {
         moveAllowed = true;
 
         if(this.getMovesLeft() < 1)
@@ -45,13 +78,12 @@ public class ConstructionManager extends TurnManager {
                 throw new BuildBeforeMoveException("Player has already made a Construction! Need to perform a Movement now.");
         }
 
-        // TODO: add statements to make a Construction
         /* 1- Check if my Card allow this move */
         moveAllowed = card.getMyConstruction().checkMove((BuildMove)move, worker);
 
         /* 2- Check if my opponent's Card allow this move */
         if(moveAllowed)
-            notifyObservers(move, worker); // if the move is denied by my opponents, moveAllowed is changed to false todo: for Construciton movement, there shouldn't be any observer (maybe for the Advenced Gods, let's wait) (just to check, REMOVE THIS COMMENT)
+            notifyObservers(move, worker); // if the move is denied by my opponents, moveAllowed is changed to false todo: for Construction movement, there shouldn't be any observer (maybe for the Advenced Gods, let's wait) (just to check, REMOVE THIS COMMENT)
 
         /* 3- Execute this move */
         if(moveAllowed) {
@@ -68,6 +100,10 @@ public class ConstructionManager extends TurnManager {
             card.setConstructionExecuted(true);
             card.getMyConstruction().decreaseConstructionLeft();
         }
+
+        /* If Construction Moves are over, trigger an Exception to switch the Player */
+        if(card.getMyConstruction().getConstructionLeft() < 1)
+            throw new TurnOverException(); // TODO: check if the Exception to switch the Player works fine (just to check, REMOVE THIS COMMENT)
 
         return moveAllowed;
     }
