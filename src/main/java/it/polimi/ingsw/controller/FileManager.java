@@ -12,7 +12,7 @@ import java.io.*;
  * the application
  *
  * The use of this class is to be intended when enabling
- * multi-user games: controlled access to persistent resources
+ * multi-user games: access to persistent resources
  * needs to be carefully controlled.
  *
  * @author AndreaAltomare
@@ -40,8 +40,8 @@ public class FileManager {
      * Save a new Card into file by passing a JSON-formatted
      * string
      *
-     * @param cardName
-     * @param jsonData
+     * @param cardName (Card's name)
+     * @param jsonData (JSON data for the Card's power, to write on File)
      */
     public void saveNewCard(String cardName, String jsonData) {
         filePath = cardName + ".config";
@@ -66,7 +66,7 @@ public class FileManager {
     /**
      * Get a Card's information just by specifying its name
      *
-     * @param cardName
+     * @param cardName (Card's name)
      * @return jsonData (JSON data read from File)
      */
     public String getCard(String cardName) {

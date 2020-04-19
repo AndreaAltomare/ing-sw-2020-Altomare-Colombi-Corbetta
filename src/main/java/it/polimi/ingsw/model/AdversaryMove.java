@@ -54,7 +54,7 @@ public class AdversaryMove {
         */
         // todo: athena (just to check, REMOVE THIS COMMENT)
         if(myLastMove != null && myLastMove.getLevelDirection() == godPower.getHotLastMoveDirection())
-            if(move.getLevelDirection() == godPower.getHotLastMoveDirection()) {
+            if(move.getLevelDirection() == godPower.getOpponentDeniedDirection()) {
                 if(godPower.isMustObey()) {
                     // if the God's power must be obeyed, and it's not, trigger a Lose Condition
                     throw new LoseException(worker.getOwner(),"Player " + worker.getOwner().getNickname() + "has lost! (By not respecting Opponent Card's power)");
