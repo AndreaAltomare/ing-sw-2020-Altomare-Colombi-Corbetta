@@ -128,6 +128,7 @@ public class MyMove {
         }
         else {
             // perform additional controls only in cas the selectedCell is already occupied
+            // todo: add a control to check that the worker is opponent's worker
             if(occupiedCell(move.getSelectedCell())) {
                 // just apollo can have ANY as a FloorDirection (it means to move the worker into the vacant Cell)
                 // todo: apollo (just to check, REMOVE THIS COMMENT)
