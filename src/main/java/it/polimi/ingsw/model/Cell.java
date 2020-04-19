@@ -341,7 +341,7 @@ public class Cell {
         if(this.isDomed())
             return false;
         //If this.building has reached the max height of Blocks
-        if (this.getLevel() > maxBlockHeighth)
+        if (this.getLevel() >= maxBlockHeighth)
             return false;
         return true;
     }

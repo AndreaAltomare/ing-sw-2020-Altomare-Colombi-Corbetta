@@ -4,5 +4,5 @@ public class OutOfBoardException extends Exception {
 
     public OutOfBoardException(String s) {
         super(s);
-    }
+     }
 }
