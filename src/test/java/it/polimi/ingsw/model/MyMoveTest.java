@@ -638,7 +638,7 @@ class MyMoveTest {
             cell1 = board.getCellAt(2, 2);
             cell2 = board.getCellAt( 3,3);
 
-            //todo: review after speack with friends about this
+            //todo: review after speak with friends about this
             /* not go in a Cell where there is another my worker */
             worker.place( cell1 );
             otherMyWorker.place( cell2 );
@@ -821,7 +821,7 @@ class MyMoveTest {
             backCell = board.getCellAt( 1, 1);
             cornerCell = board.getCellAt( 4,4);
 
-            //todo: review after speeck with friends about this
+            //todo: review after speak with friends about this
             /* not go on a Cell where there is another my worker */
             worker.place( cell1 );
             otherMyWorker.place( cell2 );
@@ -1139,15 +1139,16 @@ class MyMoveTest {
 
     /**
      * Check if Artemis's power is correctly checked and executed
-     * Methods used:        decreaseMovesLeft()     of  MyMove
-     *                      resetMovesLeft()        of  MyMove
-     *                      getCellAt( int, int)    of  IslandBoard
-     *                      getTop()                of  Cell
-     *                      getHeigth()             of  Cell
-     *                      repOk()                 of  Cell
-     *                      removePlaceable()       of  Cell
-     *                      position()              of  Placeable
-     *                      place( Cell )           of  Worker
+     * Methods used:        decreaseMovesLeft()                 of  MyMove
+     *                      resetMovesLeft()                    of  MyMove
+     *                      setMovementExecuted( boolean )      of  Card
+     *                      getCellAt( int, int)                of  IslandBoard
+     *                      getTop()                            of  Cell
+     *                      getHeigth()                         of  Cell
+     *                      repOk()                             of  Cell
+     *                      removePlaceable()                   of  Cell
+     *                      position()                          of  Placeable
+     *                      place( Cell )                       of  Worker
      *
      * Black Box
      */
@@ -1309,7 +1310,7 @@ class MyMoveTest {
      */
     @Test
     void executeMovePrometheusBlack() {
-        //TODO: Check again after create test for My Costructor
+        //TODO: Check again after create test for MyConstructor
         GodPower prometheus = new GodPower();
         prometheus.setName("Prometheus");
         prometheus.setEpithet("Titan Benefactor of Mankind");
@@ -1728,18 +1729,21 @@ class MyMoveTest {
 
     /**
      * Check if special rules ( in CheckMove() ) are correctly checked
-     * Methods used:        decreaseMovesLeft()     of  MyMove
-     *                      resetMovesLeft          of  MyMove
-     *                      getCellAt( int, int)    of  IslandBoard
-     *                      getTop()                of  Cell
-     *                      getHeigth()             of  Cell
-     *                      getPlaceableAt( int )   of  Cell
-     *                      repOk()                 of  Cell
-     *                      removePlaceable()       of  Cell
-     *                      buildBlock()            of  Cell
-     *                      position()              of  Placeable
-     *                      isBlock()               of  Placeable/Block
-     *                      place( Cell )           of  Worker
+     * Methods used:        decreaseMovesLeft()                 of  MyMove
+     *                      resetMovesLeft                      of  MyMove
+     *                      decreaseConstructionLeft()          of  MyConstruction
+     *                      resetConstructionLeft()             of  MyConstruction
+     *                      setMovementExecuted( boolean )      of  Card
+     *                      getCellAt( int, int)                of  IslandBoard
+     *                      getTop()                            of  Cell
+     *                      getHeigth()                         of  Cell
+     *                      getPlaceableAt( int )               of  Cell
+     *                      repOk()                             of  Cell
+     *                      removePlaceable()                   of  Cell
+     *                      buildBlock()                        of  Cell
+     *                      position()                          of  Placeable
+     *                      isBlock()                           of  Placeable/Block
+     *                      place( Cell )                       of  Worker
      *
      * White Box
      */
