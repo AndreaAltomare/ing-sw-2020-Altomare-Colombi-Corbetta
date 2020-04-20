@@ -292,6 +292,7 @@ class CellTest {
         check = cell.removePlaceable();
         assertTrue( !check );
         assertTrue( cell.getHeigth() == height );
+        assertTrue(height==0);
         assertTrue( cell.getPlaceableAt(0 ) == null );
 
         cell.placeOn( block0 );
@@ -480,12 +481,12 @@ class CellTest {
         assertTrue( cell.getPlaceableAt(3) == null );
 
         cellDome.placeOn( dome );
-        height = cell.getHeigth();
-        check = cell.buildBlock();
+        height = cellDome.getHeigth();
+        check = cellDome.buildBlock();
         assertTrue( !check );
-        assertTrue( cell.getHeigth() == height );
-        assertTrue( cell.getPlaceableAt(0 ).equals( dome ) );
-        assertTrue( cell.getPlaceableAt(1 ) == null );
+        assertTrue( cellDome.getHeigth() == height );
+        assertTrue( cellDome.getPlaceableAt(0 ).equals( dome ) );
+        assertTrue( cellDome.getPlaceableAt(1 ) == null );
 
     }
 
@@ -519,7 +520,7 @@ class CellTest {
         cellWorker.placeOn( blockW0 );
         cellWorker.placeOn( blockW1 );
         cellWorker.placeOn( worker );
-        check = cell.canBuildBlock();
+        check = cellWorker.canBuildBlock();
         assertTrue( check );
 
         cell.placeOn( dome );
@@ -599,16 +600,16 @@ class CellTest {
         check = cellDome.buildDome();
         assertTrue( check );
         assertTrue( cellDome.getHeigth() == (height + 1) );
-        assertTrue( cell.getPlaceableAt(0).isDome() );
-        assertTrue( cell.getPlaceableAt(1) == null );
+        assertTrue( cellDome.getPlaceableAt(0).isDome() );
+        assertTrue( cellDome.getPlaceableAt(1) == null );
 
 
         height = cellDome.getHeigth();
         check = cellDome.buildDome();
         assertTrue( !check );
         assertTrue( cellDome.getHeigth() == height );
-        assertTrue( cell.getPlaceableAt(0).isDome() );
-        assertTrue( cell.getPlaceableAt(1) == null );
+        assertTrue( cellDome.getPlaceableAt(0).isDome() );
+        assertTrue( cellDome.getPlaceableAt(1) == null );
 
     }
 

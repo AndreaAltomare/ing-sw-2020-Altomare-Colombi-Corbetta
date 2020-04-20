@@ -48,11 +48,11 @@ public abstract class Board {
             throw new InvalidParameterException("getAdjacentCell has been called with a Cell of another Board");
 
         //"A little bug fixed, a great feaure lost"
-        try {
+        /*try {
             this.getCellAt(x, y);
         } catch (OutOfBoardException e) {
             throw new InvalidParameterException("getAdjacentCell has been called with a Cell out of Board");
-        }
+        }*/
 
         List<Cell> ret = new ArrayList<Cell>();
         for(int i=-1; i<2; i++)

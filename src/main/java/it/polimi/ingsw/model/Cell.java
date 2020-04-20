@@ -278,7 +278,7 @@ public class Cell {
      */
     public boolean removePlaceable(){
         try{
-            building.pop();
+            building.removeLast();
             return true;
         }catch(NoSuchElementException e){
             return false;
@@ -308,7 +308,7 @@ public class Cell {
             //if placeable is a Block
             if (placeable.isBlock())
                 //If this.building has reached the max height of Blocks
-                if (this.getLevel() > maxBlockHeighth)
+                if (this.getLevel() >= maxBlockHeighth)
                     return false;
         }else   //If this is not free
             return false;
@@ -454,8 +454,8 @@ public class Cell {
      */
     public Worker removeWorker(){
         Worker ret = getWorker();
-        if(ret != null)
-            building.pop();
+        if((ret != null)&&(ret.isWorker()))
+            building.removeLast();
         return ret;
     }
 
@@ -466,8 +466,12 @@ public class Cell {
      */
     public void removeThisWorker(Worker arg){
         Worker ret = getWorker();
+        //todo check it
+        if(ret == null)
+            return;
+
         if(ret.equals(arg))
-            building.pop();
+            building.removeLast();
     }
 
 }

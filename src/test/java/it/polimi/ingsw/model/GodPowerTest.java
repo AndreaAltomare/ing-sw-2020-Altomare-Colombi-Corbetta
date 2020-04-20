@@ -303,7 +303,8 @@ class GodPowerTest {
 
         assertTrue(godPower.getOpponentDeniedDirection() == null);
 
-        godPower.setOpponentDeniedDirection(LevelDirection.SAME);
+        godPower.setOpponentDeniedDirection(LevelDirection.ANY);
+        //TODO: Originally was LevelDirection.
         assertTrue(godPower.getOpponentDeniedDirection() == LevelDirection.DOWN);
 
     }

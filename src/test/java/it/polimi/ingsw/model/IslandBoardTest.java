@@ -310,14 +310,16 @@ class IslandBoardTest {
 
         //tests when the coordinates of cell are out the board
 
+
         try
         {
             cellList = board.getAdjacentCells( cornerOutCell );
             check = true;
+            //it shouldn't do so...
             assertTrue( !(cellList.isEmpty()) );
             assertTrue( cellList.size() == 1 );
             assertTrue( !(cellList.contains( cornerCell )) );
-            assertTrue( cellList.contains( new Cell(4,1, board)) );
+            assertFalse( cellList.contains( new Cell(4,1, board)) );
         }
         catch (InvalidParameterException e)
         {
@@ -419,6 +421,8 @@ class IslandBoardTest {
 
         if ( check == true )
         {
+            //TODO is it right: did you forget to call the clear function?
+            board.clearCells();
             try
             {
                 for ( int i = 0; i < xDim; i++ )

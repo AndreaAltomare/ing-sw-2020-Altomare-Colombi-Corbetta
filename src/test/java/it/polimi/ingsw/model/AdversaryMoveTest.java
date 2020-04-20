@@ -150,7 +150,7 @@ class AdversaryMoveTest {
                 assertTrue(cellA2.getHeigth() == 2);
                 assertTrue(cellO1.getHeigth() == 1);
                 assertTrue(cellO2.getHeigth() == 1);
-                assertTrue(cellA1.getTop().isBlock());
+                assertTrue(cellA1.getTop().isWorker());
                 assertTrue(cellA2.getTop().equals(athenaWorker));
                 assertTrue(cellA2.getPlaceableAt(0).isBlock());
                 assertTrue(cellO1.getTop().equals(opponentWorker));
@@ -198,7 +198,7 @@ class AdversaryMoveTest {
                 assertTrue(cellA2.getHeigth() == 1);
                 assertTrue(cellO1.getHeigth() == 1);
                 assertTrue(cellO2.getHeigth() == 1);
-                assertTrue(cellA1.getTop().isBlock());
+                assertTrue(cellA1.getTop().isWorker());
                 assertTrue(cellA1.getPlaceableAt(0).isBlock());
                 assertTrue(cellA2.getTop().equals(athenaWorker));
                 assertTrue(cellO1.getTop().equals(opponentWorker));
@@ -531,7 +531,7 @@ class AdversaryMoveTest {
                 assertTrue( lowOpponentCell.getHeigth() == 0);
                 assertTrue( highMutantCell.getTop().isBlock() );
                 assertTrue( highMutantCell.getPlaceableAt(0).isBlock() );
-                assertTrue( startMutantCell.getTop().isBlock() );
+                assertTrue( startMutantCell.getTop().isWorker() );
                 assertTrue( lowMutantCell.getTop().equals( mutantWorker ) );
                 assertTrue( highOpponentCell.getTop().isBlock() );
                 assertTrue( highOpponentCell.getPlaceableAt(0).isBlock() );

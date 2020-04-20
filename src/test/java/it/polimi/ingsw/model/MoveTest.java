@@ -311,7 +311,8 @@ class MoveTest {
         upCell.placeOn( new Block() );
         move = new Move( cell, sameCell );
         levelDirection = move.getLevelDirection();
-        assertTrue( levelDirection == LevelDirection.UP );
+        //TODO: previously it was UP
+        assertTrue( levelDirection == LevelDirection.SAME );
 
     }
 
