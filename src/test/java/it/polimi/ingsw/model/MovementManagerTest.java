@@ -335,7 +335,7 @@ class MovementManagerTest {
         //YEAH, You did it!!
     }
 
-    private class MyCard extends Card{
+    public static class MyCard extends Card{
 
         private MyMove myMove;
         private MyConstruction myConstruction;
@@ -346,7 +346,7 @@ class MovementManagerTest {
         boolean movementExecuted;
         boolean constructionExecuted;
 
-        protected class MyTestMove extends MyMove{
+        public class MyTestMove extends MyMove{
 
             private GodPower godPower;
 
@@ -407,6 +407,10 @@ class MovementManagerTest {
 
             public void setGodPower(GodPower gp){
                 godPower = gp;
+            }
+
+            public void setLastMove(Move last){
+                movment = last;
             }
 
             public Move getLastMove() {
