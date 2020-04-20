@@ -40,17 +40,21 @@ public class MyConstruction {
             if(!godPower.isActiveOnMyConstruction()) {
                 /* default construction execution */
                 if(move.getBlockType() == PlaceableType.BLOCK)
-                    move.getSelectedCell().placeOn(new Block());
+                    move.getSelectedCell().buildBlock();
                 else if(move.getBlockType() == PlaceableType.DOME)
-                    move.getSelectedCell().placeOn(new Dome());
+                    move.getSelectedCell().buildDome();
+                else
+                    moveAllowed = false;
             }
             else {
                 /* special rules when performing a Movement */
                 // todo: all construction-based Gods (atlas, demeter, hephaestus, and prometheus) just need to check if the move is possible, before executing it (just to check, REMOVE THIS COMMENT)
                 if(move.getBlockType() == PlaceableType.BLOCK)
-                    move.getSelectedCell().placeOn(new Block());
+                    move.getSelectedCell().buildBlock();
                 else if(move.getBlockType() == PlaceableType.DOME)
-                    move.getSelectedCell().placeOn(new Dome());
+                    move.getSelectedCell().buildDome();
+                else
+                    moveAllowed = false;
             }
 
             /* Register the executed move */
@@ -117,13 +121,13 @@ public class MyConstruction {
         /* cannot build on the same space (for additional-time constructions) */
         // todo: demeter (just to check, REMOVE THIS COMMENT)
         if(godPower.isSameSpaceDenied())
-            if(lastMove != null && move.getSelectedCell().equals(lastMove.getSelectedCell()))
+            if(lastMove != null && constructionLeft == 1 && move.getSelectedCell().equals(lastMove.getSelectedCell()))
                 return false;
 
         /* force build on the same space (for additional-time constructions) */
         // todo: hephaestus (just to check, REMOVE THIS COMMENT)
         if(godPower.isForceConstructionOnSameSpace())
-            if(lastMove != null && !move.getSelectedCell().equals(lastMove.getSelectedCell()))
+            if(lastMove != null && constructionLeft == 1 && !move.getSelectedCell().equals(lastMove.getSelectedCell()) && move.getBlockType() == PlaceableType.DOME)
                 return false;
 
         return true; // everything ok

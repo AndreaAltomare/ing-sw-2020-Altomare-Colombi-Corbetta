@@ -3,7 +3,7 @@ package it.polimi.ingsw.model;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import sun.java2d.opengl.WGLSurfaceData;
+//import sun.java2d.opengl.WGLSurfaceData;
 
 import static org.junit.jupiter.api.Assertions.*;
 
