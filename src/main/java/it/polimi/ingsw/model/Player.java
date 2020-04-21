@@ -2,6 +2,7 @@ package it.polimi.ingsw.model;
 
 import com.google.gson.Gson;
 import it.polimi.ingsw.controller.FileManager;
+import it.polimi.ingsw.controller.ResourceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -122,12 +123,7 @@ public class Player {
      * @param cardName (Chosen Card)
      */
     public void chooseCard(String cardName) {
-        FileManager fileManager = FileManager.getIstance();
-        String json = fileManager.getCard(cardName);
-
-        /* JSON DESERIALIZATION WITH GSON */
-        Gson gson = new Gson();
-        GodPower godPower = gson.fromJson(json, GodPower.class);
+        GodPower godPower = ResourceManager.callGodPower(cardName);
 
         /* Card initialization */
         this.card = new Card(godPower);
