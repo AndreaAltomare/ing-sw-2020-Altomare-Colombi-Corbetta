@@ -26,20 +26,24 @@ class MovementObserverTest {
             this.move = move;
             this.worker = worker;
 
+            if(!allowed)
+                return false;
             if (loose)
                 throw new LoseException(new Player("test player"), "testing loose");
-            return allowed;
+            return true;
         }
 
     }
 
     @Test
     void check(){
-
-        MyAdversaryObserver mao = new MyAdversaryObserver(new GodPower());
+        GodPower gp = new GodPower();
+        gp.setMovementsLeft(3);
+        gp.setConstructionLeft(3);
+        MyAdversaryObserver mao = new MyAdversaryObserver(gp);
         MovementObserver tested = new MovementObserver(mao);
 
-        Move move = new Move(null, null);
+        Move move = new Move(new Cell(0, 0, null), new Cell(0, 0, null));
         Worker worker = new Worker(new Player("worker owner"));
 
         //Testing that it'll throw no exception if the movment is allowed:

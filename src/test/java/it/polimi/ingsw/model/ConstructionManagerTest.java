@@ -334,7 +334,7 @@ class ConstructionManagerTest {
 
 
 
-    private class MyCard extends Card{
+    /*private class MyCard extends Card{
 
         private MyMove myMove;
         private MyConstruction myConstruction;
@@ -644,7 +644,7 @@ class ConstructionManagerTest {
             myMove.resetMovesLeft();
             myConstruction.resetConstructionLeft();
 
-            /* Reset Movement and Construction executed */
+            *//* Reset Movement and Construction executed *//*
             movementExecuted = false;
             constructionExecuted = false;
         }
@@ -683,15 +683,15 @@ class ConstructionManagerTest {
         public GodPower getGodPower() {
             return godPower;
         }
-    }
+    }*/
 
     @Test
     void handle() {
 
-        MyCard myCard = new MyCard();
+        MovementManagerTest.MyCard myCard = MovementManagerTest.MyCard.builder();
         GodPower gp = new GodPower();
         Worker myWorker = new Worker(new Player("test worker player"));
-        MyCard.MyTestConstruction myConstr = (MyCard.MyTestConstruction) myCard.getMyConstruction();
+        MovementManagerTest.MyCard.MyTestConstruction myConstr = (MovementManagerTest.MyCard.MyTestConstruction) myCard.getMyConstruction();
         Move movment = new MyMovement(FloorDirection.ANY, LevelDirection.ANY, new Cell(0, 0, null));
 
         myWorker.setChosen(ChooseType.CHOSEN);
@@ -820,12 +820,12 @@ class ConstructionManagerTest {
 
     @Test
     void getMovesLeft() {
-        MyCard myCard = new MyCard();
+        MovementManagerTest.MyCard myCard = MovementManagerTest.MyCard.builder();
         GodPower gp = new GodPower();
         myCard.setGodPower(gp);
         ConstructionManager tested = new ConstructionManager(myCard);
 
-        MyCard.MyTestConstruction myMove = (MyCard.MyTestConstruction)myCard.getMyConstruction();
+        MovementManagerTest.MyCard.MyTestConstruction myMove = (MovementManagerTest.MyCard.MyTestConstruction)myCard.getMyConstruction();
         myMove.setConstructionLeft(0);
         assertTrue(tested.getMovesLeft() == 0);
         myMove.setConstructionLeft(1);

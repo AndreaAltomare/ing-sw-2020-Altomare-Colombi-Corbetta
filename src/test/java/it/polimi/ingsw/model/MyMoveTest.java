@@ -2341,6 +2341,8 @@ class MyMoveTest {
     @Test
     void getGodPower() {
         GodPower godPower = new GodPower();
+        godPower.setConstructionLeft(0);
+        godPower.setMovementsLeft(0);
         Card card = new Card(godPower);
         myMove = new MyMove(card, godPower);
 
