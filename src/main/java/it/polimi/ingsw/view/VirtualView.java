@@ -8,5 +8,5 @@ package it.polimi.ingsw.view;
  *
  * @author Giorgio Corbetta
  */
-public class VirtualView {
+public class VirtualView implements MoveExecutedListener, GamePreparationListener, ServerGeneralListener, MessageListener {
 }

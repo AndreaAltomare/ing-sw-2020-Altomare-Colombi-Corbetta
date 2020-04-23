@@ -11,6 +11,6 @@ public enum ApplicationStatus {
     WAITING,
     NEW_GAME, // (new partita)
     GAME_PREPARATION, // (posizionamento Worker, etc...)
-    PLAYING, // (turni) ==> per i sotto turni, usare il tipo Enum StateType (dal Model)
+    PLAYING, // (turni) ==> per i sotto turni, usare un tipo Enum personalizzato
     GAME_OVER // (fine partita)
 }

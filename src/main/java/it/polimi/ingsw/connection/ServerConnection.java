@@ -1,5 +1,10 @@
 package it.polimi.ingsw.connection;
 
+import it.polimi.ingsw.view.GamePreparationListener;
+import it.polimi.ingsw.view.MessageListener;
+import it.polimi.ingsw.view.MoveExecutedListener;
+import it.polimi.ingsw.view.ServerGeneralListener;
+
 /**
  * This class handle connection aspects
  * of the distributed application.
@@ -9,5 +14,5 @@ package it.polimi.ingsw.connection;
  *
  * @author AndreaAltomare
  */
-public class ServerConnection {
+public class ServerConnection implements MoveExecutedListener, GamePreparationListener, ServerGeneralListener, MessageListener {
 }

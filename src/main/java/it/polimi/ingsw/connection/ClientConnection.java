@@ -1,5 +1,10 @@
 package it.polimi.ingsw.connection;
 
+import it.polimi.ingsw.controller.CardSelectionListener;
+import it.polimi.ingsw.controller.ClientGeneralListener;
+import it.polimi.ingsw.controller.MoveListener;
+import it.polimi.ingsw.controller.TurnStatusChangeListener;
+
 /**
  * This class handle connection aspects
  * of the distributed application.
@@ -9,5 +14,5 @@ package it.polimi.ingsw.connection;
  *
  * @author AndreaAltomare
  */
-public class ClientConnection {
+public class ClientConnection implements MoveListener, CardSelectionListener, TurnStatusChangeListener, ClientGeneralListener {
 }
