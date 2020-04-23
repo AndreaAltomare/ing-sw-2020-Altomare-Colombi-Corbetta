@@ -7,6 +7,8 @@ import it.polimi.ingsw.model.Worker;
  * Interface for Move execution.
  *
  * MVEvent (Events form Server)
+ *
+ * @author Giorgio Corbetta
  */
 public interface MoveExecutedListener {
     public void onWorkerMovement(Worker worker, int x, int y);

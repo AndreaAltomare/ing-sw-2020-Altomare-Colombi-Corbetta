@@ -5,6 +5,8 @@ package it.polimi.ingsw.view;
  * Server error messages exchange.
  *
  * MVEvent (Events form Server)
+ *
+ * @author Giorgio Corbetta
  */
 public interface ErrorMessageListener extends MessageListener {
 
