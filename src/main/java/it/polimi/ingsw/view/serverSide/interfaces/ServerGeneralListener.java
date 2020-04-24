@@ -1,4 +1,6 @@
-package it.polimi.ingsw.view;
+package it.polimi.ingsw.view.serverSide.interfaces;
+
+import it.polimi.ingsw.view.serverSide.ClientStatus;
 
 /**
  * Interface for general information exchange (from Controller [Server]).
@@ -8,7 +10,6 @@ package it.polimi.ingsw.view;
  * @author Giorgio Corbetta
  */
 public interface ServerGeneralListener {
-    public void onStatusChange(ApplicationStatus applicationStatus);
-    public void onNextStatus();
+    public void onStatusChange(ClientStatus applicationStatus);
     public void serverSendData(); // Game match general data (to respond to viewRequestData, receive data from Server)
 }

@@ -1,9 +1,9 @@
 package it.polimi.ingsw.connection;
 
-import it.polimi.ingsw.view.GamePreparationListener;
-import it.polimi.ingsw.view.MessageListener;
-import it.polimi.ingsw.view.MoveExecutedListener;
-import it.polimi.ingsw.view.ServerGeneralListener;
+import it.polimi.ingsw.view.serverSide.interfaces.GamePreparationListener;
+import it.polimi.ingsw.view.serverSide.interfaces.MessageListener;
+import it.polimi.ingsw.view.serverSide.interfaces.MoveExecutedListener;
+import it.polimi.ingsw.view.serverSide.interfaces.ServerGeneralListener;
 
 /**
  * This class handle connection aspects

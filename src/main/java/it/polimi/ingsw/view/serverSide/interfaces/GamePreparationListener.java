@@ -1,4 +1,4 @@
-package it.polimi.ingsw.view;
+package it.polimi.ingsw.view.serverSide.interfaces;
 
 import it.polimi.ingsw.model.Worker;
 
