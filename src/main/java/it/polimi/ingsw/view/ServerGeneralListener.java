@@ -9,5 +9,6 @@ package it.polimi.ingsw.view;
  */
 public interface ServerGeneralListener {
     public void onStatusChange(ApplicationStatus applicationStatus);
+    public void onNextStatus();
     public void serverSendData(); // Game match general data (to respond to viewRequestData, receive data from Server)
 }
