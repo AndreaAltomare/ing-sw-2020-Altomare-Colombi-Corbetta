@@ -12,7 +12,7 @@
 |:-----------------------|:------------------------------------:|
 | Basic rules | [![YELLOW](https://placehold.it/15/ffdd00/ffdd00)](#) |
 | Complete rules | [![YELLOW](https://placehold.it/15/ffdd00/ffdd00)](#) |
-| Socket | [![RED](https://placehold.it/15/f03c15/f03c15)](#) |
+| Socket | [![YELLOW](https://placehold.it/15/ffdd00/ffdd00)](#) |
 | GUI | [![RED](https://placehold.it/15/f03c15/f03c15)](#) |
 | CLI | [![RED](https://placehold.it/15/f03c15/f03c15)](#) |
 | Multiple games | [![RED](https://placehold.it/15/f03c15/f03c15)](#) |
