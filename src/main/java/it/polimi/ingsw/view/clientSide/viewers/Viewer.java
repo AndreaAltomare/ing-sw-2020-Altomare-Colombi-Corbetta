@@ -1,4 +1,4 @@
-package it.polimi.ingsw.view;
+package it.polimi.ingsw.view.clientSide.viewers;
 
 /**
  * Interface for the various visualizer

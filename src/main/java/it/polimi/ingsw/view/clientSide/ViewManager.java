@@ -1,4 +1,4 @@
-package it.polimi.ingsw.view;
+package it.polimi.ingsw.view.clientSide;
 
 /**
  * Interface made to connect the view with the comunication layer

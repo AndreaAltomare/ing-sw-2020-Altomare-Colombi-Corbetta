@@ -1,4 +1,6 @@
-package it.polimi.ingsw.view;
+package it.polimi.ingsw.view.clientSide.viewCore.data;
+
+import it.polimi.ingsw.view.exceptions.NotFoundException;
 
 /**
  * Interface made to manage the data for the view
