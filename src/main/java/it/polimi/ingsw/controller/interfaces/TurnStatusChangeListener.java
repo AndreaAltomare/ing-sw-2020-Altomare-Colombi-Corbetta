@@ -9,6 +9,6 @@ import it.polimi.ingsw.model.StateType;
  *
  * @author AndreaAltomare
  */
-public interface TurnStatusChangeListener {
+public interface TurnStatusChangeListener extends GeneralListener {
     public void onTurnStatusChange(StateType turnStatus);
 }

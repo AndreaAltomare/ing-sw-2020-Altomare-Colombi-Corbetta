@@ -10,7 +10,7 @@ import it.polimi.ingsw.model.Worker;
  *
  * @author AndreaAltomare
  */
-public interface MoveListener {
+public interface MoveListener extends GeneralListener {
     public void onWorkerMovement(Worker worker, int x, int y);
     public void onWorkerConstruction(Worker worker, int x, int y, PlaceableType block);
 }

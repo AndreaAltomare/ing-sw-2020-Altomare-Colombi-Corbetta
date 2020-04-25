@@ -7,6 +7,6 @@ package it.polimi.ingsw.controller.interfaces;
  *
  * @author AndreaAltomare
  */
-public interface CardSelectionListener {
+public interface CardSelectionListener extends GeneralListener {
     public void onCardSelection(String cardName);
 }

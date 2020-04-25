@@ -1,6 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
-import com.sun.tools.javac.comp.Resolve;
+//import com.sun.tools.javac.comp.Resolve;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;

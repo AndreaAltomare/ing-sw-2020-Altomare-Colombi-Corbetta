@@ -7,7 +7,7 @@ package it.polimi.ingsw.controller.interfaces;
  *
  * @author AndreaAltomare
  */
-public interface ClientGeneralListener {
+public interface ClientGeneralListener extends GeneralListener {
     public void onNicknameSubmit(String nickname);
     public void onPlayerQuit(String nickname);
     public void viewRequestData(); // Game match general data
