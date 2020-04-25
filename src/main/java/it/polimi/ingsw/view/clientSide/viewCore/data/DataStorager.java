@@ -1,13 +1,15 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data;
 
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
+import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
 
 /**
  * Interface made to manage the data for the view
  *
  * @author giorgio
  */
-interface DataStorager {
+public interface DataStorager {
 
     //Funzione che prende un messaggio, lo analizza e:
     // se il messaggio è una request crea il ViewObject corrispondente;
@@ -19,7 +21,46 @@ interface DataStorager {
     //Se non lo trovo lo richiedo a ViewManager e ritorno una volta che l'ho creato.
     ViewObject find (String id);
 
-    //Funzione che cerca il ViewObject caratterizzato dall'id.
-    //Se non lo trova lancia la NotFoundException.
-    ViewObject search (String id) throws NotFoundException;
+    /**
+     * Method that searches for the ViewObject with id equals to id.
+     *
+     * @param id (the tring identifier searched)
+     * @return (the ViewObject with toString() equals to id)
+     * @throws NotFoundException (iif the searched object is not found)
+     */
+    static ViewObject search(String id) throws NotFoundException{
+        try {
+            return ViewBoard.search(id);
+        } catch (Exception ignored) { }
+        try {
+            return ViewCard.search(id);
+        } catch (Exception ignored) { }
+        try {
+            return ViewCell.search(id);
+        } catch (Exception ignored) { }
+        try {
+            return ViewPlayer.search(id);
+        } catch (Exception ignored) { }
+        try {
+            return ViewWorker.search(id);
+        } catch (Exception ignored) { }
+        try {
+            return ViewObject.search(id);
+        } catch (Exception ignored) { }
+        throw new NotFoundException();
+    }
+
+    /**
+     * Method that clears all the data represented on the View.
+     */
+    static void clearAll(){
+        ViewBoard.clear();
+        ViewCard.clear();
+        ViewCell.clear();
+        ViewPlayer.clear();
+        ViewWorker.clear();
+        ViewObject.clear();
+
+    }
+
 }

@@ -52,6 +52,11 @@ public class VirtualView implements MoveExecutedListener, GamePreparationListene
     }
 
     @Override
+    public void onNextStatus() {
+
+    }
+
+    @Override
     public void serverSendData() {
 
     }
