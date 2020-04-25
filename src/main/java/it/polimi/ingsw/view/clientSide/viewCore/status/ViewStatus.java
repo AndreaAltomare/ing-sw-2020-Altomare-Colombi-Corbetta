@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewCore.status;
 // TODO: write some comments to explains the meaning of every status defined
 
+import it.polimi.ingsw.view.clientSide.viewCore.data.DataStorager;
 import it.polimi.ingsw.view.clientSide.viewers.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.NicknameExecuter;
@@ -32,6 +33,11 @@ public enum ViewStatus {
         @Override
         StatusViewer getViewer() {
             return new StatusViewer() {
+                @Override
+                public Object toTerminal() {
+                    return null;
+                }
+
                 @Override
                 public Object toGUI() {
                     return null;
@@ -70,6 +76,11 @@ public enum ViewStatus {
         StatusViewer getViewer() {
             return new StatusViewer() {
                 @Override
+                public Object toTerminal() {
+                    return null;
+                }
+
+                @Override
                 public Object toGUI() {
                     return null;
                 }
@@ -105,6 +116,11 @@ public enum ViewStatus {
         StatusViewer getViewer() {
             return new StatusViewer() {
                 @Override
+                public Object toTerminal() {
+                    return null;
+                }
+
+                @Override
                 public Object toGUI() {
                     return null;
                 }
@@ -138,6 +154,11 @@ public enum ViewStatus {
         @Override
         StatusViewer getViewer() {
             return new StatusViewer() {
+                @Override
+                public Object toTerminal() {
+                    return null;
+                }
+
                 @Override
                 public Object toGUI() {
                     return null;
@@ -175,6 +196,11 @@ public enum ViewStatus {
         StatusViewer getViewer() {
             return new StatusViewer() {
                 @Override
+                public Object toTerminal() {
+                    return null;
+                }
+
+                @Override
                 public Object toGUI() {
                     return null;
                 }
@@ -210,6 +236,11 @@ public enum ViewStatus {
         @Override
         StatusViewer getViewer() {
             return new StatusViewer() {
+                @Override
+                public Object toTerminal() {
+                    return null;
+                }
+
                 @Override
                 public Object toGUI() {
                     return null;
@@ -248,6 +279,11 @@ public enum ViewStatus {
         StatusViewer getViewer() {
             return new StatusViewer() {
                 @Override
+                public Object toTerminal() {
+                    return null;
+                }
+
+                @Override
                 public Object toGUI() {
                     return null;
                 }
@@ -261,6 +297,7 @@ public enum ViewStatus {
 
         @Override
         void onLoad() {
+            DataStorager.clearAll();
             //TODO: set the onLoad
         }
     };

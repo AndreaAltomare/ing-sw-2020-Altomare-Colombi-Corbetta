@@ -7,6 +7,10 @@ package it.polimi.ingsw.model;
  */
 public class Worker extends Placeable {
 
+    //Addes later
+    private static int lastId = 0;
+    private int id;
+
     private Player owner;
     private ChooseType chosen; // tell whether a Worker can either be chosen for a turn or not, or it has already been chosen
 
@@ -33,6 +37,10 @@ public class Worker extends Placeable {
         this.setPosition(destination);
         this.owner = owner;
         this.chosen = ChooseType.CAN_BE_CHOSEN;
+
+        //Added later to make each worker unique
+        id = lastId;
+        lastId++;
     }
 
 
@@ -106,5 +114,15 @@ public class Worker extends Placeable {
      */
     public void setChosen(ChooseType chosen) {
         this.chosen = chosen;
+    }
+
+    /**
+     * Method that return a unique string for each worker
+     *
+     * @return (unique String denoting eachWorker).
+     */
+    //added later to make each worker identified by a unique String
+    public String toString(){
+        return "[Worker]\t"+id;
     }
 }

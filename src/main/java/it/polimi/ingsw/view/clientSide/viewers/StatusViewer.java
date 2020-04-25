@@ -5,6 +5,8 @@ package it.polimi.ingsw.view.clientSide.viewers;
  */
 public interface StatusViewer {
 
+    Object toTerminal();
+
     Object toGUI();
 
     Object toCLI();
