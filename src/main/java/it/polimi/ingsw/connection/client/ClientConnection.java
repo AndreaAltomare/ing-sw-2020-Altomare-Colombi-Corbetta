@@ -1,10 +1,5 @@
 package it.polimi.ingsw.connection.client;
 
-import it.polimi.ingsw.controller.CardSelectionListener;
-import it.polimi.ingsw.controller.ClientGeneralListener;
-import it.polimi.ingsw.controller.MoveListener;
-import it.polimi.ingsw.controller.TurnStatusChangeListener;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;

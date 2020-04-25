@@ -1,8 +1,5 @@
 package it.polimi.ingsw.model;
 
-import com.google.gson.Gson;
-import it.polimi.ingsw.controller.FileManager;
-
 /**
  * Main class for the Model package
  *

@@ -1,4 +1,4 @@
-package it.polimi.ingsw.controller;
+package it.polimi.ingsw.controller.interfaces;
 
 /**
  * Interface for general information exchange (from View [Client]).

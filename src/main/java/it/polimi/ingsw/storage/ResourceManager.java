@@ -1,4 +1,4 @@
-package it.polimi.ingsw.controller;
+package it.polimi.ingsw.storage;
 
 import com.google.gson.Gson;
 import it.polimi.ingsw.model.GodPower;

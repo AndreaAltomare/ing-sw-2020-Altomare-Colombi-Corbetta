@@ -1,8 +1,6 @@
 package it.polimi.ingsw.model;
 
-import com.google.gson.Gson;
-import it.polimi.ingsw.controller.FileManager;
-import it.polimi.ingsw.controller.ResourceManager;
+import it.polimi.ingsw.storage.ResourceManager;
 
 import java.util.ArrayList;
 import java.util.List;

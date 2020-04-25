@@ -1,4 +1,4 @@
-package it.polimi.ingsw.controller;
+package it.polimi.ingsw.controller.interfaces;
 
 import it.polimi.ingsw.model.StateType;
 
