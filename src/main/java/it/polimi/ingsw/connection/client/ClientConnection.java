@@ -122,8 +122,9 @@ public class ClientConnection {
      * @throws IOException (Exception handled by ClientApp)
      */
     public void run() throws IOException {
+        System.out.println("Connecting to the Server...");
         Socket socket = new Socket(ip, port);
-        System.out.println("Connection established.");
+        System.out.println("Connection established.\n");
         ObjectInputStream socketIn = new ObjectInputStream(socket.getInputStream());
         PrintWriter socketOut = new PrintWriter(socket.getOutputStream());
         Scanner stdin = new Scanner(System.in);

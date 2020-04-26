@@ -38,7 +38,7 @@ public class ServerConnection {
 
     public final int MINIMUM_CLIENTS_REQUIRED = 2; // public because it can never change (by definition of Game match)
     public final int MAXIMUM_CLIENTS_REQUIRED = 3; // public because it can never change (by definition of Game match)
-    public final Object serverLock = new Object(); // public lock to synchronize some ServerConnection operation
+    public final Object serverLock = new Object(); // public lock to synchronize some ServerConnection operation // TODO: maybe it's useless: to remove.
     private int numberOfPlayers;
     private boolean lobbyCreated;
 
@@ -48,6 +48,7 @@ public class ServerConnection {
      * @throws IOException (Exception handled by ServerApp)
      */
     public ServerConnection() throws IOException {
+        System.out.println("Initialization...");
         numberOfPlayers = -1; // initialized to an non-valid value
         this.serverSocket = new ServerSocket(PORT);
     }
@@ -56,6 +57,8 @@ public class ServerConnection {
      * Multi-client connection management.
      */
     public void run() {
+        System.out.println("Server is ready.\n");
+
         while(true) {
             try {
                 Socket newSocket = serverSocket.accept();
@@ -84,6 +87,7 @@ public class ServerConnection {
      * @param c (Server-Client communication Socket)
      */
     public synchronized void unregisterConnection(ClientConnection c) {
+        // TODO: handle the case in which the client disconnects before the lobby is created
         connections.remove(c);
         ClientConnection playerConnection = playingConnection.get(c);
 
@@ -113,7 +117,13 @@ public class ServerConnection {
      * @param nickname (Player's nickname)
      */
     public synchronized void lobby(ClientConnection c, String nickname) {
-        waitingConnection.put(nickname, c);
+        if(lobbyCreated) {
+            c.send("Server full!\nYou are being disconnecting...");
+            c.closeConnection();
+        }
+
+        //waitingConnection.put(nickname, c);
+        System.out.println("Player " + nickname + " has connected!");
 
         /* Create a new game lobby if it has not been created yet
         * and the number of Client connected is equal to the number of players required.
@@ -152,11 +162,33 @@ public class ServerConnection {
 
             /* 7- Clear Waiting Player Map */
             waitingConnection.clear();
+
+            /* 8- Set Lobby Created to True */
+            lobbyCreated = true;
+
+            /* 9- Alert all clients they joined the lobby successfully */
+            for(ClientConnection client : clients) {
+                client.send("Joined lobby.\nWaiting for for the game to start...\n");
+            }
         }
     }
 
-    public synchronized void addClient(ClientConnection c, String nickname) {
-        waitingConnection.put(nickname, c);
+    /**
+     * If the nickname provided for the Client is not taken yet,
+     * register the Client connection.
+     *
+     * @param c (Client connection)
+     * @param nickname (Provided nickname)
+     * @return (Client connection was registered ? true : false)
+     */
+    public synchronized boolean addClient(ClientConnection c, String nickname) {
+        if(!(waitingConnection.containsKey(nickname) || playingConnection.containsKey(nickname))) {
+            waitingConnection.put(nickname, c);
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     public int getWaitingConnectionSize() {
@@ -179,5 +211,15 @@ public class ServerConnection {
     // TODO: maybe "synchronized" here can trigger problems
     public synchronized void setLobbyCreated(boolean lobbyCreated) {
         this.lobbyCreated = lobbyCreated;
+    }
+
+    /**
+     * Tell if there is a Player connection with the provided nickname.
+     *
+     * @param nickname (Provided nickname)
+     * @return (Provided nickname is already taken ? true : false)
+     */
+    public synchronized boolean nicknameTaken(String nickname) {
+        return waitingConnection.containsKey(nickname) || playingConnection.containsKey(nickname);
     }
 }

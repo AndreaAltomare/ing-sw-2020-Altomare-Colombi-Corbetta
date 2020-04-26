@@ -21,6 +21,7 @@ public class ServerApp {
         ServerConnection server;
 
         try {
+            System.out.println("Starting Server...");
             server = new ServerConnection();
             server.run();
         }

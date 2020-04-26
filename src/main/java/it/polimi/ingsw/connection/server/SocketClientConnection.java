@@ -15,7 +15,7 @@ import java.util.Scanner;
  * @see <a href="https://github.com/emanueledelsozzo/ingsoft-prova-finale-2020/blob/master/ese_Socket_Serialization/TrisDistributedMVC/src/main/java/it/polimi/ingsw/server/SocketClientConnection.java">github.com/emanueledelsozzo/.../SocketClientConnection.java</a>
  * @author AndreaALtomare
  */
-public class SocketClientConnection extends Observable<String> implements ClientConnection, Runnable {
+public class SocketClientConnection extends Observable<Object> implements ClientConnection, Runnable {
     private Socket socket;
     private ObjectOutputStream out;
     private ServerConnection server;
@@ -70,7 +70,7 @@ public class SocketClientConnection extends Observable<String> implements Client
      */
     private void close() {
         closeConnection();
-        System.out.println("Unregistering Client...");
+        System.out.println("\nUnregistering Client...");
         server.unregisterConnection(this);
         System.out.println("Done!");
     }
@@ -115,11 +115,17 @@ public class SocketClientConnection extends Observable<String> implements Client
             /* 1- Ask for the Player's nickname */
             send("Welcome!\nType your nickname");
             String read = in.nextLine();
-            nickname = read;
-            server.addClient(this, nickname);
+            // Handle duplicates
+            while(!server.addClient(this, read)) {
+                send("This nickname is already taken! Please try again.");
+                read = in.nextLine();
+            }
+
+            nickname = read; // TODO: handle the case in which the submitted nickname is duplicated
+            //server.addClient(this, nickname);
 
             /* 2- If this is the first Client, crate a lobby */ // TODO: maybe refactor this into a more readable method
-            send("Searching for a free lobby to join in...");
+            send("Searching for a free lobby to join in...\n");
             /* Synchronize to ServerConnection */
             synchronized (server) { // synchronized (server.serverLock)
                 int requiredNumberOfPlayers = -1; // initialized to error condition
@@ -128,19 +134,19 @@ public class SocketClientConnection extends Observable<String> implements Client
                 /* If this is the first Client to connect, make it choose for the number of player */
                 if (server.getNumberOfPlayers() < server.MINIMUM_CLIENTS_REQUIRED) {
                     while(requiredNumberOfPlayers != 2 && requiredNumberOfPlayers != 3) {
-                        send("You are the first player!\nChoose the number of player for this game (you included).\nType 2 or 3");
+                        send("You are the first player!\n\nChoose the number of player for this game (you included).\nType 2 or 3");
                         requiredNumberOfPlayers = in.nextInt(); // TODO: write a try-catch block to handle the case in which user does not submit an actual number
 
                         if(requiredNumberOfPlayers != 2 && requiredNumberOfPlayers != 3)
-                            send("Wrong choice! Your answer must either be 2 or 3."); // warn the Client about the wrong choice
+                            send("Wrong choice! Your answer must either be 2 or 3.\n"); // warn the Client about the wrong choice
                     }
 
                     server.setNumberOfPlayers(requiredNumberOfPlayers);
-                    server.setLobbyCreated(true);
-                    send("Your choice has been registered!\n\nWaiting for other players...");
+                    //server.setLobbyCreated(true);
+                    send("Your choice has been registered!\n\nWaiting for other players...\n");
                 }
                 else {
-                    send("Joined lobby.\n\nWaiting for for the game to start...");
+                    send("Waiting for other players...\n");
                 }
             }
 
@@ -150,6 +156,14 @@ public class SocketClientConnection extends Observable<String> implements Client
             /* 4- Keep listening to te Client while connection is active */
             while(isActive()) {
                 read = in.nextLine();
+
+                if(read.equals("quit")) {
+                    // TODO: notify Controller about the Player's quit
+                    System.out.println("\n" + nickname + " is being disconnected.");
+                    //close(); // close the connection with the Client
+                    break;
+                }
+
                 notify(read);
             }
         }
@@ -157,7 +171,7 @@ public class SocketClientConnection extends Observable<String> implements Client
             System.err.println("Error!" + ex.getMessage());
         }
         finally {
-            close();
+            close(); // close the connection with the Client
         }
     }
 }

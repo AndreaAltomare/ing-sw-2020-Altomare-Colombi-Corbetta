@@ -33,4 +33,19 @@ public class Observable<T> {
             }
         }
     }
+
+    /**
+     * Overloaded method to attach additional information
+     * to the (generic) message received.
+     *
+     * @param message (Generic message)
+     * @param info (Additional information string)
+     */
+    protected void notify(T message, String info){
+        synchronized (observers) {
+            for(Observer<T> observer : observers){
+                observer.update(message, info);
+            }
+        }
+    }
 }

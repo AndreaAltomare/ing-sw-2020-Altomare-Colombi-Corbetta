@@ -26,6 +26,13 @@ public class VirtualView extends Observable<Object> implements MoveExecutedListe
     private String  playerNickname; // Player's unique nickname
     private ClientConnection connection;
 
+    /**
+     * Constructor: Every VirtualView is bounded to an unique Player (by the nickname)
+     * and to its Server-Client Socket connection.
+     *
+     * @param playerNickname (Player's unique nickname [ID])
+     * @param c (Server-Client Socket connection reference)
+     */
     public VirtualView(String playerNickname, ClientConnection c) {
         this.playerNickname = playerNickname;
         this.connection = c;
@@ -35,12 +42,22 @@ public class VirtualView extends Observable<Object> implements MoveExecutedListe
     }
 
     // TODO: check if simple string-based communication works properly
-    private class MessageReceiver implements Observer<String> {
+    // TODO: maybe can be transformed into a instance object attribute
+    private class MessageReceiver implements Observer<Object> {
 
+        // TODO: write Javadoc here
         @Override
-        public void update(String message) {
-            System.out.println("Received: " + message);
+        public void update(Object message) {
+            System.out.println("\n(From VirtualView) Received: " + (String)message);
+            System.out.println("I'm " + playerNickname + "'s VirtualView");
             // TODO: if this thing works, insert here operation to call proper event method handler
+            VirtualView.this.notify(message, playerNickname); // notify Controller with Player's nickname information - IMPORTANT!!
+        }
+
+        // TODO: write Javadoc here
+        @Override
+        public void update(Object message, String info) {
+            VirtualView.this.notify(message, info);
         }
     }
 
@@ -53,6 +70,22 @@ public class VirtualView extends Observable<Object> implements MoveExecutedListe
     public void update(Object o) {
         // todo code
     }
+
+    /**
+     * General update() method for Observer Pattern.
+     * Additional info provided.
+     *
+     * @param o (Object message)
+     * @param info (Additional information)
+     */
+    @Override
+    public void update(Object o, String info) {
+        // todo code
+    }
+
+
+
+
 
     @Override
     public void onWorkerPlacement(Worker worker, int x, int y) {
@@ -97,5 +130,9 @@ public class VirtualView extends Observable<Object> implements MoveExecutedListe
     @Override
     public void serverSendData() {
 
+    }
+
+    public String getPlayerNickname() {
+        return playerNickname;
     }
 }

@@ -11,7 +11,7 @@ import it.polimi.ingsw.observer.Observable;
  * @author AndreaAltomare
  */
 public class Controller extends Observable<Object> implements GeneralListener {
-    private final Model model; // Object reference to the Game Model
+    private Model model; // Object reference to the Game Model
 
     // TODO: Write Javadoc here to explain, for example, why a Model object is passed by argument
     public Controller(Model model) {
@@ -20,11 +20,25 @@ public class Controller extends Observable<Object> implements GeneralListener {
 
     /**
      * General update() method for Observer Pattern.
+     * Receive generic messages from VirtualView.
      *
-     * @param o (Object object)
+     * @param o (Object message)
      */
     @Override
     public void update(Object o) {
         // todo code
+        System.out.println("Received a generic message: " + (String)o);
+    }
+
+    /**
+     * General update() method for Observer Pattern.
+     * Receive messages from a specific Player's VirtualView.
+     *
+     * @param o (Object message)
+     * @param playerNickname (Player's unique nickname)
+     */
+    @Override
+    public void update(Object o, String playerNickname) {
+        System.out.println("Received a message from: " + playerNickname + "\nIt says: " + (String)o);
     }
 }
