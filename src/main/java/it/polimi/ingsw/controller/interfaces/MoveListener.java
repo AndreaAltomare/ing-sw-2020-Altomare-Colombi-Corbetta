@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller.interfaces;
 
 import it.polimi.ingsw.model.PlaceableType;
 import it.polimi.ingsw.model.Worker;
+import it.polimi.ingsw.observer.GeneralListener;
 
 /**
  * Interface for Move submission from View.

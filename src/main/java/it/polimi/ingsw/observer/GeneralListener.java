@@ -1,4 +1,4 @@
-package it.polimi.ingsw.controller.interfaces;
+package it.polimi.ingsw.observer;
 
 import it.polimi.ingsw.observer.Observer;
 

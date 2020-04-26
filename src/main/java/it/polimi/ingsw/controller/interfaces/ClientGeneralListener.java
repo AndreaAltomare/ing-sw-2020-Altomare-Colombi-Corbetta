@@ -1,5 +1,7 @@
 package it.polimi.ingsw.controller.interfaces;
 
+import it.polimi.ingsw.observer.GeneralListener;
+
 /**
  * Interface for general information exchange (from View [Client]).
  *

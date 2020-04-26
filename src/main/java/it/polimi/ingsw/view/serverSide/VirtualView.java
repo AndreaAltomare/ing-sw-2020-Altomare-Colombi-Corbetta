@@ -44,6 +44,16 @@ public class VirtualView extends Observable<Object> implements MoveExecutedListe
         }
     }
 
+    /**
+     * General update() method for Observer Pattern.
+     *
+     * @param o (Object object)
+     */
+    @Override
+    public void update(Object o) {
+        // todo code
+    }
+
     @Override
     public void onWorkerPlacement(Worker worker, int x, int y) {
 

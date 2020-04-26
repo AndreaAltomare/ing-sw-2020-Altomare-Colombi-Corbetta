@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.serverSide.interfaces;
 
+import it.polimi.ingsw.observer.GeneralListener;
 import it.polimi.ingsw.view.serverSide.ClientStatus;
 
 /**
@@ -9,7 +10,7 @@ import it.polimi.ingsw.view.serverSide.ClientStatus;
  *
  * @author Giorgio Corbetta
  */
-public interface ServerGeneralListener {
+public interface ServerGeneralListener extends GeneralListener {
     public void onStatusChange(ClientStatus clientStatus);
     public void onNextStatus();
     public void serverSendData(); // Game match general data (to respond to viewRequestData, receive data from Server)

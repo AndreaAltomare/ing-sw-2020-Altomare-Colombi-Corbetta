@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller.interfaces;
 
 import it.polimi.ingsw.model.StateType;
+import it.polimi.ingsw.observer.GeneralListener;
 
 /**
  * Interface for Card selection from View.

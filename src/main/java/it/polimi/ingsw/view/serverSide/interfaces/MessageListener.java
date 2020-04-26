@@ -1,5 +1,7 @@
 package it.polimi.ingsw.view.serverSide.interfaces;
 
+import it.polimi.ingsw.observer.GeneralListener;
+
 /**
  * Interface for Server messages exchange.
  *
@@ -7,7 +9,7 @@ package it.polimi.ingsw.view.serverSide.interfaces;
  *
  * @author Giorgio Corbetta
  */
-public interface MessageListener {
+public interface MessageListener extends GeneralListener {
 
     /**
      * DISPLAY INFO MESSAGES:

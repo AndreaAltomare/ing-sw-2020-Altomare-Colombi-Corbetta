@@ -34,7 +34,7 @@ public class ServerConnection {
 
     private List<ClientConnection> connections = new ArrayList<ClientConnection>();
     private Map<String, ClientConnection> waitingConnection = new HashMap<>();
-    private Map<ClientConnection, ClientConnection> playingConnection = new HashMap<>();
+    private Map<String, ClientConnection> playingConnection = new HashMap<>();
 
     public final int MINIMUM_CLIENTS_REQUIRED = 2; // public because it can never change (by definition of Game match)
     public final int MAXIMUM_CLIENTS_REQUIRED = 3; // public because it can never change (by definition of Game match)
@@ -129,8 +129,8 @@ public class ServerConnection {
             }
 
             /* 2- Instantiate VirtualView(s) */
-            for (ClientConnection client : clients) {
-                virtualViews.add(new VirtualView(keys.get(0), waitingConnection.get(keys.get(0))));
+            for (String key : keys) {
+                virtualViews.add(new VirtualView(key, waitingConnection.get(key)));
             }
 
             /* 3- Instantiate Model */
@@ -139,8 +139,19 @@ public class ServerConnection {
             /* 4- Instantiate Controller */
             Controller controller = new Controller(model);
 
-            // TODO: trovare il modo di registrare gli observer per il Controller e per le VirtualView
-            /* 5- */
+            /* 5- Register observers */
+            for (VirtualView vw : virtualViews) {
+                controller.addObserver(vw); // Observer(s) to the Controller
+                vw.addObserver(controller); // Observer to the VirtualView(s)
+            }
+
+            /* 6- Now all Clients in "waiting" must be considered in a "playing" status */
+            for (String key : keys) {
+                playingConnection.put(key, waitingConnection.get(key));
+            }
+
+            /* 7- Clear Waiting Player Map */
+            waitingConnection.clear();
         }
     }
 

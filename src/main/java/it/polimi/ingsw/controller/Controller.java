@@ -1,9 +1,8 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.controller.interfaces.*;
 import it.polimi.ingsw.model.Model;
-
-import java.util.Observable;
+import it.polimi.ingsw.observer.GeneralListener;
+import it.polimi.ingsw.observer.Observable;
 //implements ClientGeneralListener, MoveListener, TurnStatusChangeListener, CardSelectionListener
 
 /**
@@ -11,7 +10,7 @@ import java.util.Observable;
  *
  * @author AndreaAltomare
  */
-public class Controller implements GeneralListener {
+public class Controller extends Observable<Object> implements GeneralListener {
     private final Model model; // Object reference to the Game Model
 
     // TODO: Write Javadoc here to explain, for example, why a Model object is passed by argument
