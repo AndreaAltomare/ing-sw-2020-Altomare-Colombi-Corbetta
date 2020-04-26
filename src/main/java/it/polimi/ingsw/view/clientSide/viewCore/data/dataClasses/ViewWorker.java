@@ -62,7 +62,7 @@ public class ViewWorker implements ViewObject {
      *
      * @return (String identifyinng the object)
      */
-    public String toString(){ return getClassId()+id; }
+    public String toString(){ return getClassId() + "\t" + id; }
 
     /**
      * Method to compare two ViewObjects
@@ -80,7 +80,7 @@ public class ViewWorker implements ViewObject {
      * @return (String the base of Class identificators)
      */
     public static String getClassId(){
-        return "[Worker]\t";
+        return "[Worker]";
     }
 
 

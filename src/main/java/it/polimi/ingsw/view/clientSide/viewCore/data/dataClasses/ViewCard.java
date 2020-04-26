@@ -31,7 +31,7 @@ public class ViewCard implements ViewObject {
      * @return (String identifyinng the object)
      */
     public String toString(){
-        return getClassId() + name;
+        return getClassId() + "\t" + name;
     }
 
     /**
@@ -50,7 +50,7 @@ public class ViewCard implements ViewObject {
      * @return (String the base of Class identificators)
      */
     public static String getClassId(){
-        return "[Card]\t";
+        return "[Card]";
     }
 
 

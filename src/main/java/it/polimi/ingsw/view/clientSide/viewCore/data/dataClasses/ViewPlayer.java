@@ -94,7 +94,7 @@ public class ViewPlayer implements ViewObject {
      *
      * @return (String identifyinng the object)
      */
-    public String toString(){ return getClassId() + name; }
+    public String toString(){ return getClassId() + "\t" + name; }
 
     /**
      * Method to compare two ViewObjects
@@ -111,7 +111,7 @@ public class ViewPlayer implements ViewObject {
      *
      * @return (String the base of Class identificators)
      */
-    public static String getClassId(){ return "[Player]\t"; }
+    public static String getClassId(){ return "[Player]"; }
 
 
     /**

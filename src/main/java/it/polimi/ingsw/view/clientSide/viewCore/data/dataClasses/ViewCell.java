@@ -129,7 +129,7 @@ public class ViewCell implements ViewObject {
      *
      * @return (String identifyinng the object)
      */
-    public String toString(){ return getClassId() + "(" + this.getX() + ", " + this.getY() + ")"; }
+    public String toString(){ return getClassId() + "\t(" + this.getX() + ", " + this.getY() + ")"; }
 
     /**
      * Method to compare two ViewObjects
@@ -146,7 +146,7 @@ public class ViewCell implements ViewObject {
      *
      * @return (String the base of Class identificators)
      */
-    public static String getClassId(){ return "[Cell]\t"; }
+    public static String getClassId(){ return "[Cell]"; }
 
 
     /**

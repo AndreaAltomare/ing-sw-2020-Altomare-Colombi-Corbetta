@@ -1,5 +1,8 @@
 package it.polimi.ingsw.view.serverSide;
 
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Enum to describe the bossible states of the client.
  *
@@ -59,29 +62,52 @@ public enum ClientStatus {
         this.next = next;
     }
 
-    public String toString(){
-        return id;
-    }
+    /**
+     * Method that return the base string for identifying the Class.
+     *
+     * @return (String identifying the status)
+     */
+    public static String getClassId(){ return "[AppStatus]"; }
+
+    public String toString(){ return getClassId() + "\t" + id; }
+
+    public String getId() { return id; }
 
     /**
      * Method that returns the next status
      *
      * @return (Next status)
      */
-    ClientStatus getNext(){
+    public ClientStatus getNext(){
         return next;
     }
 
     /**
+     * Method to check weather the passed id is of this class or not.
+     *
+     * @param id (String to check)
+     * @return (True iif the String will correspond to the id of an object of this class).
+     */
+    public static boolean isOfThisClass( @NotNull String id){ return id.startsWith(getClassId()); }
+
+
+    /**
      * Method that searches the status from the given string.
      *
-     * @param id (the String identifying the status searched)
+     * @param searched (the String identifying the status searched)
      * @return (The searched status)
      */
-    ClientStatus searchByString(String id){
-        for (ClientStatus i : ClientStatus.values())
-            if(i.toString().equals(id))
-                return i;
+    public static ClientStatus searchByString(String searched){
+        if(isOfThisClass(searched)) {
+            for (ClientStatus i : ClientStatus.values())
+                if (i.toString().equals(searched))
+                    return i;
+        }else {
+            for (ClientStatus i : ClientStatus.values())
+                if (i.getId().equals(searched))
+                    return i;
+        }
         return null;
     }
+
 }

@@ -5,6 +5,7 @@ import it.polimi.ingsw.view.clientSide.viewCore.data.DataStorager;
 import it.polimi.ingsw.view.clientSide.viewers.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.NicknameExecuter;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Enumeration type for representing
@@ -21,7 +22,7 @@ public enum ViewStatus {
      * Initial status intended to establish a connection with the server (and state a welcome message)
      */
     READY("READY"){
-        ViewStatus getNext(){
+        public ViewStatus getNext(){
             return ViewStatus.LOGIN;
         }
 
@@ -61,7 +62,7 @@ public enum ViewStatus {
      */
     LOGIN("LOGIN") {
         @Override
-        ViewStatus getNext() {
+        public ViewStatus getNext() {
             return ViewStatus.WAITING;
         }
 
@@ -103,7 +104,7 @@ public enum ViewStatus {
      */
     WAITING("WAITING") {
         @Override
-        ViewStatus getNext() {
+        public ViewStatus getNext() {
             return ViewStatus.NEW_GAME;
         }
 
@@ -142,7 +143,7 @@ public enum ViewStatus {
      */
     NEW_GAME ("NEW_GAME") {
         @Override
-        ViewStatus getNext() {
+        public ViewStatus getNext() {
             return ViewStatus.GAME_PREPARATION;
         }
 
@@ -182,7 +183,7 @@ public enum ViewStatus {
      */
     GAME_PREPARATION("GAME_PREPARATION") {
         @Override
-        ViewStatus getNext() {
+        public ViewStatus getNext() {
             return ViewStatus.PLAYING;
         }
 
@@ -223,7 +224,7 @@ public enum ViewStatus {
      */
     PLAYING("PLAYING") {
         @Override
-        ViewStatus getNext() {
+        public ViewStatus getNext() {
             return ViewStatus.GAME_OVER;
         }
 
@@ -263,9 +264,9 @@ public enum ViewStatus {
     /**
      * Ending status.
      */
-    GAME_OVER("GAMEOVER") {
+    GAME_OVER("GAME_OVER") {
         @Override
-        ViewStatus getNext() {
+        public ViewStatus getNext() {
             return ViewStatus.READY;
         }
 
@@ -328,7 +329,7 @@ public enum ViewStatus {
      *
      * @return (next status)
      */
-    abstract ViewStatus getNext();
+    public abstract ViewStatus getNext();
 
     /**
      * Method that returns the list of all Executer that will be used for this status.
@@ -350,16 +351,27 @@ public enum ViewStatus {
      */
     abstract void onLoad();
 
+    /**
+     * Method that return the base string for identifying the Class.
+     *
+     * @return (String identifying the status)
+     */
+    public static String getClassId(){ return "[AppStatus]"; }
 
     /**
      * Method that returns the string representation of the status.
      *
      * @return (String representation of the status)
      */
-    public String toString(){
-        return "[AppStatus]:\t" + this.getId();
-    }
+    public String toString(){ return getClassId() + "\t" + this.getId(); }
 
+    /**
+     * Method to check weather the passed id is of this class or not.
+     *
+     * @param id (String to check)
+     * @return (True iif the String will correspond to the id of an object of this class).
+     */
+    public static boolean isOfThisClass( @NotNull String id){ return id.startsWith(getClassId()); }
 
     /**
      * Method intended to search the status designed by the parameter searched
@@ -367,10 +379,16 @@ public enum ViewStatus {
      * @param searched (id of the status searched)
      * @return (The status searched)
      */
-    static ViewStatus searchByString(String searched){
-        for (ViewStatus i: ViewStatus.values())
-            if(i.getId().equals(searched))
-                return i;
+    public static ViewStatus searchByString(String searched){
+        if(isOfThisClass(searched)) {
+            for (ViewStatus i : ViewStatus.values())
+                if (i.toString().equals(searched))
+                    return i;
+        }else {
+            for (ViewStatus i : ViewStatus.values())
+                if (i.getId().equals(searched))
+                    return i;
+        }
         return null;
     }
 
@@ -392,5 +410,9 @@ public enum ViewStatus {
     public static void nextStatus(){
         actualStatus = actualStatus.getNext();
         actualStatus.onLoad();
+    }
+
+    public static void reset(){
+        actualStatus = READY;
     }
 }

@@ -70,7 +70,7 @@ public class ViewBoard implements ViewObject {
      *
      * @return (String the base of Class identificators)
      */
-    public static String getClassId(){ return "[Board]\t"; }
+    public static String getClassId(){ return "[Board]"; }
 
     /**
      * Method to check weather the passed id is of this class or not.
