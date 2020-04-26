@@ -5,6 +5,7 @@ import it.polimi.ingsw.view.exceptions.AlreadySetException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
+import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class ViewWorker implements ViewObject {
      *
      * @return (int id of the worker)
      */
-    public int getId(){ return id; }
+    public String getId(){ return Integer.toString(id); }
 
     /**
      * Getter method for the player owner of the worker.
@@ -57,12 +58,44 @@ public class ViewWorker implements ViewObject {
      */
     public void moveOn(ViewCell position){ this.position = position; }
 
+    @Override
+    /**
+     * Method returning a unique String for each class.
+     *
+     * @return (unique string for each class)
+     */
+    public String getMyClassId() {
+        return getClassId();
+    }
+
+    @Override
+    /**
+     * Compares this with pl. return true iif represent the same Object.
+     *
+     * @param pl (the Addressable to be checked)
+     * @return (true iif this == pl)
+     */
+    public boolean equals(Addressable obj) {
+        return this.isThis(obj.toString());
+    }
+
+    @Override
+    /**
+     * Method checking weather the given string is identifying this.
+     *
+     * @param st (String that will possibly represent this)
+     * @return (true iif st==this.toString())
+     */
+    public boolean isThis(String st) {
+        return st.equals(this.toString());
+    }
+
     /**
      * Method that returns the String identifying the object built as: "[ClassId] \t objId".
      *
      * @return (String identifyinng the object)
      */
-    public String toString(){ return getClassId()+id; }
+    public String toString(){ return getClassId() + "\t" + id; }
 
     /**
      * Method to compare two ViewObjects
@@ -80,7 +113,7 @@ public class ViewWorker implements ViewObject {
      * @return (String the base of Class identificators)
      */
     public static String getClassId(){
-        return "[Worker]\t";
+        return "[Worker]";
     }
 
 
