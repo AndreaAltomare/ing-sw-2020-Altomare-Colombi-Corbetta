@@ -4,6 +4,7 @@ import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
+import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -124,12 +125,54 @@ public class ViewCell implements ViewObject {
         this.worker = worker;
     }
 
+    @Override
+    /**
+     * Method returning a unique string for each object inside the Class.
+     *
+     * @return (unique String identifying the object)
+     */
+    public String getId() {
+        return "(" + getX() + ", " + getY() + ")";
+    }
+
+    @Override
+    /**
+     * Method returning a unique String for each class.
+     *
+     * @return (unique string for each class)
+     */
+    public String getMyClassId() {
+        return getClassId();
+    }
+
+    @Override
+    /**
+     * Compares this with pl. return true iif represent the same Object.
+     *
+     * @param pl (the Addressable to be checked)
+     * @return (true iif this == pl)
+     */
+    public boolean equals(Addressable obj) {
+        return this.isThis(obj.toString());
+    }
+
+    @Override
+    /**
+     * Method checking weather the given string is identifying this.
+     *
+     * @param st (String that will possibly represent this)
+     * @return (true iif st==this.toString())
+     */
+    public boolean isThis(String st) {
+        return st.equals(this.toString());
+    }
+
     /**
      * Method that returns the String identifying the object built as: "[ClassId] \t objId".
      *
      * @return (String identifyinng the object)
      */
-    public String toString(){ return getClassId() + "\t(" + this.getX() + ", " + this.getY() + ")"; }
+    public String toString(){ return getClassId() + "\t" + this.getId(); }
 
     /**
      * Method to compare two ViewObjects
@@ -222,7 +265,7 @@ public class ViewCell implements ViewObject {
      * @return (String representing the object and its status)
      */
     public String toTerminal(){
-        return this.toString() + " " + this.getLevel() + " D: " + (this.isDoomed()?'t': 'f') + " W: " + (this.isThereWorker()?worker.getId()%10:"no") + "| ";
+        return this.toString() + " " + this.getLevel() + " D: " + (this.isDoomed()?'t': 'f') + " W: " + (this.isThereWorker()?worker.getId():"no") + "| ";
 
     }
 

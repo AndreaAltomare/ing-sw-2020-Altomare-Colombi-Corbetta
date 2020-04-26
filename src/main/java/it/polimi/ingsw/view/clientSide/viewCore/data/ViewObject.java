@@ -1,8 +1,10 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data;
 
+import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ClientAddressable;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
+import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 //import sun.jvm.hotspot.types.WrongTypeException;
 
@@ -13,14 +15,29 @@ import java.util.EventObject;
  *
  * @author giorgio
  */
-public interface ViewObject {
+public interface ViewObject extends ClientAddressable {
 
     /**
      * Method that returns the String identifying the object built as: "[ClassId] \t objId".
      *
-     * @return (String identifyinng the object)
+     * @return (String identifying the object)
      */
     public String toString();
+
+
+    /**
+     * Method that returns the id of the specific object in the class
+     *
+     * @return (String the id of the object)
+     */
+    public String getId();
+
+    /**
+     * Method returning a unique String for each class.
+     *
+     * @return (unique string for each class)
+     */
+    public String getMyClassId();
 
     /**
      * Method to compare two ViewObjects
@@ -28,7 +45,15 @@ public interface ViewObject {
      * @param obj (compared object)
      * @return (true iif this == obj)
      */
-    public boolean equals(ViewObject obj);
+    public boolean equals(Addressable obj);
+
+    /**
+     * Method checking weather the given string is identifying this.
+     *
+     * @param st (String that will possibly represent this)
+     * @return (true iif st==this.toString())
+     */
+    public boolean isThis (String st);
 
     /**
      * function that returns for each Class the Base of its objects identificators as "[ClassId]".

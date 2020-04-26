@@ -4,6 +4,7 @@ import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
+import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EventObject;
@@ -56,6 +57,48 @@ public class ViewBoard implements ViewObject {
      * @return (String identifyinng the object)
      */
     public String toString(){ return getClassId(); }
+
+    @Override
+    /**
+     * Method returning a unique string for each object inside the Class.
+     *
+     * @return (unique String identifying the object)
+     */
+    public String getId() {
+        return "";
+    }
+
+    @Override
+    /**
+     * Method returning a unique String for each class.
+     *
+     * @return (unique string for each class)
+     */
+    public String getMyClassId() {
+        return getClassId();
+    }
+
+    @Override
+    /**
+     * Compares this with pl. return true iif represent the same Object.
+     *
+     * @param pl (the Addressable to be checked)
+     * @return (true iif this == pl)
+     */
+    public boolean equals(Addressable obj) {
+        return this.isThis(obj.toString());
+    }
+
+    @Override
+    /**
+     * Method checking weather the given string is identifying this.
+     *
+     * @param st (String that will possibly represent this)
+     * @return (true iif st==this.toString())
+     */
+    public boolean isThis(String st) {
+        return st.equals(this.toString());
+    }
 
     /**
      * Method to compare two ViewObjects

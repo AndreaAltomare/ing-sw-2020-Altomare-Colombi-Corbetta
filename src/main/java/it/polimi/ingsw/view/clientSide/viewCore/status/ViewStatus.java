@@ -2,9 +2,11 @@ package it.polimi.ingsw.view.clientSide.viewCore.status;
 // TODO: write some comments to explains the meaning of every status defined
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.DataStorager;
+import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ClientAddressable;
 import it.polimi.ingsw.view.clientSide.viewers.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.NicknameExecuter;
+import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -16,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author giorgio
  */
-public enum ViewStatus {
+public enum ViewStatus implements ClientAddressable {
 
     /**
      * Initial status intended to establish a connection with the server (and state a welcome message)
@@ -380,15 +382,9 @@ public enum ViewStatus {
      * @return (The status searched)
      */
     public static ViewStatus searchByString(String searched){
-        if(isOfThisClass(searched)) {
-            for (ViewStatus i : ViewStatus.values())
-                if (i.toString().equals(searched))
-                    return i;
-        }else {
-            for (ViewStatus i : ViewStatus.values())
-                if (i.getId().equals(searched))
-                    return i;
-        }
+        for (ViewStatus i : ViewStatus.values())
+            if (i.isThis(searched))
+                return i;
         return null;
     }
 
@@ -411,6 +407,41 @@ public enum ViewStatus {
         actualStatus = actualStatus.getNext();
         actualStatus.onLoad();
     }
+
+    /**
+     * Compares this with pl. return true iif represent the same Object.
+     *
+     * @param pl (the Addressable to be checked)
+     * @return (true iif this == pl)
+     */
+    public boolean equals(Addressable pl){
+        return this.isThis(pl.toString());
+    }
+
+    /**
+     * Method checking weather the given string is identifying this.
+     *
+     * @param st (String that will possibly represent this)
+     * @return (true iif st==this.toString())
+     */
+    public boolean isThis (String st){
+        if(isOfThisClass(st)) {
+            return st.equals(this.toString());
+        }else{
+            return st.equals(this.getId());
+        }
+    }
+
+    /**
+     * Method returning a unique String for each class.
+     *
+     * @return (unique string for each class)
+     */
+    public String getMyClassId(){
+        return getClassId();
+    }
+
+
 
     public static void reset(){
         actualStatus = READY;
