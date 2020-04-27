@@ -10,7 +10,7 @@ import it.polimi.ingsw.observer.GeneralListener;
  * @author AndreaAltomare
  */
 public interface ClientGeneralListener extends GeneralListener {
-    public void onNicknameSubmit(String nickname);
+    public void onNicknameSubmit(String nickname); // useless: handled by Server connection
     public void onPlayerQuit(String nickname);
     public void viewRequestData(); // Game match general data
 }

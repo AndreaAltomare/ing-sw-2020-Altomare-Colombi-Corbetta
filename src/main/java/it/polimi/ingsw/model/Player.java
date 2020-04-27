@@ -107,6 +107,7 @@ public class Player {
             if(checkForLostByMovement())
                 throw new LoseException(this, "Player " + nickname + "has lost! (Cannot perform any Movement)");
 
+        // TODO: fare in modo che se il worker con cui si ha appena  mosso non può costruire, allora la mossa costruzione "passa" all'altro Worker
         if(nextState.state() == StateType.CONSTRUCTION)
             if(checkForLostByConstruction())
                 throw new LoseException(this, "Player " + nickname + "has lost! (Cannot perform any Construction)");
@@ -149,7 +150,11 @@ public class Player {
      */
     public boolean chooseWorker(Worker worker) {
         /* 1- if a Worker is in a Lose condition, don't let the Player to select it */
-        if(checkForWorkerLost(worker))
+        /* In this case, just a Lose condition triggered by denied Movements is checked,
+        * because conditions to make a Movement are more stringent than the ones to make
+        * a Construction.
+        */
+        if(checkForWorkerLostByMovement(worker))
             return false;
 
         /* 2- Check if the selected Worker belongs to the Player (by nickname, because it's unique among Players) */
@@ -182,19 +187,9 @@ public class Player {
         List<Cell> adjacentCells;
 
         /* For each worker check if a Move can be performed */
-        for(Worker workerObj : workers) {
-            /* 1- Get adjacent Cells from the one the Worker is placed on */
-            adjacentCells = workerObj.position().getBoard().getAdjacentCells(workerObj.position());
-
-            /* 2- For each Cell, check if a Move is possible */
-            for(Cell cell : adjacentCells) {
-                Move moveToCheck = new Move(workerObj.position(),cell);
-
-                // If at least one Movement is allowed, Player has not lost.
-                if(card.getMyMove().checkMove(moveToCheck, workerObj))
-                    return false;
-            }
-        }
+        for(Worker workerObj : workers)
+            if(!checkForWorkerLostByMovement(workerObj))
+                return false;
 
         return true;
     }
@@ -208,9 +203,9 @@ public class Player {
     private boolean checkForLostByConstruction() {
         List<Cell> adjacentCells;
 
-        /* For each worker check if a Move can be performed */
+        /* For each worker check if a BuildMove can be performed */
         for(Worker workerObj : workers)
-            if(!checkForWorkerLost(workerObj))
+            if(!checkForWorkerLostByConstruction(workerObj))
                 return false;
 
         return true;
@@ -221,9 +216,34 @@ public class Player {
      * is in a Lose because it cannot make any move.
      *
      * @param worker (Worker whose Lose condition has to be checked)
-     * @return (Worker cannot make any Movement ? true : false)
+     * @return (Worker cannot make any Movement Move ? true : false)
      */
-    private boolean checkForWorkerLost(Worker worker) {
+    private boolean checkForWorkerLostByMovement(Worker worker) {
+        List<Cell> adjacentCells;
+
+        /* 1- Get adjacent Cells from the one the Worker is placed on */
+        adjacentCells = worker.position().getBoard().getAdjacentCells(worker.position());
+
+        /* 2- For each Cell, check if a Move is possible */
+        for(Cell cell : adjacentCells) {
+            Move moveToCheck = new Move(worker.position(),cell);
+
+            // If at least one Movement is allowed, Player has not lost.
+            if(card.getMyMove().checkMove(moveToCheck, worker))
+                return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Given a Worker, this method tells if the Worker
+     * is in a Lose because it cannot make any Construction.
+     *
+     * @param worker (Worker whose Lose condition has to be checked)
+     * @return (Worker cannot make any Build Move ? true : false)
+     */
+    private boolean checkForWorkerLostByConstruction(Worker worker) {
         List<Cell> adjacentCells;
 
         /* 1- Get adjacent Cells from the one the Worker is placed on */

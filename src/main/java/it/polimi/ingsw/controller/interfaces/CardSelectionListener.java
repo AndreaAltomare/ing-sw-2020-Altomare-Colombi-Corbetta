@@ -10,5 +10,5 @@ import it.polimi.ingsw.observer.GeneralListener;
  * @author AndreaAltomare
  */
 public interface CardSelectionListener extends GeneralListener {
-    public void onCardSelection(String cardName);
+    public void onCardSelection(String cardName, String playerNickname);
 }

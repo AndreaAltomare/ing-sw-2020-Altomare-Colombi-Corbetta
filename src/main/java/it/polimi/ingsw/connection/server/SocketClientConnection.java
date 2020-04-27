@@ -113,7 +113,7 @@ public class SocketClientConnection extends Observable<Object> implements Client
             // todo send an event to notify connection has established and a nickname needs to be submitted
 
             /* 1- Ask for the Player's nickname */
-            send("Welcome!\nType your nickname");
+            send("Welcome!\nType your nickname"); // todo sostituire con evento NextStatus (per la view)
             String read = in.nextLine();
             // Handle duplicates
             while(!server.addClient(this, read)) {
