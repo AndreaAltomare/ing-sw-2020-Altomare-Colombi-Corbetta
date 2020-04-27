@@ -38,16 +38,16 @@ class PlayerTest {
         player = new Player( "Player1" );
         board = new IslandBoard();
         worker1 = new Worker(player);
-        worker1 = new Worker(player);
+        worker2 = new Worker(player);
         try {
             cornerCell = board.getCellAt(0,0);
             nearCornerCell1 = board.getCellAt(0,1);
             nearCornerCell2 = board.getCellAt(1,1);
             nearCornerCell3 = board.getCellAt(1,0);
-            edgeCell = board.getCellAt(5,5 );
-            nearEdgeCell1 = board.getCellAt(4,5 );
-            nearEdgeCell2 = board.getCellAt(4,4 );
-            nearEdgeCell3 = board.getCellAt(5,4 );
+            edgeCell = board.getCellAt(4,4 );
+            nearEdgeCell1 = board.getCellAt(3,4 );
+            nearEdgeCell2 = board.getCellAt(3,3 );
+            nearEdgeCell3 = board.getCellAt(4,3 );
         }
         catch ( OutOfBoardException e ) {
             e.printStackTrace();
@@ -109,7 +109,7 @@ class PlayerTest {
         boolean checkLose = false;
 
         // initialization
-        player.chooseCard("default");
+        player.chooseCard("artemis");
         player.registerWorker(worker1);
         player.registerWorker(worker2);
         worker1.place(cornerCell);
@@ -129,7 +129,7 @@ class PlayerTest {
 
             assertTrue( player.getCard().hasExecutedMovement() == false );
             assertTrue( player.getCard().hasExecutedConstruction() == false) ;
-            assertTrue( player.getCard().getMyMove().getMovesLeft() == 1 );
+            assertTrue( player.getCard().getMyMove().getMovesLeft() == 2 );
             assertTrue( player.getCard().getMyConstruction().getConstructionLeft() == 1 );
             assertTrue( worker1.getChosenStatus() == ChooseType.CAN_BE_CHOSEN );
             assertTrue( worker2.getChosenStatus() == ChooseType.CAN_BE_CHOSEN);
@@ -154,7 +154,7 @@ class PlayerTest {
      *
      * Black Box and White Box
      */
-    @Test
+    @Test //todo: error for a problem ( I think ) in checkForLostConstruction()
     void chooseState() {
         Player opponent = new Player("opponent");
         Worker opponentWorker = new Worker(opponent);
@@ -311,7 +311,7 @@ class PlayerTest {
      *
      * Black Box and White Box
      */
-    @Test
+    @Test //todo: error for a problem ( I think ) in checkForLostConstruction()
     void switchState() {
         boolean checkLose = false;
 
@@ -370,8 +370,8 @@ class PlayerTest {
         // edgeCell: W          nearEdgeCell1: D        nearEdgeCell2: BB       nearEdgeCell3: BBBD
         nearCornerCell2.buildBlock();
         nearCornerCell2.buildDome();
-        nearCornerCell3.canBuildDome();
-        nearEdgeCell3.canBuildDome();
+        nearCornerCell3.buildDome();
+        nearEdgeCell3.buildDome();
         try {
             player.switchState( player.getConstructionManager() );
         } catch (LoseException e) {
@@ -533,7 +533,8 @@ class PlayerTest {
         //* GodPower Apollo/Minotaur *//
         player.chooseCard("apollo");
 
-        /* Player can choose a Worker if it can't move */
+        //TODO: MOST IMPORTANT: to do todo in MyMove for Apollo's Power (the worker must be opponent's Worker)
+        /* Player can't choose a Worker if it can't move */
         worker1.place(cornerCell);
         worker2.place(nearCornerCell1);
         nearCornerCell2.buildDome();
@@ -616,6 +617,7 @@ class PlayerTest {
 
         player.chooseCard("default");
         player.registerWorker(worker1);
+        player.registerWorker(worker2);
 
 
         /* Player can choose a Worker if it can't move */
@@ -647,9 +649,9 @@ class PlayerTest {
         worker2.setChosen(ChooseType.CAN_BE_CHOSEN);
 
 
-        /* Player can choose a Worker if it can move but the Worker is an opponent's Worker */
+        /* Player can't choose a Worker if it can move but the Worker is an opponent's Worker */
         otherWorker.place(cornerCell);
-        check = player.chooseWorker(worker1);
+        check = player.chooseWorker(otherWorker);
         assertTrue( !check );
         assertTrue( otherWorker.position().equals(cornerCell) );
         assertTrue( otherWorker.getChosenStatus() == ChooseType.CAN_BE_CHOSEN);
