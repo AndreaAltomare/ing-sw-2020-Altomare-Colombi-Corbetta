@@ -254,7 +254,7 @@ public class Player {
             BuildMove moveToCheck = new BuildMove(worker.position(),cell,PlaceableType.ANY);
 
             // If at least one Movement is allowed, Player has not lost.
-            if(card.getMyMove().checkMove(moveToCheck, worker))
+            if(card.getMyConstruction().checkMove(moveToCheck, worker))
                 return false;
         }
 
