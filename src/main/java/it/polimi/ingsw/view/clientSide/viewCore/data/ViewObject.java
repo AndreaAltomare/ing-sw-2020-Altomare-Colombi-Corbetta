@@ -15,29 +15,34 @@ import java.util.EventObject;
  *
  * @author giorgio
  */
-public interface ViewObject extends ClientAddressable {
+public abstract class ViewObject implements ClientAddressable {
 
     /**
      * Method that returns the String identifying the object built as: "[ClassId] \t objId".
      *
      * @return (String identifying the object)
      */
-    public String toString();
+    public String toString(){
+        String tmp = this.getId();
+        if(tmp.equals(""))
+            return this.getMyClassId();
+        return this.getMyClassId() + "\t" + this.getId();
+    }
 
 
     /**
      * Method that returns the id of the specific object in the class
      *
-     * @return (String the id of the object)
+     * @return (String the id of the object or "" if no id is needed).
      */
-    public String getId();
+    public abstract String getId();
 
     /**
      * Method returning a unique String for each class.
      *
      * @return (unique string for each class)
      */
-    public String getMyClassId();
+    public abstract String getMyClassId();
 
     /**
      * Method to compare two ViewObjects
@@ -45,7 +50,11 @@ public interface ViewObject extends ClientAddressable {
      * @param obj (compared object)
      * @return (true iif this == obj)
      */
-    public boolean equals(Addressable obj);
+    public boolean equals(Addressable obj){
+        if (obj == null)
+            return false;
+        return isThis(obj.toString());
+    }
 
     /**
      * Method checking weather the given string is identifying this.
@@ -53,7 +62,9 @@ public interface ViewObject extends ClientAddressable {
      * @param st (String that will possibly represent this)
      * @return (true iif st==this.toString())
      */
-    public boolean isThis (String st);
+    public boolean isThis ( @NotNull String st){
+        return st.equals(this.toString());
+    }
 
     /**
      * function that returns for each Class the Base of its objects identificators as "[ClassId]".
@@ -71,7 +82,7 @@ public interface ViewObject extends ClientAddressable {
      * @param id (String to check)
      * @return (True iif the String will correspond to the id of an object of this class).
      */
-    static boolean isOfThisClass( @NotNull String id){
+    public static boolean isOfThisClass( @NotNull String id){
         return id.startsWith(getClassId());
     }
 
@@ -106,7 +117,9 @@ public interface ViewObject extends ClientAddressable {
      * @return (true iif the event is notified in the right way)
      * @throws WrongEventException (if the Event is not used for this object)
      */
-    boolean notifyEvent( @NotNull EventObject event) throws WrongEventException;
+    boolean notifyEvent( @NotNull EventObject event) throws WrongEventException{
+        throw new WrongEventException();
+    }
 
     /**
      * Method that will be called on the arrival of an event to build a new Object.
@@ -131,7 +144,7 @@ public interface ViewObject extends ClientAddressable {
      *
      * @return (String representing the object and its status)
      */
-    String toTerminal();
+    String toTerminal(){return "404: object not found";}
 
 
     /**
@@ -139,13 +152,13 @@ public interface ViewObject extends ClientAddressable {
      *
      * @return (representation of Object for the CLI)
      */
-    Object toCLI();
+    Object toCLI(){return null;}
 
     /**
      * Method that will return a (Object) that will represent the ViewObject on the GUI.
      *
      * @return (representation of Object for the GI)
      */
-    Object toGUI();
+    Object toGUI(){return null;}
 
 }

@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @author giorgio
  */
-public class ViewWorker implements ViewObject {
+public class ViewWorker extends ViewObject {
 
     private int id;
     private ViewPlayer player;
@@ -68,45 +68,6 @@ public class ViewWorker implements ViewObject {
         return getClassId();
     }
 
-    @Override
-    /**
-     * Compares this with pl. return true iif represent the same Object.
-     *
-     * @param pl (the Addressable to be checked)
-     * @return (true iif this == pl)
-     */
-    public boolean equals(Addressable obj) {
-        return this.isThis(obj.toString());
-    }
-
-    @Override
-    /**
-     * Method checking weather the given string is identifying this.
-     *
-     * @param st (String that will possibly represent this)
-     * @return (true iif st==this.toString())
-     */
-    public boolean isThis(String st) {
-        return st.equals(this.toString());
-    }
-
-    /**
-     * Method that returns the String identifying the object built as: "[ClassId] \t objId".
-     *
-     * @return (String identifyinng the object)
-     */
-    public String toString(){ return getClassId() + "\t" + id; }
-
-    /**
-     * Method to compare two ViewObjects
-     *
-     * @param obj (compared object)
-     * @return (true iif this == obj)
-     */
-    public boolean equals(ViewObject obj){
-        return this.toString().equals(obj.toString());
-    }
-
     /**
      * function that returns for each Class the Base of its objects identificators as "[ClassId]".
      *
@@ -114,17 +75,6 @@ public class ViewWorker implements ViewObject {
      */
     public static String getClassId(){
         return "[Worker]";
-    }
-
-
-    /**
-     * Method to check weather the passed id is of this class or not.
-     *
-     * @param id (String to check)
-     * @return (True iif the String will correspond to the id of an object of this class).
-     */
-    public static boolean isOfThisClass( @NotNull String id){
-        return id.startsWith(getClassId());
     }
 
     /**
