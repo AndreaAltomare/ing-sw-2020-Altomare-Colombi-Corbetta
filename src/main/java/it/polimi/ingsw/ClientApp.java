@@ -1,6 +1,9 @@
 package it.polimi.ingsw;
 
+import it.polimi.ingsw.connection.ConnectionSettings;
 import it.polimi.ingsw.connection.client.ClientConnection;
+import it.polimi.ingsw.connection.server.ServerConnection;
+import it.polimi.ingsw.storage.ResourceManager;
 
 import java.io.IOException;
 
@@ -18,10 +21,31 @@ public class ClientApp {
      * @param args (main() arguments)
      */
     public static void main(String[] args) {
-        String ip = "127.0.0.1";
-        int port = 9999;
+        ClientConnection client;
+        ConnectionSettings connectionSettings;
+        final String DEFAULT_IP = "127.0.0.1";
+        final int DEFAULT_PORT = 9999; // default port
+        String ip = DEFAULT_IP;
+        int port = DEFAULT_PORT;
 
-        ClientConnection client = new ClientConnection(ip, port);
+        // todo verificare che funzioni con gli argomenti
+        // todo verificare che funzioni senza gli argomenti
+        // todo verificare che funzioni con i file di configurazione presenti
+        // todo verificare che funzioni senza i file di configurazione presenti
+        /* Retrieve connection configuration settings */
+        if(args.length >= 2) {
+            ip = new String(args[0]); // not sure if without "new String(...)" statement i'd get a new reference
+            port = Integer.parseInt(args[1]);
+        }
+        else {
+            connectionSettings = ResourceManager.clientConnectionSettings();
+            if (connectionSettings != null) {
+                ip = connectionSettings.getIp();
+                port = connectionSettings.getPort();
+            }
+        }
+
+        client = new ClientConnection(ip, port);
         try {
             client.run();
         }

@@ -70,9 +70,17 @@ public class FileManager {
      * @return JSON data read from File
      */
     public String getCard(String cardName) {
+        String jsonData = "";
         filePath = cardName + ".config";
 
-        return getFileContent(filePath);
+        try {
+            jsonData = getFileContent(filePath);
+        }
+        catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        }
+
+        return jsonData;
     }
 
     /**
@@ -80,8 +88,9 @@ public class FileManager {
      *
      * @param fileName (File name)
      * @return File stored information
+     * @throws FileNotFoundException (Exception thrown when specified file does not exist)
      */
-    public String getFileContent(String fileName) {
+    public String getFileContent(String fileName) throws FileNotFoundException {
         String data = "";
         File file;
         FileReader fr;
@@ -94,6 +103,9 @@ public class FileManager {
 
             data = br.readLine();
             br.close();
+        }
+        catch (FileNotFoundException ex) {
+            throw new FileNotFoundException();
         }
         catch (IOException ex) {
             ex.printStackTrace();

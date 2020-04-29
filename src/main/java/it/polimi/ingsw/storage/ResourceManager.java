@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import it.polimi.ingsw.connection.ConnectionSettings;
 import it.polimi.ingsw.model.GodPower;
 
+import java.io.FileNotFoundException;
+
 /**
  * This class let resource retrieval operations
  * simpler since it encapsulates GSON logic
@@ -36,9 +38,15 @@ public class ResourceManager {
      */
     public static ConnectionSettings clientConnectionSettings() {
         String filePath = "connection_settings/client_settings.config";
+        String json = "";
 
         FileManager fileManager = FileManager.getIstance();
-        String json = fileManager.getFileContent(filePath);
+        try {
+            json = fileManager.getFileContent(filePath);
+        }
+        catch (FileNotFoundException ex) {
+            return null;
+        }
 
         /* JSON DESERIALIZATION WITH GSON */
         Gson gson = new Gson();
@@ -52,9 +60,15 @@ public class ResourceManager {
      */
     public static ConnectionSettings serverConnectionSettings() {
         String filePath = "connection_settings/server_settings.config";
+        String json = "";
 
         FileManager fileManager = FileManager.getIstance();
-        String json = fileManager.getFileContent(filePath);
+        try {
+            json = fileManager.getFileContent(filePath);
+        }
+        catch (FileNotFoundException ex) {
+            return null;
+        }
 
         /* JSON DESERIALIZATION WITH GSON */
         Gson gson = new Gson();
