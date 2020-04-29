@@ -154,7 +154,6 @@ class PlayerTest {
      *
      * Black Box and White Box
      */
-    @Test //todo: error for a problem ( I think ) in checkForLostConstruction()
     void chooseState() {
         Player opponent = new Player("opponent");
         Worker opponentWorker = new Worker(opponent);
@@ -300,7 +299,8 @@ class PlayerTest {
 
     /**
      * Check if switchState( TurnManager ) can correctly evaluate the lose condition
-     * of movement (checkForLostByMovement()) and of construction (checkForLostByConstruction())
+     * of movement (checkForLostByMovement()/checkForWorkerLostByMovement())
+     * and of construction (checkForLostByConstruction()/checkForWorkerLostByConstruction())
      * Methods used:        chooseCard(String)              of  Player
      *                      registerWorker(Worker)          of  Player
      *                      getMovementManager()            of  Player
@@ -311,7 +311,6 @@ class PlayerTest {
      *
      * Black Box and White Box
      */
-    @Test //todo: error for a problem ( I think ) in checkForLostConstruction()
     void switchState() {
         boolean checkLose = false;
 
@@ -533,7 +532,7 @@ class PlayerTest {
         //* GodPower Apollo/Minotaur *//
         player.chooseCard("apollo");
 
-        //TODO: MOST IMPORTANT: to do todo in MyMove for Apollo's Power (the worker must be opponent's Worker)
+        //TODO: MOST IMPORTANT: after remove todo in MyMove for Apollo's Power (the worker must be opponent's Worker) test and remove
         /* Player can't choose a Worker if it can't move */
         worker1.place(cornerCell);
         worker2.place(nearCornerCell1);
@@ -594,7 +593,8 @@ class PlayerTest {
     }
 
     /**
-     * Check if chooseWorker( Worker ) ( and checkForLostMove() ) can correctly change the Worker's status when it is possible
+     * Check if chooseWorker( Worker ) ( and checkForLostMovement()/checkForWorkerLostByMovement )
+     * can correctly change the Worker's status when it is possible
      * Methods used:        chooseCard(String)          of  Card
      *                      registerWorker(Worker)      of  Player
      *                      equals( obj )               of  Cell

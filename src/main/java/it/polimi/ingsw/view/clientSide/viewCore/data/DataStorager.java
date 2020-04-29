@@ -47,6 +47,9 @@ public interface DataStorager {
         try {
             return ViewObject.search(id);
         } catch (Exception ignored) { }
+        try {
+            return ViewNickname.search(id);
+        } catch (Exception ignored) { }
         throw new NotFoundException();
     }
 

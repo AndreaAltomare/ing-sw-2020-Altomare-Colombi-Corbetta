@@ -9,56 +9,19 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.EventObject;
 
-/**
- * Class to rapresent the board.
- * !! there will be no more than one instance in each client!!
- *
- * @author giorgio
- */
-public class ViewBoard extends ViewObject {
+public class ViewNickname extends ViewObject {
 
-    private int xDim;
-    private int yDim;
+    private String name;
 
-    private ViewCell[][] realBoard;
+    private static ViewNickname el = null;
 
-    private static ViewBoard board;
-
-    /**
-     * Getter of the x-dimension of the board.
-     *
-     * @return (the x-dimension of the board)
-     */
-    public int getXDim(){ return xDim; }
-    /**
-     * Getter of the y-dimension of the board.
-     *
-     * @return (the y-dimension of the board)
-     */
-    public int getYDim(){ return yDim; }
-
-    /**
-     * Method that returns the Cell at the selected position.
-     *
-     * @param x (x-position)
-     * @param y (y-position)
-     * @return (the cell on the selected position)
-     * @throws NotFoundException (iif it's accessing outside the borders)
-     */
-    public ViewCell getCellAt(int x, int y) throws NotFoundException {
-        if(x<0 || x>this.getXDim() || y<0 || y>this.getYDim())
-            throw new NotFoundException();
-        return realBoard[x][y];
-    }
-
-    @Override
     /**
      * Method returning a unique string for each object inside the Class.
      *
      * @return (unique String identifying the object)
      */
     public String getId() {
-        return "";
+        return name;
     }
 
     @Override
@@ -71,12 +34,15 @@ public class ViewBoard extends ViewObject {
         return getClassId();
     }
 
+
     /**
      * function that returns for each Class the Base of its objects identificators as "[ClassId]".
      *
      * @return (String the base of Class identificators)
      */
-    public static String getClassId(){ return "[Board]"; }
+    public static String getClassId(){
+        return "[Nickname]";
+    }
 
     /**
      * Method that will search the object with the passed id.
@@ -87,11 +53,9 @@ public class ViewBoard extends ViewObject {
      * @throws WrongViewObjectException (If the object is not of this Class).
      */
     public static ViewObject search( @NotNull String id) throws NotFoundException, WrongViewObjectException{
-        if(!isOfThisClass(id))
+        if(!isOfThisClass(id)||el==null)
             throw new WrongViewObjectException();
-        if(board == null)
-            throw new NotFoundException();
-        return board;
+        return el;
     }
 
     /**
@@ -102,12 +66,10 @@ public class ViewBoard extends ViewObject {
      * @throws NotFoundException (If it doesn't find the object and cannot build it)
      * @throws WrongViewObjectException (If the object is not of this Class).
      */
-    public static ViewObject find( @ NotNull String id) throws NotFoundException, WrongViewObjectException{
-        if(!isOfThisClass(id))
+    public static ViewObject find( @NotNull String id) throws NotFoundException, WrongViewObjectException{
+        if(!isOfThisClass(id)||el==null)
             throw new WrongViewObjectException();
-        if(board == null)
-            throw new NotFoundException();
-        return board;
+        return el;
     }
 
     /**
@@ -119,7 +81,7 @@ public class ViewBoard extends ViewObject {
      */
     public boolean notifyEvent( @NotNull EventObject event) throws WrongEventException{
         //todo: implement it
-        return false;
+        return true;
     }
 
     /**
@@ -130,7 +92,7 @@ public class ViewBoard extends ViewObject {
      * @throws WrongEventException (if the Event is not supported by this Class)
      */
     public static ViewObject populate( @NotNull EventObject event) throws WrongEventException{
-        //todo implement it
+        //todo immplement it
         throw new WrongEventException();
     }
 
@@ -138,7 +100,7 @@ public class ViewBoard extends ViewObject {
      * Method to discard all the objects of the Class.
      */
     public static void clear(){
-        board = null;
+        el = null;
     }
 
     /**
@@ -147,30 +109,34 @@ public class ViewBoard extends ViewObject {
      * @return (String representing the object and its status)
      */
     public String toTerminal(){
-        String ret = this.toString() + "\n";
-        for(int x = 0; x< this.getXDim(); x++) {
-            for (int y = 0; y < this.getYDim(); y++) {
-                try {
-                    ret += this.getCellAt(x, y).toString();
-                } catch (NotFoundException ignore) {   }
-            }
-            ret += "\n";
-        }
-        return ret;
+        return this.toString();
     }
-
 
     /**
      * Method that will return a (Object) that will represent the ViewObject on the CLI.
      *
      * @return (representation of Object for the CLI)
      */
-    public Object toCLI(){ return null; }
+    public Object toCLI(){
+        return null;
+    }
 
     /**
      * Method that will return a (Object) that will represent the ViewObject on the GUI.
      *
      * @return (representation of Object for the GI)
      */
-    public Object toGUI(){ return null; }
+    public Object toGUI(){
+        return null;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param nickname (String, nickname dell'utente)
+     */
+    private ViewNickname(String nickname){
+        this.name = nickname;
+        el = this;
+    }
 }
