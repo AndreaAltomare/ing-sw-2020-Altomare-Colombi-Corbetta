@@ -2,15 +2,23 @@ package it.polimi.ingsw.view.events;
 
 import java.util.EventObject;
 
-// TODO: ricordarsi che è una Bean class
 /**
  * Event: Player has selected a Card.
  * [VCEvent]
  */
 public class CardSelectionEvent extends EventObject {
-    // TODO inserire attributi
+    private String cardName;
 
-    public CardSelectionEvent(Object o) {
-        super(o);
+    public CardSelectionEvent(String cardName) {
+        super(new Object());
+        this.cardName = cardName;
+    }
+
+    public String getCardName() {
+        return cardName;
+    }
+
+    public void setCardName(String cardName) {
+        this.cardName = cardName;
     }
 }
