@@ -64,30 +64,41 @@ public class FileManager {
     }
 
     /**
-     * Get a Card's information just by specifying its name
+     * Special method to get a Card's information just by specifying its name
      *
      * @param cardName (Card's name)
-     * @return jsonData (JSON data read from File)
+     * @return JSON data read from File
      */
     public String getCard(String cardName) {
-        String jsonData = "";
         filePath = cardName + ".config";
-        File cardFile;
+
+        return getFileContent(filePath);
+    }
+
+    /**
+     * General method to get information from File
+     *
+     * @param fileName (File name)
+     * @return File stored information
+     */
+    public String getFileContent(String fileName) {
+        String data = "";
+        File file;
         FileReader fr;
         BufferedReader br;
 
         try {
-            cardFile = new File(filePath);
-            fr = new FileReader(cardFile);
+            file = new File(fileName);
+            fr = new FileReader(file);
             br = new BufferedReader(fr);
 
-            jsonData = br.readLine();
+            data = br.readLine();
             br.close();
         }
         catch (IOException ex) {
             ex.printStackTrace();
         }
 
-        return jsonData;
+        return data;
     }
 }

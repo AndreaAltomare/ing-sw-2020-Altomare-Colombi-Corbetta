@@ -19,10 +19,11 @@ public class ServerApp {
      */
     public static void main(String[] args) {
         ServerConnection server;
+        int port = 9999; // default port
 
         try {
             System.out.println("Starting Server...");
-            server = new ServerConnection();
+            server = new ServerConnection(port);
             server.run();
         }
         catch (IOException ex) {

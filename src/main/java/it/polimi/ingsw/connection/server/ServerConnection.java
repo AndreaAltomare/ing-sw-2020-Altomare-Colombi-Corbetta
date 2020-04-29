@@ -28,7 +28,7 @@ import java.util.concurrent.Executors;
  */
 public class ServerConnection {
     // TODO: maybe to remove (pass already EventObjects from VirtualView) or to implement Listener interfaces
-    private static final int PORT = 9999;
+    private final int PORT;
     private ServerSocket serverSocket;
     private ExecutorService executor = Executors.newFixedThreadPool(128);
 
@@ -47,10 +47,11 @@ public class ServerConnection {
      *
      * @throws IOException (Exception handled by ServerApp)
      */
-    public ServerConnection() throws IOException {
+    public ServerConnection(int port) throws IOException {
         System.out.println("Initialization...");
         numberOfPlayers = -1; // initialized to an non-valid value
-        this.serverSocket = new ServerSocket(PORT);
+        this.PORT = port;
+        this.serverSocket = new ServerSocket(port);
     }
 
     /**
