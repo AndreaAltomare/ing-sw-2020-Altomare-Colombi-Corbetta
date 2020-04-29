@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller.interfaces;
 
 import it.polimi.ingsw.model.StateType;
 import it.polimi.ingsw.observer.GeneralListener;
+import it.polimi.ingsw.view.events.TurnStatusChangeEvent;
 
 /**
  * Interface for Card selection from View.
@@ -11,5 +12,5 @@ import it.polimi.ingsw.observer.GeneralListener;
  * @author AndreaAltomare
  */
 public interface TurnStatusChangeListener extends GeneralListener {
-    public void onTurnStatusChange(StateType turnStatus);
+    public void onTurnStatusChange(TurnStatusChangeEvent turnStatus, String playerNickname);
 }

@@ -1,6 +1,9 @@
 package it.polimi.ingsw.controller.interfaces;
 
 import it.polimi.ingsw.observer.GeneralListener;
+import it.polimi.ingsw.view.events.QuitEvent;
+import it.polimi.ingsw.view.events.SetNicknameEvent;
+import it.polimi.ingsw.view.events.ViewRequestDataEvent;
 
 /**
  * Interface for general information exchange (from View [Client]).
@@ -10,7 +13,7 @@ import it.polimi.ingsw.observer.GeneralListener;
  * @author AndreaAltomare
  */
 public interface ClientGeneralListener extends GeneralListener {
-    public void onNicknameSubmit(String nickname); // useless: handled by Server connection
-    public void onPlayerQuit(String nickname);
-    public void viewRequestData(); // Game match general data
+    public void onNicknameSubmit(SetNicknameEvent submittedNickname); // handled by Server connection first
+    public void onPlayerQuit(QuitEvent quit, String playerNickname);
+    public void viewRequestData(ViewRequestDataEvent dataRequest, String playerNickname); // Game match general data
 }

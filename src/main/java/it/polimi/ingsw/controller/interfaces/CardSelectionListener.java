@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller.interfaces;
 
 import it.polimi.ingsw.observer.GeneralListener;
+import it.polimi.ingsw.view.events.CardSelectionEvent;
 
 /**
  * Interface for Card selection from View.
@@ -10,5 +11,5 @@ import it.polimi.ingsw.observer.GeneralListener;
  * @author AndreaAltomare
  */
 public interface CardSelectionListener extends GeneralListener {
-    public void onCardSelection(String cardName, String playerNickname);
+    public void onCardSelection(CardSelectionEvent card, String playerNickname);
 }
