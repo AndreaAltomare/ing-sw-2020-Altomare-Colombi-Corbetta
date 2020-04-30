@@ -8,7 +8,8 @@ import java.util.EventObject;
  * [MVEvent]
  */
 public class WorkerRemovedEvent extends EventObject {
-    // TODO per Giorgio: Inserire i todo per indicare gli attributi necessari
+    // TODO: 30/04/20 String worker 
+    // TODO: 30/04/20 cell: int x, int y 
 
     public WorkerRemovedEvent(Object o) {
         super(o);

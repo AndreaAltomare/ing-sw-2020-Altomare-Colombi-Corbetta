@@ -8,7 +8,9 @@ import java.util.EventObject;
  * [MVEvent]
  */
 public class WorkerMovedEvent extends EventObject {
-    // TODO per Giorgio: Inserire i todo per indicare gli attributi necessari
+    // TODO: 30/04/20 String worker
+    // TODO: 30/04/20 startCell : int startX, int startY (Se diventa un casino posso pure ricavarmelo io, è quasi solo per ccontrollare che
+    // TODO: 30/04/20 finalCell: int finalX, int finalY
 
     public WorkerMovedEvent(Object o) {
         super(o);

@@ -8,7 +8,8 @@ import java.util.EventObject;
  * [MVEvent]
  */
 public class CardSelectedEvent extends EventObject {
-    // TODO per Giorgio: Inserire i todo per indicare gli attributi necessari
+    // TODO: 30/04/20 String cardName
+    // TODO: 30/04/20 String playerName (per poter mandare il messaggio in broadcast)
 
     public CardSelectedEvent(Object o) {
         super(o);
