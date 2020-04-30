@@ -15,6 +15,8 @@ public class ViewNickname extends ViewObject {
 
     private static ViewNickname el = null;
 
+    public static ViewNickname getNickname(){ return el; }
+
     /**
      * Method returning a unique string for each object inside the Class.
      *
@@ -128,6 +130,16 @@ public class ViewNickname extends ViewObject {
      */
     public Object toGUI(){
         return null;
+    }
+
+    /**
+     * Method checking weather the given string is identifying this.
+     *
+     * @param st (String that will possibly represent this)
+     * @return (true iif st==this.toString())
+     */
+    public boolean isThis ( @NotNull String st){
+        return (st.equals(this.toString())||st.equals(this.getId()));
     }
 
     /**

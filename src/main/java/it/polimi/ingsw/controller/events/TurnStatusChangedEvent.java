@@ -10,7 +10,7 @@ import java.util.EventObject;
 public class TurnStatusChangedEvent extends EventObject {
     // TODO per Giorgio: Inserire i todo per indicare gli attributi necessari
     // TODO: 30/04/20 String playerName 
-    // TODO: 30/04/20 TurnPart part 
+    // TODO: 30/04/20 view.serverSide.ClientSubTurn part
 
     public TurnStatusChangedEvent(Object o) {
         super(o);
