@@ -14,7 +14,7 @@ import java.io.IOException;
  * @author AndteaAltomare
  */
 public class ClientApp {
-
+// todo marked resources folder as Resources root
     /**
      * Start Client-side application.
      *
