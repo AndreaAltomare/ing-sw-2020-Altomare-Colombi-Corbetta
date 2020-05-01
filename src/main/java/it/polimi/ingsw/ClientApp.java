@@ -45,6 +45,10 @@ public class ClientApp {
             }
         }
 
+        System.out.println("Stampa di prova:");
+        System.out.println(ip);
+        System.out.println(port);
+
         client = new ClientConnection(ip, port);
         try {
             client.run();
