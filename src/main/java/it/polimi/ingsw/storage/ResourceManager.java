@@ -37,20 +37,7 @@ public class ResourceManager {
      * @return ConnectionSettings' instance
      */
     public static ConnectionSettings clientConnectionSettings() {
-        String filePath = "connection_settings/client_settings.config";
-        String json = "";
-
-        FileManager fileManager = FileManager.getIstance();
-        try {
-            json = fileManager.getFileContent(filePath);
-        }
-        catch (FileNotFoundException ex) {
-            return null;
-        }
-
-        /* JSON DESERIALIZATION WITH GSON */
-        Gson gson = new Gson();
-        return gson.fromJson(json, ConnectionSettings.class);
+        return getConnectionSettingsFromPath("connection_settings/client_settings.config");
     }
 
     /**
@@ -59,7 +46,16 @@ public class ResourceManager {
      * @return ConnectionSettings' instance
      */
     public static ConnectionSettings serverConnectionSettings() {
-        String filePath = "connection_settings/server_settings.config";
+        return getConnectionSettingsFromPath("connection_settings/server_settings.config");
+    }
+
+    /**
+     * Get connection settings from a specified file path.
+     *
+     * @param filePath (Specified file path)
+     * @return ConnectionSettings' instance
+     */
+    private static ConnectionSettings getConnectionSettingsFromPath(String filePath) {
         String json = "";
 
         FileManager fileManager = FileManager.getIstance();
