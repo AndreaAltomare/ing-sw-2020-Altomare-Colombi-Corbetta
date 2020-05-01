@@ -8,7 +8,7 @@ import java.util.EventObject;
  * [MVEvent]
  */
 public class InvalidNicknameEvent extends EventObject {
-    // TODO per Giorgio: Inserire i todo per indicare gli attributi necessari
+    //non metteerei nulla...
 
     public InvalidNicknameEvent(Object o) {
         super(o);

@@ -8,7 +8,8 @@ import java.util.EventObject;
  * [MVEvent]
  */
 public class BlockBuiltEvent extends EventObject {
-    // TODO per Giorgio: Inserire i todo per indicare gli attributi necessari
+    // TODO: 30/04/20 cella: int x, int y; 
+    // TODO: 30/04/20 block: BlockType block; 
 
     public BlockBuiltEvent(Object o) {
         super(o);

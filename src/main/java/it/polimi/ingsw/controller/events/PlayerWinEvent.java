@@ -8,7 +8,9 @@ import java.util.EventObject;
  * [MVEvent]
  */
 public class PlayerWinEvent extends EventObject {
-    // TODO per Giorgio: Inserire i todo per indicare gli attributi necessari
+    // TODO: 30/04/20 String playerName 
+    // TODO: 30/04/20 String winnerMessage 
+    // TODO: 30/04/20 String losersMessage 
 
     public PlayerWinEvent(Object o) {
         super(o);

@@ -8,7 +8,8 @@ import java.util.EventObject;
  * [MVEvent]
  */
 public class BlockRemovedEvent extends EventObject {
-    // TODO per Giorgio: Inserire i todo per indicare gli attributi necessari
+    // TODO: 30/04/20 cell: int x, int y;
+    // TODO: 30/04/20 block BlockType; 
 
     public BlockRemovedEvent(Object o) {
         super(o);

@@ -8,7 +8,7 @@ import java.util.EventObject;
  * [MVEvent]
  */
 public class NextStatusEvent extends EventObject {
-    // TODO per Giorgio: Inserire i todo per indicare gli attributi necessari
+    //non metterei nulla
 
     public NextStatusEvent(Object o) {
         super(o);
