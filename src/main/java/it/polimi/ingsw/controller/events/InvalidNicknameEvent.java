@@ -2,15 +2,24 @@ package it.polimi.ingsw.controller.events;
 
 import java.util.EventObject;
 
-// TODO: ricordarsi che è una Bean class
 /**
  * Event: Submitted nickname is invalid.
  * [MVEvent]
  */
 public class InvalidNicknameEvent extends EventObject {
-    //non metteerei nulla...
+    private final String message;
 
-    public InvalidNicknameEvent(Object o) {
-        super(o);
+    public InvalidNicknameEvent() {
+        super(new Object());
+        this.message = "Your nickname is invalid or already taken! Choose another one.";
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    @Override
+    public String toString() {
+        return message;
     }
 }

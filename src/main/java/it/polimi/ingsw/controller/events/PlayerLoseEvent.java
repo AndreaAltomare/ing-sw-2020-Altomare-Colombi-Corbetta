@@ -2,16 +2,31 @@ package it.polimi.ingsw.controller.events;
 
 import java.util.EventObject;
 
-// TODO: ricordarsi che è una Bean class
 /**
  * Event: Player has lost.
  * [MVEvent]
  */
 public class PlayerLoseEvent extends EventObject {
-    // TODO: 30/04/20 String playerName
-    // TODO: 30/04/20 String message
+    private String playerNickname; // Player who has lost
+    private String message; // this message is to be intended for all players, to notify that the player [playerNickname] has lost.
+    // this Event will be sent in broadcast
 
-    public PlayerLoseEvent(Object o) {
-        super(o);
+    public PlayerLoseEvent(String playerNickname, String message) {
+        super(new Object());
+        this.playerNickname = playerNickname;
+        this.message = message;
+    }
+
+    public String getPlayerNickname() {
+        return playerNickname;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    @Override
+    public String toString() {
+        return message;
     }
 }

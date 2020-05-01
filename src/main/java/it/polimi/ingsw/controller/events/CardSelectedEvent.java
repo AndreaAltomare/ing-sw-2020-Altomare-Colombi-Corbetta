@@ -2,16 +2,25 @@ package it.polimi.ingsw.controller.events;
 
 import java.util.EventObject;
 
-// TODO: ricordarsi che è una Bean class
 /**
  * Event: Selected Card was correctly associated with the Player.
  * [MVEvent]
  */
 public class CardSelectedEvent extends EventObject {
-    // TODO: 30/04/20 String cardName
-    // TODO: 30/04/20 String playerName (per poter mandare il messaggio in broadcast)
+    private String cardName;
+    private String playerNickname; // Player who is now associated with this card
 
-    public CardSelectedEvent(Object o) {
-        super(o);
+    public CardSelectedEvent(String cardName, String playerNickname) {
+        super(new Object());
+        this.cardName = cardName;
+        this.playerNickname = playerNickname;
+    }
+
+    public String getCardName() {
+        return cardName;
+    }
+
+    public String getPlayerNickname() {
+        return playerNickname;
     }
 }

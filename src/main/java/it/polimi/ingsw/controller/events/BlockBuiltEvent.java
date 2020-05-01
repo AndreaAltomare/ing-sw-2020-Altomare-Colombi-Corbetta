@@ -1,17 +1,34 @@
 package it.polimi.ingsw.controller.events;
 
+import it.polimi.ingsw.model.PlaceableType;
+
 import java.util.EventObject;
 
-// TODO: ricordarsi che è una Bean class
 /**
  * Event: Block was built successfully.
  * [MVEvent]
  */
 public class BlockBuiltEvent extends EventObject {
-    // TODO: 30/04/20 cella: int x, int y; 
-    // TODO: 30/04/20 block: BlockType block; 
+    private int x;
+    private int y;
+    private PlaceableType blockType;
 
-    public BlockBuiltEvent(Object o) {
-        super(o);
+    public BlockBuiltEvent(int x, int y, PlaceableType blockType) {
+        super(new Object());
+        this.x = x;
+        this.y = y;
+        this.blockType = blockType;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public PlaceableType getBlockType() {
+        return blockType;
     }
 }
