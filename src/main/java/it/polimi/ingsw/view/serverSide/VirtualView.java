@@ -4,14 +4,16 @@ import it.polimi.ingsw.connection.server.ClientConnection;
 import it.polimi.ingsw.model.PlaceableType;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Worker;
-import it.polimi.ingsw.observer.Observable;
-import it.polimi.ingsw.observer.Observer;
+import it.polimi.ingsw.observer.*;
+import it.polimi.ingsw.view.events.*;
 import it.polimi.ingsw.view.serverSide.interfaces.GamePreparationListener;
 import it.polimi.ingsw.view.serverSide.interfaces.MessageListener;
 import it.polimi.ingsw.view.serverSide.interfaces.MoveExecutedListener;
 import it.polimi.ingsw.view.serverSide.interfaces.ServerGeneralListener;
 
+import java.util.ArrayList;
 import java.util.EventObject;
+import java.util.List;
 
 /**
  * Virtual View represents the generic View scenario for the MVC pattern.
@@ -19,10 +21,14 @@ import java.util.EventObject;
  *
  * It relies on the Connection Layer to handle network communication.
  *
- * @author Giorgio Corbetta
+ * An Observer Pattern is applied to let VCEvents Listeners to be properly
+ * notified when a VCEvent occurs.
+ * So this class is an Observable for VCEvents.
+ *
+ * @see <a href="https://github.com/emanueledelsozzo/ingsoft-prova-finale-2020/blob/master/ese_Socket_Serialization/RockPaperScissorsLizardSpockDistributedMVC/src/main/java/it/polimi/ingsw/view/RemoteView.java">github.com/emanueledelsozzo/.../RemoteView.java</a>
+ * @author AndreaAltomare
  */
-public class VirtualView extends Observable<Object> implements MoveExecutedListener, GamePreparationListener, ServerGeneralListener, MessageListener {
-    //private Player player;
+public class VirtualView extends VCEventSubject implements Observer<Object> {
     private String  playerNickname; // Player's unique nickname
     private ClientConnection connection;
 
@@ -37,102 +43,45 @@ public class VirtualView extends Observable<Object> implements MoveExecutedListe
         this.playerNickname = playerNickname;
         this.connection = c;
         c.addObserver(new MessageReceiver());
-        //c.asyncSend("Scrivi qualcosa [metodo send ASINCRONO]");
-        //c.send("Scrivi qualcosa [metodo send SINCRONO]");
     }
 
-    // TODO: check if simple string-based communication works properly
-    // TODO: maybe can be transformed into a instance object attribute
+
+    /**
+     * This class is the general Observer for Object messages received from
+     * the Connection Layer.
+     *
+     * @author AndreaAltomare
+     */
     private class MessageReceiver implements Observer<Object> {
 
-        // TODO: write Javadoc here
+        /**
+         * Notify VCEvents Listeners when an (Event) Object is received form
+         * the Connection Layer.
+         *
+         * @param event (Event Object)
+         */
         @Override
-        public void update(Object message) {
-            System.out.println("\n(From VirtualView) Received: " + (String)message);
-            System.out.println("I'm " + playerNickname + "'s VirtualView");
-            // TODO: if this thing works, insert here operation to call proper event method handler
-            VirtualView.this.notify(message, playerNickname); // notify Controller with Player's nickname information - IMPORTANT!!
+        public void update(Object event) {
+            System.out.println("I'm " + playerNickname + "'s VirtualView and I received an event.");
+            VirtualView.this.notifyVCEventsListeners(event, playerNickname); // notify Controller with Player's nickname information - IMPORTANT!!
         }
-
-        // TODO: write Javadoc here
-        @Override
-        public void update(Object message, String info) {
-            VirtualView.this.notify(message, info);
-        }
-    }
-
-    /**
-     * General update() method for Observer Pattern.
-     *
-     * @param o (Object object)
-     */
-    @Override
-    public void update(Object o) {
-        // todo code
-    }
-
-    /**
-     * General update() method for Observer Pattern.
-     * Additional info provided.
-     *
-     * @param o (Object message)
-     * @param info (Additional information)
-     */
-    @Override
-    public void update(Object o, String info) {
-        // todo code
-    }
-
-
-
-
-
-    @Override
-    public void onWorkerPlacement(Worker worker, int x, int y) {
-
-    }
-
-    @Override
-    public void onCardSelection(String cardName) {
-
-    }
-
-    @Override
-    public void showMessage(String message) {
-
-    }
-
-    @Override
-    public void onWorkerMovement(Worker worker, int x, int y) {
-
-    }
-
-    @Override
-    public void onWorkerConstruction(Worker worker, int x, int y, PlaceableType block) {
-
-    }
-
-    @Override
-    public void onWorkerRemoval(Worker worker, int x, int y) {
-
-    }
-
-    @Override
-    public void onStatusChange(ClientStatus clientStatus) {
-
-    }
-
-    @Override
-    public void onNextStatus() {
-
-    }
-
-    @Override
-    public void serverSendData() {
-
     }
 
     public String getPlayerNickname() {
         return playerNickname;
+    }
+
+
+    /**
+     * Wrapper method to update MVEvents Listeners (by sending
+     * the Event Object to the network) when a MVEvent occurs.
+     *
+     * @param o (Event Object)
+     */
+    @Override
+    public void update(Object o) {
+        // todo write instruction to send via connection handler the MVEvent object
+        //c.asyncSend("Scrivi qualcosa [metodo send ASINCRONO]");
+        //c.send("Scrivi qualcosa [metodo send SINCRONO]");
     }
 }

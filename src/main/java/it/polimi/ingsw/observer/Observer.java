@@ -10,5 +10,4 @@ package it.polimi.ingsw.observer;
  */
 public interface Observer<T> {
     void update(T message);
-    void update(T message, String info); // for additional information notification
 }

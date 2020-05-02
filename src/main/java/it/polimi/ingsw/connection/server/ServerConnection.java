@@ -1,6 +1,7 @@
 package it.polimi.ingsw.connection.server;
 
 import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.controller.events.NextStatusEvent;
 import it.polimi.ingsw.model.Model;
 import it.polimi.ingsw.view.serverSide.VirtualView;
 import it.polimi.ingsw.view.serverSide.interfaces.GamePreparationListener;
@@ -32,7 +33,7 @@ public class ServerConnection {
     private ServerSocket serverSocket;
     private ExecutorService executor = Executors.newFixedThreadPool(128);
 
-    private List<ClientConnection> connections = new ArrayList<ClientConnection>();
+    private List<ClientConnection> connections = new ArrayList<>();
     private Map<String, ClientConnection> waitingConnection = new HashMap<>();
     private Map<String, ClientConnection> playingConnection = new HashMap<>();
 
@@ -141,7 +142,7 @@ public class ServerConnection {
 
             /* 2- Instantiate VirtualView(s) */
             for (String key : keys) {
-                virtualViews.add(new VirtualView(key, waitingConnection.get(key)));
+                virtualViews.add(new VirtualView(key, waitingConnection.get(key))); // here: VirtualView is instantiated and become an Observer for its ClientConnection
             }
 
             /* 3- Instantiate Model */
@@ -153,7 +154,7 @@ public class ServerConnection {
             /* 5- Register observers */
             for (VirtualView vw : virtualViews) {
                 controller.addObserver(vw); // Observer(s) to the Controller
-                vw.addObserver(controller); // Observer to the VirtualView(s)
+                vw.addVCEventsListener(controller); // Observer to the VirtualView(s)
             }
 
             /* 6- Now all Clients in "waiting" must be considered in a "playing" status */
@@ -169,7 +170,7 @@ public class ServerConnection {
 
             /* 9- Alert all clients they joined the lobby successfully */
             for(ClientConnection client : clients) {
-                client.send("Joined lobby.\nWaiting for for the game to start...\n");
+                client.send(new NextStatusEvent("Joined lobby.\nWaiting for for the game to start...\n")); // todo sobstitute with NextStatus event and (MAYBE) send a (generic) message also...
             }
         }
     }

@@ -2,7 +2,6 @@ package it.polimi.ingsw.view.serverSide.interfaces;
 
 import it.polimi.ingsw.controller.events.*;
 import it.polimi.ingsw.observer.GeneralListener;
-import it.polimi.ingsw.view.events.TurnStatusChangeEvent;
 import it.polimi.ingsw.view.serverSide.ClientStatus;
 
 /**
@@ -20,5 +19,5 @@ public interface ServerGeneralListener extends GeneralListener {
     public void onLobbyFull(LobbyFullEvent lobbyFull);
     public void onPlayerWin(PlayerWinEvent playerWin);
     public void onPlayerLose(PlayerLoseEvent playerLose);
-    public void onTurnStatusChange(TurnStatusChangeEvent turnStatusChange);
+    public void onTurnStatusChange(TurnStatusChangedEvent turnStatusChange);
 }

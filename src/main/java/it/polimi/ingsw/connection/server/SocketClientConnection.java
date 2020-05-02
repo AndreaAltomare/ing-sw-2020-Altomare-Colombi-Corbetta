@@ -1,10 +1,15 @@
 package it.polimi.ingsw.connection.server;
 
+import it.polimi.ingsw.controller.events.*;
 import it.polimi.ingsw.observer.Observable;
+import it.polimi.ingsw.view.events.QuitEvent;
+import it.polimi.ingsw.view.events.SetNicknameEvent;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.EventObject;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -17,8 +22,10 @@ import java.util.Scanner;
  */
 public class SocketClientConnection extends Observable<Object> implements ClientConnection, Runnable {
     private Socket socket;
+    private ObjectInputStream in;
     private ObjectOutputStream out;
     private ServerConnection server;
+    private static final int NICKNAME_MIN_LENGTH = 3;
 
     private boolean active = true;
 
@@ -104,28 +111,34 @@ public class SocketClientConnection extends Observable<Object> implements Client
      */
     @Override
     public void run() {
-        Scanner in;
         String nickname;
+        Object read;
+        SetNicknameEvent nicknameRead = null; // null initialization
+
 
         try {
-            in = new Scanner(socket.getInputStream());
+            in = new ObjectInputStream(socket.getInputStream());
             out = new ObjectOutputStream(socket.getOutputStream());
-            // todo send an event to notify connection has established and a nickname needs to be submitted
 
             /* 1- Ask for the Player's nickname */
-            send("Welcome!\nType your nickname"); // todo sostituire con evento NextStatus (per la view)
-            String read = in.nextLine();
-            // Handle duplicates
-            while(!server.addClient(this, read)) {
-                send("This nickname is already taken! Please try again.");
-                read = in.nextLine();
+            send(new NextStatusEvent("Welcome!\nType your nickname"));
+            read = in.readObject();
+            if(read instanceof SetNicknameEvent)
+                nicknameRead = (SetNicknameEvent)read;
+            // Handle duplicates and invalid submissions
+            while(!(read instanceof SetNicknameEvent) || nicknameRead.getNickname().length() < NICKNAME_MIN_LENGTH || !server.addClient(this, nicknameRead.getNickname())) {
+                send(new InvalidNicknameEvent());
+                read = in.readObject();
+
+                if(read instanceof SetNicknameEvent)
+                    nicknameRead = (SetNicknameEvent)read;
             }
 
-            nickname = read; // TODO: handle the case in which the submitted nickname is duplicated
+            nickname = nicknameRead.getNickname(); // TODO: handle the case in which the submitted nickname is duplicated
             //server.addClient(this, nickname);
 
             /* 2- If this is the first Client, crate a lobby */ // TODO: maybe refactor this into a more readable method
-            send("Searching for a free lobby to join in...\n");
+            send(new MessageEvent("Searching for a free lobby to join in...\n"));
             /* Synchronize to ServerConnection */
             synchronized (server) { // synchronized (server.serverLock)
                 int requiredNumberOfPlayers = -1; // initialized to error condition
@@ -133,20 +146,20 @@ public class SocketClientConnection extends Observable<Object> implements Client
                 // TODO: check here what happen if Client suddenly disconnects...
                 /* If this is the first Client to connect, make it choose for the number of player */
                 if (server.getNumberOfPlayers() < server.MINIMUM_CLIENTS_REQUIRED) {
-                    while(requiredNumberOfPlayers != 2 && requiredNumberOfPlayers != 3) {
-                        send("You are the first player!\n\nChoose the number of player for this game (you included).\nType 2 or 3");
-                        requiredNumberOfPlayers = in.nextInt(); // TODO: write a try-catch block to handle the case in which user does not submit an actual number
+                    while(requiredNumberOfPlayers != server.MINIMUM_CLIENTS_REQUIRED && requiredNumberOfPlayers != server.MAXIMUM_CLIENTS_REQUIRED) {
+                        send(new RequirePlayersNumberEvent());
+                        requiredNumberOfPlayers = in.readInt(); // TODO: write a try-catch block to handle the case in which user does not submit an actual number
 
-                        if(requiredNumberOfPlayers != 2 && requiredNumberOfPlayers != 3)
-                            send("Wrong choice! Your answer must either be 2 or 3.\n"); // warn the Client about the wrong choice
+                        if(requiredNumberOfPlayers != server.MINIMUM_CLIENTS_REQUIRED && requiredNumberOfPlayers != server.MAXIMUM_CLIENTS_REQUIRED)
+                            send(new ErrorMessageEvent("Wrong choice! Your answer must either be 2 or 3.\n")); // warn the Client about the wrong choice
                     }
 
                     server.setNumberOfPlayers(requiredNumberOfPlayers);
                     //server.setLobbyCreated(true);
-                    send("Your choice has been registered!\n\nWaiting for other players...\n");
+                    send(new NextStatusEvent("Your choice has been registered!\n\nWaiting for other players...\n"));
                 }
                 else {
-                    send("Waiting for other players...\n");
+                    send(new NextStatusEvent("Waiting for other players...\n"));
                 }
             }
 
@@ -155,17 +168,20 @@ public class SocketClientConnection extends Observable<Object> implements Client
 
             /* 4- Keep listening to te Client while connection is active */
             while(isActive()) {
-                read = in.nextLine();
+                read = in.readObject();
+                notify(read);
 
-                if(read.equals("quit")) {
-                    // TODO: notify Controller about the Player's quit
+                if(read instanceof QuitEvent) {
                     System.out.println("\n" + nickname + " is being disconnected.");
                     //close(); // close the connection with the Client
                     break;
                 }
 
-                notify(read);
+                // todo: inserire un meccanismo che permette di rispondere tramite metodo send(...)
             }
+        }
+        catch (ClassNotFoundException ex) {
+            System.err.println("Error! Serialized class not found.");
         }
         catch (IOException | NoSuchElementException ex) {
             System.err.println("Error!" + ex.getMessage());

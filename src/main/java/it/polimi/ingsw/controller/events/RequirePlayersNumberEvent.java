@@ -3,15 +3,15 @@ package it.polimi.ingsw.controller.events;
 import java.util.EventObject;
 
 /**
- * Event: Submitted nickname is invalid.
+ * Event: Require the number of Players for the upcoming game.
  * [MVEvent]
  */
-public class InvalidNicknameEvent extends EventObject {
+public class RequirePlayersNumberEvent extends EventObject {
     private final String message;
 
-    public InvalidNicknameEvent() {
+    public RequirePlayersNumberEvent() {
         super(new Object());
-        this.message = "Your nickname is invalid or already taken! Please try again.\n(Your nickname must be at least 3 character long.)";
+        this.message = "You are the first player!\n\nChoose the number of player for this game (you included).\nType 2 or 3";
     }
 
     public String getMessage() {

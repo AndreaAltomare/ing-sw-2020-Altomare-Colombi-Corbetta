@@ -4,6 +4,7 @@ import it.polimi.ingsw.connection.ConnectionSettings;
 import it.polimi.ingsw.connection.client.ClientConnection;
 import it.polimi.ingsw.connection.server.ServerConnection;
 import it.polimi.ingsw.storage.ResourceManager;
+import it.polimi.ingsw.view.clientSide.View;
 
 import java.io.IOException;
 
@@ -21,12 +22,15 @@ public class ClientApp {
      * @param args (main() arguments)
      */
     public static void main(String[] args) {
+        View view = new View();
         ClientConnection client;
         ConnectionSettings connectionSettings;
         final String DEFAULT_IP = "127.0.0.1";
         final int DEFAULT_PORT = 9999; // default port
         String ip = DEFAULT_IP;
         int port = DEFAULT_PORT;
+
+        // TODO: scrivere operazioni di istanziazione della view (magari su un thread diverso), della GUI/CLI, ecc...
 
         // todo verificare che funzioni con gli argomenti
         // todo verificare che funzioni senza gli argomenti
@@ -45,11 +49,7 @@ public class ClientApp {
             }
         }
 
-        System.out.println("Stampa di prova:");
-        System.out.println(ip);
-        System.out.println(port);
-
-        client = new ClientConnection(ip, port);
+        client = new ClientConnection(ip, port, view);
         try {
             client.run();
         }
