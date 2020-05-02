@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.serverSide.interfaces;
 
+import it.polimi.ingsw.controller.events.MessageEvent;
 import it.polimi.ingsw.observer.GeneralListener;
 
 /**
@@ -19,5 +20,5 @@ public interface MessageListener extends GeneralListener {
      * Player has lost
      * Player's turn is over
      */
-    public void showMessage(String message);
+    public void showMessage(MessageEvent message);
 }

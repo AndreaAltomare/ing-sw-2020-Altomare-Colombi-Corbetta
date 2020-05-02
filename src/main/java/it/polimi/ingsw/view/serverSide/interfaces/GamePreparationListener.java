@@ -1,5 +1,7 @@
 package it.polimi.ingsw.view.serverSide.interfaces;
 
+import it.polimi.ingsw.controller.events.CardSelectedEvent;
+import it.polimi.ingsw.controller.events.WorkerPlacedEvent;
 import it.polimi.ingsw.model.Worker;
 import it.polimi.ingsw.observer.GeneralListener;
 
@@ -11,6 +13,6 @@ import it.polimi.ingsw.observer.GeneralListener;
  * @author Giorgio Corbetta
  */
 public interface GamePreparationListener extends GeneralListener {
-    public void onWorkerPlacement(Worker worker, int x, int y);
-    public void onCardSelection(String cardName);
+    public void onWorkerPlacement(WorkerPlacedEvent workerPlaced);
+    public void onCardSelection(CardSelectedEvent cardSelected);
 }

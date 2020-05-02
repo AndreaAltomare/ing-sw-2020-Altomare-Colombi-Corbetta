@@ -1,5 +1,7 @@
 package it.polimi.ingsw.view.serverSide.interfaces;
 
+import it.polimi.ingsw.controller.events.MessageEvent;
+
 /**
  * Specialized interface for
  * Server error messages exchange.
@@ -19,5 +21,5 @@ public interface ErrorMessageListener extends MessageListener {
      * Denied move
      */
     @Override
-    public void showMessage(String message);
+    public void showMessage(MessageEvent message);
 }
