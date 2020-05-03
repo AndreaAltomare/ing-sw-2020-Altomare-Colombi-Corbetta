@@ -1,0 +1,27 @@
+package it.polimi.ingsw.view.clientSide.viewers.toCLI;
+
+import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
+import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
+
+public class CLIViewer extends Viewer {
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void refresh() {
+
+    }
+
+    @Override
+    public void setStatusViewer(StatusViewer statusViewer) {
+
+    }
+
+    @Override
+    public void setSubTurnViewer(SubTurnViewer subTurnViewer) {
+
+    }
+}

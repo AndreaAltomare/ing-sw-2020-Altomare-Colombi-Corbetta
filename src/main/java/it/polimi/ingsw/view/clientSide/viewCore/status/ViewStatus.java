@@ -3,9 +3,13 @@ package it.polimi.ingsw.view.clientSide.viewCore.status;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.DataStorager;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ClientAddressable;
-import it.polimi.ingsw.view.clientSide.viewers.StatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.NicknameExecuter;
+import it.polimi.ingsw.view.clientSide.viewers.statusViewers.ReadyViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalStatusViewer;
 import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,22 +39,7 @@ public enum ViewStatus implements ClientAddressable {
 
         @Override
         StatusViewer getViewer() {
-            return new StatusViewer() {
-                @Override
-                public Object toTerminal() {
-                    return null;
-                }
-
-                @Override
-                public Object toGUI() {
-                    return null;
-                }
-
-                @Override
-                public Object toCLI() {
-                    return null;
-                }
-            };
+            return new ReadyViewer();
         }
 
         @Override
@@ -79,17 +68,17 @@ public enum ViewStatus implements ClientAddressable {
         StatusViewer getViewer() {
             return new StatusViewer() {
                 @Override
-                public Object toTerminal() {
+                public TerminalStatusViewer toTerminal() {
                     return null;
                 }
 
                 @Override
-                public Object toGUI() {
+                public GUIStatusViewer toGUI() {
                     return null;
                 }
 
                 @Override
-                public Object toCLI() {
+                public CLIStatusViewer toCLI() {
                     return null;
                 }
             };
@@ -119,17 +108,17 @@ public enum ViewStatus implements ClientAddressable {
         StatusViewer getViewer() {
             return new StatusViewer() {
                 @Override
-                public Object toTerminal() {
+                public TerminalStatusViewer toTerminal() {
                     return null;
                 }
 
                 @Override
-                public Object toGUI() {
+                public GUIStatusViewer toGUI() {
                     return null;
                 }
 
                 @Override
-                public Object toCLI() {
+                public CLIStatusViewer toCLI() {
                     return null;
                 }
             };
@@ -158,17 +147,17 @@ public enum ViewStatus implements ClientAddressable {
         StatusViewer getViewer() {
             return new StatusViewer() {
                 @Override
-                public Object toTerminal() {
+                public TerminalStatusViewer toTerminal() {
                     return null;
                 }
 
                 @Override
-                public Object toGUI() {
+                public GUIStatusViewer toGUI() {
                     return null;
                 }
 
                 @Override
-                public Object toCLI() {
+                public CLIStatusViewer toCLI() {
                     return null;
                 }
             };
@@ -199,17 +188,17 @@ public enum ViewStatus implements ClientAddressable {
         StatusViewer getViewer() {
             return new StatusViewer() {
                 @Override
-                public Object toTerminal() {
+                public TerminalStatusViewer toTerminal() {
                     return null;
                 }
 
                 @Override
-                public Object toGUI() {
+                public GUIStatusViewer toGUI() {
                     return null;
                 }
 
                 @Override
-                public Object toCLI() {
+                public CLIStatusViewer toCLI() {
                     return null;
                 }
             };
@@ -240,17 +229,17 @@ public enum ViewStatus implements ClientAddressable {
         StatusViewer getViewer() {
             return new StatusViewer() {
                 @Override
-                public Object toTerminal() {
+                public TerminalStatusViewer toTerminal() {
                     return null;
                 }
 
                 @Override
-                public Object toGUI() {
+                public GUIStatusViewer toGUI() {
                     return null;
                 }
 
                 @Override
-                public Object toCLI() {
+                public CLIStatusViewer toCLI() {
                     return null;
                 }
             };
@@ -282,17 +271,17 @@ public enum ViewStatus implements ClientAddressable {
         StatusViewer getViewer() {
             return new StatusViewer() {
                 @Override
-                public Object toTerminal() {
+                public TerminalStatusViewer toTerminal() {
                     return null;
                 }
 
                 @Override
-                public Object toGUI() {
+                public GUIStatusViewer toGUI() {
                     return null;
                 }
 
                 @Override
-                public Object toCLI() {
+                public CLIStatusViewer toCLI() {
                     return null;
                 }
             };
