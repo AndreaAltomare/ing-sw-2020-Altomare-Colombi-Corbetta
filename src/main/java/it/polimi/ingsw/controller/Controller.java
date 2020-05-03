@@ -30,8 +30,14 @@ public class Controller extends Observable<Object> implements VCEventListener {
     /* Client general listener */
     @Override
     public synchronized void update(SetNicknameEvent submittedNickname) {
-        System.out.println("SubmittedNicknameEvent received: " + submittedNickname);
+        System.out.println("SetNicknameEvent received: " + submittedNickname);
         notify(new MessageEvent("Server respond: Nickname '" + submittedNickname + "' received."));
+    }
+
+    @Override
+    public synchronized void update(SetPlayersNumberEvent playersNumber) {
+        System.out.println("SetPlayersNumberEvent received. The number of Players set by the Client is: " + playersNumber.getNumberOfPlayers());
+        notify(new MessageEvent("Server respond: number of Players: '" + playersNumber.getNumberOfPlayers() + "' received."));
     }
 
     @Override

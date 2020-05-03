@@ -4,6 +4,7 @@ import it.polimi.ingsw.controller.events.*;
 import it.polimi.ingsw.observer.Observable;
 import it.polimi.ingsw.view.events.QuitEvent;
 import it.polimi.ingsw.view.events.SetNicknameEvent;
+import it.polimi.ingsw.view.events.SetPlayersNumberEvent;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -22,8 +23,8 @@ import java.util.Scanner;
  */
 public class SocketClientConnection extends Observable<Object> implements ClientConnection, Runnable {
     private Socket socket;
-    private ObjectInputStream in;
     private ObjectOutputStream out;
+    private ObjectInputStream in;
     private ServerConnection server;
     private static final int NICKNAME_MIN_LENGTH = 3;
 
@@ -117,8 +118,8 @@ public class SocketClientConnection extends Observable<Object> implements Client
 
 
         try {
-            in = new ObjectInputStream(socket.getInputStream());
             out = new ObjectOutputStream(socket.getOutputStream());
+            in = new ObjectInputStream(socket.getInputStream());
 
             /* 1- Ask for the Player's nickname */
             send(new NextStatusEvent("Welcome!\nType your nickname"));
@@ -142,18 +143,29 @@ public class SocketClientConnection extends Observable<Object> implements Client
             /* Synchronize to ServerConnection */
             synchronized (server) { // synchronized (server.serverLock)
                 int requiredNumberOfPlayers = -1; // initialized to error condition
+                SetPlayersNumberEvent setNumberEvent = null; // null initialization
 
                 // TODO: check here what happen if Client suddenly disconnects...
                 /* If this is the first Client to connect, make it choose for the number of player */
                 if (server.getNumberOfPlayers() < server.MINIMUM_CLIENTS_REQUIRED) {
-                    while(requiredNumberOfPlayers != server.MINIMUM_CLIENTS_REQUIRED && requiredNumberOfPlayers != server.MAXIMUM_CLIENTS_REQUIRED) {
-                        send(new RequirePlayersNumberEvent());
-                        requiredNumberOfPlayers = in.readInt(); // TODO: write a try-catch block to handle the case in which user does not submit an actual number
-
-                        if(requiredNumberOfPlayers != server.MINIMUM_CLIENTS_REQUIRED && requiredNumberOfPlayers != server.MAXIMUM_CLIENTS_REQUIRED)
-                            send(new ErrorMessageEvent("Wrong choice! Your answer must either be 2 or 3.\n")); // warn the Client about the wrong choice
+                    send(new RequirePlayersNumberEvent());
+                    read = in.readObject();
+                    if(read instanceof SetPlayersNumberEvent) {
+                        setNumberEvent = (SetPlayersNumberEvent) read;
+                        requiredNumberOfPlayers = setNumberEvent.getNumberOfPlayers();
                     }
+                    // handle invalid submissions
+                    while(!(read instanceof  SetPlayersNumberEvent) || (requiredNumberOfPlayers != server.MINIMUM_CLIENTS_REQUIRED && requiredNumberOfPlayers != server.MAXIMUM_CLIENTS_REQUIRED)) {
+                        send(new ErrorMessageEvent("Wrong choice! Your answer must either be 2 or 3.\n")); // warn the Client about the wrong choice
 
+                        send(new RequirePlayersNumberEvent()); // TODO: check if this system works or we need to handle this kind of error by providing an 'InvalidSubmissionEvent' (like InvalidNickname...) and provide an error message within it...
+                        read = in.readObject();
+                        if(read instanceof SetPlayersNumberEvent) {
+                            setNumberEvent = (SetPlayersNumberEvent) read;
+                            requiredNumberOfPlayers = setNumberEvent.getNumberOfPlayers();
+                        }
+                    }
+                    System.out.println("Sto impostando il numero di giocatori..."); // todo debug
                     server.setNumberOfPlayers(requiredNumberOfPlayers);
                     //server.setLobbyCreated(true);
                     send(new NextStatusEvent("Your choice has been registered!\n\nWaiting for other players...\n"));

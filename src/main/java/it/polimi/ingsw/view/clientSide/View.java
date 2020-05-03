@@ -107,7 +107,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         System.out.println(requirePlayersNumber);
         int numberOfPlayers = in.nextInt();
 
-        notify(numberOfPlayers); // by this way we ensure auto-boxing from int to Object type works correctly
+        notify(new SetPlayersNumberEvent(numberOfPlayers)); // by this way we ensure auto-boxing from int to Object type works correctly
     }
 
     @Override

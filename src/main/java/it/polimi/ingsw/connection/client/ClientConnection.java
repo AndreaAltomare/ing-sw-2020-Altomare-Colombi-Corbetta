@@ -6,6 +6,7 @@ import it.polimi.ingsw.view.clientSide.View;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.NoSuchElementException;
@@ -31,7 +32,7 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
     private int port;
     private View view;
     ObjectInputStream socketIn;
-    PrintWriter socketOut;
+    ObjectOutputStream socketOut;
 
     private boolean active = true;
 
@@ -75,9 +76,9 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
     // todo add javadoc
     private class AsyncSocketWriter implements Runnable {
         private Object objectToWrite; // object to write to the socket
-        private PrintWriter socketOut; // output socket
+        private ObjectOutputStream socketOut; // output socket
 
-        public AsyncSocketWriter(final Object objectToWrite, final PrintWriter socketOut) {
+        public AsyncSocketWriter(final Object objectToWrite, final ObjectOutputStream socketOut) {
             this.objectToWrite = objectToWrite;
             this.socketOut = socketOut;
         }
@@ -86,7 +87,7 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
         public void run() {
             try {
                 if (isActive()) {
-                    socketOut.println(objectToWrite);
+                    socketOut.writeObject(objectToWrite);
                     socketOut.flush(); // To ensure data is sent
                 }
             }
@@ -123,8 +124,8 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
         System.out.println("Connecting to the Server...");
         Socket socket = new Socket(ip, port);
         System.out.println("Connection established.\n");
+        socketOut = new ObjectOutputStream(socket.getOutputStream()); // todo provare con l'ObjectOutputStream
         socketIn = new ObjectInputStream(socket.getInputStream());
-        socketOut = new PrintWriter(socket.getOutputStream());
         Scanner stdin = new Scanner(System.in);
 
         /* Add observers */ // todo check if this system works (since reading and writing from/to socket is done by threads)
