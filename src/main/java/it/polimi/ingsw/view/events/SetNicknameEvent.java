@@ -21,4 +21,9 @@ public class SetNicknameEvent extends EventObject {
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
+
+    @Override
+    public String toString() {
+        return nickname;
+    }
 }

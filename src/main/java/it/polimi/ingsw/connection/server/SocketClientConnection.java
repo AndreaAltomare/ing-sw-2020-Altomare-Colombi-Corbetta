@@ -177,7 +177,7 @@ public class SocketClientConnection extends Observable<Object> implements Client
                     break;
                 }
 
-                // todo: inserire un meccanismo che permette di rispondere tramite metodo send(...)
+                // todo: inserire un meccanismo che permette di rispondere tramite metodo send(...) [penso che alla fine questo problema sia stato già risolto tramite Observer Pattern]
             }
         }
         catch (ClassNotFoundException ex) {

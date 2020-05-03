@@ -91,6 +91,11 @@ public class VCEventSubject {
             }
         else {
             // todo handle evento non valido
+            System.err.println("Invalid VCEvent Object to notify!");
+            synchronized (listeners) {
+                for(VCEventListener listener : listeners)
+                    listener.update("Warning: An invalid VCEvent has been generated!");
+            }
         }
     }
 

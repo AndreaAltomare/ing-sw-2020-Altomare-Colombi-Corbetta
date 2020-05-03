@@ -21,4 +21,9 @@ public class CardSelectionEvent extends EventObject {
     public void setCardName(String cardName) {
         this.cardName = cardName;
     }
+
+    @Override
+    public String toString() {
+        return cardName;
+    }
 }

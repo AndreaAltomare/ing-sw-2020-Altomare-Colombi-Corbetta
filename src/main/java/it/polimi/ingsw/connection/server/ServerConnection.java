@@ -1,6 +1,7 @@
 package it.polimi.ingsw.connection.server;
 
 import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.controller.events.LobbyFullEvent;
 import it.polimi.ingsw.controller.events.NextStatusEvent;
 import it.polimi.ingsw.model.Model;
 import it.polimi.ingsw.view.serverSide.VirtualView;
@@ -115,7 +116,7 @@ public class ServerConnection {
      */
     public synchronized void lobby(ClientConnection c, String nickname) {
         if(lobbyCreated) {
-            c.send("Server full!\nYou are being disconnecting...");
+            c.send(new LobbyFullEvent());
             c.closeConnection();
         }
 

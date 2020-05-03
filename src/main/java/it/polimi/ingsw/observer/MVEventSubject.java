@@ -116,6 +116,11 @@ public class MVEventSubject {
             }
         else {
             // todo handle evento non valido
+            System.err.println("Invalid MVEvent Object to notify!");
+            synchronized (listeners) {
+                for(MVEventListener listener : listeners)
+                    listener.update(new ErrorMessageEvent("Warning: An invalid MVEvent has been generated!"));
+            }
         }
     }
 

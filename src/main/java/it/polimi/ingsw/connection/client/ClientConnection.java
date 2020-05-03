@@ -141,6 +141,7 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
             System.out.println("Connection closed from the client side.");
         }
         finally {
+            // TODO: forse questi metodi danno problemi
             stdin.close();
             socketIn.close();
             socketOut.close();
