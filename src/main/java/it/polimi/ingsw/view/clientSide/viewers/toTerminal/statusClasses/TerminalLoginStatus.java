@@ -5,6 +5,6 @@ import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSta
 public class TerminalLoginStatus implements TerminalStatusViewer {
     @Override
     public void print() {
-        System.out.println("Pippo");
+        System.out.println("[Terminal]:\tlogin");
     }
 }
