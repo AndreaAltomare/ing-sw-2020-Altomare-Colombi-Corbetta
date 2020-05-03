@@ -3,8 +3,12 @@ package it.polimi.ingsw.view.clientSide;
 import it.polimi.ingsw.controller.events.*;
 import it.polimi.ingsw.observer.MVEventListener;
 import it.polimi.ingsw.observer.Observable;
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
+import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.TerminalViewer;
 import it.polimi.ingsw.view.serverSide.ClientStatus;
-import it.polimi.ingsw.view.serverSide.interfaces.*;
 
 public class View extends Observable<Object> implements MVEventListener { // todo: maybe this class extends Observable<Object> for proper interaction with Network Handler
 
@@ -75,4 +79,20 @@ public class View extends Observable<Object> implements MVEventListener { // tod
     /* Generic update method */
     @Override
     public void update(Object o) {}
+
+
+
+    public static void main(String[] args) {
+        new TerminalViewer();
+        new CLIViewer();
+        new GUIViewer();
+        System.out.println("Hello World");
+
+        ViewStatus.init();
+        Viewer.setAllStatusViewer(ViewStatus.getActual().getViewer());
+
+        ViewStatus.nextStatus();
+        Viewer.setAllStatusViewer(ViewStatus.getActual().getViewer());
+
+    }
 }

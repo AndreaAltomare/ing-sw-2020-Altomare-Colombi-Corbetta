@@ -5,21 +5,22 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalStatusViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toTerminal.statusClasses.TerminalReadyStatus;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.statusClasses.TerminalLoginStatus;
 
+import java.util.List;
 import java.util.Map;
 
-public class ReadyViewer implements StatusViewer {
+public class LoginViewer implements StatusViewer {
 
     Map<String, Executer> myExecuters;
 
-    public ReadyViewer(Map<String, Executer> executers){
+    public LoginViewer(Map<String, Executer> executers){
         myExecuters = executers;
     }
 
     @Override
     public TerminalStatusViewer toTerminal() {
-        return new TerminalReadyStatus(this);
+        return new TerminalLoginStatus();
     }
 
     @Override

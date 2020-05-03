@@ -1,7 +1,7 @@
 package it.polimi.ingsw.view.clientSide;
 
 /**
- * Interface made to connect the view with the comunication layer
+ * Interface made to connect the view with the communication layer
  *
  * Being this the entry point of the View Package, I'll put here the idea driving the development of this part:
  * "divide et impera" so one day soon we'll say "veni, vidi, vici"

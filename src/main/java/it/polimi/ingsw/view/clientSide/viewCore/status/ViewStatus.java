@@ -5,13 +5,14 @@ import it.polimi.ingsw.view.clientSide.viewCore.data.DataStorager;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ClientAddressable;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
-import it.polimi.ingsw.view.clientSide.viewCore.executers.NicknameExecuter;
-import it.polimi.ingsw.view.clientSide.viewers.statusViewers.ReadyViewer;
+import it.polimi.ingsw.view.clientSide.viewers.statusViewers.*;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalStatusViewer;
 import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 /**
  * Enumeration type for representing
@@ -33,19 +34,17 @@ public enum ViewStatus implements ClientAddressable {
         }
 
         @Override
-        Executer[] getExecuters() {
-            return new Executer[0];
+        Map<String, Executer> getExecuters() {
+            return null;
         }
 
         @Override
-        StatusViewer getViewer() {
-            return new ReadyViewer();
+        public StatusViewer getViewer() {
+            return new ReadyViewer(getExecuters());
         }
 
         @Override
-        void onLoad() {
-            ViewStatus.nextStatus();
-        }
+        void onLoad() {  }
     },
 
     /**
@@ -58,30 +57,13 @@ public enum ViewStatus implements ClientAddressable {
         }
 
         @Override
-        Executer[] getExecuters() {
-            Executer[] ret = new Executer[1];
-            ret[0] = new NicknameExecuter();
-            return ret;
+        Map<String, Executer> getExecuters() {
+            return null;
         }
 
         @Override
-        StatusViewer getViewer() {
-            return new StatusViewer() {
-                @Override
-                public TerminalStatusViewer toTerminal() {
-                    return null;
-                }
-
-                @Override
-                public GUIStatusViewer toGUI() {
-                    return null;
-                }
-
-                @Override
-                public CLIStatusViewer toCLI() {
-                    return null;
-                }
-            };
+        public StatusViewer getViewer() {
+            return new LoginViewer(getExecuters());
         }
 
         @Override
@@ -100,28 +82,13 @@ public enum ViewStatus implements ClientAddressable {
         }
 
         @Override
-        Executer[] getExecuters() {
-            return new Executer[0];
+        Map<String, Executer> getExecuters() {
+            return null;
         }
 
         @Override
-        StatusViewer getViewer() {
-            return new StatusViewer() {
-                @Override
-                public TerminalStatusViewer toTerminal() {
-                    return null;
-                }
-
-                @Override
-                public GUIStatusViewer toGUI() {
-                    return null;
-                }
-
-                @Override
-                public CLIStatusViewer toCLI() {
-                    return null;
-                }
-            };
+        public StatusViewer getViewer() {
+            return new WaitingViewer(getExecuters());
         }
 
         @Override
@@ -139,28 +106,13 @@ public enum ViewStatus implements ClientAddressable {
         }
 
         @Override
-        Executer[] getExecuters() {
-            return new Executer[0];
+        Map<String, Executer> getExecuters() {
+            return null;
         }
 
         @Override
-        StatusViewer getViewer() {
-            return new StatusViewer() {
-                @Override
-                public TerminalStatusViewer toTerminal() {
-                    return null;
-                }
-
-                @Override
-                public GUIStatusViewer toGUI() {
-                    return null;
-                }
-
-                @Override
-                public CLIStatusViewer toCLI() {
-                    return null;
-                }
-            };
+        public StatusViewer getViewer() {
+            return new NewGameViewer(getExecuters());
         }
 
         @Override
@@ -179,29 +131,14 @@ public enum ViewStatus implements ClientAddressable {
         }
 
         @Override
-        Executer[] getExecuters() {
+        Map<String, Executer> getExecuters() {
             //TODO: set the executers
-            return new Executer[0];
+            return null;
         }
 
         @Override
-        StatusViewer getViewer() {
-            return new StatusViewer() {
-                @Override
-                public TerminalStatusViewer toTerminal() {
-                    return null;
-                }
-
-                @Override
-                public GUIStatusViewer toGUI() {
-                    return null;
-                }
-
-                @Override
-                public CLIStatusViewer toCLI() {
-                    return null;
-                }
-            };
+        public StatusViewer getViewer() {
+            return new GamePreparationViewer(getExecuters());
         }
 
         @Override
@@ -220,29 +157,14 @@ public enum ViewStatus implements ClientAddressable {
         }
 
         @Override
-        Executer[] getExecuters() {
+        Map<String, Executer> getExecuters() {
             //TODO: set the executers
-            return new Executer[0];
+            return null;
         }
 
         @Override
-        StatusViewer getViewer() {
-            return new StatusViewer() {
-                @Override
-                public TerminalStatusViewer toTerminal() {
-                    return null;
-                }
-
-                @Override
-                public GUIStatusViewer toGUI() {
-                    return null;
-                }
-
-                @Override
-                public CLIStatusViewer toCLI() {
-                    return null;
-                }
-            };
+        public StatusViewer getViewer() {
+            return new PlayingViewer(getExecuters());
         }
 
         @Override
@@ -262,29 +184,14 @@ public enum ViewStatus implements ClientAddressable {
         }
 
         @Override
-        Executer[] getExecuters() {
+        Map<String, Executer> getExecuters() {
             //TODO: set the executers
-            return new Executer[0];
+            return null;
         }
 
         @Override
-        StatusViewer getViewer() {
-            return new StatusViewer() {
-                @Override
-                public TerminalStatusViewer toTerminal() {
-                    return null;
-                }
-
-                @Override
-                public GUIStatusViewer toGUI() {
-                    return null;
-                }
-
-                @Override
-                public CLIStatusViewer toCLI() {
-                    return null;
-                }
-            };
+        public StatusViewer getViewer() {
+            return new GameOverViewer(getExecuters());
         }
 
         @Override
@@ -327,7 +234,7 @@ public enum ViewStatus implements ClientAddressable {
      *
      * @return (Array of all Executers used for this status).
      */
-    abstract Executer[] getExecuters();
+    abstract Map<String, Executer> getExecuters();
 
 
     /**
@@ -335,7 +242,7 @@ public enum ViewStatus implements ClientAddressable {
      *
      * @return (StatusViewer of this status)
      */
-    abstract StatusViewer getViewer();
+    public abstract StatusViewer getViewer();
 
     /**
      * Method to be called as soon as the status is changed. It contains all the instruction to be executed on loading.
@@ -434,5 +341,14 @@ public enum ViewStatus implements ClientAddressable {
 
     public static void reset(){
         actualStatus = READY;
+    }
+
+    public static void init(){
+        reset();
+        actualStatus.onLoad();
+    }
+
+    public static ViewStatus getActual(){
+        return actualStatus;
     }
 }

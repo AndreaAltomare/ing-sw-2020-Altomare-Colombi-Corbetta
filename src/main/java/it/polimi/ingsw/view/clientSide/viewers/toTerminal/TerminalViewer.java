@@ -16,4 +16,8 @@ public class TerminalViewer extends Viewer {
 
     @Override
     public void setSubTurnViewer(SubTurnViewer subTurnViewer) {  }
+
+    public TerminalViewer(){
+        Viewer.registerViewer(this);
+    }
 }

@@ -171,7 +171,7 @@ public enum ViewSubTurn implements ClientAddressable {
     }
 
     public static void setSubTurn(ViewSubTurn subTurn){ actualSubTurn = subTurn; }
-
+    //todo override
     public static void set(String st){
         try {
             setSubTurn(search(st));
