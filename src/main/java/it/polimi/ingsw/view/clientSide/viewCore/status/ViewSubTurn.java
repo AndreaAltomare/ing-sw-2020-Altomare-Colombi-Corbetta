@@ -2,7 +2,10 @@ package it.polimi.ingsw.view.clientSide.viewCore.status;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ClientAddressable;
-import it.polimi.ingsw.view.clientSide.viewers.SubTurnViewer;
+import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSubTurnViewer;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.interfaces.Addressable;
 
@@ -12,17 +15,17 @@ public enum ViewSubTurn implements ClientAddressable {
         public SubTurnViewer getSubViewer() {
             return new SubTurnViewer() {
                 @Override
-                public Object toTerminal() {
+                public TerminalSubTurnViewer toTerminal() {
                     return null;
                 }
 
                 @Override
-                public Object toGUI() {
+                public GUISubTurnViewer toGUI() {
                     return null;
                 }
 
                 @Override
-                public Object toCLI() {
+                public CLISubTurnViewer toCLI() {
                     return null;
                 }
             };
@@ -33,17 +36,17 @@ public enum ViewSubTurn implements ClientAddressable {
         public SubTurnViewer getSubViewer() {
             return new SubTurnViewer() {
                 @Override
-                public Object toTerminal() {
+                public TerminalSubTurnViewer toTerminal() {
                     return null;
                 }
 
                 @Override
-                public Object toGUI() {
+                public GUISubTurnViewer toGUI() {
                     return null;
                 }
 
                 @Override
-                public Object toCLI() {
+                public CLISubTurnViewer toCLI() {
                     return null;
                 }
             };
@@ -54,17 +57,17 @@ public enum ViewSubTurn implements ClientAddressable {
         public SubTurnViewer getSubViewer() {
             return new SubTurnViewer() {
                 @Override
-                public Object toTerminal() {
+                public TerminalSubTurnViewer toTerminal() {
                     return null;
                 }
 
                 @Override
-                public Object toGUI() {
+                public GUISubTurnViewer toGUI() {
                     return null;
                 }
 
                 @Override
-                public Object toCLI() {
+                public CLISubTurnViewer toCLI() {
                     return null;
                 }
             };
@@ -75,17 +78,17 @@ public enum ViewSubTurn implements ClientAddressable {
         public SubTurnViewer getSubViewer() {
             return new SubTurnViewer() {
                 @Override
-                public Object toTerminal() {
+                public TerminalSubTurnViewer toTerminal() {
                     return null;
                 }
 
                 @Override
-                public Object toGUI() {
+                public GUISubTurnViewer toGUI() {
                     return null;
                 }
 
                 @Override
-                public Object toCLI() {
+                public CLISubTurnViewer toCLI() {
                     return null;
                 }
             };
@@ -96,17 +99,17 @@ public enum ViewSubTurn implements ClientAddressable {
         public SubTurnViewer getSubViewer() {
             return new SubTurnViewer() {
                 @Override
-                public Object toTerminal() {
+                public TerminalSubTurnViewer toTerminal() {
                     return null;
                 }
 
                 @Override
-                public Object toGUI() {
+                public GUISubTurnViewer toGUI() {
                     return null;
                 }
 
                 @Override
-                public Object toCLI() {
+                public CLISubTurnViewer toCLI() {
                     return null;
                 }
             };
@@ -117,17 +120,17 @@ public enum ViewSubTurn implements ClientAddressable {
         public SubTurnViewer getSubViewer() {
             return new SubTurnViewer() {
                 @Override
-                public Object toTerminal() {
+                public TerminalSubTurnViewer toTerminal() {
                     return null;
                 }
 
                 @Override
-                public Object toGUI() {
+                public GUISubTurnViewer toGUI() {
                     return null;
                 }
 
                 @Override
-                public Object toCLI() {
+                public CLISubTurnViewer toCLI() {
                     return null;
                 }
             };
