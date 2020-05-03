@@ -1,19 +1,8 @@
 package it.polimi.ingsw.view.serverSide;
 
 import it.polimi.ingsw.connection.server.ClientConnection;
-import it.polimi.ingsw.model.PlaceableType;
-import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.Worker;
-import it.polimi.ingsw.observer.*;
-import it.polimi.ingsw.view.events.*;
-import it.polimi.ingsw.view.serverSide.interfaces.GamePreparationListener;
-import it.polimi.ingsw.view.serverSide.interfaces.MessageListener;
-import it.polimi.ingsw.view.serverSide.interfaces.MoveExecutedListener;
-import it.polimi.ingsw.view.serverSide.interfaces.ServerGeneralListener;
-
-import java.util.ArrayList;
-import java.util.EventObject;
-import java.util.List;
+import it.polimi.ingsw.observer.Observer;
+import it.polimi.ingsw.observer.VCEventSubject;
 
 /**
  * Virtual View represents the generic View scenario for the MVC pattern.

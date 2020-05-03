@@ -14,8 +14,6 @@ import java.util.EventObject;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-//implements MoveListener, CardSelectionListener, TurnStatusChangeListener, ClientGeneralListener // todo passare direttamente EventObject alla View
-
 /**
  * This class handle connection aspects
  * of the distributed application.

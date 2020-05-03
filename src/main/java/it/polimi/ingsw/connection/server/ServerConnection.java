@@ -4,10 +4,6 @@ import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.events.NextStatusEvent;
 import it.polimi.ingsw.model.Model;
 import it.polimi.ingsw.view.serverSide.VirtualView;
-import it.polimi.ingsw.view.serverSide.interfaces.GamePreparationListener;
-import it.polimi.ingsw.view.serverSide.interfaces.MessageListener;
-import it.polimi.ingsw.view.serverSide.interfaces.MoveExecutedListener;
-import it.polimi.ingsw.view.serverSide.interfaces.ServerGeneralListener;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -15,7 +11,6 @@ import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-//implements MoveExecutedListener, GamePreparationListener, ServerGeneralListener, MessageListener
 
 /**
  * This class handle connection aspects

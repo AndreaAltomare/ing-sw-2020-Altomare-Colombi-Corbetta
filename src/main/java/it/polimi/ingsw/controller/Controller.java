@@ -1,6 +1,5 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.controller.interfaces.*;
 import it.polimi.ingsw.model.Model;
 import it.polimi.ingsw.model.StateType;
 import it.polimi.ingsw.observer.GeneralListener;
@@ -9,7 +8,6 @@ import it.polimi.ingsw.observer.Observable;
 import it.polimi.ingsw.observer.VCEventListener;
 import it.polimi.ingsw.view.events.*;
 
-//implements GeneralListener, ClientGeneralListener, MoveListener, TurnStatusChangeListener, CardSelectionListener // todo: [MAYBE] restore interfaces implementation
 /**
  * Game Controller.
  *
