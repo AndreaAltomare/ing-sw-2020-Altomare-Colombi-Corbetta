@@ -12,19 +12,39 @@ import java.util.List;
 import java.util.Scanner;
 
 public class View extends Observable<Object> implements MVEventListener, Runnable { // todo: maybe this class extends Observable<Object> for proper interaction with Network Handler
+    private Scanner in; // Scanner unique reference
+    private String input; // unique input
     private String nickname; // Player's nickname
     private boolean connectionActive;
 
+    public View(Scanner in) {
+        this.in = in;
+    }
+
     // TODO: con questo sistema viene verificato anche che la comunicazione con Pattern Observer funzioni correttamente su thread diversi
+    // TODO: ricordarsi che il metodo run() gira su un thread differente rispetto quello dove "girano" i metodi update() --> i metodi update() vengono chiamati sullo stesso thread di client.ClientConnection
     @Override
     public void run() {
-        Scanner in = new Scanner(System.in);
-        String input;
+        // todo istanziare connessione ecc...
+
 
         System.out.println("Welcome! Type something.");
         input = in.nextLine();
         while(!input.equals("quit")) {
             switch (input) {
+                case "alto":
+                case "andrea":
+                case "giorgio":
+                case "marco":
+                    notify(new SetNicknameEvent(input)); // submit nickname
+                    break;
+                case "1":
+                case "2":
+                case "3":
+                case "4":
+                case "5":
+                    notify(new SetPlayersNumberEvent(Integer.parseInt(input))); // by this way we ensure auto-boxing from int to Object type works correctly
+                    break;
                 case "build_block":
                     notify(new BuildBlockEvent("Worker1@" + nickname, 3, 5, PlaceableType.BLOCK));
                     break;
@@ -56,6 +76,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
                     System.out.println("Invalid request. Try again.");
                     break;
             }
+
+            input = in.nextLine();
         }
 
         notify(new QuitEvent());
@@ -64,16 +86,9 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
     /* Server general listener */
     @Override
-    public void update(ClientStatus clientStatus) {} // TODO: questo metodo non è già coperto da un evento apposito?
-
-    @Override
     public void update(NextStatusEvent nextStatus) {
         // TESTED ONLY WHEN IT'S TIME TO SUBMIT THE NICKNAME
-        Scanner in = new Scanner(System.in);
         System.out.println(nextStatus); // todo: test also if overridden method toString() works correctly.
-        String nickname = in.nextLine();
-
-        notify(new SetNicknameEvent(nickname)); // submit nickname
     }
 
     @Override
@@ -94,20 +109,12 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
     @Override
     public void update(InvalidNicknameEvent invalidNickname) {
-        Scanner in = new Scanner(System.in);
         System.out.println(invalidNickname);
-        String nickname = in.nextLine();
-
-        notify(new SetNicknameEvent(nickname)); // submit nickname
     }
 
     @Override
     public void update(RequirePlayersNumberEvent requirePlayersNumber) {
-        Scanner in = new Scanner(System.in);
         System.out.println(requirePlayersNumber);
-        int numberOfPlayers = in.nextInt();
-
-        notify(new SetPlayersNumberEvent(numberOfPlayers)); // by this way we ensure auto-boxing from int to Object type works correctly
     }
 
     @Override

@@ -7,6 +7,7 @@ import it.polimi.ingsw.storage.ResourceManager;
 import it.polimi.ingsw.view.clientSide.View;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 /**
  * Client-side Application
@@ -22,7 +23,8 @@ public class ClientApp {
      * @param args (main() arguments)
      */
     public static void main(String[] args) {
-        View view = new View();
+        final Scanner input = new Scanner(System.in); // user STDIN [UNIQUE!] reference
+        View view = new View(input);
         ClientConnection client;
         ConnectionSettings connectionSettings;
         final String DEFAULT_IP = "127.0.0.1";
@@ -49,9 +51,10 @@ public class ClientApp {
             }
         }
 
-        client = new ClientConnection(ip, port, view);
+        //client = new ClientConnection(ip, port, view);
         try {
-            client.run();
+            view.run();
+            //client.run();
         }
         catch(IOException ex) {
             System.err.println(ex.getMessage());

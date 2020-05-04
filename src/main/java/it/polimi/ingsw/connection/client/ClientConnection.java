@@ -48,6 +48,18 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
         this.view = view;
     }
 
+    // TODO: check if it works correctly
+    /**
+     * Start the View for user interaction.
+     *
+     * @return The thread in which the View is running
+     */
+    public Thread startView() {
+        Thread t = new Thread(view);
+        t.start();
+        return t;
+    }
+
     /**
      * Asynchronous data reading from Server.
      *
@@ -124,9 +136,9 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
         System.out.println("Connecting to the Server...");
         Socket socket = new Socket(ip, port);
         System.out.println("Connection established.\n");
-        socketOut = new ObjectOutputStream(socket.getOutputStream()); // todo provare con l'ObjectOutputStream
+        socketOut = new ObjectOutputStream(socket.getOutputStream());
         socketIn = new ObjectInputStream(socket.getInputStream());
-        Scanner stdin = new Scanner(System.in);
+        //Scanner stdin = new Scanner(System.in);
 
         /* Add observers */ // todo check if this system works (since reading and writing from/to socket is done by threads)
         this.addMVEventsListener(view);
@@ -134,16 +146,17 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
 
         try {
             Thread t0 = asyncReadFromSocket(socketIn);
+            Thread t1 = startView();
             //Thread t1 = asyncWriteToSocket(stdin, socketOut); // todo: maybe this is useless, to remove
             t0.join();
-            //t1.join();
+            t1.join();
         }
         catch(InterruptedException | NoSuchElementException ex) {
             System.out.println("Connection closed from the client side.");
         }
         finally {
             // TODO: forse questi metodi danno problemi
-            stdin.close();
+            //stdin.close();
             socketIn.close();
             socketOut.close();
             socket.close();

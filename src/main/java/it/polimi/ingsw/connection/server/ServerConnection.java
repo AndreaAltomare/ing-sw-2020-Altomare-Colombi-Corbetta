@@ -2,6 +2,7 @@ package it.polimi.ingsw.connection.server;
 
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.events.LobbyFullEvent;
+import it.polimi.ingsw.controller.events.MessageEvent;
 import it.polimi.ingsw.controller.events.NextStatusEvent;
 import it.polimi.ingsw.model.Model;
 import it.polimi.ingsw.view.serverSide.VirtualView;
@@ -166,7 +167,8 @@ public class ServerConnection {
 
             /* 9- Alert all clients they joined the lobby successfully */
             for(ClientConnection client : clients) {
-                client.send(new NextStatusEvent("Joined lobby.\nWaiting for for the game to start...\n")); // todo sobstitute with NextStatus event and (MAYBE) send a (generic) message also...
+                //client.send(new NextStatusEvent("Joined lobby.\nWaiting for for the game to start...\n")); // todo sobstitute with NextStatus event and (MAYBE) send a (generic) message also...
+                client.send(new MessageEvent("Joined lobby.\nWaiting for for the game to start...\n")); // todo debug
             }
         }
     }

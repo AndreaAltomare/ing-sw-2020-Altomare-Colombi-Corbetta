@@ -12,7 +12,6 @@ import it.polimi.ingsw.view.serverSide.ClientStatus;
  */
 public interface MVEventListener {
     /* Server general listener */
-    public void update(ClientStatus clientStatus);
     public void update(NextStatusEvent nextStatus);
     public void update(ServerSendDataEvent serverSentData); // Game match general data (to respond to viewRequestData, receive data from Server)
     public void update(InvalidNicknameEvent invalidNickname);

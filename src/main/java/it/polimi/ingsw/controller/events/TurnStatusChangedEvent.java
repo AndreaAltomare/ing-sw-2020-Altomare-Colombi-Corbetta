@@ -10,8 +10,7 @@ import java.util.EventObject;
  */
 public class TurnStatusChangedEvent extends EventObject {
     private String playerNickname;
-    // TODO: 30/04/20 view.serverSide.ClientSubTurn part // [Andrea: non si possono usare i turni (StateType) definiti nel Model?]
-    private StateType state; // todo: temporary
+    private StateType state; // todo: send in broadcast a NONE StateType when it's not a Player's turn
 
     public TurnStatusChangedEvent(String playerNickname, StateType state) {
         super(new Object());

@@ -121,7 +121,7 @@ public class SocketClientConnection extends Observable<Object> implements Client
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
 
-            /* 1- Ask for the Player's nickname */
+            /* 1- Ask for the Player's nickname */ // todo: check if player send a quit event at this point
             send(new NextStatusEvent("Welcome!\nType your nickname"));
             read = in.readObject();
             if(read instanceof SetNicknameEvent)
@@ -138,6 +138,7 @@ public class SocketClientConnection extends Observable<Object> implements Client
             nickname = nicknameRead.getNickname(); // TODO: handle the case in which the submitted nickname is duplicated
             //server.addClient(this, nickname);
 
+            // todo: check if player send a quit event at this point
             /* 2- If this is the first Client, crate a lobby */ // TODO: maybe refactor this into a more readable method
             send(new MessageEvent("Searching for a free lobby to join in...\n"));
             /* Synchronize to ServerConnection */
@@ -165,13 +166,14 @@ public class SocketClientConnection extends Observable<Object> implements Client
                             requiredNumberOfPlayers = setNumberEvent.getNumberOfPlayers();
                         }
                     }
-                    System.out.println("Sto impostando il numero di giocatori..."); // todo debug
+
                     server.setNumberOfPlayers(requiredNumberOfPlayers);
-                    //server.setLobbyCreated(true);
-                    send(new NextStatusEvent("Your choice has been registered!\n\nWaiting for other players...\n"));
+                    //send(new NextStatusEvent("Your choice has been registered!\n\nWaiting for other players...\n")); // todo: restore real event sending
+                    send(new MessageEvent("Your choice has been registered!\n\nWaiting for other players...\n")); // todo debug
                 }
                 else {
-                    send(new NextStatusEvent("Waiting for other players...\n"));
+                    //send(new NextStatusEvent("Waiting for other players...\n")); // todo: restore real event sending
+                    send(new MessageEvent("Waiting for other players...\n")); // todo debug
                 }
             }
 

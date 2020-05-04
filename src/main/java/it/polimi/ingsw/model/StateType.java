@@ -9,6 +9,6 @@ package it.polimi.ingsw.model;
 public enum StateType {
     MOVEMENT,
     CONSTRUCTION,
-    NONE, // no State
+    NONE, // no State (it's not the Player's turn)
     ANY // any State
 }
