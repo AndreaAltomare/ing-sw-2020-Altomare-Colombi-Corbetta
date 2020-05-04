@@ -13,7 +13,7 @@ import java.util.Scanner;
  * Client-side Application
  *
  * @see <a href="https://github.com/emanueledelsozzo/ingsoft-prova-finale-2020/blob/master/ese_Socket_Serialization/TrisDistributedMVC/src/main/java/it/polimi/ingsw/ClientApp.java">github.com/emanueledelsozzo/.../ClientApp.java</a>
- * @author AndteaAltomare
+ * @author AndreaAltomare
  */
 public class ClientApp {
 // todo marked resources folder as Resources root
@@ -24,7 +24,7 @@ public class ClientApp {
      */
     public static void main(String[] args) {
         final Scanner input = new Scanner(System.in); // user STDIN [UNIQUE!] reference
-        View view = new View(input);
+        View view;
         ClientConnection client;
         ConnectionSettings connectionSettings;
         final String DEFAULT_IP = "127.0.0.1";
@@ -51,13 +51,18 @@ public class ClientApp {
             }
         }
 
-        //client = new ClientConnection(ip, port, view);
-        try {
+        /* Instantiate View and ClientConnection (Connection-Layer) */
+        client = new ClientConnection(ip, port);
+        view = new View(input, client);
+        /* Add observers */ // todo check if this system works (since reading and writing from/to socket is done by threads)
+        client.addMVEventsListener(view);
+        view.addObserver(client);
+        //try {
             view.run();
             //client.run();
-        }
-        catch(IOException ex) {
-            System.err.println(ex.getMessage());
-        }
+        //}
+        //catch(IOException ex) {
+        //    System.err.println(ex.getMessage());
+        //}
     }
 }

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.clientSide;
 
+import it.polimi.ingsw.connection.client.ClientConnection;
 import it.polimi.ingsw.controller.events.*;
 import it.polimi.ingsw.model.PlaceableType;
 import it.polimi.ingsw.model.StateType;
@@ -8,17 +9,21 @@ import it.polimi.ingsw.observer.Observable;
 import it.polimi.ingsw.view.events.*;
 import it.polimi.ingsw.view.serverSide.ClientStatus;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
 public class View extends Observable<Object> implements MVEventListener, Runnable { // todo: maybe this class extends Observable<Object> for proper interaction with Network Handler
+    Thread tConnection;
+    private ClientConnection connection;
     private Scanner in; // Scanner unique reference
     private String input; // unique input
     private String nickname; // Player's nickname
     private boolean connectionActive;
 
-    public View(Scanner in) {
+    public View(Scanner in, ClientConnection connection) {
         this.in = in;
+        this.connection = connection;
     }
 
     // TODO: con questo sistema viene verificato anche che la comunicazione con Pattern Observer funzioni correttamente su thread diversi
@@ -26,9 +31,21 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     @Override
     public void run() {
         // todo istanziare connessione ecc...
+        tConnection = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    connection.run();
+                }
+                catch (IOException ex) {
+                    System.err.println(ex.getMessage());
+                }
+            }
+        });
+        tConnection.start();
 
 
-        System.out.println("Welcome! Type something.");
+        //System.out.println("Welcome! Type something.");
         input = in.nextLine();
         while(!input.equals("quit")) {
             switch (input) {
@@ -36,6 +53,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
                 case "andrea":
                 case "giorgio":
                 case "marco":
+                    nickname = input;
                     notify(new SetNicknameEvent(input)); // submit nickname
                     break;
                 case "1":
@@ -131,7 +149,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
     @Override
     public void update(TurnStatusChangedEvent turnStatusChange) {
-        System.out.println("Turn status changed to: " + turnStatusChange.getState().toString()); // todo: check what toString() of an enum prints...
+        System.out.println("Turn status changed to: " + turnStatusChange.getState().toString()); // todo: check what toString() of an enum prints... [si, funziona.]
     }
 
 
@@ -170,7 +188,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
     @Override
     public void update(WorkerSelectedEvent workerSelected) {
-        System.out.println("Worker named '" + workerSelected.getWorker());
+        System.out.println("Worker named '" + workerSelected.getWorker() + "was correctly SELECTED");
     }
 
 

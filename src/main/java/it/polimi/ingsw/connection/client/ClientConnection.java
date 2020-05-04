@@ -42,13 +42,14 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
      * @param ip (IP address)
      * @param port (Port for Socket connection)
      */
-    public ClientConnection(String ip, int port, View view) {
+    public ClientConnection(String ip, int port) {
         this.ip = ip;
         this.port = port;
-        this.view = view;
+        //this.view = view;
     }
 
     // TODO: check if it works correctly
+    // TODO: Maybe this method is useless
     /**
      * Start the View for user interaction.
      *
@@ -141,15 +142,15 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
         //Scanner stdin = new Scanner(System.in);
 
         /* Add observers */ // todo check if this system works (since reading and writing from/to socket is done by threads)
-        this.addMVEventsListener(view);
-        view.addObserver(this);
+        //this.addMVEventsListener(view);
+        //view.addObserver(this);
 
         try {
             Thread t0 = asyncReadFromSocket(socketIn);
-            Thread t1 = startView();
+            //Thread t1 = startView();
             //Thread t1 = asyncWriteToSocket(stdin, socketOut); // todo: maybe this is useless, to remove
             t0.join();
-            t1.join();
+            //t1.join();
         }
         catch(InterruptedException | NoSuchElementException ex) {
             System.out.println("Connection closed from the client side.");
@@ -174,6 +175,15 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
         /* Asynchronously write to the Socket */
         // todo usare gli executor (check se funziona: se non funziona, anche per problemi di caduta di connessione, istanziare un nuovo Thread alla maniera "tradizionale"
         executor.submit(new AsyncSocketWriter(o,socketOut));
+    }
+
+
+    public View getView() {
+        return view;
+    }
+
+    public void setView(View view) {
+        this.view = view;
     }
 
 
