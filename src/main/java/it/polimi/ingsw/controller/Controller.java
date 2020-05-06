@@ -42,6 +42,7 @@ public class Controller extends Observable<Object> implements VCEventListener {
 
     @Override
     public synchronized void update(QuitEvent quit, String playerNickname) {
+        // TODO: add operations to handle disconnections of Players
         System.out.println("QuitEvent received from Player " + playerNickname + ": quitting...");
     }
 

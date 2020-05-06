@@ -89,6 +89,11 @@ public class MVEventSubject {
                 for(MVEventListener listener : listeners)
                     listener.update((RequirePlayersNumberEvent) e);
             }
+        else if (e instanceof ServerQuitEvent)
+            synchronized (listeners) {
+                for(MVEventListener listener : listeners)
+                    listener.update((ServerQuitEvent) e);
+            }
         else if (e instanceof ServerSendDataEvent)
             synchronized (listeners) {
                 for(MVEventListener listener : listeners)

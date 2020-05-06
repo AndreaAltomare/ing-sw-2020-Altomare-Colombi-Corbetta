@@ -152,6 +152,12 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         System.out.println("Turn status changed to: " + turnStatusChange.getState().toString()); // todo: check what toString() of an enum prints... [si, funziona.]
     }
 
+    @Override
+    public void update(ServerQuitEvent serverQuit) {
+        // todo add code to handle disconnection
+        System.out.println(serverQuit.getMessage());
+    }
+
 
     /* Game preparation listener */
     @Override
@@ -195,14 +201,14 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     /* Message listener */
     @Override
     public void update(MessageEvent message) {
-        System.out.println("A message was received. It says: '" + message + "'");
+        System.out.println("MESSAGE: " + message);
     }
 
 
     /* Error message listener */
     @Override
     public void update(ErrorMessageEvent message) {
-        System.out.println("An ERROR message was received. It says: '" + message + "'");
+        System.out.println("ERROR MESSAGE: " + message);
     }
 
 

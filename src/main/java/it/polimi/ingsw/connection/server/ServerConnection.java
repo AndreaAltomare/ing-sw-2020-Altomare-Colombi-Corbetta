@@ -31,14 +31,18 @@ public class ServerConnection {
     private ExecutorService executor = Executors.newFixedThreadPool(128);
 
     private List<ClientConnection> connections = new ArrayList<>();
-    private Map<String, ClientConnection> waitingConnection = new HashMap<>();
-    private Map<String, ClientConnection> playingConnection = new HashMap<>();
+    private Map<String, ClientConnection> waitingConnection = new HashMap<>(); // In case of Multiple Games (Waiting list)
+    private Map<String, ClientConnection> playingConnection = new HashMap<>(); // In case of Multiple Games (Playing list)
 
     public final int MINIMUM_CLIENTS_REQUIRED = 2; // public because it can never change (by definition of Game match)
     public final int MAXIMUM_CLIENTS_REQUIRED = 3; // public because it can never change (by definition of Game match)
-    public final Object serverLock = new Object(); // public lock to synchronize some ServerConnection operation // TODO: maybe it's useless: to remove.
+    //public final Object serverLock = new Object(); // public lock to synchronize some ServerConnection operation // TODO: maybe it's useless: to remove.
     private int numberOfPlayers;
     private boolean lobbyCreated;
+
+    private Model model;
+    private Controller controller;
+    List<VirtualView> virtualViews;
 
     /**
      * Constructor (Initialization of ServerSocket).
@@ -50,6 +54,9 @@ public class ServerConnection {
         numberOfPlayers = -1; // initialized to an non-valid value
         this.PORT = port;
         this.serverSocket = new ServerSocket(port);
+        this.model = null;
+        this.controller = null;
+        this.virtualViews = null;
     }
 
     /**
@@ -87,30 +94,43 @@ public class ServerConnection {
      */
     public synchronized void unregisterConnection(ClientConnection c) {
         // TODO: handle the case in which the client disconnects before the lobby is created
+        /* 1- Unregister Observer(s) */
+        if(lobbyCreated)
+            for(VirtualView vw : virtualViews)
+                if(vw.getConnection().equals(c)) {
+                    vw.removeVCEventsListener(controller);
+                    controller.removeObserver(vw);
+                    vw = null;
+                }
+
+
+        /* 2- Remove connection entries (and items) */
         connections.remove(c);
-        ClientConnection playerConnection = playingConnection.get(c);
+        //ClientConnection playerConnection = playingConnection.get(c);
+        // TODO: maybe remove all this "if" part, which is useless
+        //if(playerConnection != null) {
+            //playerConnection.closeConnection(); // todo remove (redundant)
+            //playingConnection.remove(c);
+            //playingConnection.remove(playerConnection); // TODO: non e' ridondante questo metodo? c e playerConnection dovrebbero essere lo stesso oggetto di classe ClientConnection...
+        //}
 
-        if(playerConnection != null) {
-            playerConnection.closeConnection();
-            playingConnection.remove(c);
-            playingConnection.remove(playerConnection); // TODO: non e' ridondante questo metodo? c e playerConnection dovrebbero essere lo stesso oggetto di classe ClientConnection...
-        }
-
-        //playingConnection.remove(c);
-        //playingConnection.remove(playerConnection); // TODO: non e' ridondante questo metodo? c e playerConnection dovrebbero essere lo stesso oggetto di classe ClientConnection...
-
-        //waitingConnection.keySet().removeIf(s -> waitingConnection.get(s) == c);
-        Iterator<String> iterator = waitingConnection.keySet().iterator();
+        waitingConnection.keySet().removeIf(s -> waitingConnection.get(s) == c); // todo check if it works
+        playingConnection.keySet().removeIf(s -> playingConnection.get(s) == c); // todo check if it works
+        /*Iterator<String> iterator = waitingConnection.keySet().iterator();
         while(iterator.hasNext()) {
             if(waitingConnection.get(iterator.next()) == c) {
                 iterator.remove();
             }
-        }
+        }*/
     }
 
-    // TODO: modify Javadoc too
+
     /**
-     * Wait for another player.
+     * If the waiting list has reached the requested number of Players,
+     * create a lobby and prepare the game.
+     *
+     * If a lobby has been already created, inform the Player he/she cannot
+     * join now.
      *
      * @param c (Server-Client communication Socket)
      * @param nickname (Player's nickname)
@@ -119,9 +139,9 @@ public class ServerConnection {
         if(lobbyCreated) {
             c.send(new LobbyFullEvent());
             c.closeConnection();
+            unregisterConnection(c);
         }
         else {
-            //waitingConnection.put(nickname, c);
             System.out.println("Player " + nickname + " has connected!");
         }
 
@@ -130,8 +150,8 @@ public class ServerConnection {
         */
         if(!lobbyCreated && waitingConnection.size() == numberOfPlayers) {
             List<String> keys = new ArrayList<>(waitingConnection.keySet());
-            List<ClientConnection> clients = new ArrayList<>(MAXIMUM_CLIENTS_REQUIRED); // todo not sure if this is the right way to use this Constructor method
-            List<VirtualView> virtualViews = new ArrayList<>(MAXIMUM_CLIENTS_REQUIRED); // TODO: NOT SURE if this is the right (semantic) way to instantiate the VirtualView
+            List<ClientConnection> clients = new ArrayList<>(MAXIMUM_CLIENTS_REQUIRED);
+            virtualViews = new ArrayList<>(MAXIMUM_CLIENTS_REQUIRED); // TODO: NOT SURE if this is the right (semantic) way to instantiate the VirtualView
 
             /* 1- Get ClientConnection(s) */
             for (String key : keys) {
@@ -144,12 +164,13 @@ public class ServerConnection {
             }
 
             /* 3- Instantiate Model */
-            Model model = new Model();
+            model = new Model();
 
             /* 4- Instantiate Controller */
-            Controller controller = new Controller(model);
+            controller = new Controller(model);
 
             /* 5- Register observers */
+            // By registering observers, references to Controller and VirtualView(s) are not lost (even when Lobby(...) method is finished running)
             for (VirtualView vw : virtualViews) {
                 controller.addObserver(vw); // Observer(s) to the Controller
                 vw.addVCEventsListener(controller); // Observer to the VirtualView(s)
@@ -183,35 +204,13 @@ public class ServerConnection {
      * @return (Client connection was registered ? true : false)
      */
     public synchronized boolean addClient(ClientConnection c, String nickname) {
-        if(!(waitingConnection.containsKey(nickname) || playingConnection.containsKey(nickname))) {
+        if(!nicknameTaken(nickname)) {
             waitingConnection.put(nickname, c);
             return true;
         }
         else {
             return false;
         }
-    }
-
-    public int getWaitingConnectionSize() {
-        return waitingConnection.size();
-    }
-
-    public int getNumberOfPlayers() {
-        return numberOfPlayers;
-    }
-
-    // TODO: maybe "synchronized" here can trigger problems
-    public synchronized void setNumberOfPlayers(int numberOfPlayers) {
-        this.numberOfPlayers = numberOfPlayers;
-    }
-
-    public boolean isLobbyCreated() {
-        return lobbyCreated;
-    }
-
-    // TODO: maybe "synchronized" here can trigger problems
-    public synchronized void setLobbyCreated(boolean lobbyCreated) {
-        this.lobbyCreated = lobbyCreated;
     }
 
     /**
@@ -222,5 +221,13 @@ public class ServerConnection {
      */
     public synchronized boolean nicknameTaken(String nickname) {
         return waitingConnection.containsKey(nickname) || playingConnection.containsKey(nickname);
+    }
+
+    public int getNumberOfPlayers() {
+        return numberOfPlayers;
+    }
+
+    public synchronized void setNumberOfPlayers(int numberOfPlayers) {
+        this.numberOfPlayers = numberOfPlayers;
     }
 }

@@ -51,7 +51,8 @@ public class VirtualView extends VCEventSubject implements Observer<Object> {
          */
         @Override
         public void update(Object event) {
-            System.out.println("I'm " + playerNickname + "'s VirtualView and I received an event.");
+            //System.out.println("I'm " + playerNickname + "'s VirtualView and I received an event.");
+            System.out.println("\n");
             VirtualView.this.notifyVCEventsListeners(event, playerNickname); // notify Controller with Player's nickname information - IMPORTANT!!
         }
 
@@ -59,11 +60,6 @@ public class VirtualView extends VCEventSubject implements Observer<Object> {
         @Override
         public void update(Object message, String nickname) {}
     }
-
-    public String getPlayerNickname() {
-        return playerNickname;
-    }
-
 
     /**
      * Wrapper method to update MVEvents Listeners (by sending
@@ -89,5 +85,15 @@ public class VirtualView extends VCEventSubject implements Observer<Object> {
     public void update(Object o, String nickname) {
         if (playerNickname.equals(nickname))
             connection.asyncSend(o);
+    }
+
+
+
+    public String getPlayerNickname() {
+        return playerNickname;
+    }
+
+    public ClientConnection getConnection() {
+        return connection;
     }
 }

@@ -27,6 +27,8 @@ public class SocketClientConnection extends Observable<Object> implements Client
     private ObjectInputStream in;
     private ServerConnection server;
     private static final int NICKNAME_MIN_LENGTH = 3;
+    private static final String UNREGISTERED_NICKNAME = "UNKNOWN"; // unique nickname (identifier) for unregistered Client
+    private String nickname; // Player's (Client) unique nickname whose this connection is associated with
 
     private boolean active = true;
 
@@ -39,6 +41,7 @@ public class SocketClientConnection extends Observable<Object> implements Client
     public SocketClientConnection(Socket socket, ServerConnection server) {
         this.socket = socket;
         this.server = server;
+        this.nickname = UNREGISTERED_NICKNAME;
     }
 
     /**
@@ -78,17 +81,17 @@ public class SocketClientConnection extends Observable<Object> implements Client
      */
     private void close() {
         closeConnection();
-        System.out.println("\nUnregistering Client...");
+        System.out.println("\nUnregistering " + nickname + "'s Client...");
         server.unregisterConnection(this);
         System.out.println("Done!");
     }
 
     /**
-     * Inform Client that Connection is being closed.
+     * Close socket connection with the Client.
      */
     @Override
     public synchronized void closeConnection() {
-        send("Connection closed!");
+        //send("Connection closed!"); // todo remove
         try {
             socket.close();
         }
@@ -96,6 +99,28 @@ public class SocketClientConnection extends Observable<Object> implements Client
             System.err.println("Error when closing socket!");
         }
         active = false;
+    }
+
+    /**
+     * Takes an Object message as an argument,
+     * determines if it is a QuitEvent,
+     * then execute quitting operation for the Client.
+     *
+     * Returns true if the Object argument is an actual QuitEvent
+     * and so the connection with the Client was closed.
+     *
+     * @param o (Object message)
+     * @return (Object o is an actual QuitEvent ? true : false)
+     */
+    public boolean quitHandler(Object o) {
+        if(o instanceof QuitEvent) {
+            System.out.println("\n" + nickname + " is being disconnected...");
+            send(new ServerQuitEvent("Connection with Server is closed!"));
+            close(); // close the connection with the Client
+            return true;
+        }
+        else
+            return false;
     }
 
     /**
@@ -112,7 +137,6 @@ public class SocketClientConnection extends Observable<Object> implements Client
      */
     @Override
     public void run() {
-        String nickname;
         Object read;
         SetNicknameEvent nicknameRead = null; // null initialization
 
@@ -124,21 +148,28 @@ public class SocketClientConnection extends Observable<Object> implements Client
             /* 1- Ask for the Player's nickname */ // todo: check if player send a quit event at this point
             send(new NextStatusEvent("Welcome!\nType your nickname"));
             read = in.readObject();
+            // check if a QuitEvent arrives
+            if (quitHandler(read))
+                return;
+
             if(read instanceof SetNicknameEvent)
                 nicknameRead = (SetNicknameEvent)read;
             // Handle duplicates and invalid submissions
-            while(!(read instanceof SetNicknameEvent) || nicknameRead.getNickname().length() < NICKNAME_MIN_LENGTH || !server.addClient(this, nicknameRead.getNickname())) {
+            while(!(read instanceof SetNicknameEvent) || nicknameRead.getNickname().length() < NICKNAME_MIN_LENGTH || nicknameRead.getNickname().equals(UNREGISTERED_NICKNAME) || !server.addClient(this, nicknameRead.getNickname())) {
                 send(new InvalidNicknameEvent());
                 read = in.readObject();
+                // check if a QuitEvent arrives
+                if (quitHandler(read))
+                    return;
 
                 if(read instanceof SetNicknameEvent)
                     nicknameRead = (SetNicknameEvent)read;
             }
 
-            nickname = nicknameRead.getNickname(); // TODO: handle the case in which the submitted nickname is duplicated
+            nickname = nicknameRead.getNickname();
             //server.addClient(this, nickname);
 
-            // todo: check if player send a quit event at this point
+            // todo: check if player send a quit event at this point [MAYBE THIS CASE IS ALREADY HANDLED]
             /* 2- If this is the first Client, crate a lobby */ // TODO: maybe refactor this into a more readable method
             send(new MessageEvent("Searching for a free lobby to join in...\n"));
             /* Synchronize to ServerConnection */
@@ -151,6 +182,10 @@ public class SocketClientConnection extends Observable<Object> implements Client
                 if (server.getNumberOfPlayers() < server.MINIMUM_CLIENTS_REQUIRED) {
                     send(new RequirePlayersNumberEvent());
                     read = in.readObject();
+                    // check if a QuitEvent arrives
+                    if (quitHandler(read))
+                        return;
+
                     if(read instanceof SetPlayersNumberEvent) {
                         setNumberEvent = (SetPlayersNumberEvent) read;
                         requiredNumberOfPlayers = setNumberEvent.getNumberOfPlayers();
@@ -161,6 +196,10 @@ public class SocketClientConnection extends Observable<Object> implements Client
 
                         send(new RequirePlayersNumberEvent()); // TODO: check if this system works or we need to handle this kind of error by providing an 'InvalidSubmissionEvent' (like InvalidNickname...) and provide an error message within it...
                         read = in.readObject();
+                        // check if a QuitEvent arrives
+                        if (quitHandler(read))
+                            return;
+
                         if(read instanceof SetPlayersNumberEvent) {
                             setNumberEvent = (SetPlayersNumberEvent) read;
                             requiredNumberOfPlayers = setNumberEvent.getNumberOfPlayers();
@@ -183,12 +222,10 @@ public class SocketClientConnection extends Observable<Object> implements Client
             /* 4- Keep listening to te Client while connection is active */
             while(isActive()) {
                 read = in.readObject();
-                notify(read);
+                notify(read); // notify also in case of QuitEvents, to let the Controller take action on it
 
                 if(read instanceof QuitEvent) {
-                    System.out.println("\n" + nickname + " is being disconnected.");
-                    //close(); // close the connection with the Client
-                    // TODO: inserire istruzioni per cancellare il Player dalla lista dei Clients connessi sul Server.
+                    quitHandler(read);
                     break;
                 }
             }
@@ -197,10 +234,14 @@ public class SocketClientConnection extends Observable<Object> implements Client
             System.err.println("Error! Serialized class not found.");
         }
         catch (IOException | NoSuchElementException ex) {
-            System.err.println("Error!" + ex.getMessage());
+            System.err.println("Error! " + ex.getMessage());
         }
         finally {
-            close(); // close the connection with the Client
+            /* Close connection with an error message just if it is still active (so the error is Server-side) */
+            if(isActive()) {
+                send(new ServerQuitEvent("An error on Server occurred. You are being disconnected...")); // Inform the Client that connection is being closed since an error occurred. // TODO: check if this works correctly
+                close(); // close the connection with the Client
+            }
         }
     }
 }
