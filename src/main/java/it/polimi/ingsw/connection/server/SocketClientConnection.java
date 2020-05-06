@@ -168,12 +168,12 @@ public class SocketClientConnection extends Observable<Object> implements Client
                     }
 
                     server.setNumberOfPlayers(requiredNumberOfPlayers);
-                    //send(new NextStatusEvent("Your choice has been registered!\n\nWaiting for other players...\n")); // todo: restore real event sending
-                    send(new MessageEvent("Your choice has been registered!\n\nWaiting for other players...\n")); // todo debug
+                    send(new NextStatusEvent("Your choice has been registered!\n\nWaiting for other players...\n"));
+                    //send(new MessageEvent("Your choice has been registered!\n\nWaiting for other players...\n")); // todo [for debug]
                 }
                 else {
-                    //send(new NextStatusEvent("Waiting for other players...\n")); // todo: restore real event sending
-                    send(new MessageEvent("Waiting for other players...\n")); // todo debug
+                    send(new NextStatusEvent("Waiting for other players...\n"));
+                    //send(new MessageEvent("Waiting for other players...\n")); // todo [for debug]
                 }
             }
 

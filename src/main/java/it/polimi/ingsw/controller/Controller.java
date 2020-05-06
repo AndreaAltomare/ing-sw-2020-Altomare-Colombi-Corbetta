@@ -72,7 +72,7 @@ public class Controller extends Observable<Object> implements VCEventListener {
         workersToPlayer.put(playerNickname,workers1);
         workersToPlayer.put("Tizio",workers2);
         workersToPlayer.put("Caio",workers3);
-        notify(new ServerSendDataEvent(boardXSize,boardYSize,players,workersToPlayer));
+        notify(new ServerSendDataEvent(boardXSize,boardYSize,players,workersToPlayer), playerNickname); // TODO: here, check if unicast communication works correctly
     }
 
 

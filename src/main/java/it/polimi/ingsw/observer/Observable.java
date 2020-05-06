@@ -33,4 +33,18 @@ public class Observable<T> {
             }
         }
     }
+
+    /**
+     * This method is used to update just a certain Player.
+     *
+     * @param message (Object message to notify)
+     * @param nickname (Player's (unique) nickname)
+     */
+    protected void notify(T message, String nickname) {
+        synchronized (observers) {
+            for(Observer<T> observer : observers) {
+                observer.update(message, nickname);
+            }
+        }
+    }
 }

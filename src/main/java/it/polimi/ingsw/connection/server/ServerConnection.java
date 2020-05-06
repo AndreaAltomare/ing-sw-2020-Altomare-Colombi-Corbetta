@@ -120,9 +120,10 @@ public class ServerConnection {
             c.send(new LobbyFullEvent());
             c.closeConnection();
         }
-
-        //waitingConnection.put(nickname, c);
-        System.out.println("Player " + nickname + " has connected!");
+        else {
+            //waitingConnection.put(nickname, c);
+            System.out.println("Player " + nickname + " has connected!");
+        }
 
         /* Create a new game lobby if it has not been created yet
         * and the number of Client connected is equal to the number of players required.
@@ -167,8 +168,8 @@ public class ServerConnection {
 
             /* 9- Alert all clients they joined the lobby successfully */
             for(ClientConnection client : clients) {
-                //client.send(new NextStatusEvent("Joined lobby.\nWaiting for for the game to start...\n")); // todo sobstitute with NextStatus event and (MAYBE) send a (generic) message also...
-                client.send(new MessageEvent("Joined lobby.\nWaiting for for the game to start...\n")); // todo debug
+                client.send(new NextStatusEvent("Joined lobby.\nWaiting for for the game to start...\n"));
+                //client.send(new MessageEvent("Joined lobby.\nWaiting for for the game to start...\n")); // todo [for debug]
             }
         }
     }

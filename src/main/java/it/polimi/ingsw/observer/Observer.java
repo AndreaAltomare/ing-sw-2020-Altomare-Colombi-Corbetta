@@ -10,4 +10,5 @@ package it.polimi.ingsw.observer;
  */
 public interface Observer<T> {
     void update(T message);
+    void update(T message, String nickname); // method used to update just a certain Player
 }

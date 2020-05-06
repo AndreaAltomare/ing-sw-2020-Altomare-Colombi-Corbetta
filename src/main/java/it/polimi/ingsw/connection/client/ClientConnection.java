@@ -177,6 +177,10 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
         executor.submit(new AsyncSocketWriter(o,socketOut));
     }
 
+    /* Maybe it can be useful in future implementations (like a chat system) */
+    @Override
+    public void update(Object o, String nickname) {}
+
 
     public View getView() {
         return view;
