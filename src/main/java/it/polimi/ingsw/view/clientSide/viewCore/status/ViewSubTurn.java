@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewCore.status;
 
+import it.polimi.ingsw.model.StateType;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ClientAddressable;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
@@ -51,6 +52,11 @@ public enum ViewSubTurn implements ClientAddressable {
                 }
             };
         }
+
+        @Override
+        public StateType toStateType(){
+            return StateType.CONSTRUCTION;
+        }
     },
     MOVE("MOVE"){
         @Override
@@ -72,68 +78,10 @@ public enum ViewSubTurn implements ClientAddressable {
                 }
             };
         }
-    },
-    BUILDORMOVE("BUILDORMOVE"){
+
         @Override
-        public SubTurnViewer getSubViewer() {
-            return new SubTurnViewer() {
-                @Override
-                public TerminalSubTurnViewer toTerminal() {
-                    return null;
-                }
-
-                @Override
-                public GUISubTurnViewer toGUI() {
-                    return null;
-                }
-
-                @Override
-                public CLISubTurnViewer toCLI() {
-                    return null;
-                }
-            };
-        }
-    },
-    CANBUILD("CANBUILD"){
-        @Override
-        public SubTurnViewer getSubViewer() {
-            return new SubTurnViewer() {
-                @Override
-                public TerminalSubTurnViewer toTerminal() {
-                    return null;
-                }
-
-                @Override
-                public GUISubTurnViewer toGUI() {
-                    return null;
-                }
-
-                @Override
-                public CLISubTurnViewer toCLI() {
-                    return null;
-                }
-            };
-        }
-    },
-    CANMOVE("CANMOVE"){
-        @Override
-        public SubTurnViewer getSubViewer() {
-            return new SubTurnViewer() {
-                @Override
-                public TerminalSubTurnViewer toTerminal() {
-                    return null;
-                }
-
-                @Override
-                public GUISubTurnViewer toGUI() {
-                    return null;
-                }
-
-                @Override
-                public CLISubTurnViewer toCLI() {
-                    return null;
-                }
-            };
+        public StateType toStateType(){
+            return StateType.CONSTRUCTION;
         }
     };
 
@@ -171,7 +119,7 @@ public enum ViewSubTurn implements ClientAddressable {
     }
 
     public static void setSubTurn(ViewSubTurn subTurn){ actualSubTurn = subTurn; }
-
+    //todo override
     public static void set(String st){
         try {
             setSubTurn(search(st));
@@ -187,4 +135,6 @@ public enum ViewSubTurn implements ClientAddressable {
     public boolean isMyTurn(){return ViewNickname.getNickname().isThis(player); }
 
     public abstract SubTurnViewer getSubViewer();
+
+    public StateType toStateType(){return StateType.NONE; }
 }

@@ -20,7 +20,7 @@ public abstract class Viewer{
      *
      * @param viewer
      */
-    static void registerViewer(Viewer viewer){ myViewers.add(viewer); }
+    public static void registerViewer(Viewer viewer){ myViewers.add(viewer); }
 
     /**
      * Method that executes the "setAllStatusViewer" method on each Viewer of myViewer.

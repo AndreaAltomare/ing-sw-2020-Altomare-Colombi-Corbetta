@@ -5,22 +5,19 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalStatusViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toTerminal.statusClasses.TerminalReadyStatus;
 
 import java.util.Map;
 
-public class ReadyViewer implements StatusViewer {
+public class NewGameViewer implements StatusViewer {
 
     Map<String, Executer> myExecuters;
 
-    public ReadyViewer(Map<String, Executer> executers){
+    public NewGameViewer(Map<String, Executer> executers){
         myExecuters = executers;
     }
 
     @Override
-    public TerminalStatusViewer toTerminal() {
-        return new TerminalReadyStatus(this);
-    }
+    public TerminalStatusViewer toTerminal() { return null; }
 
     @Override
     public GUIStatusViewer toGUI() {

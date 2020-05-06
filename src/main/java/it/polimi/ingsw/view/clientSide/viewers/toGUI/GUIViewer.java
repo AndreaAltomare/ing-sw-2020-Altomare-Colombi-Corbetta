@@ -5,6 +5,11 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 
 public class GUIViewer extends Viewer {
+
+    public GUIViewer(){
+        Viewer.registerViewer(this);
+    }
+
     @Override
     public void start() {
 
