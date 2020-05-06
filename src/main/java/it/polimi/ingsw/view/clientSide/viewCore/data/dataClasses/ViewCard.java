@@ -148,9 +148,12 @@ public class ViewCard extends ViewObject {
      * @throws NotFoundException (If it doesn't find the object)
      */
     private static ViewCard cSearch( @NotNull String id) throws NotFoundException {
-        for (ViewCard i: myList)
-            if(i.toString().equals(id))
+        for (ViewCard i: myList) {
+            if (i.toString().equals(id))
                 return i;
+            if (i.getId().equals(id))
+                return i;
+        }
         throw new NotFoundException();
     }
 

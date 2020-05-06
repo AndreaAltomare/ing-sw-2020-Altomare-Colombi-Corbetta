@@ -1,5 +1,7 @@
 package it.polimi.ingsw.view.clientSide;
 
+import java.util.EventObject;
+
 /**
  * Interface made to connect the view with the communication layer
  *
@@ -22,4 +24,5 @@ public class ViewManager {
     //Funzione che invia un evento in modo asincrono.
     //Ritorna true se l'invio ha avuto successto, false altrimenti.
     public boolean sendEvent(String event){return false;}
+
 }

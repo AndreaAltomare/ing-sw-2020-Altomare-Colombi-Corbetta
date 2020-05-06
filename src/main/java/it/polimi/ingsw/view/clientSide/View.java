@@ -3,11 +3,14 @@ package it.polimi.ingsw.view.clientSide;
 import it.polimi.ingsw.controller.events.*;
 import it.polimi.ingsw.observer.MVEventListener;
 import it.polimi.ingsw.observer.Observable;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.BuildBlockExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.TerminalViewer;
+import it.polimi.ingsw.view.events.BuildBlockEvent;
 import it.polimi.ingsw.view.serverSide.ClientStatus;
 
 public class View extends Observable<Object> implements MVEventListener { // todo: maybe this class extends Observable<Object> for proper interaction with Network Handler
