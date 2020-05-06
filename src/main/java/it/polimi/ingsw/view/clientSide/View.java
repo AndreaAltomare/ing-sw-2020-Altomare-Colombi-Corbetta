@@ -7,6 +7,17 @@ import it.polimi.ingsw.model.StateType;
 import it.polimi.ingsw.observer.MVEventListener;
 import it.polimi.ingsw.observer.Observable;
 import it.polimi.ingsw.view.events.*;
+import it.polimi.ingsw.controller.events.*;
+import it.polimi.ingsw.observer.MVEventListener;
+import it.polimi.ingsw.observer.Observable;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.BuildBlockExecuter;
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
+import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.TerminalViewer;
+import it.polimi.ingsw.view.serverSide.ClientStatus;
 import it.polimi.ingsw.view.serverSide.ClientStatus;
 
 import java.io.IOException;
@@ -30,6 +41,20 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     // TODO: ricordarsi che il metodo run() gira su un thread differente rispetto quello dove "girano" i metodi update() --> i metodi update() vengono chiamati sullo stesso thread di client.ClientConnection
     @Override
     public void run() {
+        // TODO: commentato perché ho bisogno di fare ancora qualche test...
+        /*new TerminalViewer();
+        new CLIViewer();
+        new GUIViewer();
+        System.out.println("Hello World");
+
+        ViewStatus.init();
+        Viewer.setAllStatusViewer(ViewStatus.getActual().getViewer());
+
+        ViewStatus.nextStatus();
+        Viewer.setAllStatusViewer(ViewStatus.getActual().getViewer());*/
+
+
+
         // todo istanziare connessione ecc...
         tConnection = new Thread(new Runnable() {
             @Override
