@@ -1,5 +1,8 @@
 package it.polimi.ingsw.connection.server;
 
+import it.polimi.ingsw.connection.utility.ConnectionManager;
+import it.polimi.ingsw.connection.utility.PingObserver;
+import it.polimi.ingsw.connection.utility.PingResponse;
 import it.polimi.ingsw.controller.events.*;
 import it.polimi.ingsw.observer.Observable;
 import it.polimi.ingsw.view.events.QuitEvent;
@@ -10,18 +13,21 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.EventObject;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Class for Server-Client communication management.
  * It enables Server to manage multi-client connection.
  *
  * @see <a href="https://github.com/emanueledelsozzo/ingsoft-prova-finale-2020/blob/master/ese_Socket_Serialization/TrisDistributedMVC/src/main/java/it/polimi/ingsw/server/SocketClientConnection.java">github.com/emanueledelsozzo/.../SocketClientConnection.java</a>
- * @author AndreaALtomare
+ * @author AndreaAltomare
  */
 public class SocketClientConnection extends Observable<Object> implements ClientConnection, Runnable {
+    /* General */
+    private ExecutorService executor = Executors.newFixedThreadPool(128);
+    /* Server-Client communication */
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
@@ -29,7 +35,9 @@ public class SocketClientConnection extends Observable<Object> implements Client
     private static final int NICKNAME_MIN_LENGTH = 3;
     private static final String UNREGISTERED_NICKNAME = "UNKNOWN"; // unique nickname (identifier) for unregistered Client
     private String nickname; // Player's (Client) unique nickname whose this connection is associated with
-
+    /* Network-related */
+    private ConnectionManager connectionManager;
+    /* Connection properties */
     private boolean active = true;
 
     /**
@@ -42,6 +50,7 @@ public class SocketClientConnection extends Observable<Object> implements Client
         this.socket = socket;
         this.server = server;
         this.nickname = UNREGISTERED_NICKNAME;
+        this.connectionManager = new ConnectionManager(this);
     }
 
     /**
@@ -68,12 +77,12 @@ public class SocketClientConnection extends Observable<Object> implements Client
      */
     @Override
     public void asyncSend(final Object message) {
-        new Thread(new Runnable() {
+        executor.submit(new Runnable() {
             @Override
             public void run() {
                 send(message);
             }
-        }).start();
+        });
     }
 
     /**
@@ -91,7 +100,6 @@ public class SocketClientConnection extends Observable<Object> implements Client
      */
     @Override
     public synchronized void closeConnection() {
-        //send("Connection closed!"); // todo remove
         try {
             socket.close();
         }
@@ -124,6 +132,26 @@ public class SocketClientConnection extends Observable<Object> implements Client
     }
 
     /**
+     * Takes an Object message as an argument,
+     * determines if it is a PingResponse,
+     * then notify the Connection Manager that
+     * a Ping response message was received.
+     *
+     * Returns true if the Object argument is an actual PingResponse.
+     *
+     * @param o (Object message)
+     * @return (Object o is an actual PingResponse ? true : false)
+     */
+    public boolean pingHandler(Object o) {
+        if(o instanceof PingResponse) {
+            connectionManager.pingResponseReceived((PingResponse) o);
+            return true;
+        }
+        else
+            return false;
+    }
+
+    /**
      * Tell if the connection is active.
      *
      * @return (Connection is active ? true : false)
@@ -139,7 +167,6 @@ public class SocketClientConnection extends Observable<Object> implements Client
     public void run() {
         Object read;
         SetNicknameEvent nicknameRead = null; // null initialization
-
 
         try {
             out = new ObjectOutputStream(socket.getOutputStream());
@@ -219,10 +246,14 @@ public class SocketClientConnection extends Observable<Object> implements Client
             /* 3- Join a lobby */
             server.lobby(this, nickname);
 
-            /* 4- Keep listening to te Client while connection is active */
+            /* 4- Execute Connection manager to handle network problems */
+            executor.submit(connectionManager);
+
+            /* 5- Keep listening to te Client while connection is active */
             while(isActive()) {
                 read = in.readObject();
-                notify(read); // notify also in case of QuitEvents, to let the Controller take action on it
+                if(!pingHandler(read)) // if the Object read is a Ping response, do not notify the Game Controller
+                    notify(read); // notify also in case of QuitEvents, to let the Controller take action on it
 
                 if(read instanceof QuitEvent) {
                     quitHandler(read);
@@ -243,5 +274,12 @@ public class SocketClientConnection extends Observable<Object> implements Client
                 close(); // close the connection with the Client
             }
         }
+    }
+
+
+
+
+    public String getNickname() {
+        return nickname;
     }
 }

@@ -144,7 +144,7 @@ public class Controller extends Observable<Object> implements VCEventListener {
         System.out.println("TurnStatusChangeEvent received form Player: " + playerNickname);
 
         /* ANSWER FROM THE CONTROLLER (Notify the View) */
-        notify(new TurnStatusChangedEvent(playerNickname, turnStatus.getTurnStatus()));
+        notify(new TurnStatusChangedEvent(playerNickname, turnStatus.getTurnStatus()), playerNickname);
     }
 
     /* Generic update method */

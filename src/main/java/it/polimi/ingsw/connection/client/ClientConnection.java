@@ -1,5 +1,7 @@
 package it.polimi.ingsw.connection.client;
 
+import it.polimi.ingsw.connection.utility.PingMessage;
+import it.polimi.ingsw.connection.utility.PingResponse;
 import it.polimi.ingsw.observer.MVEventSubject;
 import it.polimi.ingsw.observer.Observer;
 import it.polimi.ingsw.view.clientSide.View;
@@ -30,9 +32,8 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
     private ExecutorService executor = Executors.newFixedThreadPool(128);
     private String ip;
     private int port;
-    private View view;
-    ObjectInputStream socketIn;
-    ObjectOutputStream socketOut;
+    private ObjectInputStream socketIn;
+    private ObjectOutputStream socketOut;
 
     private boolean active = true;
 
@@ -50,16 +51,16 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
 
     // TODO: check if it works correctly
     // TODO: Maybe this method is useless
-    /**
+    /*
      * Start the View for user interaction.
      *
      * @return The thread in which the View is running
      */
-    public Thread startView() {
+    /*public Thread startView() {
         Thread t = new Thread(view);
         t.start();
         return t;
-    }
+    }*/
 
     /**
      * Asynchronous data reading from Server.
@@ -74,7 +75,8 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
                 try {
                     while(isActive()) {
                         Object inputObject = socketIn.readObject();
-                        notifyMVEventsListeners(inputObject); // actually notify the View as a MVEventListener
+                        if(!pingHandler(inputObject))
+                            notifyMVEventsListeners(inputObject); // actually notify the View as a MVEventListener
                     }
                 }
                 catch (Exception ex) {
@@ -86,7 +88,11 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
         return t;
     }
 
-    // todo add javadoc
+    /**
+     * Private class for asynchronous data forwarding to Server.
+     *
+     * @author AndreaAltomare
+     */
     private class AsyncSocketWriter implements Runnable {
         private Object objectToWrite; // object to write to the socket
         private ObjectOutputStream socketOut; // output socket
@@ -164,6 +170,27 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
         }
     }
 
+
+
+    /**
+     * Takes an Object message as an argument,
+     * determines if it is a PingMessage,
+     * then respond to the Server with a PingResponse.
+     *
+     * Returns true if the Object argument is an actual PingMessage.
+     *
+     * @param o (Object message)
+     * @return (Object o is an actual PingMessage ? true : false)
+     */
+    public boolean pingHandler(Object o) {
+        if(o instanceof PingMessage) {
+            executor.submit(new AsyncSocketWriter(new PingResponse(),socketOut));
+            return true;
+        }
+        else
+            return false;
+    }
+
     /**
      * This method send Event Object generated from View
      * to the Server by using Socket communication methods.
@@ -180,15 +207,6 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
     /* Maybe it can be useful in future implementations (like a chat system) */
     @Override
     public void update(Object o, String nickname) {}
-
-
-    public View getView() {
-        return view;
-    }
-
-    public void setView(View view) {
-        this.view = view;
-    }
 
 
 
