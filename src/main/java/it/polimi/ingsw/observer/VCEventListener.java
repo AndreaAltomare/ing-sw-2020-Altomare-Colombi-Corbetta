@@ -18,6 +18,7 @@ public interface VCEventListener {
 
     /* Card selection listener */
     public void update(CardSelectionEvent card, String playerNickname);
+    public void update(CardsChoosingEvent chosenCards, String playerNickname);
 
     /* Move listener */
     public void update(PlaceWorkerEvent workerToPlace, String playerNickname);

@@ -39,6 +39,11 @@ public class VCEventSubject {
                 for(VCEventListener listener : listeners)
                     listener.update((BuildBlockEvent)e, playerNickname);
             }
+        else if (e instanceof CardsChoosingEvent)
+            synchronized (listeners) {
+                for(VCEventListener listener : listeners)
+                    listener.update((CardsChoosingEvent) e, playerNickname);
+            }
         else if (e instanceof CardSelectionEvent)
             synchronized (listeners) {
                 for(VCEventListener listener : listeners)

@@ -167,7 +167,7 @@ public class ServerConnection {
             model = new Model();
 
             /* 4- Instantiate Controller */
-            controller = new Controller(model);
+            controller = new Controller(model, keys); // "keys" are the Players' nicknames
 
             /* 5- Register observers */
             // By registering observers, references to Controller and VirtualView(s) are not lost (even when Lobby(...) method is finished running)
@@ -192,6 +192,10 @@ public class ServerConnection {
                 client.send(new NextStatusEvent("Joined lobby.\nWaiting for for the game to start...\n"));
                 //client.send(new MessageEvent("Joined lobby.\nWaiting for for the game to start...\n")); // todo [for debug]
             }
+
+            /* 10- Start a new game match */
+            executor.submit(controller); // TODO: check if this is non-blocking and works correctly
+            //controller.run(); // todo (maybe this can be removed)
         }
     }
 

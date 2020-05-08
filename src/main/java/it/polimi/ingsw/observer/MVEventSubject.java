@@ -49,6 +49,11 @@ public class MVEventSubject {
                 for(MVEventListener listener : listeners)
                     listener.update((CardSelectedEvent) e);
             }
+        else if (e instanceof CardsInformationEvent)
+            synchronized (listeners) {
+                for(MVEventListener listener : listeners)
+                    listener.update((CardsInformationEvent) e);
+            }
         else if (e instanceof ErrorMessageEvent)
             synchronized (listeners) {
                 for(MVEventListener listener : listeners)

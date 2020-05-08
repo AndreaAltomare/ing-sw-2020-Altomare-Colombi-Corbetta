@@ -1,6 +1,8 @@
 package it.polimi.ingsw.storage;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class's aim is to provide a unique entry point
@@ -112,5 +114,43 @@ public class FileManager {
         }
 
         return data;
+    }
+
+    /**
+     * This method is used when a File content is split up into
+     * more than one line.
+     * So this method returns a List containing every line in a
+     * given File.
+     *
+     * @param fileName (File name)
+     * @return File stored information (every line in a List of String)
+     * @throws FileNotFoundException (Exception thrown when specified file does not exist)
+     */
+    public List<String> getFileRecords(String fileName) throws FileNotFoundException {
+        List<String> fileLines = new ArrayList<>();
+        String data = "";
+        File file;
+        FileReader fr;
+        BufferedReader br;
+
+        try {
+            file = new File(fileName);
+            fr = new FileReader(file);
+            br = new BufferedReader(fr);
+
+            // Read every line of the File until the end od file
+            while((data = br.readLine()) != null)
+                fileLines.add(data);
+
+            br.close();
+        }
+        catch (FileNotFoundException ex) {
+            throw new FileNotFoundException();
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        return fileLines;
     }
 }

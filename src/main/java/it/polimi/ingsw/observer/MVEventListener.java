@@ -25,6 +25,7 @@ public interface MVEventListener {
     /* Game preparation listener */
     public void update(WorkerPlacedEvent workerPlaced);
     public void update(CardSelectedEvent cardSelected);
+    public void update(CardsInformationEvent cardsInformation);
 
     /* Move executed listener */
     public void update(WorkerMovedEvent workerMoved);
