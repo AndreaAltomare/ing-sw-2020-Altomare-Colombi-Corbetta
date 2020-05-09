@@ -1,5 +1,6 @@
 package it.polimi.ingsw.connection.client;
 
+import it.polimi.ingsw.connection.utility.ClientConnectionManager;
 import it.polimi.ingsw.connection.utility.PingMessage;
 import it.polimi.ingsw.connection.utility.PingResponse;
 import it.polimi.ingsw.observer.MVEventSubject;
@@ -28,13 +29,17 @@ import java.util.concurrent.Executors;
  * @author AndreaAltomare
  */
 public class ClientConnection extends MVEventSubject implements Observer<Object> {
-    // TODO: re-implement Listener interfaces
+    // TODO: re-implement Listener interfaces [...done?]
+    /* General */
     private ExecutorService executor = Executors.newFixedThreadPool(128);
+    /* Client-Server communication */
     private String ip;
     private int port;
     private ObjectInputStream socketIn;
     private ObjectOutputStream socketOut;
-
+    /* Network-related */
+    private ClientConnectionManager connectionManager;
+    /* Connection properties */
     private boolean active = true;
 
     /**
@@ -46,6 +51,7 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
     public ClientConnection(String ip, int port) {
         this.ip = ip;
         this.port = port;
+        this.connectionManager = new ClientConnectionManager(this);
         //this.view = view;
     }
 
@@ -185,6 +191,15 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
     public boolean pingHandler(Object o) {
         if(o instanceof PingMessage) {
             executor.submit(new AsyncSocketWriter(new PingResponse(),socketOut));
+
+            /* When the first Ping message from the Server is received,
+             * check the connection by starting the ClientConnectionManager.
+             */
+            if(!connectionManager.isRunning())
+                executor.submit(connectionManager);
+            else
+                connectionManager.pingMessageReceived((PingMessage) o);
+
             return true;
         }
         else
@@ -207,6 +222,13 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
     /* Maybe it can be useful in future implementations (like a chat system) */
     @Override
     public void update(Object o, String nickname) {}
+
+    /**
+     * This method closes the connection between Client and Server.
+     */
+    public void closeConnection() {
+        setActive(false);
+    }
 
 
 
