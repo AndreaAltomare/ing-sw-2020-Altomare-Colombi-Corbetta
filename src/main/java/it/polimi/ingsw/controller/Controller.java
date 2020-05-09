@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Game Controller.
@@ -26,8 +27,8 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     private List<String> players;
     private String challenger; // Challenger Player
     private List<String> cardsInGame; // Cards used for this game match
-    private volatile boolean challengerHasChosenCards; // Marked as volatile because it is accessed by different threads // TODO: ensure that "volatile" attribute mark does not clash with "synchronized" methods that update this very attribute
-
+    private volatile Boolean challengerHasChosenCards; // Marked as volatile because it is accessed by different threads // TODO: ensure that "volatile" attribute mark does not clash with "synchronized" methods that update this very attribute
+    private final int DEFAULT_WAITING_TIME; // time is in milliseconds
 
     /**
      * Constructor for Controller class.
@@ -40,6 +41,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         this.model = model;
         this.players = new ArrayList<>(players);
         this.challengerHasChosenCards = false;
+        this.DEFAULT_WAITING_TIME = 1000; // time is in milliseconds
     }
 
     /**
@@ -59,6 +61,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         /* 2- Challenger choose the Cards for this game match */
         // 2.1- Prepare Card's information
         List<CardInfo> cardInfoList = ResourceManager.getCardsInformation();
+        List<String> possibleCards = cardInfoList.stream().map(c -> c.getName()).collect(Collectors.toList());// get just Cards' name // todo: check if this works correctly
         // 2.2- Notify other Players that Cards are being chosen by the Challenger
         players.forEach(p -> {
             if(!p.equals(challenger)) {
@@ -69,10 +72,23 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             // 2.3- Send Card's information to the challenger
             notify(new CardsInformationEvent(cardInfoList), challenger);
             // 2.4- Waits until Challenger hasn't chosen the Cards for this game
-            while (!challengerHasChosenCards); // works like a wait // todo (IT SHOULD WORK, check it... [or if it has thread-related problems])
-            // 2.5- The number of chosen Cards needs to be equal to the number of the Players in the game
+            synchronized (challengerHasChosenCards) {
+                while (!challengerHasChosenCards) { // works like a wait // todo (IT SHOULD WORK, check it... [or if it has thread-related problems])
+                    try {
+                        challengerHasChosenCards.wait(); // TODO: don't know if this works correctly
+                    }
+                    catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+            // 2.5- The number of chosen Cards needs to be equal to the number of the Players in the game (and Cards chosen must be valid)
             if (cardsInGame.size() != players.size()) {
                 notify(new ErrorMessageEvent("You must choose a number of cards equal to the number of players in this game!"), challenger);
+                setChallengerHasChosenCards(false); // SYNCHRONOUSLY set the attribute to false
+            }
+            else if (!(possibleCards.containsAll(cardsInGame))) {
+                notify(new ErrorMessageEvent("Your choice is invalid! Please, try again."), challenger);
                 setChallengerHasChosenCards(false); // SYNCHRONOUSLY set the attribute to false
             }
         }
@@ -96,7 +112,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
 
 
 
-
+    // TODO: In tutti i metodi update, controllare tramite apposito Booleano in Model che la partita sia cominciata, altrimenti si rischia di ricevere pacchetti di eventi non pertinenti con lo scenario di avanzamento del flusso di gioco in cui ci si trova
 
 
 
@@ -139,8 +155,11 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     /* Card selection listener */
     @Override
     public synchronized void update(CardsChoosingEvent chosenCards, String playerNickname) {
-        cardsInGame = chosenCards.getCards();
-        challengerHasChosenCards = true; // todo remember to set this to false when a new game starts (if necessary)
+        synchronized (challengerHasChosenCards) {
+            cardsInGame = chosenCards.getCards();
+            challengerHasChosenCards = true; // todo remember to set this to false when a new game starts (if necessary)
+            challengerHasChosenCards.notifyAll();
+        }
     }
 
     @Override
