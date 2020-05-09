@@ -89,6 +89,11 @@ public class VCEventSubject {
                 for(VCEventListener listener : listeners)
                     listener.update((SetPlayersNumberEvent) e);
             }
+        else if (e instanceof SetStartPlayerEvent)
+            synchronized (listeners) {
+                for(VCEventListener listener : listeners)
+                    listener.update((SetStartPlayerEvent) e, playerNickname);
+            }
         else if (e instanceof TurnStatusChangeEvent)
             synchronized (listeners) {
                 for(VCEventListener listener : listeners)

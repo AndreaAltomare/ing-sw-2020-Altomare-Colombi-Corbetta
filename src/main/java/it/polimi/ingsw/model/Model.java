@@ -14,11 +14,11 @@ package it.polimi.ingsw.model;
 public class Model {
     private volatile Boolean gameStarted; // tel if the game has started
 
-    public synchronized Boolean getGameStarted() {
+    public synchronized Boolean isGameStarted() {
         return gameStarted;
     }
 
-    public synchronized void isGameStarted(Boolean gameStarted) {
+    public synchronized void setGameStarted(Boolean gameStarted) {
         this.gameStarted = gameStarted;
     }
 }

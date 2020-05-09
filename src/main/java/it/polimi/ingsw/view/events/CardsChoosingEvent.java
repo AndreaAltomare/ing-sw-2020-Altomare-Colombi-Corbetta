@@ -8,7 +8,7 @@ import java.util.List;
  * [VCEvent]
  */
 public class CardsChoosingEvent extends EventObject {
-    List<String> cards;
+    List<String> cards; // Cards' name list
 
     public CardsChoosingEvent(List<String> cards) {
         super(new Object());

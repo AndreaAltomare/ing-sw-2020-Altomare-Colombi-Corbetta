@@ -89,10 +89,20 @@ public class MVEventSubject {
                 for(MVEventListener listener : listeners)
                     listener.update((PlayerWinEvent) e);
             }
+        else if (e instanceof RequirePlaceWorkersEvent)
+            synchronized (listeners) {
+                for(MVEventListener listener : listeners)
+                    listener.update((RequirePlaceWorkersEvent) e);
+            }
         else if (e instanceof RequirePlayersNumberEvent)
             synchronized (listeners) {
                 for(MVEventListener listener : listeners)
                     listener.update((RequirePlayersNumberEvent) e);
+            }
+        else if (e instanceof RequireStartPlayerEvent)
+            synchronized (listeners) {
+                for(MVEventListener listener : listeners)
+                    listener.update((RequireStartPlayerEvent) e);
             }
         else if (e instanceof ServerQuitEvent)
             synchronized (listeners) {

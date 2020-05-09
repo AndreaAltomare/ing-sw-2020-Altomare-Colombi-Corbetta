@@ -16,12 +16,13 @@ public interface VCEventListener {
     public void update(QuitEvent quit, String playerNickname);
     public void update(ViewRequestDataEvent dataRequest, String playerNickname); // Game match general data
 
-    /* Card selection listener */
+    /* Game preparation listener */
     public void update(CardSelectionEvent card, String playerNickname);
     public void update(CardsChoosingEvent chosenCards, String playerNickname);
+    public void update(SetStartPlayerEvent startPlayer, String playerNickname);
+    public void update(PlaceWorkerEvent workerToPlace, String playerNickname);
 
     /* Move listener */
-    public void update(PlaceWorkerEvent workerToPlace, String playerNickname);
     public void update(SelectWorkerEvent selectedWorker, String playerNickname);
     public void update(MoveWorkerEvent move, String playerNickname);
     public void update(BuildBlockEvent build, String playerNickname);

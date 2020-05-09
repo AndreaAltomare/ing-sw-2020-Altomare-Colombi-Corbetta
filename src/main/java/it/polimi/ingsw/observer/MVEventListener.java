@@ -26,6 +26,8 @@ public interface MVEventListener {
     public void update(WorkerPlacedEvent workerPlaced);
     public void update(CardSelectedEvent cardSelected);
     public void update(CardsInformationEvent cardsInformation);
+    public void update(RequireStartPlayerEvent requireStartPlayer);
+    public void update(RequirePlaceWorkersEvent requirePlaceWorkers);
 
     /* Move executed listener */
     public void update(WorkerMovedEvent workerMoved);
