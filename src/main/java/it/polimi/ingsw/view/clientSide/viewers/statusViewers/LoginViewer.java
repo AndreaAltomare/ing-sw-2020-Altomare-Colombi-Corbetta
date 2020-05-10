@@ -18,9 +18,11 @@ public class LoginViewer implements StatusViewer {
         myExecuters = executers;
     }
 
+    public Map<String, Executer> getMyExecuters(){ return myExecuters; }
+
     @Override
     public TerminalStatusViewer toTerminal() {
-        return new TerminalLoginStatus();
+        return new TerminalLoginStatus(this);
     }
 
     @Override

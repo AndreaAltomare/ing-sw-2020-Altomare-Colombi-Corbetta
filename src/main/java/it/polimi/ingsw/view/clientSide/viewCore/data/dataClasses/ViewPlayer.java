@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
+import it.polimi.ingsw.controller.events.ServerSendDataEvent;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.exceptions.AlreadySetException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
@@ -173,6 +174,24 @@ public class ViewPlayer extends ViewObject {
      * @throws WrongEventException (if the Event is not supported by this Class)
      */
     public static ViewObject populate( @NotNull EventObject event) throws WrongEventException{
+        ServerSendDataEvent data;
+        try{
+            data = (ServerSendDataEvent) event;
+        }catch (Exception e){
+            throw new WrongEventException();
+        }
+
+        for (String player : data.getPlayers()) {new ViewPlayer(player);
+            List<String> workers = data.getWorkersToPlayer().get(player);
+            for (String worker : workers){
+                try {
+                    new ViewWorker(worker, player);
+                } catch (NotFoundException | WrongViewObjectException e) {
+                    throw new WrongEventException();
+                }
+            }
+
+        }
         //todo: implement it
         throw new WrongEventException();
     }

@@ -8,11 +8,10 @@ import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSta
 
 import java.util.Map;
 
-public class PlayingViewer implements StatusViewer {
-
+public class ClosingViewer implements StatusViewer {
     Map<String, Executer> myExecuters;
 
-    public PlayingViewer(Map<String, Executer> executers){
+    public ClosingViewer(Map<String, Executer> executers){
         myExecuters = executers;
     }
 

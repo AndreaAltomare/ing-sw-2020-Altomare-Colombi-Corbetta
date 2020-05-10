@@ -1,5 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewers.interfaces;
 
+import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +38,8 @@ public abstract class Viewer{
      */
     public static void setAllSubTurnViewer(SubTurnViewer subTurnViewer){ for (Viewer i: myViewers) i.setSubTurnViewer(subTurnViewer); }
 
+    public static void sendAllMessage(ViewMessage message) { for (Viewer i: myViewers) i.sendMessage(message); }
+
     //Funzione che lancia l'esecuzione.
     public abstract void start();
 
@@ -46,6 +50,8 @@ public abstract class Viewer{
     public abstract void setStatusViewer(StatusViewer statusViewer);
 
     public abstract void setSubTurnViewer(SubTurnViewer subTurnViewer);
+
+    public abstract void sendMessage(ViewMessage message);
 
 
 

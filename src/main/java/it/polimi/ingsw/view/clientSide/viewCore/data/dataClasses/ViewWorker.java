@@ -237,4 +237,19 @@ public class ViewWorker extends ViewObject {
     public ViewWorker(String id, @NotNull String player) throws NotFoundException, WrongViewObjectException {
         this(id, (ViewPlayer)ViewPlayer.find(player));
     }
+
+    public void placeOn(int x, int y){
+        if(position != null) position.removeWorker();
+        try {
+            position = ((ViewBoard)ViewBoard.search(ViewBoard.getClassId())).getCellAt(x, y);
+        } catch (NotFoundException | WrongViewObjectException e) {
+            position = null;
+            return;
+        }
+        position.placeWorker(this);
+    }
+
+    public void removeWorker(){
+        if(position!=null) position.removeWorker();
+    }
 }

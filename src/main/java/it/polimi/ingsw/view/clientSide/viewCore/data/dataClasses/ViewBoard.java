@@ -1,5 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
+import it.polimi.ingsw.controller.events.ServerSendDataEvent;
+import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
@@ -130,8 +132,23 @@ public class ViewBoard extends ViewObject {
      * @throws WrongEventException (if the Event is not supported by this Class)
      */
     public static ViewObject populate( @NotNull EventObject event) throws WrongEventException{
-        //todo implement it
-        throw new WrongEventException();
+        ServerSendDataEvent data;
+        try{
+            data = (ServerSendDataEvent) event;
+        }catch (Exception e){
+            throw new WrongEventException();
+        }
+
+        board = new ViewBoard();
+        board.xDim = data.getBoardXsize();
+        board.yDim = data.getBoardYsize();
+        board.realBoard = new ViewCell[board.xDim][board.yDim];
+        for(int i=0; i<board.xDim; i++) {
+            for (int j = 0; j < board.yDim; j++){
+                board.realBoard[i][j] = new ViewCell(i, j);
+            }
+        }
+        return board;
     }
 
     /**

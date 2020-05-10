@@ -1,7 +1,5 @@
 package it.polimi.ingsw.view.clientSide;
 
-import java.util.EventObject;
-
 /**
  * Interface made to connect the view with the communication layer
  *
@@ -11,6 +9,7 @@ import java.util.EventObject;
  * @author giorgio
  */
 public class ViewManager {
+
     //istanzio l'oggetto evento
 
     //Funzione da chiamare con il messaggio ricevuto (quindi dalla comunicazione)

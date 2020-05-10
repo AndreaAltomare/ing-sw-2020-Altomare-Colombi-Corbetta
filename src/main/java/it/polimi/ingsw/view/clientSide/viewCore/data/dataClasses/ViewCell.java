@@ -86,26 +86,26 @@ public class ViewCell extends ViewObject {
     /**
      * Method to build a dome on this cell
      */
-    void buildDome(){ doomed = true; }
+    public void buildDome(){ doomed = true; }
     /**
      * Method to remove a dome on this cell
      */
-    void removeDome(){ doomed = false; }
+    public void removeDome(){ doomed = false; }
 
     /**
      * Method to build a level on this cell
      */
-    void buildLevel(){ level++; }
+    public void buildLevel(){ level++; }
     /**
      * Method to remove a dome on this cell
      */
-    void removeLevel(){ level=(level>0?level-1: 0); }
+    public void removeLevel(){ level=(level>0?level-1: 0); }
     /**
      * Method to set the level of this cell.
      *
      * @param level (int level of this cell)
      */
-    void setLevel(int level){ this.level = (level>0?level:0); }
+    public void setLevel(int level){ this.level = (level>0?level:0); }
 
     /**
      * Method to remove the ViewWorker on this cell.

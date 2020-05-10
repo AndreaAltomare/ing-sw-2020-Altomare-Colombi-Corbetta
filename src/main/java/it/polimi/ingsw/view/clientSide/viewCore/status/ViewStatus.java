@@ -2,9 +2,11 @@ package it.polimi.ingsw.view.clientSide.viewCore.status;
 // TODO: write some comments to explains the meaning of every status defined
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.DataStorager;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetNicknameExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ClientAddressable;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
+import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.*;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
@@ -12,6 +14,7 @@ import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSta
 import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -58,7 +61,9 @@ public enum ViewStatus implements ClientAddressable {
 
         @Override
         Map<String, Executer> getExecuters() {
-            return null;
+            Map<String, Executer> ret = new HashMap<String, Executer>(1);
+            ret.put("NickName", new SetNicknameExecuter());
+            return ret;
         }
 
         @Override
@@ -82,9 +87,7 @@ public enum ViewStatus implements ClientAddressable {
         }
 
         @Override
-        Map<String, Executer> getExecuters() {
-            return null;
-        }
+        Map<String, Executer> getExecuters() { return null; }
 
         @Override
         public StatusViewer getViewer() {
@@ -199,6 +202,54 @@ public enum ViewStatus implements ClientAddressable {
             DataStorager.clearAll();
             //TODO: set the onLoad
         }
+    },
+    /**
+     * status in which the player has to choose with how many other players it's going to play.
+     */
+    NUMBER_PLAYER("NUMBER_PLAYER") {
+        @Override
+        public ViewStatus getNext() {
+            return WAITING;
+        }
+
+        @Override
+        Map<String, Executer> getExecuters() {
+            return null;
+        }
+
+        @Override
+        public StatusViewer getViewer() {
+            return new NumberPlayerViewer(getExecuters());
+        }
+
+        @Override
+        void onLoad() {
+
+        }
+    },
+    /**
+     * closing status.
+     */
+    CLOSING("CLOSING") {
+        @Override
+        public ViewStatus getNext() {
+            return null;
+        }
+
+        @Override
+        Map<String, Executer> getExecuters() {
+            return null;
+        }
+
+        @Override
+        public StatusViewer getViewer() {
+            return new ClosingViewer(getExecuters());
+        }
+
+        @Override
+        void onLoad() {
+
+        }
     };
 
     private String id;
@@ -292,8 +343,10 @@ public enum ViewStatus implements ClientAddressable {
     public static void setStatus(String status){
         ViewStatus tmp = searchByString(status);
         actualStatus = (tmp!=null)? tmp: actualStatus;
-        if(tmp!=null)
+        if(tmp!=null) {
             actualStatus.onLoad();
+            Viewer.setAllStatusViewer(ViewStatus.getActual().getViewer());
+        }
     }
 
     /**
@@ -302,6 +355,7 @@ public enum ViewStatus implements ClientAddressable {
     public static void nextStatus(){
         actualStatus = actualStatus.getNext();
         actualStatus.onLoad();
+        Viewer.setAllStatusViewer(ViewStatus.getActual().getViewer());
     }
 
     /**
@@ -341,6 +395,7 @@ public enum ViewStatus implements ClientAddressable {
 
     public static void reset(){
         actualStatus = READY;
+        Viewer.setAllStatusViewer(ViewStatus.getActual().getViewer());
     }
 
     public static void init(){
