@@ -10,7 +10,33 @@ import java.util.List;
  *
  * @author giorgio
  */
-public abstract class Viewer{
+public abstract class Viewer implements Runnable{
+
+    public static class ViewerQueuedEvent{
+        public enum ViewerQueuedEventType{
+            MESSAGE,
+            SET_SUBTURN,
+            SET_STATUS,
+            REFRESH,
+            EXIT;
+        }
+
+        private Object payload;
+        private ViewerQueuedEventType type;
+
+        public ViewerQueuedEventType getType(){ return type; }
+
+        public Object getPayload(){ return this.payload; }
+
+        public ViewerQueuedEvent(ViewerQueuedEventType type, Object payload){
+            this.type = type;
+            this.payload = payload;
+        }
+
+    }
+
+    public List<ViewerQueuedEvent> myViewerQueue = new ArrayList<ViewerQueuedEvent>();
+    public Object wakers;
 
     /**
      * List of all the Viewers.
@@ -47,13 +73,25 @@ public abstract class Viewer{
     public abstract void refresh();
 
     //Funzione che segnala al Viewer di controllare lo stato ASAP
-    public abstract void setStatusViewer(StatusViewer statusViewer);
+    public void setStatusViewer(StatusViewer statusViewer){
+        synchronized (myViewerQueue){
+            myViewerQueue.add(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS, statusViewer));
+        }
+        wakers.notifyAll();
+    }
 
-    public abstract void setSubTurnViewer(SubTurnViewer subTurnViewer);
+    public void setSubTurnViewer(SubTurnViewer subTurnViewer){
+        synchronized (myViewerQueue){
+            myViewerQueue.add(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN, subTurnViewer));
+        }
+        wakers.notifyAll();
+    }
 
-    public abstract void sendMessage(ViewMessage message);
-
-
-
+    public void sendMessage(ViewMessage message){
+        synchronized (myViewerQueue){
+            myViewerQueue.add(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.MESSAGE, message));
+        }
+        wakers.notifyAll();
+    }
 
 }
