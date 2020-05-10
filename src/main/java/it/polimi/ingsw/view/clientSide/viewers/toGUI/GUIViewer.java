@@ -11,11 +11,6 @@ public class GUIViewer extends Viewer {
     }
 
     @Override
-    public void start() {
-
-    }
-
-    @Override
     public void refresh() {
 
     }
@@ -27,6 +22,11 @@ public class GUIViewer extends Viewer {
 
     @Override
     public void setSubTurnViewer(SubTurnViewer subTurnViewer) {
+
+    }
+
+    @Override
+    public void run() {
 
     }
 }

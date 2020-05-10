@@ -9,12 +9,6 @@ public class CLIViewer extends Viewer {
     public CLIViewer(){
         Viewer.registerViewer(this);
     }
-
-    @Override
-    public void start() {
-
-    }
-
     @Override
     public void refresh() {
 
@@ -27,6 +21,11 @@ public class CLIViewer extends Viewer {
 
     @Override
     public void setSubTurnViewer(SubTurnViewer subTurnViewer) {
+
+    }
+
+    @Override
+    public void run() {
 
     }
 }

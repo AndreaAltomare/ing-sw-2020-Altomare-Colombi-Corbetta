@@ -17,6 +17,9 @@ public class GameOverViewer implements StatusViewer {
     }
 
     @Override
+    public Map<String, Executer> getMyExecuters() { return myExecuters; }
+
+    @Override
     public TerminalStatusViewer toTerminal() { return null; }
 
     @Override

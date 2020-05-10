@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @author giorgio
  */
-public abstract class Viewer implements Runnable{
+public abstract class Viewer extends Thread{
 
     public static class ViewerQueuedEvent{
         public enum ViewerQueuedEventType{
@@ -36,7 +36,7 @@ public abstract class Viewer implements Runnable{
     }
 
     public List<ViewerQueuedEvent> myViewerQueue = new ArrayList<ViewerQueuedEvent>();
-    public Object wakers;
+    public Object wakers = new Object();
 
     /**
      * List of all the Viewers.
@@ -66,9 +66,6 @@ public abstract class Viewer implements Runnable{
 
     public static void sendAllMessage(ViewMessage message) { for (Viewer i: myViewers) i.sendMessage(message); }
 
-    //Funzione che lancia l'esecuzione.
-    public abstract void start();
-
     //Fuzione che forza un refresh della view
     public abstract void refresh();
 
@@ -77,7 +74,9 @@ public abstract class Viewer implements Runnable{
         synchronized (myViewerQueue){
             myViewerQueue.add(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS, statusViewer));
         }
-        wakers.notifyAll();
+        synchronized (wakers){
+            wakers.notifyAll();
+        }
     }
 
     public void setSubTurnViewer(SubTurnViewer subTurnViewer){
