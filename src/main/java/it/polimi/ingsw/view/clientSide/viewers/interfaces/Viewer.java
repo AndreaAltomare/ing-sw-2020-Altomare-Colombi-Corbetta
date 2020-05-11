@@ -35,8 +35,8 @@ public abstract class Viewer extends Thread{
 
     }
 
-    public List<ViewerQueuedEvent> myViewerQueue = new ArrayList<ViewerQueuedEvent>();
-    public Object wakers = new Object();
+    protected final List<ViewerQueuedEvent> myViewerQueue = new ArrayList<ViewerQueuedEvent>();
+    protected final Object wakers = new Object();
 
     /**
      * List of all the Viewers.
@@ -66,6 +66,8 @@ public abstract class Viewer extends Thread{
 
     public static void sendAllMessage(ViewMessage message) { for (Viewer i: myViewers) i.sendMessage(message); }
 
+    public static void exitAll(){ for (Viewer i: myViewers) i.exit(); }
+
     //Fuzione che forza un refresh della view
     public abstract void refresh();
 
@@ -90,7 +92,18 @@ public abstract class Viewer extends Thread{
         synchronized (myViewerQueue){
             myViewerQueue.add(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.MESSAGE, message));
         }
-        wakers.notifyAll();
+        synchronized (wakers){
+            wakers.notifyAll();
+        }
+    }
+
+    public void exit(){
+        synchronized (myViewerQueue){
+            myViewerQueue.add(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.EXIT, null));
+        }
+        synchronized (wakers){
+            wakers.notifyAll();
+        }
     }
 
 }

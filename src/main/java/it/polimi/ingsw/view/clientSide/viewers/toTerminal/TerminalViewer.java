@@ -36,7 +36,7 @@ public class TerminalViewer extends Viewer {
                         ((StatusViewer)queued.getPayload()).toTerminal().print();
                     }
                     if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.MESSAGE){
-                        System.out.println("[Message: " + ((ViewMessage)queued.getPayload()).getMessageType() + "]\t" + ((ViewMessage)queued.getPayload()).getMessageType());
+                        System.out.println("[Message: " + ((ViewMessage)queued.getPayload()).getMessageType() + "]\t" + ((ViewMessage)queued.getPayload()).getPayload());
                     }
                 }
             }

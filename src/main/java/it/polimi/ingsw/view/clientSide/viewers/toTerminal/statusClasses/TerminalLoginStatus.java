@@ -3,8 +3,10 @@ package it.polimi.ingsw.view.clientSide.viewers.toTerminal.statusClasses;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetNicknameExecuter;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.LoginViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalStatusViewer;
+import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import java.util.Scanner;
@@ -30,10 +32,9 @@ public class TerminalLoginStatus implements TerminalStatusViewer {
         }
         try {
             setNicknameExecuter.setNickname(name);
-        } catch (WrongParametersException e) {
-
+            setNicknameExecuter.doIt();
+        } catch (WrongParametersException | CannotSendEventException e) {
+            ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
         }
-
-
     }
 }

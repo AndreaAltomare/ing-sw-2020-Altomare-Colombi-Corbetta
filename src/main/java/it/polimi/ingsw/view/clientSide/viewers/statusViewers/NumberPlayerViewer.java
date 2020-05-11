@@ -5,6 +5,7 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalStatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.statusClasses.TerminalNumberPlayerViewer;
 
 import java.util.Map;
 
@@ -22,7 +23,7 @@ public class NumberPlayerViewer implements StatusViewer {
     }
 
     @Override
-    public TerminalStatusViewer toTerminal() { return null; }
+    public TerminalStatusViewer toTerminal() { return new TerminalNumberPlayerViewer(this); }
 
     @Override
     public GUIStatusViewer toGUI() {

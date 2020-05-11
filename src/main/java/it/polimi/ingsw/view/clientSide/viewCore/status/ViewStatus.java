@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.clientSide.viewCore.status;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.DataStorager;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetNicknameExecuter;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetPlayerNumberExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ClientAddressable;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
@@ -11,6 +12,7 @@ import it.polimi.ingsw.view.clientSide.viewers.statusViewers.*;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalStatusViewer;
+import it.polimi.ingsw.view.events.SetPlayersNumberEvent;
 import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 
@@ -214,7 +216,9 @@ public enum ViewStatus implements ClientAddressable {
 
         @Override
         Map<String, Executer> getExecuters() {
-            return null;
+            Map<String, Executer> ret = new HashMap<String, Executer>(1);
+            ret.put("NumberPlayers", new SetPlayerNumberExecuter());
+            return ret;
         }
 
         @Override

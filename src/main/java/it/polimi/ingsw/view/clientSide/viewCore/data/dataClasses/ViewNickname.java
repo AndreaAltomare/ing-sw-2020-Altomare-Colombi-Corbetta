@@ -156,7 +156,7 @@ public class ViewNickname extends ViewObject {
     }
 
     public static void setNickname(String nickname) throws AlreadySetException, WrongParametersException {
-        if(el == null) throw new AlreadySetException();
+        if(el != null) throw new AlreadySetException();
         if(false) throw new WrongParametersException();
         new ViewNickname(nickname);
     }

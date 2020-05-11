@@ -142,8 +142,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     /* Server general listener */
     @Override
     public void update(NextStatusEvent nextStatus) {
+        ViewMessage.populateAndSend(nextStatus.toString(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
         ViewStatus.nextStatus();
-        ViewMessage.populateAndSend(nextStatus.getMessage(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
     }
 
     /**
@@ -165,8 +165,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
      */
     @Override
     public void update(RequirePlayersNumberEvent requirePlayersNumber) {
-        ViewStatus.setStatus("NUMBER_PLAYER");
         ViewMessage.populateAndSend(requirePlayersNumber.getMessage(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
+        ViewStatus.setStatus("NUMBER_PLAYER");
     }
 
     /**
