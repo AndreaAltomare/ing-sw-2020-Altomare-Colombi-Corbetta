@@ -1,6 +1,8 @@
 package it.polimi.ingsw.view.clientSide.viewers.interfaces;
 
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
+import it.polimi.ingsw.view.exceptions.CheckQueueException;
+import it.polimi.ingsw.view.exceptions.EmptyQueueException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +37,8 @@ public abstract class Viewer extends Thread{
 
     }
 
-    protected final List<ViewerQueuedEvent> myViewerQueue = new ArrayList<ViewerQueuedEvent>();
-    protected final Object wakers = new Object();
+    private final List<ViewerQueuedEvent> myViewerQueue = new ArrayList<ViewerQueuedEvent>();
+    private final Object wakers = new Object();
 
     /**
      * List of all the Viewers.
@@ -73,36 +75,80 @@ public abstract class Viewer extends Thread{
 
     //Funzione che segnala al Viewer di controllare lo stato ASAP
     public void setStatusViewer(StatusViewer statusViewer){
-        synchronized (myViewerQueue){
-            myViewerQueue.add(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS, statusViewer));
-        }
-        synchronized (wakers){
-            wakers.notifyAll();
-        }
+        enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS, statusViewer));
+        wakersNotify();
     }
 
     public void setSubTurnViewer(SubTurnViewer subTurnViewer){
-        synchronized (myViewerQueue){
-            myViewerQueue.add(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN, subTurnViewer));
-        }
-        wakers.notifyAll();
+        enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN, subTurnViewer));
+        wakersNotify();
     }
 
     public void sendMessage(ViewMessage message){
-        synchronized (myViewerQueue){
-            myViewerQueue.add(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.MESSAGE, message));
+        enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.MESSAGE, message));
+        wakersNotify();
+    }
+
+    public void exit(){
+        enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.EXIT, null));
+        wakersNotify();
+    }
+
+    protected void enqueue(ViewerQueuedEvent event){
+        synchronized (wakers) {
+            synchronized (myViewerQueue) {
+                myViewerQueue.add(event);
+            }
         }
+    }
+
+    protected void wakersNotify(){
         synchronized (wakers){
             wakers.notifyAll();
         }
     }
 
-    public void exit(){
+    public void goOn() throws CheckQueueException {
         synchronized (myViewerQueue){
-            myViewerQueue.add(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.EXIT, null));
+            if(myViewerQueue.isEmpty()) return;
         }
+        throw new CheckQueueException();
+    }
+
+    public void waitTimeOut(long timeOut) throws CheckQueueException{
         synchronized (wakers){
-            wakers.notifyAll();
+            try {
+                goOn();
+            } catch (CheckQueueException e) {
+                throw new CheckQueueException();
+            }
+            try {
+                wakers.wait(timeOut);
+            } catch (InterruptedException e) {
+                throw new CheckQueueException();
+            }
+        }
+    }
+
+    protected ViewerQueuedEvent getNextEvent()throws EmptyQueueException {
+        synchronized (myViewerQueue){
+            if(!myViewerQueue.isEmpty()) return myViewerQueue.remove(0);
+        }
+        throw new EmptyQueueException();
+    }
+
+    public void waitNextEvent(){
+        synchronized (wakers){
+            try {
+                goOn();
+            } catch (CheckQueueException e) {
+                return;
+            }
+            try {
+                wakers.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

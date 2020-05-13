@@ -82,6 +82,7 @@ public abstract class Executer{
         sender.send(event);
     }
 
+    //todo da rivedere (tutte le comunicazioni in uscita sono asincrone)
     /**
      * Method to send the event to the Server in a new thread.
      *

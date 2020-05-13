@@ -5,6 +5,8 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
+import it.polimi.ingsw.view.exceptions.CheckQueueException;
+import it.polimi.ingsw.view.exceptions.EmptyQueueException;
 
 public class TerminalViewer extends Viewer {
     @Override
@@ -15,29 +17,48 @@ public class TerminalViewer extends Viewer {
         Viewer.registerViewer(this);
     }
 
+    protected void enqueue(ViewerQueuedEvent event){
+        if(event.getType()==ViewerQueuedEvent.ViewerQueuedEventType.MESSAGE){
+            new Thread(){
+                String mySt;
+
+                public Thread setSt(String st){
+                    mySt = st;
+                    return this;
+                }
+
+                public void run(){
+                    System.out.println(mySt);
+                }
+            }.setSt((new String("[Message: " + ((ViewMessage)event.getPayload()).getMessageType() + "]\t" + ((ViewMessage)event.getPayload()).getPayload()))).start();
+        }else{
+            super.enqueue(event);
+        }
+    }
+
     @Override
     public void run() {
-        System.out.println("Thread started");
+        ViewerQueuedEvent queued;
         while(true){
-            synchronized (super.wakers) {
+            waitNextEvent();
+
+            while(true){
                 try {
-                    super.wakers.wait();
-                } catch (InterruptedException e) {
-                    return;
+                    queued = getNextEvent();
+                } catch (EmptyQueueException e) {
+                    break;
                 }
-            }
-            synchronized (super.myViewerQueue){
-                while(!super.myViewerQueue.isEmpty()){
-                    ViewerQueuedEvent queued = super.myViewerQueue.get(0);
-                    super.myViewerQueue.remove(0);
-                    if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.EXIT) return;
-                    if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS){
-                        System.out.println(ViewStatus.getActual().toString());
+                if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.EXIT) return;
+                if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS){
+                    System.out.println(ViewStatus.getActual().toString());
+                    ((StatusViewer)queued.getPayload()).toTerminal().setMyTerminalViewer(this);
+                    try {
                         ((StatusViewer)queued.getPayload()).toTerminal().print();
+                    } catch (CheckQueueException ignore) {
                     }
-                    if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.MESSAGE){
-                        System.out.println("[Message: " + ((ViewMessage)queued.getPayload()).getMessageType() + "]\t" + ((ViewMessage)queued.getPayload()).getPayload());
-                    }
+                }
+                if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.MESSAGE){
+                    System.out.println();
                 }
             }
         }

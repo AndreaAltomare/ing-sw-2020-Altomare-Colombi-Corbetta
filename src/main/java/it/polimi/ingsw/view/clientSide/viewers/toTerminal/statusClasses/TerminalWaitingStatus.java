@@ -1,9 +1,11 @@
 package it.polimi.ingsw.view.clientSide.viewers.toTerminal.statusClasses;
 
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.TerminalViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalStatusViewer;
+import it.polimi.ingsw.view.exceptions.CheckQueueException;
 
-public class TerminalWaitingStatus implements TerminalStatusViewer {
+public class TerminalWaitingStatus extends TerminalStatusViewer {
     StatusViewer myStatusViewer;
 
     public TerminalWaitingStatus(StatusViewer statusViewer){
@@ -11,5 +13,11 @@ public class TerminalWaitingStatus implements TerminalStatusViewer {
     }
 
     @Override
-    public void print() { System.out.println("[Terminal]: waiting"); }
+    public void print() throws CheckQueueException {
+        System.out.println("[Terminal]: waiting");
+        while (true) {
+            super.myTerminalViewer.waitTimeOut(1000);
+            System.out.println("...");
+        }
+    }
 }

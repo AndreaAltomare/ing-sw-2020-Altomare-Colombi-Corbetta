@@ -6,6 +6,7 @@ import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ViewSender;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
+import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.TerminalViewer;
@@ -29,8 +30,9 @@ public class ViewTester implements ViewSender {
 
     private void initialisation(){
         new TerminalViewer().start();
+        new GUIViewer().start();
         new CLIViewer();
-        new GUIViewer();
+
 
         Executer.setSender(this);
     }
@@ -40,15 +42,42 @@ public class ViewTester implements ViewSender {
     }
 
     private void myMain(){
+        Object obj = new Object();
+
         initialisation();
         System.out.println("Hello World");
 
         ViewStatus.init();
+
+        synchronized (obj) {
+            try {
+                obj.wait(2500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         view.update((NextStatusEvent)new NextStatusEvent("vai alla login"));
         myWait();
         view.update((RequirePlayersNumberEvent) new RequirePlayersNumberEvent());
         myWait();
         view.update((NextStatusEvent)new NextStatusEvent("vai alla wait"));
+
+        synchronized (obj) {
+            try {
+                obj.wait(2500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        ViewMessage.populateAndSend("test async", ViewMessage.MessageType.FROM_SERVER_MESSAGE);
+        synchronized (obj) {
+            try {
+                obj.wait(2500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         end();
     }
 

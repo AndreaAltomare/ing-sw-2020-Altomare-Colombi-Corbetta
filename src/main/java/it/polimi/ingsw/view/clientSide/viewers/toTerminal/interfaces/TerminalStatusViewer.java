@@ -1,8 +1,14 @@
 package it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces;
 
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SpecificStatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.TerminalViewer;
+import it.polimi.ingsw.view.exceptions.CheckQueueException;
 
-public interface TerminalStatusViewer extends SpecificStatusViewer {
+public abstract class TerminalStatusViewer implements SpecificStatusViewer {
 
-    public void print();
+    protected TerminalViewer myTerminalViewer;
+
+    public void setMyTerminalViewer(TerminalViewer terminalViewer){ myTerminalViewer = terminalViewer; }
+
+    public abstract void print() throws CheckQueueException;
 }

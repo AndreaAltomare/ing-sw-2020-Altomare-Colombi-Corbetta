@@ -8,6 +8,7 @@ package it.polimi.ingsw.view.clientSide;
  *
  * @author giorgio
  */
+//todo remove
 public class ViewManager {
 
     //istanzio l'oggetto evento

@@ -11,7 +11,7 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import java.util.Scanner;
 
-public class TerminalLoginStatus implements TerminalStatusViewer {
+public class TerminalLoginStatus extends TerminalStatusViewer {
 
     StatusViewer parentViewer;
 

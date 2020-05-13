@@ -22,6 +22,7 @@ public abstract class ViewObject implements ClientAddressable {
      *
      * @return (String identifying the object)
      */
+    @Override
     public String toString(){
         String tmp = this.getId();
         if(tmp.equals(""))
@@ -50,6 +51,7 @@ public abstract class ViewObject implements ClientAddressable {
      * @param obj (compared object)
      * @return (true iif this == obj)
      */
+    @Override
     public boolean equals(Addressable obj){
         if (obj == null)
             return false;
@@ -62,6 +64,7 @@ public abstract class ViewObject implements ClientAddressable {
      * @param st (String that will possibly represent this)
      * @return (true iif st==this.toString())
      */
+    @Override
     public boolean isThis ( @NotNull String st){
         return st.equals(this.toString());
     }

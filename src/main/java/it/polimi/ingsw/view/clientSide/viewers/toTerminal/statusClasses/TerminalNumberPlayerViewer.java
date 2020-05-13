@@ -10,7 +10,7 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import java.util.Scanner;
 
-public class TerminalNumberPlayerViewer implements TerminalStatusViewer {
+public class TerminalNumberPlayerViewer extends TerminalStatusViewer {
 
     StatusViewer parentViewer;
 

@@ -8,29 +8,12 @@ import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSta
 
 import java.util.Map;
 
-public class PlayingViewer implements StatusViewer {
-
-    Map<String, Executer> myExecuters;
-
+public class PlayingViewer extends StatusViewer {
     public PlayingViewer(Map<String, Executer> executers){
+
         myExecuters = executers;
-    }
-
-    @Override
-    public Map<String, Executer> getMyExecuters() {
-        return myExecuters;
-    }
-
-    @Override
-    public TerminalStatusViewer toTerminal() { return null; }
-
-    @Override
-    public GUIStatusViewer toGUI() {
-        return null;
-    }
-
-    @Override
-    public CLIStatusViewer toCLI() {
-        return null;
+        myCLI = null;
+        myGUI = null;
+        myTerminal = null;
     }
 }

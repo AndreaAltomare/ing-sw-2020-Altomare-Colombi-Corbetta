@@ -10,13 +10,23 @@ import java.util.Map;
 /**
  * Interface used in the ApplicationStatus to return the various viewer for CLI, GUI and Terminal
  */
-public interface StatusViewer {
+public abstract class StatusViewer {
 
-    public Map<String, Executer> getMyExecuters();
+    protected Map<String, Executer> myExecuters;
 
-    TerminalStatusViewer toTerminal();
+    protected TerminalStatusViewer myTerminal;
 
-    GUIStatusViewer toGUI();
+    protected GUIStatusViewer myGUI;
 
-    CLIStatusViewer toCLI();
+    protected CLIStatusViewer myCLI;
+
+    public Map<String, Executer> getMyExecuters() {
+        return myExecuters;
+    }
+
+    public TerminalStatusViewer toTerminal(){ return myTerminal; }
+
+    public GUIStatusViewer toGUI(){ return myGUI; }
+
+    public CLIStatusViewer toCLI(){ return myCLI; }
 }

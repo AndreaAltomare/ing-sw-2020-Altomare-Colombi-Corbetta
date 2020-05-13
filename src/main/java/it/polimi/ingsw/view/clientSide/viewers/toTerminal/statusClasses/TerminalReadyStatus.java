@@ -7,7 +7,7 @@ import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSta
 
 import java.util.List;
 
-public class TerminalReadyStatus implements TerminalStatusViewer {
+public class TerminalReadyStatus extends TerminalStatusViewer {
 
     StatusViewer myStatusViewer;
 
