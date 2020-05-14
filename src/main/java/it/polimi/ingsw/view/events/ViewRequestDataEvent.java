@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.events;
 
 import java.util.EventObject;
 
+// TODO: Maybe this event is completely useless from a Distributed-MVC Pattern point of view. To remove...
 /**
  * Event: View has requested general game data.
  * [VCEvent]

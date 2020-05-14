@@ -195,6 +195,21 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         System.out.println("Card " + cardSelected.getCardName() + " has been selected correctly.");
     }
 
+    @Override
+    public void update(CardsInformationEvent cardsInformation) {
+        // todo something
+    }
+
+    @Override
+    public void update(RequireStartPlayerEvent requireStartPlayer) {
+        // todo something
+    }
+
+    @Override
+    public void update(RequirePlaceWorkersEvent requirePlaceWorkers) {
+        // todo something
+    }
+
 
     /* Move executed listener */
     @Override

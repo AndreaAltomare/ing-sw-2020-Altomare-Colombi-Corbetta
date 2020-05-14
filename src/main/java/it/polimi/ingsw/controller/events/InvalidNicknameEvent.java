@@ -11,7 +11,7 @@ public class InvalidNicknameEvent extends EventObject {
 
     public InvalidNicknameEvent() {
         super(new Object());
-        this.message = "Your nickname is invalid or already taken! Please try again.\n(Your nickname must be at least 3 character long.)";
+        this.message = "Your nickname is invalid or already taken! Please try again.\n(Your nickname must be at least 3 character long.)"; // TODO: maybe it's to remove (useless)
     }
 
     public String getMessage() {

@@ -11,7 +11,7 @@ public class LobbyFullEvent extends EventObject {
 
     public LobbyFullEvent() {
         super(new Object());
-        this.message = "Lobby is full! No other players are allowed in until a new game starts.";
+        this.message = "Lobby is full! No other players are allowed in until a new game starts."; // TODO: maybe it's to remove (useless)
     }
 
     public String getMessage() {

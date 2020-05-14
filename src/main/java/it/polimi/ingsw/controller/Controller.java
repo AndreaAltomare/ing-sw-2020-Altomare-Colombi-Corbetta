@@ -34,7 +34,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     private volatile String startPlayer; // the Start Player for this game
     private final int DEFAULT_WAITING_TIME; // time is in milliseconds
     /* Miscellaneous */
-    private volatile int workerPlaced;
+    private volatile int workersPlaced;
 
     /**
      * Constructor for Controller class.
@@ -49,7 +49,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         this.clientResponded = false;
         this.challengerHasChosen = false;
         this.DEFAULT_WAITING_TIME = 1000; // time is in milliseconds
-        this.workerPlaced = 0;
+        this.workersPlaced = 0;
     }
 
     /**
@@ -61,6 +61,9 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      */
     @Override
     public void run() { // TODO: maybe refactor this into a more readable method (every step should be encapsulated in a same-abstraction-level method)
+        /* 0- Send to the Client general info for this game */
+        notify(new ServerSendDataEvent()); // todo populate
+
         /* 1- Select the -Challenger- Player */
         challenger = players.get(0); // Choose the Challenger (this can be done in any possible way)
         Model.setChallenger(challenger); // set Challenger into the Game Model
@@ -71,16 +74,16 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         // 2.1- Prepare Card's information
         List<CardInfo> cardInfoList = ResourceManager.getCardsInformation();
         List<String> possibleCards = cardInfoList.stream().map(c -> c.getName()).collect(Collectors.toList()); // get just Cards' name // todo: check if this works correctly
-        // 2.2- Notify other Players that Cards are being chosen by the Challenger
-        players.forEach(p -> {
-            if(!p.equals(challenger)) {
-                notify(new MessageEvent(challenger + " is choosing the God Cards for this game! Wait..."));
-            }
-        });
+        // 2.2- Notify other Players that Cards are being chosen by the Challenger // todo remove this block
+//        players.forEach(p -> {
+//            if(!p.equals(challenger)) {
+//                notify(new MessageEvent(challenger + " is choosing the God Cards for this game! Wait..."));
+//            }
+//        });
         while(!challengerHasChosen) {
-            // 2.3- Send Card's information to the challenger
-            notify(new CardsInformationEvent(cardInfoList), challenger);
-            // 2.4- Waits until Challenger hasn't chosen the Cards for this game
+            // 2.2- Broadcast Card's information
+            notify(new CardsInformationEvent(cardInfoList)); // todo maybe CardInformationEvent can act as a kind of "NextStatusEvent" (needs to be broadcasted of course)
+            // 2.3- Waits until Challenger hasn't chosen the Cards for this game
             synchronized (challengerHasChosen) {
                 while (!challengerHasChosen) { // works like a wait // todo (IT SHOULD WORK, check it... [or if it has thread-related problems])
                     try {
@@ -91,7 +94,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
                     }
                 }
             }
-            // 2.5- The number of chosen Cards needs to be equal to the number of the Players in the game (and Cards chosen must be valid)
+            // 2.4- The number of chosen Cards needs to be equal to the number of the Players in the game (and Cards chosen must be valid)
             if (cardsInGame.size() != players.size()) {
                 notify(new ErrorMessageEvent("You must choose a number of cards equal to the number of players in this game!"), challenger);
                 setChallengerHasChosen(false); // SYNCHRONOUSLY set the attribute to false
@@ -114,7 +117,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             clientResponded = false;
             cardsToChoose = requestPlayerForCardChoice(cardsToChoose, players.get(i));
         }
-        // 3.3- Ask the last Card to the Challenger
+        // 3.3- Set the last Card to the Challenger
         List<String> lastCardList = cardsToChoose.stream().map(c -> c.getName()).collect(Collectors.toList());
         String lastCard = lastCardList.get(0);
         Model.setPlayerCard(lastCard, challenger);
@@ -125,7 +128,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         challengerHasChosen = false;
         while(!challengerHasChosen) {
             // 4.1- Send to the Challenger a request
-            notify(new RequireStartPlayerEvent(players), challenger);
+            notify(new RequireStartPlayerEvent(players)); // todo this event is broadcasted
             // 4.2- Waits until Challenger hasn't chosen the Start Player for this game
             synchronized (challengerHasChosen) {
                 while (!challengerHasChosen) { // works like a wait // todo (IT SHOULD WORK, check it... [or if it has thread-related problems])
@@ -149,7 +152,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
                 }
             }
         }
-        notify(new MessageEvent("Other players are placing their workers. Wait...")); // notify other Players
+        notify(new MessageEvent("Other players are placing their workers. Wait...")); // notify other Players // todo maybe it's useless: to remove
 
         /* 5- Sort the list of Players */
         players.remove(startPlayer);
@@ -158,10 +161,10 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         /* 6- In "clockwise" order, starting from Start Player, every Player places his/her Workers on the Board */
         for(int i = 0; i < players.size(); i++) {
             setClientResponded(false);
-            setWorkerPlaced(0);
+            setWorkersPlaced(0);
             while(!clientResponded) {
                 // 6.1- Ask the Player to place his/her Worker
-                notify(new RequirePlaceWorkersEvent(), players.get(i));
+                notify(new RequirePlaceWorkersEvent());
                 // 6.2- Wait for the response
                 synchronized (clientResponded) {
                     while (!clientResponded) {
@@ -194,8 +197,9 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         List<String> validCards = cardsToChoose.stream().map(c -> c.getName()).collect(Collectors.toList());// cards that can be chosen as a response from the Player
         while (!clientResponded) {
             // 3.2.1- Send messages to the Player
-            notify(new NextStatusEvent("Choose your Card!"), playerNickname); // notify the Player he/she needs to choose a Card
-            notify(new CardsInformationEvent(cardsToChoose), playerNickname); // send Cards information to the Player
+            // todo: maybe modify NextStatusEvent in a simple MessageEvent
+            notify(new NextStatusEvent("Choose your Card!"), playerNickname); // notify the Player he/she needs to choose a Card // todo maybe it's to remove
+            notify(new CardsInformationEvent(cardsToChoose)); // send Cards information to the Player
             // 3.2.2- Wait for the response
             synchronized (clientResponded) {
                 while (!clientResponded) {
@@ -267,14 +271,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         System.out.println("ViewRequestDataEvent received form Player: " + playerNickname);
 
         /* ANSWER FROM THE CONTROLLER (Notify the View) */
-        // Board size data preparation
-        int boardXSize = Model.getBoardXSize();
-        int boardYSize = Model.getBoardYSize();
-        // Players data preparation
-        List<String> players = Model.getPlayers();
-        // Workers associated to Players data preparation
-        Map<String, List<String>> workersToPlayer = Model.getWorkers();
-        notify(new ServerSendDataEvent(boardXSize,boardYSize,players,workersToPlayer), playerNickname);
+        // TODO: maybe this method/event is useless from a Distributed-MVC Pattern point of view. Maybe it's t remove
     }
 
 
@@ -325,8 +322,10 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     @Override
     public synchronized void update(PlaceWorkerEvent workerToPlace, String playerNickname) {
         synchronized (clientResponded) {
-            if(model.placeWorker(workerToPlace.getX(), workerToPlace.getY(), playerNickname))
+            if(model.placeWorker(workerToPlace.getX(), workerToPlace.getY(), playerNickname)) {
                 workerPlaced++;
+                notify(new WorkerPlacedEvent()); // broadcast notification of a worker placed event
+            }
             else {
                 notify(new ErrorMessageEvent("Your choice is invalid! Try to place your worker again."), playerNickname);
             }
@@ -431,12 +430,12 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         return model.isGameStarted();
     }
 
-    public int getWorkerPlaced() {
-        return workerPlaced;
+    public int getWorkersPlaced() {
+        return workersPlaced;
     }
 
-    public synchronized void setWorkerPlaced(int workerPlaced) {
-        this.workerPlaced = workerPlaced;
+    public synchronized void setWorkersPlaced(int workersPlaced) {
+        this.workersPlaced = workersPlaced;
     }
 
 
@@ -535,6 +534,16 @@ public class Controller extends Observable<Object> implements VCEventListener, R
 //
 //        /* ANSWER FROM THE CONTROLLER (Notify the View) */
 //        notify(new CardSelectedEvent(card.getCardName(), playerNickname));
+//    }
+//
+//    @Override
+//    public void update(CardsChoosingEvent chosenCards, String playerNickname) {
+//        // todo something
+//    }
+//
+//    @Override
+//    public void update(SetStartPlayerEvent startPlayer, String playerNickname) {
+//        // todo something
 //    }
 //
 //

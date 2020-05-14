@@ -11,7 +11,7 @@ public class RequirePlayersNumberEvent extends EventObject {
 
     public RequirePlayersNumberEvent() {
         super(new Object());
-        this.message = "You are the first player!\n\nChoose the number of player for this game (you included).\nType 2 or 3";
+        this.message = "You are the first player!\n\nChoose the number of player for this game (you included).\nType 2 or 3"; // TODO: maybe it's to remove (useless)
     }
 
     public String getMessage() {

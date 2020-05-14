@@ -8,7 +8,7 @@ import java.util.EventObject;
  */
 public class PlayerLoseEvent extends EventObject {
     private String playerNickname; // Player who has lost
-    private String message; // this message is to be intended for all players, to notify that the player [playerNickname] has lost.
+    private String message; // this message is to be intended for all players, to notify that the player [playerNickname] has lost. // TODO: maybe this message (form Server) is useless: the View has the responsibility to render a proper message to show to the end-user
     // this Event will be sent in broadcast
 
     public PlayerLoseEvent(String playerNickname, String message) {
