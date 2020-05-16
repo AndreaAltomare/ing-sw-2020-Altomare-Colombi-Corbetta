@@ -16,6 +16,9 @@ public abstract class GeneralGameRoom {
     public abstract boolean addPlayer(String nickname);
     public abstract void removePlayer(String nickname);
     public abstract Iterator<Player> getPlayers();
+    public abstract List<Player> getPlayersList();
+    public abstract void setPlayers(List<Player> players);
+    public abstract Player getPlayer(String nickname);
     public abstract Player getPlayer(int n);
     public abstract Player getChallenger();
     public abstract Player getStartingPlayer();

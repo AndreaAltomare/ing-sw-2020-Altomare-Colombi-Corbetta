@@ -56,6 +56,26 @@ public class GameRoom extends GeneralGameRoom {
         return players.iterator();
     }
 
+    /**
+     * Gets the players list.
+     *
+     * @return Players list
+     */
+    @Override
+    public List<Player> getPlayersList() {
+        return players;
+    }
+
+    /**
+     * Set the players list for this game.
+     *
+     * @param players (Players list)
+     */
+    @Override
+    public void setPlayers(List<Player> players) {
+        this.players = new ArrayList<>(players);
+    }
+
     /* Game settings */
 
     /**
@@ -93,6 +113,17 @@ public class GameRoom extends GeneralGameRoom {
         player = getPlayerReference(nickname);
         if(player != null)
             player.setStartingPlayer(true);
+    }
+
+    /**
+     * Given a nickname, this method returns a reference to
+     * the Player object with that unique nickname (key).
+     *
+     * @param nickname (Player's nickname)
+     * @return Player object reference
+     */
+    public Player getPlayer(String nickname) {
+        return this.getPlayerReference(nickname);
     }
 
     /**

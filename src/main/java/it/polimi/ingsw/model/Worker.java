@@ -116,13 +116,24 @@ public class Worker extends Placeable {
         this.chosen = chosen;
     }
 
+    //added later to make each worker identified by a unique String
     /**
      * Method that return a unique string for each worker
      *
      * @return (unique String denoting eachWorker).
      */
-    //added later to make each worker identified by a unique String
+    @Override
     public String toString(){
         return "[Worker]\t"+id;
+    }
+
+    /**
+     * An alternative method to get a Worker's identifier.
+     *
+     * @return The unique Worker's identifier.
+     * @author AndreaAltomare // todo [per Giorgio]: mi serviva per rendermi più veloce il lavoro, senza ricordarmi che ha il toString()
+     */
+    public String getWorkerId() {
+        return this.toString();
     }
 }

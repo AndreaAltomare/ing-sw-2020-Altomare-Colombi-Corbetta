@@ -7,13 +7,15 @@ import java.util.EventObject;
  * [MVEvent]
  */
 public class CardSelectedEvent extends EventObject {
+    private boolean success; // tell if the move was successful
     private String cardName;
     private String playerNickname; // Player who is now associated with this card
 
-    public CardSelectedEvent(String cardName, String playerNickname) {
+    public CardSelectedEvent(String cardName, String playerNickname, boolean success) {
         super(new Object());
         this.cardName = cardName;
         this.playerNickname = playerNickname;
+        this.success = success;
     }
 
     public String getCardName() {
@@ -22,5 +24,9 @@ public class CardSelectedEvent extends EventObject {
 
     public String getPlayerNickname() {
         return playerNickname;
+    }
+
+    public boolean success() {
+        return success;
     }
 }

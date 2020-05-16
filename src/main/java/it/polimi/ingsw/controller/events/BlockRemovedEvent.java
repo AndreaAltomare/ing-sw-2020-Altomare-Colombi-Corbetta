@@ -9,15 +9,17 @@ import java.util.EventObject;
  * [MVEvent]
  */
 public class BlockRemovedEvent extends EventObject {
+    private boolean success; // tell if the move was successful
     private int x;
     private int y;
     private PlaceableType blockType;
 
-    public BlockRemovedEvent(int x, int y, PlaceableType blockType) {
+    public BlockRemovedEvent(int x, int y, PlaceableType blockType, boolean success) {
         super(new Object());
         this.x = x;
         this.y = y;
         this.blockType = blockType;
+        this.success = success;
     }
 
     public int getX() {
@@ -30,5 +32,9 @@ public class BlockRemovedEvent extends EventObject {
 
     public PlaceableType getBlockType() {
         return blockType;
+    }
+
+    public boolean success() {
+        return success;
     }
 }

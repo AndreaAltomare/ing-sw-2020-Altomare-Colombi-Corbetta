@@ -292,4 +292,8 @@ public class Player {
     public ConstructionManager getConstructionManager() {
         return constructionState;
     }
+
+    public List<Worker> getWorkers() {
+        return workers;
+    }
 }

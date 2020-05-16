@@ -7,19 +7,21 @@ import java.util.EventObject;
  * [MVEvent]
  */
 public class WorkerMovedEvent extends EventObject {
+    private boolean success; // tell if the move was successful
     private String worker;
     private int initialX, initialY;
     private int finalX, finalY;
 
     // TODO: 30/04/20 startCell : int startX, int startY (Se diventa un casino posso pure ricavarmelo io, è quasi solo per ccontrollare che // [Andrea: controllare che...? Comunque vediamo: se non è troppo difficile ti mando anche queste info]
 
-    public WorkerMovedEvent(String worker, int initialX, int initialY, int finalX, int finalY) {
+    public WorkerMovedEvent(String worker, int initialX, int initialY, int finalX, int finalY, boolean success) {
         super(new Object());
         this.worker = worker;
         this.initialX = initialX;
         this.initialY = initialY;
         this.finalX = finalX;
         this.finalY = finalY;
+        this.success = success;
     }
 
     public String getWorker() {
@@ -40,5 +42,9 @@ public class WorkerMovedEvent extends EventObject {
 
     public int getFinalY() {
         return finalY;
+    }
+
+    public boolean success() {
+        return success;
     }
 }

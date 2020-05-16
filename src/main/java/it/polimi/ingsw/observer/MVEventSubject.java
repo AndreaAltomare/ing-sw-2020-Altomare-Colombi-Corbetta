@@ -59,6 +59,11 @@ public class MVEventSubject {
                 for(MVEventListener listener : listeners)
                     listener.update((ErrorMessageEvent) e);
             }
+        else if (e instanceof GameOverEvent)
+            synchronized (listeners) {
+                for(MVEventListener listener : listeners)
+                    listener.update((GameOverEvent) e);
+            }
         else if (e instanceof InvalidNicknameEvent)
             synchronized (listeners) {
                 for(MVEventListener listener : listeners)

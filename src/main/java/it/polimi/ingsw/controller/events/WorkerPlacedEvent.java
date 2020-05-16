@@ -7,14 +7,16 @@ import java.util.EventObject;
  * [MVEvent]
  */
 public class WorkerPlacedEvent extends EventObject {
+    private boolean success; // tell if the move was successful
     private String worker;
     private int x, y;
 
-    public WorkerPlacedEvent(String worker, int x, int y) {
+    public WorkerPlacedEvent(String worker, int x, int y, boolean success) {
         super(new Object());
         this.worker = worker;
         this.x = x;
         this.y = y;
+        this.success = success;
     }
 
     public String getWorker() {
@@ -27,5 +29,9 @@ public class WorkerPlacedEvent extends EventObject {
 
     public int getY() {
         return y;
+    }
+
+    public boolean success() {
+        return success;
     }
 }

@@ -20,6 +20,7 @@ public interface MVEventListener {
     public void update(PlayerWinEvent playerWin);
     public void update(PlayerLoseEvent playerLose);
     public void update(TurnStatusChangedEvent turnStatusChange);
+    public void update(GameOverEvent gameOver);
     public void update(ServerQuitEvent serverQuit);
 
     /* Game preparation listener */

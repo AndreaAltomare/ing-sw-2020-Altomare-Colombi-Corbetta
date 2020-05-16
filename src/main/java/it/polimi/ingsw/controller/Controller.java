@@ -1,19 +1,14 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.controller.events.*;
-import it.polimi.ingsw.model.CardInfo;
-import it.polimi.ingsw.model.Model;
-import it.polimi.ingsw.model.PlaceableType;
-import it.polimi.ingsw.model.StateType;
+import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.observer.Observable;
 import it.polimi.ingsw.observer.VCEventListener;
 import it.polimi.ingsw.storage.ResourceManager;
 import it.polimi.ingsw.view.events.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -22,12 +17,12 @@ import java.util.stream.Collectors;
  * @author AndreaAltomare
  */
 public class Controller extends Observable<Object> implements VCEventListener, Runnable {
-    // TODO: [IMPORTANTE!!] Usare Model.isGameStarted per controllare che gli eventi ricevuti (come MoveWorkerEvent) siano "validi" solo a gioco iniziato!
+    /* Members for Controller-Model interaction */
     private Model model; // Object reference to the Game Model
-    // todo capire quale di qeuste variabili devono essere nel model
-    private List<String> players;
-    private String challenger; // Challenger Player
+    /* Members for generic game info */
+    private List<String> players; // these are JUST NICKNAMES (used to make interaction through Observer Pattern simpler)
     private List<String> cardsInGame; // Cards used for this game match
+    /* Members for concurrency handling */
     private volatile String genericResponse; // String used for generic response from client
     private volatile Boolean clientResponded; // used to control generic responses from Players
     private volatile Boolean challengerHasChosen; // Marked as volatile because it is accessed by different threads // TODO: ensure that "volatile" attribute mark does not clash with "synchronized" methods that update this very attribute
@@ -52,6 +47,14 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         this.workersPlaced = 0;
     }
 
+
+
+
+    /* ##################################### MAIN LOGIC ##################################### */
+
+
+
+
     /**
      * Run() method for Controller class, to let the game flow
      * be controlled in a separated thread from the one into which
@@ -61,18 +64,110 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      */
     @Override
     public void run() { // TODO: maybe refactor this into a more readable method (every step should be encapsulated in a same-abstraction-level method)
-        /* 0- Send to the Client general info for this game */
-        notify(new ServerSendDataEvent()); // todo populate
+        /* 0- Initialize the Model and Send to the Client general info for this game */
+        model.initialize(players);
+        notify(new ServerSendDataEvent(model.getBoardXSize(), model.getBoardYSize(), players, model.getWorkersToPlayers()));
 
         /* 1- Select the -Challenger- Player */
-        challenger = players.get(0); // Choose the Challenger (this can be done in any possible way)
-        Model.setChallenger(challenger); // set Challenger into the Game Model
-        notify(new MessageEvent("The Challenger Player has been chosen. It's: " + challenger)); // notify players that the Challenger has been chosen
+        setChallenger();
+        notify(new MessageEvent("The Challenger Player has been chosen. It's: " + model.challenger())); // notify players that the Challenger has been chosen
 
         /* 2- Challenger choose the Cards for this game match */
         notify(new NextStatusEvent("Game preparation"));
-        // 2.1- Prepare Card's information
         List<CardInfo> cardInfoList = ResourceManager.getCardsInformation();
+        challengerChoosesCards(cardInfoList);
+
+        /* 3- In "clockwise" order, every Player choose a Card (among the Cards chosen by the Challenger) */
+        List<CardInfo> cardsToChoose = cardInfoList.stream().filter(c -> cardsInGame.contains(c.getName())).collect(Collectors.toList());
+        playersChooseCards(cardsToChoose);
+
+        /* 4- Ask the Challenger for the Start Player */
+        challengerChoosesStartPlayer();
+        //notify(new MessageEvent("Other players are placing their workers. Wait...")); // notify other Players // todo maybe it's useless: to remove
+
+        /* 5- Sort the list of Players */
+        sortPlayers();
+
+        /* 6- In "clockwise" order, starting from Start Player, every Player places his/her Workers on the Board */
+        playersPlaceWorkers();
+
+        /* 7- Send general game info data to all Views so the game can start */
+        notify(new ServerSendDataEvent(model.getBoardXSize(), model.getBoardYSize(), players, model.getWorkersToPlayers()));
+
+        /* 8- Game preparation phase is over. The game match can start */
+        notify(new NextStatusEvent("The game has started!"));
+        startGame();
+    }
+
+
+
+
+    /* ############################## FIRST LEVEL METHOD LOGIC ############################## */
+
+
+
+
+    /**
+     * This method encapsulates the logic for the Workers placement by every Player.
+     */
+    private void playersPlaceWorkers() {
+        for(int i = 0; i < players.size(); i++) {
+            setClientResponded(false);
+            setWorkersPlaced(0);
+            while(!clientResponded) {
+                // 6.1- Ask the Player to place his/her Worker
+                notify(new RequirePlaceWorkersEvent(players.get(i)));
+                // 6.2- Wait for response
+                waitForPlayerResponse();
+                // 6.3- Validation of Worker placement is done in the update method.
+            }
+        }
+    }
+
+    /**
+     * Sort the list of Players based on the Start Player.
+     */
+    private void sortPlayers() {
+        players.remove(model.startPlayer());
+        players.add(0, model.startPlayer());
+    }
+
+    /**
+     * This method encapsulates the logic for the choice of the Start Player by the Challenger.
+     */
+    private void challengerChoosesStartPlayer() {
+        challengerHasChosen = false;
+        while(!challengerHasChosen) {
+            // 4.1- Send to the Challenger a request
+            notify(new RequireStartPlayerEvent(players, model.challenger())); // todo this event is broadcasted
+            // 4.2- Waits until Challenger hasn't chosen the Start Player for this game
+            waitForChallengerResponse();
+            // 4.3- Check if the choice is valid
+            challengerHasChosen = checkValidStartPlayer();
+        }
+    }
+
+    /**
+     * This method encapsulates the logic for the choice of Cards by the Players.
+     *
+     * @param cardsToChoose (Cards among the Players can choose (chosen previously by the Challenger))
+     */
+    private void playersChooseCards(List<CardInfo> cardsToChoose) {
+        // 3.2- Notify every Player in "clockwise" order
+        for(int i = 1; i < players.size(); i++) { // for cycle starts by 1 (one) because Player n. 0 is the Challenger
+            clientResponded = false;
+            cardsToChoose = requestPlayerForCardChoice(cardsToChoose, players.get(i));
+        }
+        // 3.3- Set the last Card to the Challenger
+        setLastCard(cardsToChoose);
+    }
+
+    /**
+     * This method encapsulates the logic for the choice of the Cards in this game by the Challenger.
+     *
+     * @param cardInfoList (Cards among Challenger can choose)
+     */
+    private void challengerChoosesCards(List<CardInfo> cardInfoList) {
         List<String> possibleCards = cardInfoList.stream().map(c -> c.getName()).collect(Collectors.toList()); // get just Cards' name // todo: check if this works correctly
         // 2.2- Notify other Players that Cards are being chosen by the Challenger // todo remove this block
 //        players.forEach(p -> {
@@ -82,107 +177,120 @@ public class Controller extends Observable<Object> implements VCEventListener, R
 //        });
         while(!challengerHasChosen) {
             // 2.2- Broadcast Card's information
-            notify(new CardsInformationEvent(cardInfoList)); // todo maybe CardInformationEvent can act as a kind of "NextStatusEvent" (needs to be broadcasted of course)
+            notify(new CardsInformationEvent(cardInfoList, model.challenger(), "")); // todo maybe CardInformationEvent can act as a kind of "NextStatusEvent" (needs to be broadcasted of course)
             // 2.3- Waits until Challenger hasn't chosen the Cards for this game
-            synchronized (challengerHasChosen) {
-                while (!challengerHasChosen) { // works like a wait // todo (IT SHOULD WORK, check it... [or if it has thread-related problems])
-                    try {
-                        challengerHasChosen.wait(); // TODO: don't know if this works correctly
-                    }
-                    catch (InterruptedException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }
+            waitForChallengerResponse();
             // 2.4- The number of chosen Cards needs to be equal to the number of the Players in the game (and Cards chosen must be valid)
-            if (cardsInGame.size() != players.size()) {
-                notify(new ErrorMessageEvent("You must choose a number of cards equal to the number of players in this game!"), challenger);
-                setChallengerHasChosen(false); // SYNCHRONOUSLY set the attribute to false
-            }
-            else if (!(possibleCards.containsAll(cardsInGame))) {
-                notify(new ErrorMessageEvent("Your choice is invalid! Please, try again."), challenger);
-                setChallengerHasChosen(false); // SYNCHRONOUSLY set the attribute to false
-            }
-            else {
-                Model.setCardsInGame(cardsInGame);
-                notify(new MessageEvent("Your choice has been registered!"), challenger);
-            }
+            challengerHasChosen = checkValidChosenCards(possibleCards);
         }
-
-        /* 3- In "clockwise" order, every Player choose a Card (among the Cards chosen by the Challenger) */
-        // 3.1- Prepare Cards information
-        List<CardInfo> cardsToChoose = cardInfoList.stream().filter(c -> cardsInGame.contains(c.getName())).collect(Collectors.toList());
-        // 3.2- Notify every Player in "clockwise" order
-        for(int i = 1; i < players.size(); i++) { // for cycle starts by 1 (one) because Player n. 0 is the Challenger
-            clientResponded = false;
-            cardsToChoose = requestPlayerForCardChoice(cardsToChoose, players.get(i));
-        }
-        // 3.3- Set the last Card to the Challenger
-        List<String> lastCardList = cardsToChoose.stream().map(c -> c.getName()).collect(Collectors.toList());
-        String lastCard = lastCardList.get(0);
-        Model.setPlayerCard(lastCard, challenger);
-        notify(new CardSelectedEvent(lastCard, challenger)); // ANSWER FROM THE CONTROLLER (Notify the View)
-        cardsToChoose.removeIf(c -> c.getName().equals(lastCard));
-
-        /* 4- Ask the Challenger for the Start Player */
-        challengerHasChosen = false;
-        while(!challengerHasChosen) {
-            // 4.1- Send to the Challenger a request
-            notify(new RequireStartPlayerEvent(players)); // todo this event is broadcasted
-            // 4.2- Waits until Challenger hasn't chosen the Start Player for this game
-            synchronized (challengerHasChosen) {
-                while (!challengerHasChosen) { // works like a wait // todo (IT SHOULD WORK, check it... [or if it has thread-related problems])
-                    try {
-                        challengerHasChosen.wait(); // TODO: don't know if this works correctly
-                    }
-                    catch (InterruptedException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }
-            // 4.3- Check if the choice is valid
-            synchronized (startPlayer) {
-                if (!players.contains(startPlayer)) {
-                    notify(new ErrorMessageEvent("Your choice is invalid! Please, try again."), challenger);
-                    setChallengerHasChosen(false); // SYNCHRONOUSLY set the attribute to false
-                }
-                else {
-                    Model.setStartPlayer(startPlayer);
-                    notify(new MessageEvent(startPlayer + " will be the Start Player for this game!"));
-                }
-            }
-        }
-        notify(new MessageEvent("Other players are placing their workers. Wait...")); // notify other Players // todo maybe it's useless: to remove
-
-        /* 5- Sort the list of Players */
-        players.remove(startPlayer);
-        players.add(0, startPlayer);
-
-        /* 6- In "clockwise" order, starting from Start Player, every Player places his/her Workers on the Board */
-        for(int i = 0; i < players.size(); i++) {
-            setClientResponded(false);
-            setWorkersPlaced(0);
-            while(!clientResponded) {
-                // 6.1- Ask the Player to place his/her Worker
-                notify(new RequirePlaceWorkersEvent());
-                // 6.2- Wait for the response
-                synchronized (clientResponded) {
-                    while (!clientResponded) {
-                        try {
-                            clientResponded.wait(); // TODO: don't know if this works correctly
-                        } catch (InterruptedException ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                }
-                // 6.3- Validation of Worker palcement is done in the update method.
-            }
-        }
-
-        /* 7- Game preparation phase is over. The game match can start */
-        notify(new NextStatusEvent("The game has started!"));
     }
 
+    /**
+     * Set the Challenger Player for this game.
+     */
+    private void setChallenger() {
+        String challenger = players.get(0); // Choose the Challenger (this can be done in any possible way)
+        model.setChallenger(challenger); // set Challenger into the Game Model
+    }
+
+
+
+
+    /* ############################## SECOND LEVEL METHOD LOGIC ############################## */
+
+
+
+
+    /**
+     * Checks if the Cards chosen by the Challenger are valid.
+     *
+     * @param possibleCards (Possible Cards among which the Challenger can choose)
+     * @return (Cards chosen are valid ? true : false)
+     */
+    private boolean checkValidChosenCards(List<String> possibleCards) {
+        boolean chosenCardsAreValid = true;
+
+        if (cardsInGame.size() != players.size()) {
+            notify(new ErrorMessageEvent("You must choose a number of cards equal to the number of players in this game!"), model.challenger());
+            setChallengerHasChosen(false); // SYNCHRONOUSLY set the attribute to false
+            chosenCardsAreValid = false;
+        }
+        else if (!(possibleCards.containsAll(cardsInGame))) {
+            notify(new ErrorMessageEvent("Your choice is invalid! Please, try again."), model.challenger());
+            setChallengerHasChosen(false); // SYNCHRONOUSLY set the attribute to false
+            chosenCardsAreValid = false;
+        }
+        else {
+            model.setCardsInGame(cardsInGame);
+            notify(new MessageEvent("Your choice has been registered!"), model.challenger());
+        }
+
+        return chosenCardsAreValid;
+    }
+
+    /**
+     * Sets the last Card left to the Challenger.
+     *
+     * @param cardsToChoose (Cards among which the Player can choose)
+     */
+    private void setLastCard(List<CardInfo> cardsToChoose) {
+        List<String> lastCardList = cardsToChoose.stream().map(c -> c.getName()).collect(Collectors.toList());
+        String lastCard = lastCardList.get(0);
+        model.setPlayerCard(lastCard, model.challenger());
+        notify(new CardSelectedEvent(lastCard, model.challenger(), true)); // ANSWER FROM THE CONTROLLER (Notify the View)
+        cardsToChoose.removeIf(c -> c.getName().equals(lastCard));
+    }
+
+    /**
+     * Checks if the Start Player chosen by the Challenger is valid.
+     *
+     * @return (Start Player chosen is valid ? true : false)
+     */
+    private boolean checkValidStartPlayer() {
+        synchronized (startPlayer) {
+            if (!players.contains(startPlayer)) {
+                notify(new ErrorMessageEvent("Your choice is invalid! Please, try again."), model.challenger());
+                setChallengerHasChosen(false); // SYNCHRONOUSLY set the attribute to false
+                return false;
+            }
+            else {
+                model.setStartPlayer(startPlayer);
+                notify(new MessageEvent(model.startPlayer() + " will be the Start Player for this game!"));
+                return true;
+            }
+        }
+    }
+
+    /**
+     * (Synchronized) Waits for a response from the Challenger.
+     */
+    private void waitForChallengerResponse() {
+        synchronized (challengerHasChosen) {
+            while (!challengerHasChosen) { // works like a wait // todo (IT SHOULD WORK, check it... [or if it has thread-related problems])
+                try {
+                    challengerHasChosen.wait(); // TODO: don't know if this works correctly
+                }
+                catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * (Synchronized) Waits for a response from a Player.
+     */
+    private void waitForPlayerResponse() {
+        synchronized (clientResponded) {
+            while (!clientResponded) {
+                try {
+                    clientResponded.wait(); // TODO: don't know if this works correctly
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
 
     /**
      * Ask a given Player for a Card choice.
@@ -199,28 +307,42 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             // 3.2.1- Send messages to the Player
             // todo: maybe modify NextStatusEvent in a simple MessageEvent
             notify(new NextStatusEvent("Choose your Card!"), playerNickname); // notify the Player he/she needs to choose a Card // todo maybe it's to remove
-            notify(new CardsInformationEvent(cardsToChoose)); // send Cards information to the Player
+            notify(new CardsInformationEvent(cardsToChoose, model.challenger(), playerNickname)); // send Cards information to the Player
             // 3.2.2- Wait for the response
-            synchronized (clientResponded) {
-                while (!clientResponded) {
-                    try {
-                        clientResponded.wait(); // TODO: don't know if this works correctly
-                    } catch (InterruptedException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }
+            waitForPlayerResponse();
             // 3.2.3- Check for the correctness of the choice made
-            synchronized (genericResponse) {
-                if (!(validCards.contains(genericResponse))) {
-                    notify(new ErrorMessageEvent("Your choice is invalid! Please, try again."), playerNickname);
-                    setClientResponded(false); // SYNCHRONOUSLY set the attribute to false
-                }
-                else {
-                    Model.setPlayerCard(genericResponse, playerNickname);
-                    notify(new CardSelectedEvent(genericResponse, playerNickname)); // ANSWER FROM THE CONTROLLER (Notify the View)
-                    cardsToChoose.removeIf(c -> c.getName().equals(genericResponse));
-                }
+            cardsToChoose = checkValidSelectedCards(cardsToChoose, playerNickname, validCards);
+        }
+
+        return cardsToChoose;
+    }
+
+
+
+
+    /* ############################## THIRD LEVEL METHOD LOGIC ############################## */
+
+
+
+
+    /**
+     * Checks if Cards SELECTED by a Player are valid.
+     *
+     * @param cardsToChoose (Cards among which the Player can choose)
+     * @param playerNickname (Player's nickname)
+     * @param validCards (List of String representing valid Cards which can be chosen)
+     * @return An updated version of cardsToChoose List
+     */
+    private List<CardInfo> checkValidSelectedCards(List<CardInfo> cardsToChoose, String playerNickname, List<String> validCards) {
+        synchronized (genericResponse) {
+            if (!(validCards.contains(genericResponse))) {
+                notify(new ErrorMessageEvent("Your choice is invalid! Please, try again."), playerNickname);
+                setClientResponded(false); // SYNCHRONOUSLY set the attribute to false
+            }
+            else {
+                model.setPlayerCard(genericResponse, playerNickname);
+                notify(new CardSelectedEvent(genericResponse, playerNickname, true)); // ANSWER FROM THE CONTROLLER (Notify the View)
+                cardsToChoose.removeIf(c -> c.getName().equals(genericResponse));
             }
         }
 
@@ -235,43 +357,41 @@ public class Controller extends Observable<Object> implements VCEventListener, R
 
 
 
-
-
-
-
-
+    /* ############### UPDATE METHODS FOR VCEvents LISTENER (OBSERVER PATTERN) ############## */
 
 
     // TODO: In tutti i metodi update, controllare tramite apposito Booleano in Model che la partita sia cominciata, altrimenti si rischia di ricevere pacchetti di eventi non pertinenti con lo scenario di avanzamento del flusso di gioco in cui ci si trova
 
 
 
-    // TODO: in all these methods, write actual code to interact with the Model
+
     /* Client general listener */
     @Override
     public synchronized void update(SetNicknameEvent submittedNickname) {
-        System.out.println("SetNicknameEvent received: " + submittedNickname);
-        notify(new MessageEvent("Server respond: Nickname '" + submittedNickname + "' received."));
+        System.err.println("ERROR: Unexpected SetNicknameEvent received: '" + submittedNickname + "'");
+        notify(new ErrorMessageEvent("Bad Request: Server cannot process your request!"), submittedNickname.getNickname());
     }
 
     @Override
     public synchronized void update(SetPlayersNumberEvent playersNumber) {
-        System.out.println("SetPlayersNumberEvent received. The number of Players set by the Client is: " + playersNumber.getNumberOfPlayers());
-        notify(new MessageEvent("Server respond: number of Players: '" + playersNumber.getNumberOfPlayers() + "' received."));
+        System.err.println("ERROR: Unexpected SetPlayersNumberEvent received!");
+        //notify(new ErrorMessageEvent("Bad Request: Server cannot process your request!"));
     }
 
     @Override
     public synchronized void update(QuitEvent quit, String playerNickname) {
         // TODO: add operations to handle disconnections of Players
         System.out.println("QuitEvent received from Player " + playerNickname + ": quitting...");
+        this.stopGame();
+        notify(new GameOverEvent("A player quit. This game can no longer continue."));
+        // TODO: inserire operazioni per distruggere oggetti nel Server e tornare in uno stato in cui si accettano nuovi giocatori
     }
 
+    /* Not actually necessary for Distributed-MVC Pattern */
     @Override
     public synchronized void update(ViewRequestDataEvent dataRequest, String playerNickname) {
-        System.out.println("ViewRequestDataEvent received form Player: " + playerNickname);
-
-        /* ANSWER FROM THE CONTROLLER (Notify the View) */
-        // TODO: maybe this method/event is useless from a Distributed-MVC Pattern point of view. Maybe it's t remove
+        System.err.println("ERROR: Unexpected ViewRequestDataEvent received!");
+        notify(new ErrorMessageEvent("Bad Request: Server cannot process your request!"), playerNickname);
     }
 
 
@@ -284,7 +404,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      */
     @Override
     public synchronized void update(CardsChoosingEvent chosenCards, String playerNickname) {
-        if(playerNickname.equals(challenger)) {
+        if(playerNickname.equals(model.challenger())) {
             synchronized (challengerHasChosen) {
                 cardsInGame = chosenCards.getCards();
                 challengerHasChosen = true; // todo remember to set this to false when a new game starts (if necessary)
@@ -309,8 +429,8 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      * @param playerNickname (Player's nickname)
      */
     @Override
-    public void update(SetStartPlayerEvent startPlayer, String playerNickname) {
-        if(playerNickname.equals(challenger)) {
+    public synchronized void update(SetStartPlayerEvent startPlayer, String playerNickname) {
+        if(playerNickname.equals(model.challenger())) {
             synchronized (challengerHasChosen) {
                 this.startPlayer = startPlayer.getStartPlayer();
                 challengerHasChosen = true; // todo remember to set this to false when a new game starts (if necessary)
@@ -322,15 +442,16 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     @Override
     public synchronized void update(PlaceWorkerEvent workerToPlace, String playerNickname) {
         synchronized (clientResponded) {
-            if(model.placeWorker(workerToPlace.getX(), workerToPlace.getY(), playerNickname)) {
-                workerPlaced++;
-                notify(new WorkerPlacedEvent()); // broadcast notification of a worker placed event
+            String workerId = model.placeWorker(workerToPlace.getX(), workerToPlace.getY(), playerNickname);
+            if(workerId != null) {
+                workersPlaced++;
+                notify(new WorkerPlacedEvent(workerId, workerToPlace.getX(), workerToPlace.getY(), true)); // broadcast notification of a worker placed event
             }
             else {
                 notify(new ErrorMessageEvent("Your choice is invalid! Try to place your worker again."), playerNickname);
             }
 
-            if(workerPlaced == model.WORKERS_PER_PLAYER) {
+            if(workersPlaced == model.WORKERS_PER_PLAYER) {
                 clientResponded = true;
                 clientResponded.notifyAll();
             }
@@ -338,65 +459,106 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     }
 
 
-    /* Move listener */
+    /* Move listener */ // TODO: mettere dei booleani negli eventi di risposta per dire se l'azione è andata a buon fine o no
     @Override
     public synchronized void update(SelectWorkerEvent selectedWorker, String playerNickname) {
-        System.out.println("SelectWorkerEvent received form Player: " + playerNickname);
-
-        /* ANSWER FROM THE CONTROLLER (Notify the View) */
-        notify(new WorkerSelectedEvent(playerNickname, selectedWorker.getWorkerId()));
+        if(model.hasGameStarted()) {
+            System.out.println("SelectWorkerEvent received form Player: " + playerNickname);
+            WorkerSelectedEvent workerSelected = model.selectWorker(selectedWorker.getWorkerId(), playerNickname);
+            if (workerSelected != null)
+                notify(workerSelected); // ANSWER FROM THE CONTROLLER (Notify the View)
+        /*else
+            notify(new ErrorMessageEvent("This Worker cannot be selected! Please try again."), playerNickname);*/
+        }
+        else
+            notify(new ErrorMessageEvent("Game has not started yet! Hold on..."), playerNickname);
     }
 
     @Override
     public synchronized void update(MoveWorkerEvent move, String playerNickname) {
-        System.out.println("MoveWorkerEvent received form Player: " + playerNickname);
-
-        /* ANSWER FROM THE CONTROLLER (Notify the View) */
-        notify(new WorkerMovedEvent(move.getWorkerId(),1,1,move.getX(),move.getY()));
+        if(model.hasGameStarted()) {
+            System.out.println("MoveWorkerEvent received form Player: " + playerNickname);
+            WorkerMovedEvent workerMoved = model.moveWorker(move.getWorkerId(), move.getX(), move.getY(), playerNickname);
+            if (workerMoved != null)
+                notify(workerMoved); // ANSWER FROM THE CONTROLLER (Notify the View)
+        /*else
+            notify(new ErrorMessageEvent("Cannot move here! Please try again."), playerNickname);*/
+        }
+        else
+            notify(new ErrorMessageEvent("Game has not started yet! Hold on..."), playerNickname);
     }
 
     @Override
     public synchronized void update(BuildBlockEvent build, String playerNickname) {
-        System.out.println("BuildBlockEvent received form Player: " + playerNickname);
-
-        /* ANSWER FROM THE CONTROLLER (Notify the View) */
-        notify(new BlockBuiltEvent(build.getX(),build.getY(), build.getBlockType()));
+        if(model.hasGameStarted()) {
+            System.out.println("BuildBlockEvent received form Player: " + playerNickname);
+            BlockBuiltEvent blockBuilt = model.buildBlock(build.getWorkerId(), build.getX(), build.getY(), build.getBlockType(), playerNickname);
+            if (blockBuilt != null)
+                notify(blockBuilt); // ANSWER FROM THE CONTROLLER (Notify the View)
+        /*else
+            notify(new ErrorMessageEvent("Cannot make this construction here! Please try again."), playerNickname);*/
+        }
+        else
+            notify(new ErrorMessageEvent("Game has not started yet! Hold on..."), playerNickname);
     }
 
     @Override
     public synchronized void update(RemoveWorkerEvent workerToRemove, String playerNickname) {
-        System.out.println("RemoveWorkerEvent received form Player: " + playerNickname);
+        if(model.hasGameStarted()) {
+            System.out.println("RemoveWorkerEvent received form Player: " + playerNickname);
+            WorkerRemovedEvent workerRemoved = model.removeWorker(workerToRemove.getWorkerId(), workerToRemove.getX(), workerToRemove.getY(), playerNickname);
+            if (workerRemoved != null)
+                notify(workerRemoved); // ANSWER FROM THE CONTROLLER (Notify the View)
+        /*else
+            notify(new ErrorMessageEvent("Cannot make this construction here! Please try again."), playerNickname);*/
 
-        /* ANSWER FROM THE CONTROLLER (Notify the View) */
-        notify(new WorkerRemovedEvent(workerToRemove.getWorkerId(),workerToRemove.getX(),workerToRemove.getY())); // todo: retrieve X and Y position by using Worker's unique ID
+            /* ANSWER FROM THE CONTROLLER (Notify the View) */
+            /*notify(new WorkerRemovedEvent(workerToRemove.getWorkerId(),workerToRemove.getX(),workerToRemove.getY()));*/ // todo: retrieve X and Y position by using Worker's unique ID
+        }
+        else
+            notify(new ErrorMessageEvent("Game has not started yet! Hold on..."), playerNickname);
     }
 
     @Override
     public synchronized void update(RemoveBlockEvent blockToRemove, String playerNickname) {
-        System.out.println("RemoveBlockEvent received form Player: " + playerNickname);
+        if(model.hasGameStarted()) {
+            System.out.println("RemoveBlockEvent received form Player: " + playerNickname);
+            BlockRemovedEvent blockRemoved = model.removeBlock(blockToRemove.getWorkerId(), blockToRemove.getX(), blockToRemove.getY(), playerNickname);
+            if (blockRemoved != null)
+                notify(blockRemoved); // ANSWER FROM THE CONTROLLER (Notify the View)
+        /*else
+            notify(new ErrorMessageEvent("Cannot make this construction here! Please try again."), playerNickname);*/
 
-        /* ANSWER FROM THE CONTROLLER (Notify the View) */
-        notify(new BlockRemovedEvent(blockToRemove.getX(),blockToRemove.getY(), PlaceableType.DOME));
+            /* ANSWER FROM THE CONTROLLER (Notify the View) */
+            /*notify(new BlockRemovedEvent(blockToRemove.getX(),blockToRemove.getY(), PlaceableType.DOME));*/
+        }
+        else
+            notify(new ErrorMessageEvent("Game has not started yet! Hold on..."), playerNickname);
     }
 
 
     /* Turn status change listener */
     @Override
     public synchronized void update(TurnStatusChangeEvent turnStatus, String playerNickname) {
-        System.out.println("TurnStatusChangeEvent received form Player: " + playerNickname);
+        if(model.hasGameStarted()) {
+            System.out.println("TurnStatusChangeEvent received form Player: " + playerNickname);
+            TurnStatusChangedEvent turnStatusChanged = model.changeTurnStatus(turnStatus.getTurnStatus(), playerNickname);
+            if (turnStatusChanged != null)
+                notify(turnStatusChanged, playerNickname); // ANSWER FROM THE CONTROLLER (Notify the View)
 
-        /* ANSWER FROM THE CONTROLLER (Notify the View) */
-        notify(new TurnStatusChangedEvent(playerNickname, turnStatus.getTurnStatus()), playerNickname);
+            /* ANSWER FROM THE CONTROLLER (Notify the View) */
+            /*notify(new TurnStatusChangedEvent(playerNickname, turnStatus.getTurnStatus()), playerNickname);*/
+        }
+        else
+            notify(new ErrorMessageEvent("Game has not started yet! Hold on..."), playerNickname);
     }
+
 
     /* Generic update method */
     @Override
     public synchronized void update(Object o) {
-        // todo: maybe these statements are to remove
-        System.out.println("Generic VCEvent received");
-
-        /* ANSWER FROM THE CONTROLLER (Notify the View) */
-        notify(new MessageEvent("Received a generic Object from your Client"));
+        System.err.println("ERROR: Unexpected [Generic] VCEvent received!");
+        //notify(new ErrorMessageEvent("Bad Request: Server cannot process your request!"));
     }
 
 
@@ -405,6 +567,51 @@ public class Controller extends Observable<Object> implements VCEventListener, R
 
 
 
+
+
+    /* ########################### AUXILIARY AND SUPPORT METHODS ############################ */
+
+
+
+
+    /**
+     * Starts the game.
+     */
+    private void startGame() {
+        model.startGame();
+        model.setGameStarted(true); // todo maybe this is useless (if done into the Model itself)
+        // todo maybe notify players with a TurnStatusChanged
+    }
+
+    /**
+     * Stops the game.
+     */
+    private void stopGame() {
+        /* 1- Stop the game */
+        model.stopGame();
+        /* 2- Save the match */ // TODO: [MAYBE] For "Persistence" FA
+        saveGame();
+    }
+
+    /**
+     * Save the game.
+     */
+    private void saveGame() { // TODO: [MAYBE] For "Persistence" FA
+        /* 1- Get game state from Model */
+        GameState gameState = model.getGameState();
+        /* 2- Save game state */
+        ResourceManager.saveGameState(gameState);
+    }
+
+    /**
+     * Load a saved game.
+     */
+    private void loadGame() { // TODO: [MAYBE] For "Persistence" FA
+        /* 1- Load game state */
+        GameState gameState = ResourceManager.loadGameState();
+        /* 2- Restore game state to the Model */
+        model.restoreGameState(gameState);
+    }
 
     public synchronized void setChallengerHasChosen(boolean challengerHasChosen) {
         this.challengerHasChosen = challengerHasChosen;
@@ -419,7 +626,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     }
 
     public String getStartPlayer() {
-        return startPlayer;
+        return model.startPlayer();
     }
 
     public synchronized void setStartPlayer(String startPlayer) {
@@ -427,7 +634,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     }
 
     public synchronized boolean gameIsStarted() {
-        return model.isGameStarted();
+        return model.hasGameStarted();
     }
 
     public int getWorkersPlaced() {

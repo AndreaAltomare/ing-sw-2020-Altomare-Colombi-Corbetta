@@ -9,12 +9,7 @@ import java.util.*;
 public class ServerSendDataEvent extends EventObject {
     private int boardXsize, boardYsize;
     private List<String> players;
-    private Map<String, List<String>> workersToPlayer; // usage example: List<String> workers = workersToPlayer["player1"];
-    // String worker1Player1, String worker2Player1, String worker1Player2, String worker2Player2, String worker1Player3, String worker2Player3
-
-    // TODO: 30/04/20 List<String> cardName // [Andrea: Esattamente qui quali carte ti devo mandare? Perché le carte vanno scelte prima di posizionare i lavoratori...]
-    // TODO: 30/04/20 List<String> cardEpiteth
-    // TODO: 30/04/20 List<String> cardDescript
+    private Map<String, List<String>> workersToPlayer; // usage example: List<String> workers = workersToPlayer["player1"]; (kind of...)
 
     public ServerSendDataEvent(int boardXSize, int boardYSize, List<String> players, Map<String,List<String>> workersToPlayer) {
         super(new Object());
