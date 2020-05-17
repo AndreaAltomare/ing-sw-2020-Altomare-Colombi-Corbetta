@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewCore.executers;
 
+import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ViewSender;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -12,6 +13,12 @@ import java.util.EventObject;
  * @author giorgio
  */
 public abstract class Executer{
+
+    private static ViewSender sender;
+
+    public static void setSender(ViewSender newSender){
+        sender = newSender;
+    }
 
     /**
      * Method that reset the executer with initial values.
@@ -70,12 +77,12 @@ public abstract class Executer{
      *
      * @param event (EventObject to be submitted to the server)
      */
-    public static void send(EventObject event){
+    public static void send(EventObject event) throws NullPointerException{
         if(event == null) throw new NullPointerException();
-        //todo: discutere con Andrea come fare qua
-        System.out.println("Ricevuto un evento da inviare");
+        sender.send(event);
     }
 
+    //todo da rivedere (tutte le comunicazioni in uscita sono asincrone)
     /**
      * Method to send the event to the Server in a new thread.
      *
@@ -83,7 +90,7 @@ public abstract class Executer{
      */
     public void asyncSend()throws CannotSendEventException {
 
-        class asyncExecutor implements Runnable {
+        class asyncExecutor extends Thread {
             private EventObject myObj;
             asyncExecutor(EventObject obj){
                 super();
@@ -94,7 +101,7 @@ public abstract class Executer{
             public void run() { Executer.send(myObj); }
         }
 
-        new asyncExecutor(this.getMyEvent()).run();
+        new asyncExecutor(this.getMyEvent()).start();
         this.clear();
     }
 

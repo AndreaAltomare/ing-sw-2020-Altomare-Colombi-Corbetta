@@ -14,6 +14,8 @@ public interface Addressable {
     public String getId();
 
 
+    //todo chiedere ai prof.
+    //observer pattern
     /**
      * Method returning a unique String for each class.
      *
@@ -26,7 +28,9 @@ public interface Addressable {
      *
      * @return (Unique string for each object)
      */
+    @Override
     public String toString();
+
 
     /**
      * Compares this with pl. return true iif represent the same Object.

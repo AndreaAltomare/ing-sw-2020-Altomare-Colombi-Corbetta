@@ -1,9 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
-import it.polimi.ingsw.view.exceptions.NotFoundException;
-import it.polimi.ingsw.view.exceptions.WrongEventException;
-import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
+import it.polimi.ingsw.view.exceptions.*;
 import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,9 +11,13 @@ public class ViewNickname extends ViewObject {
 
     private String name;
 
+    private ViewCard card;
+
     private static ViewNickname el = null;
 
     public static ViewNickname getNickname(){ return el; }
+
+    public ViewCard getCard(){ return this.card; }
 
     /**
      * Method returning a unique string for each object inside the Class.
@@ -149,6 +151,46 @@ public class ViewNickname extends ViewObject {
      */
     private ViewNickname(String nickname){
         this.name = nickname;
+        this.card = null;
         el = this;
     }
+
+    public static void setNickname(String nickname) throws AlreadySetException, WrongParametersException {
+        if(el != null) throw new AlreadySetException();
+        if(false) throw new WrongParametersException();
+        new ViewNickname(nickname);
+    }
+
+    /**
+     * Method that will return the nickname.
+     *
+     * @return (String: nickname or null)
+     */
+    public static String getMyNickname(){
+        if(el!=null) return el.getId();
+        return null;
+    }
+
+    /**
+     * Method that returns the card choosen by the player.
+     *
+     * @return (ViewCard choosen by the player; null if not chosen)
+     */
+    public static ViewCard getMyard(){
+        if(el!=null) return el.getCard();
+        return null;
+    }
+
+    public void setCard(ViewCard card){ this.card = card; }
+
+    public void setCard(String card){
+        try {
+            this.setCard((ViewCard)ViewCard.search(card));
+        } catch (NotFoundException | WrongViewObjectException e) {
+        }
+    }
+
+    public static void setMyCard(ViewCard card){ if(el!= null) el.setCard(card); }
+
+    public static void setMyCard(String card){ if(el!= null) el.setCard(card); }
 }

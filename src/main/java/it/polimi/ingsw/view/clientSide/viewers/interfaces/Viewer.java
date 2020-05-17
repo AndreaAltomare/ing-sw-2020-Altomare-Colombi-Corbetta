@@ -1,5 +1,9 @@
 package it.polimi.ingsw.view.clientSide.viewers.interfaces;
 
+import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
+import it.polimi.ingsw.view.exceptions.CheckQueueException;
+import it.polimi.ingsw.view.exceptions.EmptyQueueException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +12,33 @@ import java.util.List;
  *
  * @author giorgio
  */
-public abstract class Viewer{
+public abstract class Viewer extends Thread{
+
+    public static class ViewerQueuedEvent{
+        public enum ViewerQueuedEventType{
+            MESSAGE,
+            SET_SUBTURN,
+            SET_STATUS,
+            REFRESH,
+            EXIT;
+        }
+
+        private Object payload;
+        private ViewerQueuedEventType type;
+
+        public ViewerQueuedEventType getType(){ return type; }
+
+        public Object getPayload(){ return this.payload; }
+
+        public ViewerQueuedEvent(ViewerQueuedEventType type, Object payload){
+            this.type = type;
+            this.payload = payload;
+        }
+
+    }
+
+    private final List<ViewerQueuedEvent> myViewerQueue = new ArrayList<ViewerQueuedEvent>();
+    private final Object wakers = new Object();
 
     /**
      * List of all the Viewers.
@@ -36,18 +66,90 @@ public abstract class Viewer{
      */
     public static void setAllSubTurnViewer(SubTurnViewer subTurnViewer){ for (Viewer i: myViewers) i.setSubTurnViewer(subTurnViewer); }
 
-    //Funzione che lancia l'esecuzione.
-    public abstract void start();
+    public static void sendAllMessage(ViewMessage message) { for (Viewer i: myViewers) i.sendMessage(message); }
+
+    public static void exitAll(){ for (Viewer i: myViewers) i.exit(); }
 
     //Fuzione che forza un refresh della view
     public abstract void refresh();
 
     //Funzione che segnala al Viewer di controllare lo stato ASAP
-    public abstract void setStatusViewer(StatusViewer statusViewer);
+    public void setStatusViewer(StatusViewer statusViewer){
+        enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS, statusViewer));
+        wakersNotify();
+    }
 
-    public abstract void setSubTurnViewer(SubTurnViewer subTurnViewer);
+    public void setSubTurnViewer(SubTurnViewer subTurnViewer){
+        enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN, subTurnViewer));
+        wakersNotify();
+    }
 
+    public void sendMessage(ViewMessage message){
+        enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.MESSAGE, message));
+        wakersNotify();
+    }
 
+    public void exit(){
+        enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.EXIT, null));
+        wakersNotify();
+    }
 
+    protected void enqueue(ViewerQueuedEvent event){
+        synchronized (wakers) {
+            synchronized (myViewerQueue) {
+                myViewerQueue.add(event);
+            }
+        }
+    }
+
+    protected void wakersNotify(){
+        synchronized (wakers){
+            wakers.notifyAll();
+        }
+    }
+
+    public void goOn() throws CheckQueueException {
+        synchronized (myViewerQueue){
+            if(myViewerQueue.isEmpty()) return;
+        }
+        throw new CheckQueueException();
+    }
+
+    public void waitTimeOut(long timeOut) throws CheckQueueException{
+        synchronized (wakers){
+            try {
+                goOn();
+            } catch (CheckQueueException e) {
+                throw new CheckQueueException();
+            }
+            try {
+                wakers.wait(timeOut);
+            } catch (InterruptedException e) {
+                throw new CheckQueueException();
+            }
+        }
+    }
+
+    protected ViewerQueuedEvent getNextEvent()throws EmptyQueueException {
+        synchronized (myViewerQueue){
+            if(!myViewerQueue.isEmpty()) return myViewerQueue.remove(0);
+        }
+        throw new EmptyQueueException();
+    }
+
+    public void waitNextEvent(){
+        synchronized (wakers){
+            try {
+                goOn();
+            } catch (CheckQueueException e) {
+                return;
+            }
+            try {
+                wakers.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 }

@@ -89,13 +89,13 @@ public class MoveWorkerExecuter extends Executer {
      */
     public static String myType(){ return Executer.myType() + "\tMoveWorker"; }
 
-    @Override
     /**
      * Method that returns the event of this Executer
      *
      * @return (The event associated to this Executer)
      * @throws CannotSendEventException (if the Executer doesn't have all the information needed  by the Event)
      */
+    @Override
     public EventObject getMyEvent()throws CannotSendEventException {
         if(x<0||y<0) throw new CannotSendEventException("Cannot try to move without having selected the destination");
         if(workerId == null) throw new CannotSendEventException("Cannot move without knowing which worker is trying to move");

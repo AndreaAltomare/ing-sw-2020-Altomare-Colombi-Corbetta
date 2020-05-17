@@ -18,6 +18,7 @@ public class CardSelectionExecuter extends Executer {
     /**
      * Method that reset the executer with initial values.
      */
+    @Override
     public void clear(){
         nameCard = null;
     }
@@ -61,13 +62,14 @@ public class CardSelectionExecuter extends Executer {
      */
     public static String myType(){ return Executer.myType() + "\tCardSelection"; }
 
-    @Override
+
     /**
      * Method that returns the event of this Executer
      *
      * @return (The event associated to this Executer)
      * @throws CannotSendEventException (if the Executer doesn't have all the information needed  by the Event)
      */
+    @Override
     public EventObject getMyEvent()throws CannotSendEventException {
         if(nameCard == null) throw new CannotSendEventException("You haven't choose any card so far");
         return new CardSelectionEvent(nameCard);

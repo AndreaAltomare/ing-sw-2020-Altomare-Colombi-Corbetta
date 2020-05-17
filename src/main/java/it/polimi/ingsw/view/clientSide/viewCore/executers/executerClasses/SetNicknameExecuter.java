@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.events.SetNicknameEvent;
+import it.polimi.ingsw.view.exceptions.AlreadySetException;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
@@ -32,7 +33,7 @@ public class SetNicknameExecuter extends Executer {
      * @param nickname (Sting identifying the worker).
      * @throws WrongParametersException (if nickname is not correct).
      */
-    public void setWorkerId(String nickname)throws WrongParametersException {
+    public void setNickname(String nickname)throws WrongParametersException {
         //todo check correcntess of nickname
         if (nickname==null || nickname.equals(""))throw new WrongParametersException();
         this.nickname = nickname;
@@ -57,9 +58,12 @@ public class SetNicknameExecuter extends Executer {
         SetNicknameEvent setNicknameEvent = new SetNicknameEvent(nickname);
         nickname = null;
         try {
-            ViewNickname.populate(setNicknameEvent);
-        } catch (WrongEventException e) {
+            ViewNickname.setNickname(setNicknameEvent.getNickname());
+            //ViewNickname.populate(setNicknameEvent);
+        } catch (WrongParametersException e) {
             throw new CannotSendEventException("Cannot set local nickname");
+        } catch (AlreadySetException e) {
+            throw new CannotSendEventException("Exists an already set nickname");
         }
         return setNicknameEvent;
     }
