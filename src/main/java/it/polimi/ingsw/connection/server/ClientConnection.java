@@ -9,6 +9,7 @@ import it.polimi.ingsw.observer.Observer;
  * @author AndreaAltomare
  */
 public interface ClientConnection {
+    void unregisterAndClose();
     void closeConnection();
     void addObserver(Observer<Object> observer);
     void asyncSend(Object message);

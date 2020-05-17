@@ -86,6 +86,13 @@ public class SocketClientConnection extends Observable<Object> implements Client
     }
 
     /**
+     * Public method for externally close the connection.
+     */
+    public void unregisterAndClose() {
+        close();
+    }
+
+    /**
      * Close connection with Client and unregister it from connected Clients.
      */
     private void close() {

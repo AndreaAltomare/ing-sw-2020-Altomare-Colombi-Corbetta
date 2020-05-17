@@ -1,6 +1,8 @@
 package it.polimi.ingsw.view.serverSide;
 
 import it.polimi.ingsw.connection.server.ClientConnection;
+import it.polimi.ingsw.controller.events.GameOverEvent;
+import it.polimi.ingsw.controller.events.PlayerLoseEvent;
 import it.polimi.ingsw.observer.Observer;
 import it.polimi.ingsw.observer.VCEventSubject;
 
@@ -83,8 +85,14 @@ public class VirtualView extends VCEventSubject implements Observer<Object> {
      */
     @Override
     public void update(Object o, String nickname) {
-        if (playerNickname.equals(nickname))
+        if (playerNickname.equals(nickname)) {
             connection.asyncSend(o);
+
+            /* Check if connection has to be closed */
+            if(o instanceof GameOverEvent || o instanceof PlayerLoseEvent) {
+                connection.unregisterAndClose();
+            }
+        }
     }
 
 

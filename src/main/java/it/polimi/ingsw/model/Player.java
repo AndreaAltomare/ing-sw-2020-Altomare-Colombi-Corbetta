@@ -19,6 +19,7 @@ public class Player {
     private MovementManager movementState;
     private ConstructionManager constructionState;
     private List<Worker> workers;
+    private boolean playing; // tells if the player is playing or not
 
     public Player(String nickname) {
         this.nickname = nickname;
@@ -29,6 +30,7 @@ public class Player {
         this.constructionState = null;
         this.turn = movementState; // initial turn State
         this.workers = new ArrayList<>();
+        this.playing = false;
     }
 
     /**
@@ -37,6 +39,7 @@ public class Player {
      *
      * @param move (Move to execute)
      * @param worker (Worker by which perform the Move)
+     * @return Result of move execution
      * @throws WinException (Exception handled by Controller)
      * @throws LoseException (Exception handled by Controller)
      * @throws RunOutMovesException (Exception handled by Controller)
@@ -44,8 +47,18 @@ public class Player {
      * @throws WrongWorkerException (Exception handled by Controller)
      * @throws TurnOverException (Exception handled by Controller)
      */
-    public void executeMove(Move move,Worker worker) throws WinException,LoseException,RunOutMovesException,BuildBeforeMoveException,WrongWorkerException,TurnOverException {
-        turn.handle(move, worker);
+    public boolean executeMove(Move move,Worker worker) throws WinException,LoseException,RunOutMovesException,BuildBeforeMoveException,WrongWorkerException,TurnOverException {
+        boolean executionResult = false;
+
+        try {
+            executionResult = turn.handle(move, worker);
+        }
+        catch (TurnOverException | LoseException ex) {
+            this.playing = false;
+            throw ex;
+        }
+
+        return executionResult;
     }
 
     /**
@@ -68,6 +81,16 @@ public class Player {
 
         /* 3- Get to the initial State */
         chooseState(StateType.MOVEMENT);
+
+        /* 4- The Player is now playing */
+        this.playing = true;
+    }
+
+    /**
+     * End the Player's game turn.
+     */
+    public void endTurn() {
+        this.playing = false;
     }
 
     /**
@@ -295,5 +318,24 @@ public class Player {
 
     public List<Worker> getWorkers() {
         return workers;
+    }
+
+    /**
+     * Given a Worker's unique identifier,
+     * returns the related Worker's instance.
+     *
+     * @param workerId (Worker's unique identifier)
+     * @return The related Worker's instance
+     */
+    public Worker getWorker(String workerId) {
+        for(Worker w : workers)
+            if(w.getWorkerId().equals(workerId))
+                return w;
+
+        return null;
+    }
+
+    public boolean isPlaying() {
+        return playing;
     }
 }

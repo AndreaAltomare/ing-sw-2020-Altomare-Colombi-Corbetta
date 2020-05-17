@@ -65,7 +65,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     @Override
     public void run() { // TODO: maybe refactor this into a more readable method (every step should be encapsulated in a same-abstraction-level method)
         /* 0- Initialize the Model and Send to the Client general info for this game */
-        model.initialize(players);
+        model.initialize(this, players);
         notify(new ServerSendDataEvent(model.getBoardXSize(), model.getBoardYSize(), players, model.getWorkersToPlayers()));
 
         /* 1- Select the -Challenger- Player */
@@ -360,7 +360,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     /* ############### UPDATE METHODS FOR VCEvents LISTENER (OBSERVER PATTERN) ############## */
 
 
-    // TODO: In tutti i metodi update, controllare tramite apposito Booleano in Model che la partita sia cominciata, altrimenti si rischia di ricevere pacchetti di eventi non pertinenti con lo scenario di avanzamento del flusso di gioco in cui ci si trova
+
 
 
 
@@ -459,7 +459,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     }
 
 
-    /* Move listener */ // TODO: mettere dei booleani negli eventi di risposta per dire se l'azione è andata a buon fine o no
+    /* Move listener */
     @Override
     public synchronized void update(SelectWorkerEvent selectedWorker, String playerNickname) {
         if(model.hasGameStarted()) {
@@ -481,8 +481,8 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             WorkerMovedEvent workerMoved = model.moveWorker(move.getWorkerId(), move.getX(), move.getY(), playerNickname);
             if (workerMoved != null)
                 notify(workerMoved); // ANSWER FROM THE CONTROLLER (Notify the View)
-        /*else
-            notify(new ErrorMessageEvent("Cannot move here! Please try again."), playerNickname);*/
+
+            checkForSwitching(playerNickname);
         }
         else
             notify(new ErrorMessageEvent("Game has not started yet! Hold on..."), playerNickname);
@@ -495,8 +495,8 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             BlockBuiltEvent blockBuilt = model.buildBlock(build.getWorkerId(), build.getX(), build.getY(), build.getBlockType(), playerNickname);
             if (blockBuilt != null)
                 notify(blockBuilt); // ANSWER FROM THE CONTROLLER (Notify the View)
-        /*else
-            notify(new ErrorMessageEvent("Cannot make this construction here! Please try again."), playerNickname);*/
+
+            checkForSwitching(playerNickname);
         }
         else
             notify(new ErrorMessageEvent("Game has not started yet! Hold on..."), playerNickname);
@@ -509,8 +509,6 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             WorkerRemovedEvent workerRemoved = model.removeWorker(workerToRemove.getWorkerId(), workerToRemove.getX(), workerToRemove.getY(), playerNickname);
             if (workerRemoved != null)
                 notify(workerRemoved); // ANSWER FROM THE CONTROLLER (Notify the View)
-        /*else
-            notify(new ErrorMessageEvent("Cannot make this construction here! Please try again."), playerNickname);*/
 
             /* ANSWER FROM THE CONTROLLER (Notify the View) */
             /*notify(new WorkerRemovedEvent(workerToRemove.getWorkerId(),workerToRemove.getX(),workerToRemove.getY()));*/ // todo: retrieve X and Y position by using Worker's unique ID
@@ -526,8 +524,6 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             BlockRemovedEvent blockRemoved = model.removeBlock(blockToRemove.getWorkerId(), blockToRemove.getX(), blockToRemove.getY(), playerNickname);
             if (blockRemoved != null)
                 notify(blockRemoved); // ANSWER FROM THE CONTROLLER (Notify the View)
-        /*else
-            notify(new ErrorMessageEvent("Cannot make this construction here! Please try again."), playerNickname);*/
 
             /* ANSWER FROM THE CONTROLLER (Notify the View) */
             /*notify(new BlockRemovedEvent(blockToRemove.getX(),blockToRemove.getY(), PlaceableType.DOME));*/
@@ -545,6 +541,8 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             TurnStatusChangedEvent turnStatusChanged = model.changeTurnStatus(turnStatus.getTurnStatus(), playerNickname);
             if (turnStatusChanged != null)
                 notify(turnStatusChanged, playerNickname); // ANSWER FROM THE CONTROLLER (Notify the View)
+
+            checkForSwitching(playerNickname);
 
             /* ANSWER FROM THE CONTROLLER (Notify the View) */
             /*notify(new TurnStatusChangedEvent(playerNickname, turnStatus.getTurnStatus()), playerNickname);*/
@@ -578,9 +576,17 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      * Starts the game.
      */
     private void startGame() {
-        model.startGame();
-        model.setGameStarted(true); // todo maybe this is useless (if done into the Model itself)
-        // todo maybe notify players with a TurnStatusChanged
+        model.sortPlayers(players); // sort the players' list before stating
+        try {
+            model.startGame(); // start the game
+            model.setGameStarted(true);
+            notify(new TurnStatusChangedEvent(model.getPlayingPlayer(), StateType.MOVEMENT, true));
+            // other players will update their StateType to NONE consequently
+        }
+        catch (LoseException ex) {
+            System.err.println("An error has occurred during the starting of the game!");
+            model.setGameStarted(false);
+        }
     }
 
     /**
@@ -597,10 +603,11 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      * Save the game.
      */
     private void saveGame() { // TODO: [MAYBE] For "Persistence" FA
+        System.out.println("The game is being saved..."); // todo [debug]
         /* 1- Get game state from Model */
-        GameState gameState = model.getGameState();
-        /* 2- Save game state */
-        ResourceManager.saveGameState(gameState);
+//        GameState gameState = model.getGameState();
+//        /* 2- Save game state */
+//        ResourceManager.saveGameState(gameState);
     }
 
     /**
@@ -608,9 +615,9 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      */
     private void loadGame() { // TODO: [MAYBE] For "Persistence" FA
         /* 1- Load game state */
-        GameState gameState = ResourceManager.loadGameState();
-        /* 2- Restore game state to the Model */
-        model.restoreGameState(gameState);
+//        GameState gameState = ResourceManager.loadGameState();
+//        /* 2- Restore game state to the Model */
+//        model.restoreGameState(gameState);
     }
 
     public synchronized void setChallengerHasChosen(boolean challengerHasChosen) {
@@ -645,40 +652,52 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         this.workersPlaced = workersPlaced;
     }
 
+    /**
+     * After the execution of a move, this method checks
+     * if any switching-player condition is triggered.
+     *
+     * @param playerNickname (Player who just made the move)
+     */
+    private void checkForSwitching(String playerNickname) {
+        /* After the Player notification, if the player's turn is over (or other triggering conditions), switch the playing Player */
+        if (model.getMoveOutcome() == MoveOutcomeType.TURN_OVER)
+            model.switchPlayer();
+        else if (model.getMoveOutcome() == MoveOutcomeType.LOSS) {
+            notify(new PlayerLoseEvent(playerNickname, "Player " + playerNickname + " has lost the game!"));
+            model.handlePlayerLoss(playerNickname);
+            model.switchPlayer();
+        } else if (model.getMoveOutcome() == MoveOutcomeType.WIN) {
+            model.handlePlayerWin(playerNickname);
+        }
+    }
 
+    /**
+     * Method used to let the Model easily send notification to Players.
+     *
+     * @param o (Object to be notified)
+     */
+    public void notifyFromModel(Object o) {
+        notify(o);
+    }
 
+    /**
+     * Method used to let the Model easily send notification to a specific Player.
+     *
+     * @param o (Object to be notified)
+     * @param playerNickname (Player's nickname)
+     */
+    public void notifyFromModel(Object o, String playerNickname) {
+        notify(o, playerNickname);
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    /**
+     * Remove the Virtual View bounded to the provided Player.
+     *
+     * @param nickname (Player's nickname)
+     */
+    public void removeView(String nickname) {
+        notify(new GameOverEvent("You are being disconnected from the game..."), nickname);
+    }
 
 
 // todo /* ########## CODE FOR TEST ########## */ [This code has already been tested. Maybe to remove]

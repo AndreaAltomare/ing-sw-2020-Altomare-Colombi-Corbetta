@@ -1,5 +1,7 @@
 package it.polimi.ingsw.controller.events;
 
+import it.polimi.ingsw.model.MoveOutcomeType;
+
 import java.util.EventObject;
 
 /**
@@ -7,21 +9,20 @@ import java.util.EventObject;
  * [MVEvent]
  */
 public class WorkerMovedEvent extends EventObject {
-    private boolean success; // tell if the move was successful
+    //private boolean success; // tell if the move was successful
+    private MoveOutcomeType moveOutcome; // a more precise outcome of an executed Move
     private String worker;
     private int initialX, initialY;
     private int finalX, finalY;
 
-    // TODO: 30/04/20 startCell : int startX, int startY (Se diventa un casino posso pure ricavarmelo io, è quasi solo per ccontrollare che // [Andrea: controllare che...? Comunque vediamo: se non è troppo difficile ti mando anche queste info]
-
-    public WorkerMovedEvent(String worker, int initialX, int initialY, int finalX, int finalY, boolean success) {
+    public WorkerMovedEvent(String worker, int initialX, int initialY, int finalX, int finalY, MoveOutcomeType moveOutcome) {
         super(new Object());
         this.worker = worker;
         this.initialX = initialX;
         this.initialY = initialY;
         this.finalX = finalX;
         this.finalY = finalY;
-        this.success = success;
+        this.moveOutcome = moveOutcome;
     }
 
     public String getWorker() {
@@ -44,7 +45,7 @@ public class WorkerMovedEvent extends EventObject {
         return finalY;
     }
 
-    public boolean success() {
-        return success;
+    public MoveOutcomeType getMoveOutcome() {
+        return moveOutcome;
     }
 }
