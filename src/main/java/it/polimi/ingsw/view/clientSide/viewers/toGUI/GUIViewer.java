@@ -19,6 +19,13 @@ public class GUIViewer extends Viewer {
     @Override
     public void refresh() {  }
 
+    @Override
+    protected void enqueue(ViewerQueuedEvent event){
+        if(event.getType()!= ViewerQueuedEvent.ViewerQueuedEventType.MESSAGE){
+            super.enqueue(event);
+        }
+    }
+
     public GUIViewer(){
         Viewer.registerViewer(this);
     }

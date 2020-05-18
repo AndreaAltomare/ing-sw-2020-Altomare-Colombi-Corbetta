@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.clientSide.viewers.toGUI.statusClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetPlayerNumberExecuter;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
@@ -65,6 +66,7 @@ public class GUINumberPlayerStatus extends GUIStatusViewer {
                                 executer.doIt();
                                 dialog.setVisible(false);
                             } catch (WrongParametersException | CannotSendEventException e) {
+                                ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
                                 e.printStackTrace();
                             }
                         }
@@ -80,6 +82,7 @@ public class GUINumberPlayerStatus extends GUIStatusViewer {
 
         } catch (IOException e) {
             e.printStackTrace();
+            throw new Error();
         }
 
     }

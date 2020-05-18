@@ -38,7 +38,7 @@ public class GUIReadyStatus extends GUIStatusViewer {
             frame.setVisible(true);
         } catch (IOException e) {
             e.printStackTrace();
-            return;
+            throw new Error();
         }
     }
 }

@@ -67,6 +67,25 @@ public abstract class Board {
         return ret;
     }
 
+    // TODO: 18/05/20 test
+    public void removeWorkers(Player player){
+        int xDim = getXDim();
+        int yDim = getYDim();
+        
+        for(int i = 0; i<xDim; i++){
+            for(int j = 0; j<yDim; j++){
+                try {
+                    Cell cell = getCellAt(i, j);
+                    Worker worker = cell.getWorker();
+                    if(worker.getOwner().equals(player))
+                        cell.removeWorker();
+                } catch (OutOfBoardException ignore) {
+                }
+
+            }
+        }
+    }
+
     public void clearCells(){
         int xDim = getXDim();
         int yDim = getYDim();

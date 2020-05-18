@@ -221,6 +221,11 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         //System.out.println("Turn status changed to: " + turnStatusChange.getState().toString()); // todo: check what toString() of an enum prints... [si, funziona.]
     }
 
+    @Override
+    public void update(GameOverEvent gameOver) {
+
+    }
+
 
     /**
      * Method that notify that the view has to quit.

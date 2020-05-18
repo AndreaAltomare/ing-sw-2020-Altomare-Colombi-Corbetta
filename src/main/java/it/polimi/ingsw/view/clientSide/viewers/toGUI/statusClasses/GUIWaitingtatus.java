@@ -38,7 +38,7 @@ public class GUIWaitingtatus extends GUIStatusViewer {
             frame.setVisible(true);
         } catch (IOException e) {
             e.printStackTrace();
-            return;
+            throw new Error();
         }
     }
 }

@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.clientSide.viewers.toGUI.statusClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetNicknameExecuter;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
@@ -56,6 +57,7 @@ public class GUILoginStatus extends GUIStatusViewer {
                                 executer.setNickname(nickname);
                                 executer.doIt();
                             } catch (WrongParametersException | CannotSendEventException e) {
+                                ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
                                 e.printStackTrace();
                             }
                         }
@@ -63,14 +65,11 @@ public class GUILoginStatus extends GUIStatusViewer {
             );
             frame.add(button);
 
-
-
-            //frame.pack();
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
         } catch (IOException e) {
             e.printStackTrace();
-            return;
+            throw new Error();
         }
     }
 }
