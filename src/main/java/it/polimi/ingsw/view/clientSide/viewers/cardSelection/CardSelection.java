@@ -10,9 +10,10 @@ import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.EndCardSelectionException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
+import java.util.Iterator;
 import java.util.List;
 
-public class CardSelection {
+public class CardSelection implements Iterator<ViewCard> {
 
     private List<ViewCard> cardList;
     private CardExecuter cardExecuter;
@@ -137,13 +138,19 @@ public class CardSelection {
         return cardList.get(iterator);
     }
 
+    @Override
+    public boolean hasNext() {
+        return cardList.size()>0;
+    }
+
     /**
      * Method that returns the next card.(and sets it to be the currnt one)
      *
      *
      * @return (ViewCard: next card)
      */
-    public ViewCard getNext(){
+    @Override
+    public ViewCard next() {
         iterator++;
         return getCurrent();
     }
@@ -154,8 +161,8 @@ public class CardSelection {
      *
      * @return (ViewCard: previous card)
      */
-    public ViewCard getPrec(){
-        iterator --;
+    public ViewCard prev() {
+        iterator++;
         return getCurrent();
     }
 }
