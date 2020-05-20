@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewers.interfaces;
 
+import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.exceptions.CheckQueueException;
 import it.polimi.ingsw.view.exceptions.EmptyQueueException;
@@ -22,6 +23,7 @@ public abstract class Viewer extends Thread{
             SET_SUBTURN,
             SET_STATUS,
             REFRESH,
+            CARDSELECTION,
             EXIT;
         }
 
@@ -41,6 +43,7 @@ public abstract class Viewer extends Thread{
 
     //Blocking Queue
     private final BlockingQueue<ViewerQueuedEvent> myViewerQueue = new ArrayBlockingQueue<ViewerQueuedEvent>(8);
+    //NON LEVARE IL COMMENTO!!!
     //private final List<ViewerQueuedEvent> myViewerQueue = new ArrayList<ViewerQueuedEvent>();
     private final Object wakers = new Object();
 
@@ -70,6 +73,8 @@ public abstract class Viewer extends Thread{
      */
     public static void setAllSubTurnViewer(SubTurnViewer subTurnViewer){ for (Viewer i: myViewers) i.setSubTurnViewer(subTurnViewer); }
 
+    public static void setAllCardSelection(CardSelection cardSelection){ for (Viewer i: myViewers) i.setCardSelection(cardSelection); }
+
     public static void sendAllMessage(ViewMessage message) { for (Viewer i: myViewers) i.sendMessage(message); }
 
     public static void exitAll(){ for (Viewer i: myViewers) i.exit(); }
@@ -84,6 +89,10 @@ public abstract class Viewer extends Thread{
 
     public void setSubTurnViewer(SubTurnViewer subTurnViewer){
         enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN, subTurnViewer));
+    }
+
+    public void setCardSelection(CardSelection cardSelection){
+        enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.CARDSELECTION, cardSelection));
     }
 
     public void sendMessage(ViewMessage message){

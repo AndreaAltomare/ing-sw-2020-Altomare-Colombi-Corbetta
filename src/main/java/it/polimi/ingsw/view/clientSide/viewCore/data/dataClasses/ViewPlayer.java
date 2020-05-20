@@ -263,4 +263,6 @@ public class ViewPlayer extends ViewObject {
         myList.add(this);
     }
 
+    public static int getNumberOfPlayers(){ return myList.size(); }
+
 }

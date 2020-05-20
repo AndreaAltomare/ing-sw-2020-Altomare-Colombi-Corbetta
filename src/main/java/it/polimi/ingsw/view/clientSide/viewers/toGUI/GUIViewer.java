@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewers.toGUI;
 
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
+import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
@@ -52,6 +53,11 @@ public class GUIViewer extends Viewer {
 
                     if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.EXIT) return;
                     if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS) setStatus(queued);
+                    if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.CARDSELECTION) {
+                        for(int i = 0; i<20; i++){
+                            System.out.println(((CardSelection)queued.getPayload()).getNext().getName());
+                        }
+                    }
                 }
             });
         }

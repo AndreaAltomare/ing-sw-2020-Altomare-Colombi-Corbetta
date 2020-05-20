@@ -9,6 +9,7 @@ import it.polimi.ingsw.observer.MVEventListener;
 import it.polimi.ingsw.observer.Observable;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
+import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.events.*;
 import it.polimi.ingsw.controller.events.*;
@@ -28,6 +29,7 @@ import it.polimi.ingsw.view.serverSide.ClientStatus;
 import it.polimi.ingsw.view.serverSide.ClientStatus;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -291,8 +293,22 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     @Override
     public void update(CardsInformationEvent cardsInformation) {
         List<CardInfo> cardList = cardsInformation.getCards();
+        List<ViewCard> cards = new ArrayList<>();
         for (CardInfo card: cardList) {
-            new ViewCard(card.getName(), card.getEpithet(), card.getDescription());
+            try{
+                cards.add((ViewCard)ViewCard.search(card.getName()));
+            }catch(WrongViewObjectException | NotFoundException e){
+                cards.add(new ViewCard(card.getName(), card.getEpithet(), card.getDescription()));
+            }
+        }
+        if(!cardsInformation.getPlayer().equals("")){
+            if(cardsInformation.getPlayer().equals(ViewNickname.getMyNickname())){
+                Viewer.setAllCardSelection(new CardSelection(cards, false));
+            }
+        }else{
+            if(cardsInformation.getChallenger().equals(ViewNickname.getMyNickname())){
+                Viewer.setAllCardSelection(new CardSelection(cards, true));
+            }
         }
     }
 

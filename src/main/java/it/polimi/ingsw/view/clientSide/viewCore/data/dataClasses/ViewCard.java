@@ -25,6 +25,10 @@ public class ViewCard extends ViewObject {
 
     private static List<ViewCard> myList = new ArrayList<ViewCard>();
 
+    public String getName(){ return name; }
+    public String getEpiteth() { return epiteth; }
+    public String getDescription() { return description; }
+
     @Override
     /**
      * Method returning a unique string for each object inside the Class.
@@ -63,8 +67,8 @@ public class ViewCard extends ViewObject {
      * @throws WrongViewObjectException (If the object is not of this Class).
      */
     public static ViewObject search( @NotNull String id) throws NotFoundException, WrongViewObjectException{
-        if(!isOfThisClass(id))
-            throw new WrongViewObjectException();
+        /*if(!isOfThisClass(id))
+            throw new WrongViewObjectException();*/
         return cSearch(id);
     }
 
