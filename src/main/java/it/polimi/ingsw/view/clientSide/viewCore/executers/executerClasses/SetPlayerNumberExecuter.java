@@ -33,7 +33,7 @@ public class SetPlayerNumberExecuter extends Executer {
      */
     public void setNumberOfPlayers(Integer num)throws WrongParametersException {
         //todo check correcntess of num
-        if (num==null || num == 0)throw new WrongParametersException();
+        if (num==null || num <= 0)throw new WrongParametersException("Invalid number");
         this.playerNumber = num;
     }
 

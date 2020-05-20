@@ -181,16 +181,19 @@ public class ViewPlayer extends ViewObject {
             throw new WrongEventException();
         }
 
-        for (String player : data.getPlayers()) {new ViewPlayer(player);
+        for (String player : data.getPlayers()) {
+            new ViewPlayer(player);
             List<String> workers = data.getWorkersToPlayer().get(player);
-            for (String worker : workers){
-                try {
-                    new ViewWorker(worker, player);
-                } catch (NotFoundException | WrongViewObjectException e) {
-                    throw new WrongEventException();
+            if(workers!=null) {
+                for (String worker : workers) {
+                    try {
+                        new ViewWorker(worker, player);
+                    } catch (NotFoundException | WrongViewObjectException e) {
+                        throw new WrongEventException();
+                    }
                 }
             }
-
+            return null;
         }
         //todo: implement it
         throw new WrongEventException();

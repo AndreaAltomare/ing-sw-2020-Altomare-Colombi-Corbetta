@@ -58,7 +58,7 @@ public class GUINumberPlayerStatus extends GUIStatusViewer {
                 try {
                     executer.setNumberOfPlayers(2);
                     executer.doIt();
-                    frame.setVisible(false);
+                    frame.dispose();
                 } catch (CannotSendEventException e) {
                     ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
                     if (View.debugging)

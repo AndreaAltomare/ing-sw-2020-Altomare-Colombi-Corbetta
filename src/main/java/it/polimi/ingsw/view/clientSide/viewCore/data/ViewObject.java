@@ -147,7 +147,7 @@ public abstract class ViewObject implements ClientAddressable {
      *
      * @return (String representing the object and its status)
      */
-    String toTerminal(){return "404: object not found";}
+    public String toTerminal(){return "404: object not found";}
 
 
     /**
@@ -155,13 +155,13 @@ public abstract class ViewObject implements ClientAddressable {
      *
      * @return (representation of Object for the CLI)
      */
-    Object toCLI(){return null;}
+    public Object toCLI(){return null;}
 
     /**
      * Method that will return a (Object) that will represent the ViewObject on the GUI.
      *
      * @return (representation of Object for the GI)
      */
-    Object toGUI(){return null;}
+    public Object toGUI(){return null;}
 
 }

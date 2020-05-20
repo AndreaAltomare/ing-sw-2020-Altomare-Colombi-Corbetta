@@ -26,6 +26,8 @@ public class ViewBoard extends ViewObject {
 
     private static ViewBoard board;
 
+    public static ViewBoard getBoard(){ return board; }
+
     /**
      * Getter of the x-dimension of the board.
      *

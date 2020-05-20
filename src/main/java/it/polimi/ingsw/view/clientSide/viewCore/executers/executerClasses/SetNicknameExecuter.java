@@ -35,7 +35,7 @@ public class SetNicknameExecuter extends Executer {
      */
     public void setNickname(String nickname)throws WrongParametersException {
         //todo check correcntess of nickname
-        if (nickname==null || nickname.equals(""))throw new WrongParametersException();
+        if (nickname==null || nickname.equals(""))throw new WrongParametersException("invalid nickname");
         this.nickname = nickname;
     }
 

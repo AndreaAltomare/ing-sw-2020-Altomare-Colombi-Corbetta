@@ -6,6 +6,8 @@ import it.polimi.ingsw.view.exceptions.EmptyQueueException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Interface for the various visualizer
@@ -38,7 +40,8 @@ public abstract class Viewer extends Thread{
     }
 
     //Blocking Queue
-    private final List<ViewerQueuedEvent> myViewerQueue = new ArrayList<ViewerQueuedEvent>();
+    private final BlockingQueue<ViewerQueuedEvent> myViewerQueue = new ArrayBlockingQueue<ViewerQueuedEvent>(8);
+    //private final List<ViewerQueuedEvent> myViewerQueue = new ArrayList<ViewerQueuedEvent>();
     private final Object wakers = new Object();
 
     /**
@@ -92,9 +95,20 @@ public abstract class Viewer extends Thread{
     }
 
     protected void enqueue(ViewerQueuedEvent event){
-        synchronized (wakers) {
-            synchronized (myViewerQueue) {
-                myViewerQueue.add(event);
+        try {
+            synchronized (wakers) {
+                synchronized (myViewerQueue) {
+                    System.out.println("Remaining: " + ((ArrayBlockingQueue)myViewerQueue).size());
+                    myViewerQueue.add(event);
+                }
+            }
+        }catch (IllegalStateException ignore){
+            System.out.println("FUCK IT BLOCKING QUEUE");
+            wakersNotify();
+            try {
+                myViewerQueue.put(event);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
         wakersNotify();
@@ -130,7 +144,7 @@ public abstract class Viewer extends Thread{
 
     protected ViewerQueuedEvent getNextEvent()throws EmptyQueueException {
         synchronized (myViewerQueue){
-            if(!myViewerQueue.isEmpty()) return myViewerQueue.remove(0);
+            if(!myViewerQueue.isEmpty()) return myViewerQueue.remove();
         }
         throw new EmptyQueueException();
     }
@@ -140,7 +154,8 @@ public abstract class Viewer extends Thread{
             if(myViewerQueue.isEmpty()){
                 throw new EmptyQueueException();
             }
-            return myViewerQueue.get(0).getType();
+            return myViewerQueue.element().getType();
+            //return myViewerQueue.get(0).getType();
         }
     }
 
@@ -152,7 +167,8 @@ public abstract class Viewer extends Thread{
             waitNextEvent();
             synchronized (myViewerQueue){
                 if(!myViewerQueue.isEmpty()) {
-                    if (myViewerQueue.get(0).getType().equals(eventType)) {
+                    //if (myViewerQueue.get(0).getType().equals(eventType)) {
+                    if (myViewerQueue.element().getType().equals(eventType)) {
                         return;
                     }
                 }
