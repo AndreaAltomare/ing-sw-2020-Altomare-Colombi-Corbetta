@@ -39,6 +39,9 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     private String nickname; // Player's nickname
     private boolean connectionActive;
 
+    //Per fare debugging
+    public static final boolean debugging = true;
+
     public View(Scanner in, ClientConnection connection) {
         this.in = in;
         this.connection = connection;

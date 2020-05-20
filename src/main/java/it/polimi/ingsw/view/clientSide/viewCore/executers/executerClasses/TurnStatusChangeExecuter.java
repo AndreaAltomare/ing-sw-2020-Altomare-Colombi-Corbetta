@@ -33,7 +33,7 @@ public class TurnStatusChangeExecuter extends Executer {
      * @param status (ViewSubTurn identifying the status).
      * @throws WrongParametersException (if status is null).
      */
-    public void setWorkerId(ViewSubTurn status)throws WrongParametersException {
+    public void setStatusId(ViewSubTurn status)throws WrongParametersException {
         if(status == null) throw new WrongParametersException();
         if(status.toStateType()== StateType.NONE) throw new WrongParametersException();
         this.stato = status;
@@ -45,9 +45,9 @@ public class TurnStatusChangeExecuter extends Executer {
      * @param status (String identifying the status).
      * @throws WrongParametersException (if status doesn't represent a valid status).
      */
-    public void setWorkerId(String status)throws WrongParametersException {
+    public void setStatusId(String status)throws WrongParametersException {
         try {
-            setWorkerId(ViewSubTurn.search(status));
+            setStatusId(ViewSubTurn.search(status));
         } catch (NotFoundException e) {
             throw new WrongParametersException();
         }

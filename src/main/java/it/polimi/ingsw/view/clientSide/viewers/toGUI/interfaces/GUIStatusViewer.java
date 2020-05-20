@@ -25,7 +25,9 @@ public abstract class GUIStatusViewer implements SpecificStatusViewer {
     public void directFrameManipulation(){  }
 
     public void execute() throws CheckQueueException {
-        if(hasJPanel()) guiViewer.setJPanel(getJPanel());
+        if(hasJPanel()) {
+            guiViewer.setJPanel(getJPanel());
+        }
         if(hasDirectFrameManipulation()) directFrameManipulation();
         if(hasPopup()) this.doPopUp();
     }

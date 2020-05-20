@@ -37,6 +37,7 @@ public abstract class Viewer extends Thread{
 
     }
 
+    //Blocking Queue
     private final List<ViewerQueuedEvent> myViewerQueue = new ArrayList<ViewerQueuedEvent>();
     private final Object wakers = new Object();
 
@@ -76,22 +77,18 @@ public abstract class Viewer extends Thread{
     //Funzione che segnala al Viewer di controllare lo stato ASAP
     public void setStatusViewer(StatusViewer statusViewer){
         enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS, statusViewer));
-        wakersNotify();
     }
 
     public void setSubTurnViewer(SubTurnViewer subTurnViewer){
         enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN, subTurnViewer));
-        wakersNotify();
     }
 
     public void sendMessage(ViewMessage message){
         enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.MESSAGE, message));
-        wakersNotify();
     }
 
     public void exit(){
         enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.EXIT, null));
-        wakersNotify();
     }
 
     protected void enqueue(ViewerQueuedEvent event){
@@ -100,6 +97,7 @@ public abstract class Viewer extends Thread{
                 myViewerQueue.add(event);
             }
         }
+        wakersNotify();
     }
 
     protected void wakersNotify(){
@@ -135,6 +133,37 @@ public abstract class Viewer extends Thread{
             if(!myViewerQueue.isEmpty()) return myViewerQueue.remove(0);
         }
         throw new EmptyQueueException();
+    }
+
+    public ViewerQueuedEvent.ViewerQueuedEventType seeEnqueuedType() throws EmptyQueueException{
+        synchronized (myViewerQueue){
+            if(myViewerQueue.isEmpty()){
+                throw new EmptyQueueException();
+            }
+            return myViewerQueue.get(0).getType();
+        }
+    }
+
+
+    //Non usarlo a meno di sapere che c'è un thread che serve ogni tipo di evento
+    @Deprecated
+    public void waitNextEventType(ViewerQueuedEvent.ViewerQueuedEventType eventType){
+        while(true){
+            waitNextEvent();
+            synchronized (myViewerQueue){
+                if(!myViewerQueue.isEmpty()) {
+                    if (myViewerQueue.get(0).getType().equals(eventType)) {
+                        return;
+                    }
+                }
+            }
+            Object obj = new Object();
+            synchronized (obj){
+                try {
+                    obj.wait(500);
+                } catch (InterruptedException ignore) {  }
+            }
+        }
     }
 
     public void waitNextEvent(){
