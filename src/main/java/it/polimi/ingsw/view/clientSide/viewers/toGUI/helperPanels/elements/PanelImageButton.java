@@ -33,6 +33,21 @@ public class PanelImageButton extends SubPanel {
         this.add(button);
     }
 
+    public void setBackgroundImg(String fileName, String defaultValue){
+        try {
+            image = ImageIO.read(getClass().getResource(fileName));
+        }catch(IOException e){
+            if(View.debugging)
+                e.printStackTrace();
+            image = null;
+            button.setText(defaultValue);
+        }
+    }
+
+    public boolean isSetImg(){
+        return image!=null;
+    }
+
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 

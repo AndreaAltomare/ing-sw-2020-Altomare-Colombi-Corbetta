@@ -193,10 +193,9 @@ public class ViewPlayer extends ViewObject {
                     }
                 }
             }
-            return null;
         }
-        //todo: implement it
-        throw new WrongEventException();
+        return null;
+        //throw new WrongEventException();
     }
 
     /**

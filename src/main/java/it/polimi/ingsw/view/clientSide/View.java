@@ -307,6 +307,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
             }
         }else{
             if(cardsInformation.getChallenger().equals(ViewNickname.getMyNickname())){
+                System.out.println("CHALLENGER");
                 Viewer.setAllCardSelection(new CardSelection(cards, true));
             }
         }

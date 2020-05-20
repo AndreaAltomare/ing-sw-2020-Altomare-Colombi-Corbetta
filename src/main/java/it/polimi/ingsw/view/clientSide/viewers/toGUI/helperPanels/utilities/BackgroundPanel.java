@@ -33,4 +33,18 @@ public class BackgroundPanel extends JPanel {
             g2d.fill(new Rectangle2D.Double(0, 0, dimension.width, dimension.height));
         }
     }
+
+    public void setBackgroundImg(String fileName){
+        try {
+            backgroundImg = ImageIO.read(getClass().getResource(fileName));
+        }catch(IOException e){
+            if(View.debugging)
+                e.printStackTrace();
+            backgroundImg = null;
+        }
+    }
+
+    public boolean isSetImg(){
+        return backgroundImg!=null;
+    }
 }

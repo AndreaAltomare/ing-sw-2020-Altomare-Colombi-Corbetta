@@ -6,6 +6,7 @@ import it.polimi.ingsw.controller.events.RequirePlayersNumberEvent;
 import it.polimi.ingsw.controller.events.ServerSendDataEvent;
 import it.polimi.ingsw.model.CardInfo;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewCard;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ViewSender;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
@@ -22,6 +23,7 @@ import java.util.*;
 public class ViewTester implements ViewSender {
 
     private final static boolean addWait = false;
+    private final static boolean setDefaultChallenger = true;
 
     private Object lock = new Object();
     private View view = new View(null, null);
@@ -151,7 +153,11 @@ public class ViewTester implements ViewSender {
 
         {
             List<CardInfo> cards = new ArrayList<CardInfo>();
-            String challenger = "player1";
+            String challenger;
+            if(setDefaultChallenger)
+                challenger = "nickname";
+            else
+                challenger = "player1";
             String player = "";
 
             cards.add(new CardInfo("Apollo", "God of Music", "Your Move: Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated."));
@@ -163,16 +169,18 @@ public class ViewTester implements ViewSender {
             cards.add(new CardInfo("Minotaur", "Bull-headed Monster", "Your Move: Your Worker may move into an opponent Worker’s space, if their Worker can be forced one space straight backwards to an unoccupied space at any level."));
             cards.add(new CardInfo("Pan", "God of the Wild", "Win Condition: You also win if your Worker moves down two or more levels."));
             cards.add(new CardInfo("Prometheus", "Titan Benefactor of Mankind", "Your Turn: If your Worker does not move up, it may build both before and after moving."));
-            cards.add(new CardInfo("generalGod", "God of this dick", "DON'T CHOOSE ME."));
+            cards.add(new CardInfo("Default", "God of this dick", "DON'T CHOOSE ME."));
+            cards.add(new CardInfo("Default", "God of this dick", "Your Condition: do not choose me."));
 
+            System.out.println(cards.get(cards.size()-1).getDescription());
 
             CardsInformationEvent cardsInformationEvent = new CardsInformationEvent( cards, challenger, player);
 
             view.update(cardsInformationEvent);
         }
 
-        /*
-        view.update((NextStatusEvent)new NextStatusEvent("Playing"));*/
+        myWait();
+        view.update((NextStatusEvent)new NextStatusEvent("Playing"));
     }
 
     public static void main(String[] args) {

@@ -7,7 +7,9 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.elements.PanelImageButton;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.BackgroundPanel;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.SubPanel;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.specificGUISideClass.GUISelectCard;
 import it.polimi.ingsw.view.exceptions.CheckQueueException;
 import it.polimi.ingsw.view.exceptions.EmptyQueueException;
 
@@ -53,15 +55,15 @@ public class GUIViewer extends Viewer {
 
                     if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.EXIT) return;
                     if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS) setStatus(queued);
-                    if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.CARDSELECTION) {
-                        for(int i = 0; i<20; i++){
-                            System.out.println(((CardSelection)queued.getPayload()).getNext().getName());
+                    if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.CARDSELECTION)
+                        if (ViewStatus.getActual().equals(ViewStatus.GAME_PREPARATION)){
+                            GUISelectCard.attivate((CardSelection) queued.getPayload());
                         }
-                    }
                 }
             });
         }
     }
+
 
     public void displayErrorMessage(String message, ViewMessage.MessageType type){
         String buttonImage;

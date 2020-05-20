@@ -36,7 +36,7 @@ public class CardsChoosingExecuter extends Executer implements CardExecuter {
     @Override
     public void add(ViewCard card) throws WrongParametersException {
         if(card == null) throw new WrongParametersException("No card selected");
-        if (cardList.size()>= numberOfCards-1) throw new WrongParametersException("Too many cards selected");
+        if (cardList.size()>= numberOfCards) throw new WrongParametersException("Too many cards selected");
         cardList.add(card.getId());
     }
 
@@ -45,7 +45,7 @@ public class CardsChoosingExecuter extends Executer implements CardExecuter {
         if(cardList.contains(card)){
             throw new WrongParametersException("Already selected");
         }
-        if (cardList.size()>= numberOfCards-1) throw new WrongParametersException("Too many cards selected");
+        if (cardList.size()>= numberOfCards) throw new WrongParametersException("Too many cards selected");
         try {
             cardList.add(ViewCard.search(card).getId());
         } catch (NotFoundException | WrongViewObjectException e) {

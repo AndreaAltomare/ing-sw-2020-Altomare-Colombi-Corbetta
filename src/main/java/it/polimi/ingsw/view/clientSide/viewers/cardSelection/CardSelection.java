@@ -67,10 +67,11 @@ public class CardSelection implements Iterator<ViewCard> {
      * @throws CannotSendEventException (iif theexecuter cannot be sent)
      * @throws EndCardSelectionException (iif the executor was succesfully sent anc so the cards have been chosen)
      */
-    public void add(ViewCard card) throws WrongParametersException, CannotSendEventException {
+    public void add(ViewCard card) throws WrongParametersException, CannotSendEventException, EndCardSelectionException {
         cardExecuter.add(card);
         if(cardExecuter.getRemaining()==0){
             ((Executer)cardExecuter).doIt();
+            throw new EndCardSelectionException();
         }
     }
 
@@ -162,7 +163,7 @@ public class CardSelection implements Iterator<ViewCard> {
      * @return (ViewCard: previous card)
      */
     public ViewCard prev() {
-        iterator++;
+        iterator--;
         return getCurrent();
     }
 }
