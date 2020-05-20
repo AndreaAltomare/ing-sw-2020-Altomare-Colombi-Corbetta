@@ -479,10 +479,10 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         if(model.hasGameStarted()) {
             System.out.println("MoveWorkerEvent received form Player: " + playerNickname);
             WorkerMovedEvent workerMoved = model.moveWorker(move.getWorkerId(), move.getX(), move.getY(), playerNickname);
-            if (workerMoved != null)
+            if (workerMoved != null) {
                 notify(workerMoved); // ANSWER FROM THE CONTROLLER (Notify the View)
-
-            checkForSwitching(playerNickname);
+                checkForSwitching(playerNickname);
+            }
         }
         else
             notify(new ErrorMessageEvent("Game has not started yet! Hold on..."), playerNickname);
@@ -493,10 +493,10 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         if(model.hasGameStarted()) {
             System.out.println("BuildBlockEvent received form Player: " + playerNickname);
             BlockBuiltEvent blockBuilt = model.buildBlock(build.getWorkerId(), build.getX(), build.getY(), build.getBlockType(), playerNickname);
-            if (blockBuilt != null)
+            if (blockBuilt != null) {
                 notify(blockBuilt); // ANSWER FROM THE CONTROLLER (Notify the View)
-
-            checkForSwitching(playerNickname);
+                checkForSwitching(playerNickname);
+            }
         }
         else
             notify(new ErrorMessageEvent("Game has not started yet! Hold on..."), playerNickname);
@@ -539,10 +539,10 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         if(model.hasGameStarted()) {
             System.out.println("TurnStatusChangeEvent received form Player: " + playerNickname);
             TurnStatusChangedEvent turnStatusChanged = model.changeTurnStatus(turnStatus.getTurnStatus(), playerNickname);
-            if (turnStatusChanged != null)
+            if (turnStatusChanged != null) {
                 notify(turnStatusChanged, playerNickname); // ANSWER FROM THE CONTROLLER (Notify the View)
-
-            checkForSwitching(playerNickname);
+                checkForSwitching(playerNickname);
+            }
 
             /* ANSWER FROM THE CONTROLLER (Notify the View) */
             /*notify(new TurnStatusChangedEvent(playerNickname, turnStatus.getTurnStatus()), playerNickname);*/

@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.clientSide;
 import it.polimi.ingsw.connection.client.ClientConnection;
 import it.polimi.ingsw.controller.events.*;
 import it.polimi.ingsw.model.CardInfo;
+import it.polimi.ingsw.model.MoveOutcomeType;
 import it.polimi.ingsw.model.PlaceableType;
 import it.polimi.ingsw.model.StateType;
 import it.polimi.ingsw.observer.MVEventListener;
@@ -28,7 +29,9 @@ import it.polimi.ingsw.view.serverSide.ClientStatus;
 import it.polimi.ingsw.view.serverSide.ClientStatus;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class View extends Observable<Object> implements MVEventListener, Runnable { // todo: maybe this class extends Observable<Object> for proper interaction with Network Handler
@@ -38,6 +41,11 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     private String input; // unique input
     private String nickname; // Player's nickname
     private boolean connectionActive;
+
+    /* ########## TESTING ########## */
+    private int boardXsize, boardYsize;
+    private List<String> players;
+    private Map<String, List<String>> workersToPlayer;
 
     public View(Scanner in, ClientConnection connection) {
         this.in = in;
@@ -86,8 +94,10 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
                 case "giorgio":
                 case "marco":
                     nickname = input;
-                    //notify(new SetNicknameEvent(input)); // submit nickname
+                    notify(new SetNicknameEvent(nickname)); // submit nickname
                     break;
+
+
                 case "1":
                 case "2":
                 case "3":
@@ -95,33 +105,126 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
                 case "5":
                     notify(new SetPlayersNumberEvent(Integer.parseInt(input))); // by this way we ensure auto-boxing from int to Object type works correctly
                     break;
+
+
+                case "start_player":
+                    input = in.nextLine();
+                    notify(new SetStartPlayerEvent(input)); // submit nickname
+                    break;
+
+
                 case "build_block":
-                    notify(new BuildBlockEvent("Worker1@" + nickname, 3, 5, PlaceableType.BLOCK));
+                    System.out.println("Type the Worker's ID (just the number) by which make a build: ");
+                    int id = Integer.parseInt(in.nextLine());
+                    String workerId = "[Worker]\t" + id;
+                    System.out.println("X position: ");
+                    int x = Integer.parseInt(in.nextLine());
+                    System.out.println("Y position: ");
+                    int y = Integer.parseInt(in.nextLine());
+                    System.out.println("Select the type of block you want to build (type its number):\n1 - BLOCK\n2 - DOME");
+                    int block = Integer.parseInt(in.nextLine());
+                    PlaceableType blockType = PlaceableType.DOME;
+                    if(block == 1)
+                        blockType = PlaceableType.BLOCK;
+                    notify(new BuildBlockEvent(workerId, x, y, blockType));
                     break;
+
+
+                case "challenger_card":
+                    String card;
+                    int n = players.size();
+                    List<String> cards = new ArrayList<>(n);
+                    System.out.println("Choose " + n + "Cards for this game.");
+                    for(int i = 0; i < n; i++) {
+                        System.out.println((n - i) + " remaining Cards to choose. Type a name of a Card:");
+                        card = in.nextLine();
+                        cards.add(card);
+                    }
+                    notify(new CardsChoosingEvent(cards));
+                    break;
+
+
                 case "select_card":
-                    notify(new CardSelectionEvent("zeus"));
+                    card = in.nextLine();
+                    notify(new CardSelectionEvent(card));
                     break;
+
+
                 case "move_worker":
-                    notify(new MoveWorkerEvent("Worker1@" + nickname, 3, 3));
+                    System.out.println("Type the Worker's ID (just the number) by which make a movement: ");
+                    id = Integer.parseInt(in.nextLine());
+                    workerId = "[Worker]\t" + id;
+                    System.out.println("X position: ");
+                    x = Integer.parseInt(in.nextLine());
+                    System.out.println("Y position: ");
+                    y = Integer.parseInt(in.nextLine());
+                    notify(new MoveWorkerEvent(workerId, x, y));
                     break;
+
+
                 case "place_worker":
-                    notify(new PlaceWorkerEvent(1, 1));
+                    System.out.println("Place a Worker onto the game board.");
+                    System.out.println("X position: ");
+                    x = Integer.parseInt(in.nextLine());
+                    System.out.println("Y position: ");
+                    y = Integer.parseInt(in.nextLine());
+                    notify(new PlaceWorkerEvent(x, y));
                     break;
+
+
                 case "remove_block":
-                    notify(new RemoveBlockEvent("Worker1@" + nickname, 4, 1));
+                    System.out.println("Type the Worker's ID (just the number) by which remove a block from the game board: ");
+                    id = Integer.parseInt(in.nextLine());
+                    workerId = "[Worker]\t" + id;
+                    System.out.println("X position of the block to remove: ");
+                    x = Integer.parseInt(in.nextLine());
+                    System.out.println("Y position of the block to remove: ");
+                    y = Integer.parseInt(in.nextLine());
+                    notify(new RemoveBlockEvent(workerId, x, y));
                     break;
+
+
                 case "remove_worker":
-                    notify(new RemoveWorkerEvent("Worker2@" + nickname, 0, 0));
+                    System.out.println("Type the Worker's ID (just the number) of the Worker to remove from the game board: ");
+                    id = Integer.parseInt(in.nextLine());
+                    workerId = "[Worker]\t" + id;
+                    System.out.println("X position of the Worker to remove: ");
+                    x = Integer.parseInt(in.nextLine());
+                    System.out.println("Y position of the Worker to remove: ");
+                    y = Integer.parseInt(in.nextLine());
+                    notify(new RemoveWorkerEvent(workerId, x, y));
                     break;
+
+
                 case "select_worker":
-                    notify(new SelectWorkerEvent("Worker1@" + nickname));
+                    System.out.println("Type the Worker's ID (just the number) of the Worker you want to select: ");
+                    id = Integer.parseInt(in.nextLine());
+                    workerId = "[Worker]\t" + id;
+                    notify(new SelectWorkerEvent(workerId));
                     break;
+
+
                 case "turn_change":
-                    notify(new TurnStatusChangeEvent(StateType.MOVEMENT));
+                    System.out.println("Select the turn you want to switch at:\n1 - MOVEMENT\n2 - CONSTRUCTION");
+                    int turn = Integer.parseInt(in.nextLine());
+                    StateType turnType = StateType.CONSTRUCTION;
+                    if(turn == 1)
+                        turnType = StateType.MOVEMENT;
+                    notify(new TurnStatusChangeEvent(turnType));
                     break;
+
+
                 case "data_request":
                     notify(new ViewRequestDataEvent());
                     break;
+
+
+                /* ########## CONTROL COMMANDS ########## */
+                case "game_info":
+                    printGameInfo();
+                    break;
+
+
                 default:
                     System.out.println("Invalid request. Try again.");
                     break;
@@ -134,6 +237,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         // TODO: close connection, and gracefully close the whole application
     }
 
+
+
     /**
      * Method called to make the status go ahead of one step.
      *
@@ -142,8 +247,9 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     /* Server general listener */
     @Override
     public void update(NextStatusEvent nextStatus) {
-        ViewMessage.populateAndSend(nextStatus.toString(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
-        ViewStatus.nextStatus();
+//        ViewMessage.populateAndSend(nextStatus.toString(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
+//        ViewStatus.nextStatus();
+        System.out.println("[NextStatusEvent]"); // todo [debug]
     }
 
     /**
@@ -154,8 +260,9 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     @Override
     public void update(InvalidNicknameEvent invalidNickname) {
         //It is in the LOGIN status...so we only need to display the error message
-        ViewNickname.clear();
-        ViewMessage.populateAndSend(invalidNickname.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
+//        ViewNickname.clear();
+//        ViewMessage.populateAndSend(invalidNickname.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
+        System.out.println("[InvalidNicknameEvent] Invalid nickname! Try again."); // todo [debug]
     }
 
     /**
@@ -165,8 +272,9 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
      */
     @Override
     public void update(RequirePlayersNumberEvent requirePlayersNumber) {
-        ViewMessage.populateAndSend(requirePlayersNumber.getMessage(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
-        ViewStatus.setStatus("NUMBER_PLAYER");
+//        ViewMessage.populateAndSend(requirePlayersNumber.getMessage(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
+//        ViewStatus.setStatus("NUMBER_PLAYER");
+        System.out.println("[RequirePlayersNumberEvent] You are the first player. Choose the number of players for this game (2 or 3):"); // todo [debug]
     }
 
     /**
@@ -176,9 +284,10 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
      */
     @Override
     public void update(LobbyFullEvent lobbyFull) {
-        ViewStatus.setStatus("CLOSING");
-        ViewMessage.populateAndSend(lobbyFull.getMessage(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
-        ViewMessage.populateAndSend(lobbyFull.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
+//        ViewStatus.setStatus("CLOSING");
+//        ViewMessage.populateAndSend(lobbyFull.getMessage(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
+//        ViewMessage.populateAndSend(lobbyFull.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
+        System.out.println("[LobbyFullEvent] Lobby is full!"); // todo [debug]
         // TODO: close connection, and gracefully close the whole application
     }
 
@@ -189,11 +298,12 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
      */
     @Override
     public void update(PlayerWinEvent playerWin) {
-        if (ViewNickname.getMyNickname().equals(playerWin.getPlayerNickname())) {
-            ViewMessage.populateAndSend(playerWin.getWinnerMessage(), ViewMessage.MessageType.WIN_MESSAGE);
-        } else {
-            ViewMessage.populateAndSend(playerWin.getLosersMessage(), ViewMessage.MessageType.LOOSE_MESSAGE);
-        }
+//        if (ViewNickname.getMyNickname().equals(playerWin.getPlayerNickname())) {
+//            ViewMessage.populateAndSend(playerWin.getWinnerMessage(), ViewMessage.MessageType.WIN_MESSAGE);
+//        } else {
+//            ViewMessage.populateAndSend(playerWin.getLosersMessage(), ViewMessage.MessageType.LOOSE_MESSAGE);
+//        }
+        System.out.println("[PlayerWinEvent] Player " + playerWin.getPlayerNickname() + " has won!"); // todo [debug]
     }
 
     /**
@@ -203,9 +313,10 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
      */
     @Override
     public void update(PlayerLoseEvent playerLose) {
-        if (ViewNickname.getMyNickname().equals(playerLose.getPlayerNickname())) {
-            ViewMessage.populateAndSend(playerLose.getMessage(), ViewMessage.MessageType.LOOSE_MESSAGE);
-        }
+//        if (ViewNickname.getMyNickname().equals(playerLose.getPlayerNickname())) {
+//            ViewMessage.populateAndSend(playerLose.getMessage(), ViewMessage.MessageType.LOOSE_MESSAGE);
+//        }
+        System.out.println("[PlayerLoseEvent] Player " + playerLose.getPlayerNickname() + " has lost!"); // todo [debug]
     }
 
     /**
@@ -215,15 +326,16 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
      */
     @Override
     public void update(TurnStatusChangedEvent turnStatusChange) {
-        ViewSubTurn.set(turnStatusChange.getState().toString());
-        ViewSubTurn.getActual().setPlayer(turnStatusChange.getPlayerNickname());
-        Viewer.setAllSubTurnViewer(ViewSubTurn.getActual().getSubViewer());
+//        ViewSubTurn.set(turnStatusChange.getState().toString());
+//        ViewSubTurn.getActual().setPlayer(turnStatusChange.getPlayerNickname());
+//        Viewer.setAllSubTurnViewer(ViewSubTurn.getActual().getSubViewer());
         //System.out.println("Turn status changed to: " + turnStatusChange.getState().toString()); // todo: check what toString() of an enum prints... [si, funziona.]
+        System.out.println("[TurnStatusChangedEvent] Your turn is now: " + turnStatusChange.getState().toString()); // todo [debug]
     }
 
     @Override
     public void update(GameOverEvent gameOver) {
-
+        System.out.println("[GameOverEvent] Game over!"); // todo [debug]
     }
 
 
@@ -234,9 +346,10 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
      */
     @Override
     public void update(ServerQuitEvent serverQuit) {
-        ViewStatus.setStatus("CLOSING");
-        ViewMessage.populateAndSend(serverQuit.getMessage(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
-        ViewMessage.populateAndSend(serverQuit.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
+//        ViewStatus.setStatus("CLOSING");
+//        ViewMessage.populateAndSend(serverQuit.getMessage(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
+//        ViewMessage.populateAndSend(serverQuit.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
+        System.out.println("[ServerQuitEvent] Server quit the connection."); // todo [debug]
         // todo add code to handle disconnection
     }
 
@@ -248,7 +361,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
      */
     @Override
     public void update(MessageEvent message) {
-        ViewMessage.populateAndSend(message.getMessage(), ViewMessage.MessageType.FROM_SERVER_MESSAGE);
+//        ViewMessage.populateAndSend(message.getMessage(), ViewMessage.MessageType.FROM_SERVER_MESSAGE);
+        System.out.println("[MessageEvent] " + message.getMessage()); // todo [debug]
     }
 
 
@@ -260,7 +374,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
      */
     @Override
     public void update(ErrorMessageEvent message) {
-        ViewMessage.populateAndSend(message.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
+//        ViewMessage.populateAndSend(message.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
+        System.out.println("[ErrorMessageEvent] " + message.getMessage()); // todo [debug]
     }
 
 
@@ -271,11 +386,29 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
      */
     @Override
     public void update(ServerSendDataEvent serverSentData) {
-        try {
-            ViewBoard.populate(serverSentData);
-            ViewPlayer.populate(serverSentData);
-        } catch (WrongEventException e) {
-            e.printStackTrace();
+//        try {
+//            ViewBoard.populate(serverSentData);
+//            ViewPlayer.populate(serverSentData);
+//        } catch (WrongEventException e) {
+//            e.printStackTrace();
+//        }
+        /* Retrieve data */
+        this.boardXsize = serverSentData.getBoardXsize();
+        this.boardXsize = serverSentData.getBoardYsize();
+        this.players = serverSentData.getPlayers();
+        this.workersToPlayer = serverSentData.getWorkersToPlayer();
+        /* Print info */
+        System.out.println("[ServerSendDataRequest]");
+        /* Board size */
+        System.out.println("\nBoard X size: " + serverSentData.getBoardXsize());
+        System.out.println("Board Y size: " + serverSentData.getBoardYsize());
+        /* Players list and workers associated to each */
+        System.out.println("\nPlayers list and their Workers: ");
+        for (String player : serverSentData.getPlayers()) {
+            System.out.println(player);
+            List<String> workers = serverSentData.getWorkersToPlayer().get(player);
+            for (String worker : workers)
+                System.out.println("     - " + worker);
         }
     }
 
@@ -287,9 +420,22 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
      */
     @Override
     public void update(CardsInformationEvent cardsInformation) {
-        List<CardInfo> cardList = cardsInformation.getCards();
-        for (CardInfo card: cardList) {
-            new ViewCard(card.getName(), card.getEpithet(), card.getDescription());
+//        List<CardInfo> cardList = cardsInformation.getCards();
+//        for (CardInfo card: cardList) {
+//            new ViewCard(card.getName(), card.getEpithet(), card.getDescription());
+//        }
+        // todo [debug]
+        if(cardsInformation.getPlayer().equals("") && cardsInformation.getChallenger().equals(nickname)) {
+            System.out.println("[CardsInformationEvent] You are the challenger.\nChoose a number of cards equal to the number of players for this game."); // todo [debug]
+            System.out.println("Cards: ");
+            List<CardInfo> cardList = cardsInformation.getCards();
+            cardList.forEach(x -> System.out.println("    - " + x.getName()));
+        }
+        else if(cardsInformation.getPlayer().equals(nickname)) {
+            System.out.println("[CardsInformationEvent] Select your Card.");
+            System.out.println("Cards:");
+            List<CardInfo> cardList = cardsInformation.getCards();
+            cardList.forEach(x -> System.out.println("    - " + x.getName()));
         }
     }
 
@@ -300,79 +446,159 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
      */
     @Override
     public void update(CardSelectedEvent cardSelected) {
-        ViewNickname.setMyCard(cardSelected.getCardName());
+//        ViewNickname.setMyCard(cardSelected.getCardName());
+        // todo [debug]
+        if(cardSelected.getPlayerNickname().equals(nickname)) {
+            if (cardSelected.success())
+                System.out.println("[CardSelectedEvent] You have correctly selected the card: " + cardSelected.getCardName()); // todo [debug]
+            else
+                System.out.println("[CardSelectedEvent] The Card you have selected is not valid!"); // todo [debug]
+        }
+        else {
+            if (cardSelected.success())
+                System.out.println("[CardSelectedEvent] Player " + cardSelected.getPlayerNickname() + " has correctly selected the card: " + cardSelected.getCardName()); // todo [debug]
+            else
+                System.out.println("[CardSelectedEvent] The Card Player " + cardSelected.getPlayerNickname() + " has selected is not valid!"); // todo [debug]
+        }
     }
 
     @Override
     public void update(WorkerPlacedEvent workerPlaced) {
-        try {
-            ((ViewWorker)ViewWorker.search(workerPlaced.getWorker())).placeOn(workerPlaced.getX(), workerPlaced.getY());
-        } catch (NotFoundException | WrongViewObjectException e) {
-            ViewMessage.populateAndSend("Wrong placed recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
-        }
+//        try {
+//            ((ViewWorker)ViewWorker.search(workerPlaced.getWorker())).placeOn(workerPlaced.getX(), workerPlaced.getY());
+//        } catch (NotFoundException | WrongViewObjectException e) {
+//            ViewMessage.populateAndSend("Wrong placed recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+//        }
+        if(workerPlaced.success())
+            System.out.println("[WorkerPlacedEvent] Worker '" + workerPlaced.getWorker() + "' was correctly placed in position: ( " + workerPlaced.getX() + " , " + workerPlaced.getY() + " )"); // todo [debug]
+        else
+            System.out.println("[WorkerPlacedEvent] A Worker was not correctly placed!");
     }
 
     @Override
     public void update(WorkerMovedEvent workerMoved) {
-        try {
-            ((ViewWorker)ViewWorker.search(workerMoved.getWorker())).placeOn(workerMoved.getFinalX(), workerMoved.getFinalY());
-        } catch (NotFoundException | WrongViewObjectException e) {
-            ViewMessage.populateAndSend("Wrong cell recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+//        try {
+//            ((ViewWorker)ViewWorker.search(workerMoved.getWorker())).placeOn(workerMoved.getFinalX(), workerMoved.getFinalY());
+//        } catch (NotFoundException | WrongViewObjectException e) {
+//            ViewMessage.populateAndSend("Wrong cell received", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+//        }
+        if(workerMoved.getMoveOutcome() == MoveOutcomeType.EXECUTED) {
+            System.out.println("[WorkerMovedEvent] Worker '" + workerMoved.getWorker() + "' was correctly moved:"); // todo [debug]
+            System.out.println("    Initial position: ( " + workerMoved.getInitialX() + " , " + workerMoved.getInitialY() + " )"); // todo [debug]
+            System.out.println("    Current position: ( " + workerMoved.getFinalX() + " , " + workerMoved.getFinalY() + " )"); // todo [debug]
         }
+        else
+            System.out.println("[WorkerMovedEvent] Worker '" + workerMoved.getWorker() + "' movement is not valid!"); // todo [debug]
     }
 
     @Override
     public void update(BlockBuiltEvent blockBuilt) {
-        ViewCell cell;
-        try {
-            cell = ((ViewBoard) ViewBoard.search(ViewBoard.getClassId())).getCellAt(blockBuilt.getX(), blockBuilt.getY());
-        } catch (NotFoundException | WrongViewObjectException e) {
-            ViewMessage.populateAndSend("Wrong cell recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
-            return;
-        }
-        if(blockBuilt.getBlockType().equals(PlaceableType.BLOCK))
-            cell.buildLevel();
-        else if(blockBuilt.getBlockType().equals(PlaceableType.DOME))
-            cell.buildDome();
+//        ViewCell cell;
+//        try {
+//            cell = ((ViewBoard) ViewBoard.search(ViewBoard.getClassId())).getCellAt(blockBuilt.getX(), blockBuilt.getY());
+//        } catch (NotFoundException | WrongViewObjectException e) {
+//            ViewMessage.populateAndSend("Wrong cell recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+//            return;
+//        }
+//        if(blockBuilt.getBlockType().equals(PlaceableType.BLOCK))
+//            cell.buildLevel();
+//        else if(blockBuilt.getBlockType().equals(PlaceableType.DOME))
+//            cell.buildDome();
+//        else
+//            ViewMessage.populateAndSend("Wrong block recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+        if(blockBuilt.getMoveOutcome() == MoveOutcomeType.EXECUTED)
+            System.out.println("[BlockBuiltEvent] A '" + blockBuilt.getBlockType().toString() + "' was correctly built in place: ( " + blockBuilt.getX() + " , " + blockBuilt.getY() + " )"); // todo [debug]
         else
-            ViewMessage.populateAndSend("Wrong block recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+            System.out.println("[BlockBuiltEvent] '" + blockBuilt.getBlockType().toString() + " was NOT built. Invalid BuildMove."); // todo [debug]
     }
 
     @Override
     public void update(BlockRemovedEvent blockRemoved) {
-        ViewCell cell;
-        try {
-            cell = ((ViewBoard) ViewBoard.search(ViewBoard.getClassId())).getCellAt(blockRemoved.getX(), blockRemoved.getY());
-        } catch (NotFoundException | WrongViewObjectException e) {
-            ViewMessage.populateAndSend("Wrong cell recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
-            return;
-        }
-        if(cell.isDoomed())
-            cell.removeDome();
-        else
-            cell.removeLevel();
+//        ViewCell cell;
+//        try {
+//            cell = ((ViewBoard) ViewBoard.search(ViewBoard.getClassId())).getCellAt(blockRemoved.getX(), blockRemoved.getY());
+//        } catch (NotFoundException | WrongViewObjectException e) {
+//            ViewMessage.populateAndSend("Wrong cell recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+//            return;
+//        }
+//        if(cell.isDoomed())
+//            cell.removeDome();
+//        else
+//            cell.removeLevel();
+        // todo: This kind of event should not be displayed!
+        System.err.println("[BlockRemovedEvent] A block was correctly removed. (This kind of event SHALL NOT be displayed!)"); // todo [debug]
     }
 
     @Override
     public void update(WorkerRemovedEvent workerRemoved) {
-        try {
-            ((ViewWorker)ViewWorker.search(workerRemoved.getWorker())).removeWorker();
-        } catch (NotFoundException | WrongViewObjectException e) {
-            ViewMessage.populateAndSend("Cannot remove worker", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
-        }
+//        try {
+//            ((ViewWorker)ViewWorker.search(workerRemoved.getWorker())).removeWorker();
+//        } catch (NotFoundException | WrongViewObjectException e) {
+//            ViewMessage.populateAndSend("Cannot remove worker", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+//        }
+        System.out.println("[WorkerRemovedEvent] Worker" + workerRemoved.getWorker() + "was correctly removed from position: ( " + workerRemoved.getX() + " , " + workerRemoved.getY() + " )"); // todo [debug]
     }
 
     @Override
-    public void update(Object o) {
-        ViewMessage.populateAndSend("Recived a wrong message", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+    public void update(RequireStartPlayerEvent requireStartPlayer) {
+        if(requireStartPlayer.getChallenger().equals(nickname)) {
+            System.out.println("[RequireStartPlayerEvent] You are the challenger.\nChoose the Start Player: "); // todo [debug]
+            List<String> players = requireStartPlayer.getPlayers();
+            players.forEach(x -> System.out.println("    - " + x));
+        }
+        else
+            System.out.println("Challenger is choosing the Start Player. Wait...");
     }
+
+    @Override
+    public void update(RequirePlaceWorkersEvent requirePlaceWorkers) {
+        if(requirePlaceWorkers.getPlayer().equals(nickname)) {
+            System.out.println("[RequirePlaceWorkersEvent] Place worker."); // todo [debug]
+        }
+        else
+            System.out.println("Other players are placing their Workers. Wait...");
+    }
+
+    @Override
+    public void update(WorkerSelectedEvent workerSelected) {
+        if(workerSelected.getPlayerNickname().equals(nickname)) {
+            if(workerSelected.success())
+                System.out.println("[WorkerSelectedEvent] Worker '" + workerSelected.getWorker() + "' was correctly SELECTED.");
+            else
+                System.out.println("[WorkerSelectedEvent] Worker '" + workerSelected.getWorker() + "' CANNOT BE SELECTED!");
+        }
+    }
+
+
+
+    @Override
+    public void update(Object o) {
+//        ViewMessage.populateAndSend("Recived a wrong message", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+        System.err.println("[ERROR] Received a generic Object (UNEXPECTED!)");
+    }
+
+
+
+    /* ########## AUXILIARY TEST METHODS ########## */
+    private void printGameInfo() {
+        System.out.println("Players list and their Workers: ");
+        for (String player : players) {
+            System.out.println(player);
+            List<String> workers = workersToPlayer.get(player);
+            for (String worker : workers)
+                System.out.println("     - " + worker);
+        }
+    }
+
+
+
 
     public String getNickname() {
         String ret = ViewNickname.getMyNickname();
         return ret==null?"":ret;
     }
 
-    //todo: serve?
+    //todo: serve? [Andrea: Forse. In caso non serva, lo togliamo al momento del refactoring generale]
     public void setNickname(String nickname) { throw new NullPointerException("Questo metodo non dovrebbe essere chiamato"); }
 
     public boolean isConnectionActive() {
@@ -388,20 +614,11 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
 
 
-    @Override
-    public void update(RequireStartPlayerEvent requireStartPlayer) {
 
-    }
 
-    @Override
-    public void update(RequirePlaceWorkersEvent requirePlaceWorkers) {
 
-    }
 
-    @Override
-    public void update(WorkerSelectedEvent workerSelected) {
-        System.out.println("Worker named '" + workerSelected.getWorker() + "was correctly SELECTED");
-    }
+
 
 
 

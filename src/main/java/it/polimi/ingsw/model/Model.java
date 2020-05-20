@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
  * @author AndreaAltomare
  */
 public class Model {
+    // TODO: All "volatile" variables needs to be changed to "Atomic" type-of variables [FORSE]
     private Controller controller; // associated controller
     public final int WORKERS_PER_PLAYER;
     private volatile Boolean gameStarted; // tell if the game has started
@@ -266,10 +267,12 @@ public class Model {
 
             /* 2- Execute move */
             moveSuccess = player.chooseWorker(w);
+
+            /* 3- Return the result */
+            return new WorkerSelectedEvent(playerNickname, workerId, moveSuccess);
         }
 
-        /* 3- Return the result */
-        return new WorkerSelectedEvent(playerNickname, workerId, moveSuccess);
+        return null;
     }
 
 
@@ -541,8 +544,14 @@ public class Model {
     }
 
     private void unregisterPlayer(Player losingPlayer) {
-        board.removeWorkers(losingPlayer); // todo: to be written by Giorgio
+        /* 1- Take Player's Workers, remove them and notify views*/
+        List<Worker> workers = losingPlayer.getWorkers();
+        List<WorkerRemovedEvent> removedWorkers = workers.stream().map(x -> new WorkerRemovedEvent(x.getWorkerId(), x.position().getX(), x.position().getY(), true)).collect(Collectors.toList());
+        board.removeWorkers(losingPlayer);
+        removedWorkers.forEach(x -> controller.notifyFromModel(x));
+        /* 2- Remove the Player from the Players list */
         gameRoom.removePlayer(losingPlayer.getNickname());
+        /* 3- Remove the Player-associated Virtual View */
         controller.removeView(losingPlayer.getNickname());
     }
 
