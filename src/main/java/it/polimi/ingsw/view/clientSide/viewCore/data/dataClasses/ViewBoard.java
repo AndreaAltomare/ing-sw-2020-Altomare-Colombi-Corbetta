@@ -33,6 +33,20 @@ public class ViewBoard extends ViewObject {
 
     private static ViewBoard board;
 
+    private ViewCell selectedCell;
+
+    public void setSelectedCell(int x, int y){
+        try {
+            selectedCell = getCellAt(x, y);
+        } catch (NotFoundException e) {
+            selectedCell = null;
+        }
+    }
+
+    public void setSelectedCell(ViewCell cell){ selectedCell = cell; }
+
+    public ViewCell getSelectedCell(){ return selectedCell; }
+
     public static ViewBoard getBoard(){ return board; }
 
     /**
@@ -214,6 +228,7 @@ public class ViewBoard extends ViewObject {
                 } catch (NotFoundException ignore) {  }
             }
         }
+        guiPanel.setSelectCell(selectedCell);
         return guiPanel;
     }
 }

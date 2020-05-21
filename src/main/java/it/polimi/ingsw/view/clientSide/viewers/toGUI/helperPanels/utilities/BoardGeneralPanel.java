@@ -1,8 +1,11 @@
 package it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities;
 
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewCell;
+import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
+import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -18,6 +21,10 @@ public class BoardGeneralPanel extends ImagePanel {
     private double xLen;
     private double yLen;
 
+
+    private ViewCell selectedCell;
+    private ImagePanel selectPanel = new ImagePanel(1, 1, 0, 0, "/img/board/cells/selectedCell.png");
+
     /**
      * Class to represent the status of the buildings on the board
      */
@@ -25,7 +32,7 @@ public class BoardGeneralPanel extends ImagePanel {
 
         private SubPanel[][] cellMatrix;
         private String[][] cellStatusMatrix;
-        BoardGeneralPanel parent;
+        private BoardGeneralPanel parent;
 
         MyBuildingRepresentation(BoardGeneralPanel parent){
             this.parent = parent;
@@ -171,6 +178,38 @@ public class BoardGeneralPanel extends ImagePanel {
         return ret;
     }
 
+    /*public void setSelectCell(int x, int y){
+        if(selectedCell!= null){
+            remove(selectPanel);
+        }
+        try {
+            selectedCell = ViewBoard.getBoard().getCellAt(x, y);
+            addComponentToCell(selectedCell, selectPanel);
+        } catch (NotFoundException e) {
+            selectedCell = null;
+        }
+    }*/
+
+    public void setSelectCell(ViewCell cell){
+        if(selectedCell!=null){
+            JPanel back = myBuildingRepresentation.getPanelAt(selectedCell);
+            if(back == null)
+                remove(selectPanel);
+            else
+                back.remove(selectPanel);
+        }
+
+        selectedCell = cell;
+        if(selectedCell!=null){
+            JPanel back = myBuildingRepresentation.getPanelAt(cell);
+            if(back == null)
+                addComponentToCell(selectedCell, selectPanel);
+            else
+                back.add(selectPanel);
+        }
+
+    }
+
     @Override
     public Component add(Component c){
         if(c==null) return null;
@@ -182,4 +221,6 @@ public class BoardGeneralPanel extends ImagePanel {
         if(c==null) return;
         super.remove(c);
     }
+
+
 }

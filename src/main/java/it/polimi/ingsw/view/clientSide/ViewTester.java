@@ -225,14 +225,59 @@ public class ViewTester implements ViewSender {
             ViewBoard.getBoard().getCellAt(2, 0).buildLevel();
             ViewBoard.getBoard().getCellAt(3, 0).buildLevel();
             ViewBoard.getBoard().getCellAt(4, 0).buildLevel();
-            System.out.println(ViewBoard.getBoard().toTerminal());
-            ViewBoard.getBoard().toGUI();
-            Viewer.setAllRefresh();
-            System.out.println("aggiorno la board da View");
 
         } catch (NotFoundException e) {
             e.printStackTrace();
         }
+
+        System.out.println(ViewBoard.getBoard().toTerminal());
+        //ViewBoard.getBoard().toGUI();
+        Viewer.setAllRefresh();
+        System.out.println("aggiorno la board da View");
+
+        synchronized (obj) {
+            try {
+                obj.wait(2500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        ViewBoard.getBoard().setSelectedCell(0, 0);
+        Viewer.setAllRefresh();
+
+        synchronized (obj) {
+            try {
+                obj.wait(2500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        ViewBoard.getBoard().setSelectedCell(1, 1);
+        Viewer.setAllRefresh();
+
+        synchronized (obj) {
+            try {
+                obj.wait(2500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        ViewBoard.getBoard().setSelectedCell(null);
+        Viewer.setAllRefresh();
+
+        synchronized (obj) {
+            try {
+                obj.wait(2500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        ViewBoard.getBoard().setSelectedCell(0, 0);
+        Viewer.setAllRefresh();
 
     }
 
