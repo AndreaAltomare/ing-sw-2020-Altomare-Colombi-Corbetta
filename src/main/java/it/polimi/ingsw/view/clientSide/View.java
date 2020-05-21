@@ -40,6 +40,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     private Scanner in; // Scanner unique reference
     private String input; // unique input
     private String nickname; // Player's nickname
+    private boolean nicknameSet;
     private boolean connectionActive;
 
     /* ########## TESTING ########## */
@@ -68,7 +69,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         ViewStatus.nextStatus();
         Viewer.setAllStatusViewer(ViewStatus.getActual().getViewer());*/
 
-
+        nicknameSet = false;
 
         // todo istanziare connessione ecc...
         tConnection = new Thread(new Runnable() {
@@ -93,8 +94,14 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
                 case "andrea":
                 case "giorgio":
                 case "marco":
-                    nickname = input;
-                    notify(new SetNicknameEvent(nickname)); // submit nickname
+                    if(!nicknameSet) {
+                        nickname = input;
+                        notify(new SetNicknameEvent(nickname)); // submit nickname
+                        nicknameSet = true;
+                    }
+                    else {
+                        notify(new SetStartPlayerEvent(input)); // submit nickname
+                    }
                     break;
 
 
@@ -134,7 +141,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
                     String card;
                     int n = players.size();
                     List<String> cards = new ArrayList<>(n);
-                    System.out.println("Choose " + n + "Cards for this game.");
+                    System.out.println("Choose " + n + " Cards for this game.");
                     for(int i = 0; i < n; i++) {
                         System.out.println((n - i) + " remaining Cards to choose. Type a name of a Card:");
                         card = in.nextLine();
@@ -249,7 +256,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     public void update(NextStatusEvent nextStatus) {
 //        ViewMessage.populateAndSend(nextStatus.toString(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
 //        ViewStatus.nextStatus();
-        System.out.println("[NextStatusEvent]"); // todo [debug]
+        System.out.println("[NextStatusEvent] " + nextStatus.getMessage()); // todo [debug]
     }
 
     /**
@@ -349,7 +356,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 //        ViewStatus.setStatus("CLOSING");
 //        ViewMessage.populateAndSend(serverQuit.getMessage(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
 //        ViewMessage.populateAndSend(serverQuit.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
-        System.out.println("[ServerQuitEvent] Server quit the connection."); // todo [debug]
+        System.out.println("[ServerQuitEvent] Server quit the connection.\nMessage: " + serverQuit.getMessage()); // todo [debug]
         // todo add code to handle disconnection
     }
 
@@ -425,17 +432,25 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 //            new ViewCard(card.getName(), card.getEpithet(), card.getDescription());
 //        }
         // todo [debug]
-        if(cardsInformation.getPlayer().equals("") && cardsInformation.getChallenger().equals(nickname)) {
-            System.out.println("[CardsInformationEvent] You are the challenger.\nChoose a number of cards equal to the number of players for this game."); // todo [debug]
-            System.out.println("Cards: ");
-            List<CardInfo> cardList = cardsInformation.getCards();
-            cardList.forEach(x -> System.out.println("    - " + x.getName()));
+        if(cardsInformation.getPlayer().equals("")) {
+            if(cardsInformation.getChallenger().equals(nickname)) {
+                System.out.println("[CardsInformationEvent] You are the challenger.\nChoose a number of cards equal to the number of players for this game."); // todo [debug]
+                System.out.println("Cards: ");
+                List<CardInfo> cardList = cardsInformation.getCards();
+                cardList.forEach(x -> System.out.println("    - " + x.getName()));
+            }
+            else {
+                System.out.println("[CardsInformationEvent] Challenger is choosing cards for this game...");
+            }
         }
         else if(cardsInformation.getPlayer().equals(nickname)) {
             System.out.println("[CardsInformationEvent] Select your Card.");
             System.out.println("Cards:");
             List<CardInfo> cardList = cardsInformation.getCards();
             cardList.forEach(x -> System.out.println("    - " + x.getName()));
+        }
+        else {
+            System.out.println("[CardsInformationEvent] Another Player is choosing his/her Card. Wait...");
         }
     }
 

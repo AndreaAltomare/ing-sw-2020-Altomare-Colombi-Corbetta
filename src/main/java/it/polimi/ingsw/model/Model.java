@@ -469,6 +469,7 @@ public class Model {
             try {
                 nextPlayer.startTurn();
                 playerSwitched = true;
+                controller.printControlMessage("### It's " + nextPlayer.getNickname() + "'s turn.");
                 /* 4- Notify the Player */
                 controller.notifyFromModel(new TurnStatusChangedEvent(nextPlayer.getNickname(), StateType.MOVEMENT, true));
             } catch (LoseException ex) {

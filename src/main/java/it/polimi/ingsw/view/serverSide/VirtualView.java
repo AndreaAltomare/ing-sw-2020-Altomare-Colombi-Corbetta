@@ -54,7 +54,7 @@ public class VirtualView extends VCEventSubject implements Observer<Object> {
         @Override
         public void update(Object event) {
             //System.out.println("I'm " + playerNickname + "'s VirtualView and I received an event.");
-            System.out.println("\n");
+            //System.out.println("\n");
             VirtualView.this.notifyVCEventsListeners(event, playerNickname); // notify Controller with Player's nickname information - IMPORTANT!!
         }
 

@@ -8,7 +8,9 @@ import it.polimi.ingsw.storage.ResourceManager;
 import it.polimi.ingsw.view.events.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -24,8 +26,10 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     private List<String> cardsInGame; // Cards used for this game match
     /* Members for concurrency handling */
     private volatile String genericResponse; // String used for generic response from client
-    private volatile Boolean clientResponded; // used to control generic responses from Players
-    private volatile Boolean challengerHasChosen; // Marked as volatile because it is accessed by different threads // TODO: ensure that "volatile" attribute mark does not clash with "synchronized" methods that update this very attribute
+    private volatile boolean clientResponded; // used to control generic responses from Players
+    private volatile boolean challengerHasChosen; // Marked as volatile because it is accessed by different threads // TODO: ensure that "volatile" attribute mark does not clash with "synchronized" methods that update this very attribute
+    private final Object clientLock; // lock used for responses from Client(s)
+    private final Object challengerLock; // lock used for responses from Challenger
     private volatile String startPlayer; // the Start Player for this game
     private final int DEFAULT_WAITING_TIME; // time is in milliseconds
     /* Miscellaneous */
@@ -43,6 +47,8 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         this.players = new ArrayList<>(players);
         this.clientResponded = false;
         this.challengerHasChosen = false;
+        this.clientLock = new Object();
+        this.challengerLock = new Object();
         this.DEFAULT_WAITING_TIME = 1000; // time is in milliseconds
         this.workersPlaced = 0;
     }
@@ -65,24 +71,30 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     @Override
     public void run() { // TODO: maybe refactor this into a more readable method (every step should be encapsulated in a same-abstraction-level method)
         /* 0- Initialize the Model and Send to the Client general info for this game */
+        System.out.println("\n##### Running Controller... #####\n"); // Server control message
         model.initialize(this, players);
         notify(new ServerSendDataEvent(model.getBoardXSize(), model.getBoardYSize(), players, model.getWorkersToPlayers()));
 
         /* 1- Select the -Challenger- Player */
+        System.out.println("##### Game Preparation phase #####"); // Server control message
         setChallenger();
+        System.out.println(" - Challenger Player set: '" + model.challenger() + "'"); // Server control message
         notify(new MessageEvent("The Challenger Player has been chosen. It's: " + model.challenger())); // notify players that the Challenger has been chosen
 
         /* 2- Challenger choose the Cards for this game match */
         notify(new NextStatusEvent("Game preparation"));
         List<CardInfo> cardInfoList = ResourceManager.getCardsInformation();
         challengerChoosesCards(cardInfoList);
+        printCardsInGame(cardsInGame);
 
         /* 3- In "clockwise" order, every Player choose a Card (among the Cards chosen by the Challenger) */
         List<CardInfo> cardsToChoose = cardInfoList.stream().filter(c -> cardsInGame.contains(c.getName())).collect(Collectors.toList());
         playersChooseCards(cardsToChoose);
+        //System.out.println(""); // Server control message   --->   in playersChooseCards(...) method
 
         /* 4- Ask the Challenger for the Start Player */
         challengerChoosesStartPlayer();
+        System.out.println(" - Challenger Player has chosen Start Player: '" + model.startPlayer() + "'"); // Server control message
         //notify(new MessageEvent("Other players are placing their workers. Wait...")); // notify other Players // todo maybe it's useless: to remove
 
         /* 5- Sort the list of Players */
@@ -92,11 +104,13 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         playersPlaceWorkers();
 
         /* 7- Send general game info data to all Views so the game can start */
+        System.out.println(" - Notifying Players that the game is starting..."); // Server control message
         notify(new ServerSendDataEvent(model.getBoardXSize(), model.getBoardYSize(), players, model.getWorkersToPlayers()));
 
         /* 8- Game preparation phase is over. The game match can start */
         notify(new NextStatusEvent("The game has started!"));
         startGame();
+        System.out.println("\n##### Game started #####\n"); // Server control message
     }
 
 
@@ -193,6 +207,21 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         model.setChallenger(challenger); // set Challenger into the Game Model
     }
 
+    /**
+     * Prints Cards chosen for this game.
+     * (Server-side control message)
+     *
+     * @param cardsInGame (List of cards in game)
+     */
+    private void printCardsInGame(List<String> cardsInGame) {
+        int i = 1;
+        System.out.println(" - Challenger has chosen Cards for this game: "); // Server control message
+        for(String card : cardsInGame) {
+            System.out.println("    " + i + ". " + card);
+            i++;
+        }
+    }
+
 
 
 
@@ -215,7 +244,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             setChallengerHasChosen(false); // SYNCHRONOUSLY set the attribute to false
             chosenCardsAreValid = false;
         }
-        else if (!(possibleCards.containsAll(cardsInGame))) {
+        else if (!(possibleCards.containsAll(cardsInGame)) || !itemsAllDifferent(cardsInGame)) {
             notify(new ErrorMessageEvent("Your choice is invalid! Please, try again."), model.challenger());
             setChallengerHasChosen(false); // SYNCHRONOUSLY set the attribute to false
             chosenCardsAreValid = false;
@@ -239,6 +268,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         model.setPlayerCard(lastCard, model.challenger());
         notify(new CardSelectedEvent(lastCard, model.challenger(), true)); // ANSWER FROM THE CONTROLLER (Notify the View)
         cardsToChoose.removeIf(c -> c.getName().equals(lastCard));
+        System.out.println(" - Player '" + model.challenger() + "' was set with the last Card left: '" + lastCard + "'"); // Server control message
     }
 
     /**
@@ -247,7 +277,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      * @return (Start Player chosen is valid ? true : false)
      */
     private boolean checkValidStartPlayer() {
-        synchronized (startPlayer) {
+        synchronized (startPlayer) { // todo: this should work (it's not used properly as a Lock)
             if (!players.contains(startPlayer)) {
                 notify(new ErrorMessageEvent("Your choice is invalid! Please, try again."), model.challenger());
                 setChallengerHasChosen(false); // SYNCHRONOUSLY set the attribute to false
@@ -265,10 +295,10 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      * (Synchronized) Waits for a response from the Challenger.
      */
     private void waitForChallengerResponse() {
-        synchronized (challengerHasChosen) {
+        synchronized (challengerLock) {
             while (!challengerHasChosen) { // works like a wait // todo (IT SHOULD WORK, check it... [or if it has thread-related problems])
                 try {
-                    challengerHasChosen.wait(); // TODO: don't know if this works correctly
+                    challengerLock.wait(); // TODO: don't know if this works correctly
                 }
                 catch (InterruptedException ex) {
                     ex.printStackTrace();
@@ -281,10 +311,10 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      * (Synchronized) Waits for a response from a Player.
      */
     private void waitForPlayerResponse() {
-        synchronized (clientResponded) {
+        synchronized (clientLock) {
             while (!clientResponded) {
                 try {
-                    clientResponded.wait(); // TODO: don't know if this works correctly
+                    clientLock.wait(); // TODO: don't know if this works correctly
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
@@ -303,10 +333,9 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      */
     private List<CardInfo> requestPlayerForCardChoice(List<CardInfo> cardsToChoose, String playerNickname) {
         List<String> validCards = cardsToChoose.stream().map(c -> c.getName()).collect(Collectors.toList());// cards that can be chosen as a response from the Player
+        notify(new NextStatusEvent("Choose your Card!"), playerNickname); // notify the Player he/she needs to choose a Card // todo maybe it's to remove
         while (!clientResponded) {
             // 3.2.1- Send messages to the Player
-            // todo: maybe modify NextStatusEvent in a simple MessageEvent
-            notify(new NextStatusEvent("Choose your Card!"), playerNickname); // notify the Player he/she needs to choose a Card // todo maybe it's to remove
             notify(new CardsInformationEvent(cardsToChoose, model.challenger(), playerNickname)); // send Cards information to the Player
             // 3.2.2- Wait for the response
             waitForPlayerResponse();
@@ -343,10 +372,31 @@ public class Controller extends Observable<Object> implements VCEventListener, R
                 model.setPlayerCard(genericResponse, playerNickname);
                 notify(new CardSelectedEvent(genericResponse, playerNickname, true)); // ANSWER FROM THE CONTROLLER (Notify the View)
                 cardsToChoose.removeIf(c -> c.getName().equals(genericResponse));
+                System.out.println(" - Player '" + playerNickname + "' has selected his/her Card: '" + genericResponse + "'"); // Server control message
             }
         }
 
         return cardsToChoose;
+    }
+
+    /**
+     * Tells if all items in a provided List are different.
+     *
+     * @param cardsInGame (List of items)
+     * @return (All items in a provided List are different ? true : false)
+     */
+    private boolean itemsAllDifferent(List<String> cardsInGame) {
+        boolean cardUnique = false;
+        Set<String> cardsSet = new HashSet<>(cardsInGame.size());
+
+        for(String card : cardsInGame) {
+            cardUnique = cardsSet.add(card);
+
+            if(!cardUnique)
+                return false;
+        }
+
+        return true;
     }
 
 
@@ -381,7 +431,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     @Override
     public synchronized void update(QuitEvent quit, String playerNickname) {
         // TODO: add operations to handle disconnections of Players
-        System.out.println("QuitEvent received from Player " + playerNickname + ": quitting...");
+        System.out.println("[QuitEvent] received from Player " + playerNickname + ": quitting...");
         this.stopGame();
         notify(new GameOverEvent("A player quit. This game can no longer continue."));
         // TODO: inserire operazioni per distruggere oggetti nel Server e tornare in uno stato in cui si accettano nuovi giocatori
@@ -404,21 +454,23 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      */
     @Override
     public synchronized void update(CardsChoosingEvent chosenCards, String playerNickname) {
+        System.out.println("[CardsChoosingEvent] received from Player: '" + playerNickname + "'"); // Server control message
         if(playerNickname.equals(model.challenger())) {
-            synchronized (challengerHasChosen) {
+            synchronized (challengerLock) {
                 cardsInGame = chosenCards.getCards();
                 challengerHasChosen = true; // todo remember to set this to false when a new game starts (if necessary)
-                challengerHasChosen.notifyAll();
+                challengerLock.notifyAll();
             }
         }
     }
 
     @Override
     public synchronized void update(CardSelectionEvent card, String playerNickname) {
-        synchronized (clientResponded) {
+        System.out.println("[CardSelectionEvent] received from Player: '" + playerNickname + "'"); // Server control message
+        synchronized (clientLock) {
             genericResponse = card.getCardName();
             clientResponded = true;
-            clientResponded.notifyAll();
+            clientLock.notifyAll();
         }
     }
 
@@ -430,22 +482,25 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      */
     @Override
     public synchronized void update(SetStartPlayerEvent startPlayer, String playerNickname) {
+        System.out.println("[SetStartPlayerEvent] received from Player: '" + playerNickname + "'"); // Server control message
         if(playerNickname.equals(model.challenger())) {
-            synchronized (challengerHasChosen) {
+            synchronized (challengerLock) {
                 this.startPlayer = startPlayer.getStartPlayer();
                 challengerHasChosen = true; // todo remember to set this to false when a new game starts (if necessary)
-                challengerHasChosen.notifyAll();
+                challengerLock.notifyAll();
             }
         }
     }
 
     @Override
     public synchronized void update(PlaceWorkerEvent workerToPlace, String playerNickname) {
-        synchronized (clientResponded) {
+        System.out.println("[PlaceWorkerEvent] received from Player: '" + playerNickname + "'"); // Server control message
+        synchronized (clientLock) {
             String workerId = model.placeWorker(workerToPlace.getX(), workerToPlace.getY(), playerNickname);
             if(workerId != null) {
                 workersPlaced++;
                 notify(new WorkerPlacedEvent(workerId, workerToPlace.getX(), workerToPlace.getY(), true)); // broadcast notification of a worker placed event
+                System.out.println(" - Player '" + playerNickname + "' placed a Worker in position: ( " + workerToPlace.getX() + " , " + workerToPlace.getY() + " )"); // Server control message
             }
             else {
                 notify(new ErrorMessageEvent("Your choice is invalid! Try to place your worker again."), playerNickname);
@@ -453,7 +508,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
 
             if(workersPlaced == model.WORKERS_PER_PLAYER) {
                 clientResponded = true;
-                clientResponded.notifyAll();
+                clientLock.notifyAll();
             }
         }
     }
@@ -463,7 +518,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     @Override
     public synchronized void update(SelectWorkerEvent selectedWorker, String playerNickname) {
         if(model.hasGameStarted()) {
-            System.out.println("SelectWorkerEvent received form Player: " + playerNickname);
+            System.out.println("[SelectWorkerEvent] received form Player: '" + playerNickname + "'"); // Server control message
             WorkerSelectedEvent workerSelected = model.selectWorker(selectedWorker.getWorkerId(), playerNickname);
             if (workerSelected != null)
                 notify(workerSelected); // ANSWER FROM THE CONTROLLER (Notify the View)
@@ -477,7 +532,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     @Override
     public synchronized void update(MoveWorkerEvent move, String playerNickname) {
         if(model.hasGameStarted()) {
-            System.out.println("MoveWorkerEvent received form Player: " + playerNickname);
+            System.out.println("[MoveWorkerEvent] received form Player: '" + playerNickname + "'"); // Server control message
             WorkerMovedEvent workerMoved = model.moveWorker(move.getWorkerId(), move.getX(), move.getY(), playerNickname);
             if (workerMoved != null) {
                 notify(workerMoved); // ANSWER FROM THE CONTROLLER (Notify the View)
@@ -491,7 +546,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     @Override
     public synchronized void update(BuildBlockEvent build, String playerNickname) {
         if(model.hasGameStarted()) {
-            System.out.println("BuildBlockEvent received form Player: " + playerNickname);
+            System.out.println("[BuildBlockEvent] received form Player: '" + playerNickname + "'"); // Server control message
             BlockBuiltEvent blockBuilt = model.buildBlock(build.getWorkerId(), build.getX(), build.getY(), build.getBlockType(), playerNickname);
             if (blockBuilt != null) {
                 notify(blockBuilt); // ANSWER FROM THE CONTROLLER (Notify the View)
@@ -505,7 +560,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     @Override
     public synchronized void update(RemoveWorkerEvent workerToRemove, String playerNickname) {
         if(model.hasGameStarted()) {
-            System.out.println("RemoveWorkerEvent received form Player: " + playerNickname);
+            System.out.println("[RemoveWorkerEvent] received form Player: '" + playerNickname + "'"); // Server control message
             WorkerRemovedEvent workerRemoved = model.removeWorker(workerToRemove.getWorkerId(), workerToRemove.getX(), workerToRemove.getY(), playerNickname);
             if (workerRemoved != null)
                 notify(workerRemoved); // ANSWER FROM THE CONTROLLER (Notify the View)
@@ -520,7 +575,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     @Override
     public synchronized void update(RemoveBlockEvent blockToRemove, String playerNickname) {
         if(model.hasGameStarted()) {
-            System.out.println("RemoveBlockEvent received form Player: " + playerNickname);
+            System.out.println("[RemoveBlockEvent] received form Player: '" + playerNickname + "'"); // Server control message
             BlockRemovedEvent blockRemoved = model.removeBlock(blockToRemove.getWorkerId(), blockToRemove.getX(), blockToRemove.getY(), playerNickname);
             if (blockRemoved != null)
                 notify(blockRemoved); // ANSWER FROM THE CONTROLLER (Notify the View)
@@ -537,7 +592,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     @Override
     public synchronized void update(TurnStatusChangeEvent turnStatus, String playerNickname) {
         if(model.hasGameStarted()) {
-            System.out.println("TurnStatusChangeEvent received form Player: " + playerNickname);
+            System.out.println("[TurnStatusChangeEvent] received form Player: '" + playerNickname + "'"); // Server control message
             TurnStatusChangedEvent turnStatusChanged = model.changeTurnStatus(turnStatus.getTurnStatus(), playerNickname);
             if (turnStatusChanged != null) {
                 notify(turnStatusChanged, playerNickname); // ANSWER FROM THE CONTROLLER (Notify the View)
@@ -580,8 +635,12 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         try {
             model.startGame(); // start the game
             model.setGameStarted(true);
-            notify(new TurnStatusChangedEvent(model.getPlayingPlayer(), StateType.MOVEMENT, true));
-            // other players will update their StateType to NONE consequently
+            String playingPlayer = model.getPlayingPlayer();
+            notify(new TurnStatusChangedEvent(playingPlayer, StateType.MOVEMENT, true));
+            // Notify other Players too
+            for(String player : players)
+                if (!player.equals(playingPlayer))
+                    notify(new TurnStatusChangedEvent(playingPlayer, StateType.NONE, true));
         }
         catch (LoseException ex) {
             System.err.println("An error has occurred during the starting of the game!");
@@ -697,6 +756,16 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      */
     public void removeView(String nickname) {
         notify(new GameOverEvent("You are being disconnected from the game..."), nickname);
+    }
+
+    /**
+     * Print a control message.
+     * (Server-side).
+     *
+     * @param message (Message to print)
+     */
+    public void printControlMessage(String message) {
+        System.out.println(message); // Server control message
     }
 
 

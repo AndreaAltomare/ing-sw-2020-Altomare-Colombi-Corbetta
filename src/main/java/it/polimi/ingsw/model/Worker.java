@@ -23,6 +23,10 @@ public class Worker extends Placeable {
         super();
         this.owner = owner;
         this.chosen = ChooseType.CAN_BE_CHOSEN;
+
+        //Added later to make each worker unique
+        id = lastId;
+        lastId++;
     }
 
     /**
