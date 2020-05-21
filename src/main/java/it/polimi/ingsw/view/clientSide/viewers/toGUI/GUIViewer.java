@@ -59,6 +59,10 @@ public class GUIViewer extends Viewer {
                         if (ViewStatus.getActual().equals(ViewStatus.GAME_PREPARATION)){
                             GUISelectCard.attivate((CardSelection) queued.getPayload());
                         }
+                    if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.REFRESH) {
+                        System.out.println("\t\tREFRESHING");
+                        SwingUtilities.updateComponentTreeUI(window);
+                    }
                 }
             });
         }
@@ -172,6 +176,10 @@ public class GUIViewer extends Viewer {
 
             if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.EXIT) return;
             if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS) setStatus(queued);
+            if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.REFRESH) {
+                System.out.println("\t\tREFRESHING");
+                SwingUtilities.updateComponentTreeUI(window);
+            }
         }
     }
 

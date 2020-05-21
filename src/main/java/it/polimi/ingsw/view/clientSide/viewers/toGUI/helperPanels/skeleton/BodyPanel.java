@@ -50,13 +50,17 @@ public class BodyPanel extends SubPanel {
 
         }
 
-        cont++;
-        if(cont>=2){
+
+        ViewBoard.getBoard().toGUI();
+        System.out.println("aggiorno la board");
+        /*cont++;
+        if(cont>=1){
             cont = 0;
-            boardPanel.removeAll();
-            boardPanel.add(ViewBoard.getBoard().toGUI());
+            ViewBoard.getBoard().toGUI();
+           *//* boardPanel.removeAll();
+            boardPanel.add(ViewBoard.getBoard().toGUI());*//*
             System.out.println("aggiorno la board");
-        }
+        }*/
 
 
         subTurnPanel.setBounds(0, 0, (int)panelW, (int)panelH);

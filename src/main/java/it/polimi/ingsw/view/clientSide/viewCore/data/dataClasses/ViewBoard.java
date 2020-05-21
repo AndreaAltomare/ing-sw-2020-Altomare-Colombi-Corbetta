@@ -3,10 +3,12 @@ package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 import it.polimi.ingsw.controller.events.ServerSendDataEvent;
 import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.BoardGeneralPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.SubPanel;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
+import it.polimi.ingsw.view.exceptions.WrongParametersException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
 import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +23,8 @@ import java.util.EventObject;
  * @author giorgio
  */
 public class ViewBoard extends ViewObject {
+
+    private BoardGeneralPanel guiPanel;
 
     private int xDim;
     private int yDim;
@@ -194,8 +198,25 @@ public class ViewBoard extends ViewObject {
      *
      * @return (representation of Object for the GI)
      */
-    public JPanel toGUI(){
-        JPanel ret = new ImagePanel(1,1,0,0, "/img/board/boardScalata.png");
+    public BoardGeneralPanel toGUI(){
+        if(guiPanel == null){
+            try {
+                guiPanel = BoardGeneralPanel.buildBoard(xDim, yDim);
+            } catch (WrongParametersException ignore) {
+                return null;
+            }
+        }
+
+        for(int i=0; i<xDim; i++) {
+            for (int j = 0; j < yDim; j++) {
+                try {
+                    guiPanel.updateCell(getCellAt(i, j));
+                } catch (NotFoundException ignore) {  }
+            }
+        }
+        return guiPanel;
+
+        /*JPanel ret = new ImagePanel(1,1,0,0, "/img/board/boardScalata.png");
         JPanel tmp;
         JPanel cellPanel;
 
@@ -216,6 +237,6 @@ public class ViewBoard extends ViewObject {
                 } catch (NotFoundException ignore) {  }
             }
         }
-        return ret;
+        return ret;*/
     }
 }

@@ -75,6 +75,10 @@ public abstract class Viewer extends Thread{
 
     public static void setAllCardSelection(CardSelection cardSelection){ for (Viewer i: myViewers) i.setCardSelection(cardSelection); }
 
+    public static void setAllRefresh(Object payload){ for (Viewer i: myViewers) i.setRefresh(payload); }
+
+    public static void setAllRefresh(){setAllRefresh(null);}
+
     public static void sendAllMessage(ViewMessage message) { for (Viewer i: myViewers) i.sendMessage(message); }
 
     public static void exitAll(){ for (Viewer i: myViewers) i.exit(); }
@@ -93,6 +97,10 @@ public abstract class Viewer extends Thread{
 
     public void setCardSelection(CardSelection cardSelection){
         enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.CARDSELECTION, cardSelection));
+    }
+
+    public void setRefresh(Object payload){
+        enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.REFRESH, payload));
     }
 
     public void sendMessage(ViewMessage message){

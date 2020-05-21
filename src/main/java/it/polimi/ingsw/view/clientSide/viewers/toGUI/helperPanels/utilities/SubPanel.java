@@ -5,12 +5,19 @@ import java.awt.*;
 
 public class SubPanel extends JPanel {
 
-    private final double xDimRapp;
-    private final double yDimRapp;
-    private final double xPosRapp;
-    private final double yPosRapp;
+    private double xDimRapp;
+    private double yDimRapp;
+    private double xPosRapp;
+    private double yPosRapp;
 
     public SubPanel(double xDimRapp, double yDimRapp, double xPosRapp, double yPosRapp){
+        this.xDimRapp = xDimRapp;
+        this.yDimRapp = yDimRapp;
+        this.yPosRapp = yPosRapp;
+        this.xPosRapp = xPosRapp;
+    }
+
+    public void setMyRapp(double xDimRapp, double yDimRapp, double xPosRapp, double yPosRapp){
         this.xDimRapp = xDimRapp;
         this.yDimRapp = yDimRapp;
         this.yPosRapp = yPosRapp;

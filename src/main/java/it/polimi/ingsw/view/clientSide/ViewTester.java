@@ -22,8 +22,8 @@ import java.util.*;
 
 public class ViewTester implements ViewSender {
 
-    private final static boolean addWait = true;
-    private final static boolean setDefaultChallenger = true;
+    private final static boolean addWait = false;
+    private final static boolean setDefaultChallenger = false;
 
     private Object lock = new Object();
     private View view = new View(null, null);
@@ -177,9 +177,12 @@ public class ViewTester implements ViewSender {
             CardsInformationEvent cardsInformationEvent = new CardsInformationEvent( cards, challenger, player);
 
             view.update(cardsInformationEvent);
+
+            if(setDefaultChallenger)
+                myWait();
         }
 
-        myWait();
+
         view.update((NextStatusEvent)new NextStatusEvent("Playing"));
 
         synchronized (obj) {
@@ -223,6 +226,9 @@ public class ViewTester implements ViewSender {
             ViewBoard.getBoard().getCellAt(3, 0).buildLevel();
             ViewBoard.getBoard().getCellAt(4, 0).buildLevel();
             System.out.println(ViewBoard.getBoard().toTerminal());
+            ViewBoard.getBoard().toGUI();
+            Viewer.setAllRefresh();
+            System.out.println("aggiorno la board da View");
 
         } catch (NotFoundException e) {
             e.printStackTrace();

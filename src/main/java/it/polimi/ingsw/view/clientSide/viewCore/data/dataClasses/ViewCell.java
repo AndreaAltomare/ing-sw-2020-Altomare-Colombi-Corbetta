@@ -235,24 +235,24 @@ public class ViewCell extends ViewObject {
      *
      * @return (representation of Object for the GI)
      */
-    public JPanel toGUI(){
-        boolean set = false;
-        ImagePanel ret = new ImagePanel(1, 1, 0 ,0 , "/img/board/cells/void_space.png");
+    public ImagePanel toGUI(){
+        ImagePanel ret = null;
+        String fileName = "";
 
-        if(level == 0) set = false;
+        if(isDoomed())
+            fileName += "doomed_";
+        if(level==1)
+            fileName += "single_block";
+        if(level == 2)
+            fileName += "double_block";
+        if(level == 3)
+            fileName += "triple_block";
 
-        if(level==1) ret.setBackgroundImg("/img/board/cells/single_block.png");
-        if(level == 2) ret.setBackgroundImg("/img/board/cells/double_block.png");
-        if(level == 3) ret.setBackgroundImg("/img/board/cells/triple_block.png");
-        if(isDoomed()){
-            ret.add(new ImagePanel(1, 1, 0, 0, "/img/board/cells/sized_cuple.png"));
-            set = true;
+        if(!fileName.equals("")) {
+            System.out.println(fileName);
+            ret = new ImagePanel(1, 1, 0, 0, "/img/board/cells/" + fileName + ".png");
         }
-        if(set) {
-            return ret;
-        }else{
-            return null;
-        }
+        return ret;
     }
 
     /**
