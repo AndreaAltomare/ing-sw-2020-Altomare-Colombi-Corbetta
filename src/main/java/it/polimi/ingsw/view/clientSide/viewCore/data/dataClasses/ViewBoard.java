@@ -3,12 +3,15 @@ package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 import it.polimi.ingsw.controller.events.ServerSendDataEvent;
 import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.SubPanel;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
 import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.EventObject;
 
 /**
@@ -170,7 +173,7 @@ public class ViewBoard extends ViewObject {
         for(int x = 0; x< this.getXDim(); x++) {
             for (int y = 0; y < this.getYDim(); y++) {
                 try {
-                    ret += this.getCellAt(x, y).toString();
+                    ret += this.getCellAt(x, y).toTerminal();
                 } catch (NotFoundException ignore) {   }
             }
             ret += "\n";
@@ -191,5 +194,28 @@ public class ViewBoard extends ViewObject {
      *
      * @return (representation of Object for the GI)
      */
-    public Object toGUI(){ return null; }
+    public JPanel toGUI(){
+        JPanel ret = new ImagePanel(1,1,0,0, "/img/board/boardScalata.png");
+        JPanel tmp;
+        JPanel cellPanel;
+
+        double xLen = ((double)1/xDim);
+        double yLen = ((double)1/yDim);
+
+        for(int i=0; i<xDim; i++){
+            for(int j =0; j<yDim; j++){
+                tmp = new SubPanel(xLen, yLen, i*xLen, j*yLen);
+                tmp.setOpaque(false);
+                try {
+                    cellPanel = getCellAt(i, j).toGUI();
+                    System.out.println(getCellAt(i, j).toTerminal());
+                    if(cellPanel!=null){
+                        tmp.add(cellPanel);
+                        ret.add(tmp);
+                    }
+                } catch (NotFoundException ignore) {  }
+            }
+        }
+        return ret;
+    }
 }

@@ -22,7 +22,7 @@ import java.util.*;
 
 public class ViewTester implements ViewSender {
 
-    private final static boolean addWait = false;
+    private final static boolean addWait = true;
     private final static boolean setDefaultChallenger = true;
 
     private Object lock = new Object();
@@ -79,11 +79,11 @@ public class ViewTester implements ViewSender {
 
         if(addWait) {
 
-            ViewMessage.populateAndSend("test fromServerMEssage", ViewMessage.MessageType.FROM_SERVER_MESSAGE);
+            /*ViewMessage.populateAndSend("test fromServerMEssage", ViewMessage.MessageType.FROM_SERVER_MESSAGE);
             ViewMessage.populateAndSend("test serverError", ViewMessage.MessageType.FROM_SERVER_ERROR);
             ViewMessage.populateAndSend("test executerError", ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
             ViewMessage.populateAndSend("test fatalError", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
-
+*/
             synchronized (obj) {
                 try {
                     obj.wait(2500);
@@ -181,6 +181,53 @@ public class ViewTester implements ViewSender {
 
         myWait();
         view.update((NextStatusEvent)new NextStatusEvent("Playing"));
+
+        synchronized (obj) {
+            try {
+                obj.wait(2500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+
+            ViewBoard.getBoard().getCellAt(0, 0).buildLevel();
+            ViewBoard.getBoard().getCellAt(0, 0).buildLevel();
+            ViewBoard.getBoard().getCellAt(0, 0).buildLevel();
+
+            ViewBoard.getBoard().getCellAt(0, 1).buildLevel();
+            ViewBoard.getBoard().getCellAt(0, 1).buildLevel();
+            ViewBoard.getBoard().getCellAt(0, 1).buildLevel();
+            ViewBoard.getBoard().getCellAt(0, 1).buildDome();
+
+            ViewBoard.getBoard().getCellAt(0, 2).buildLevel();
+            ViewBoard.getBoard().getCellAt(0, 2).buildLevel();
+
+            ViewBoard.getBoard().getCellAt(0, 3).buildLevel();
+            ViewBoard.getBoard().getCellAt(0, 3).buildLevel();
+            ViewBoard.getBoard().getCellAt(0, 3).buildDome();
+
+            ViewBoard.getBoard().getCellAt(0, 4).buildDome();
+            ViewBoard.getBoard().getCellAt(1, 4).buildLevel();
+            ViewBoard.getBoard().getCellAt(2, 4).buildDome();
+            ViewBoard.getBoard().getCellAt(2, 2).buildDome();
+            ViewBoard.getBoard().getCellAt(3, 4).buildLevel();
+            ViewBoard.getBoard().getCellAt(4, 4).buildDome();
+
+            ViewBoard.getBoard().getCellAt(1, 0).buildLevel();
+
+            ViewBoard.getBoard().getCellAt(1, 1).buildLevel();
+            ViewBoard.getBoard().getCellAt(1, 1).buildDome();
+
+            ViewBoard.getBoard().getCellAt(2, 0).buildLevel();
+            ViewBoard.getBoard().getCellAt(3, 0).buildLevel();
+            ViewBoard.getBoard().getCellAt(4, 0).buildLevel();
+            System.out.println(ViewBoard.getBoard().toTerminal());
+
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static void main(String[] args) {

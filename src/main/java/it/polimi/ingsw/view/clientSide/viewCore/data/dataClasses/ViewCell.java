@@ -1,12 +1,13 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
-import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -234,7 +235,25 @@ public class ViewCell extends ViewObject {
      *
      * @return (representation of Object for the GI)
      */
-    public Object toGUI(){ return null; }
+    public JPanel toGUI(){
+        boolean set = false;
+        ImagePanel ret = new ImagePanel(1, 1, 0 ,0 , "/img/board/cells/void_space.png");
+
+        if(level == 0) set = false;
+
+        if(level==1) ret.setBackgroundImg("/img/board/cells/single_block.png");
+        if(level == 2) ret.setBackgroundImg("/img/board/cells/double_block.png");
+        if(level == 3) ret.setBackgroundImg("/img/board/cells/triple_block.png");
+        if(isDoomed()){
+            ret.add(new ImagePanel(1, 1, 0, 0, "/img/board/cells/sized_cuple.png"));
+            set = true;
+        }
+        if(set) {
+            return ret;
+        }else{
+            return null;
+        }
+    }
 
     /**
      * Method that will search the object with the passed id.

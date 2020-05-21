@@ -5,6 +5,7 @@ import it.polimi.ingsw.view.exceptions.*;
 import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.EventObject;
 
 public class ViewNickname extends ViewObject {
@@ -130,7 +131,7 @@ public class ViewNickname extends ViewObject {
      *
      * @return (representation of Object for the GI)
      */
-    public Object toGUI(){
+    public JPanel toGUI(){
         return null;
     }
 

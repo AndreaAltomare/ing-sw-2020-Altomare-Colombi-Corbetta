@@ -1,14 +1,19 @@
 package it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton;
 
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.SubPanel;
 
+import javax.swing.*;
 import java.awt.*;
 
 public class BodyPanel extends SubPanel {
 
+    private int cont =0;
+
     protected SubTurnPanel subTurnPanel = new SubTurnPanel();
     protected PlayerPanel playerPanel = new PlayerPanel();
-    protected BoardPanel boardPanel = new BoardPanel();
+    //protected BoardPanel boardPanel = new BoardPanel();
+    protected JPanel boardPanel = new BoardPanel();
 
     public BodyPanel(){
         super(1, 0.7, 0, 0.2);
@@ -17,6 +22,7 @@ public class BodyPanel extends SubPanel {
         add(subTurnPanel);
         add(playerPanel);
         add(boardPanel);
+        boardPanel.add(ViewBoard.getBoard().toGUI());
     }
 
     @Override
@@ -25,7 +31,10 @@ public class BodyPanel extends SubPanel {
 
         Dimension myDim = getSize();
 
-        double rapp = boardPanel.getWidthOnWeight();
+
+        //double rapp = boardPanel.getWidthOnWeight();
+        double rapp = 1.0;
+
         double hypX, hypY;
         double panelW, panelH;
 
@@ -40,6 +49,15 @@ public class BodyPanel extends SubPanel {
             hypY = hypX/rapp;
 
         }
+
+        cont++;
+        if(cont>=2){
+            cont = 0;
+            boardPanel.removeAll();
+            boardPanel.add(ViewBoard.getBoard().toGUI());
+            System.out.println("aggiorno la board");
+        }
+
 
         subTurnPanel.setBounds(0, 0, (int)panelW, (int)panelH);
         playerPanel.setBounds((int)(panelW+hypX), 0, (int)panelW, (int)panelH);

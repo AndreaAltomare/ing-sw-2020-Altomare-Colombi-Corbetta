@@ -8,6 +8,7 @@ import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 //import sun.jvm.hotspot.types.WrongTypeException;
 
+import javax.swing.*;
 import java.util.EventObject;
 
 /**
@@ -162,6 +163,6 @@ public abstract class ViewObject implements ClientAddressable {
      *
      * @return (representation of Object for the GI)
      */
-    public Object toGUI(){return null;}
+    public JPanel toGUI(){return null;}
 
 }

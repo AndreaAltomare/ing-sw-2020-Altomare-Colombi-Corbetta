@@ -1,13 +1,14 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 import it.polimi.ingsw.view.exceptions.AlreadySetException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
-import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -156,7 +157,9 @@ public class ViewWorker extends ViewObject {
      *
      * @return (representation of Object for the GI)
      */
-    public Object toGUI(){ return null; }
+    public JPanel toGUI(){
+        return new ImagePanel(1, 1, 0 ,0 , "/img/board/cells/void_space.png");
+    }
 
     /**
      * Method that will search the object with the passed id.
