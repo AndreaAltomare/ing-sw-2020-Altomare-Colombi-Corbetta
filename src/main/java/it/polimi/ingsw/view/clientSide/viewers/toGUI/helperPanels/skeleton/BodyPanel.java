@@ -12,8 +12,7 @@ public class BodyPanel extends SubPanel {
 
     protected SubTurnPanel subTurnPanel = new SubTurnPanel();
     protected PlayerPanel playerPanel = new PlayerPanel();
-    //protected BoardPanel boardPanel = new BoardPanel();
-    protected JPanel boardPanel = new BoardPanel();
+    protected JPanel boardPanel = new JPanel();
 
     public BodyPanel(){
         super(1, 0.7, 0, 0.2);
@@ -52,16 +51,6 @@ public class BodyPanel extends SubPanel {
 
 
         ViewBoard.getBoard().toGUI();
-        System.out.println("aggiorno la board");
-        /*cont++;
-        if(cont>=1){
-            cont = 0;
-            ViewBoard.getBoard().toGUI();
-           *//* boardPanel.removeAll();
-            boardPanel.add(ViewBoard.getBoard().toGUI());*//*
-            System.out.println("aggiorno la board");
-        }*/
-
 
         subTurnPanel.setBounds(0, 0, (int)panelW, (int)panelH);
         playerPanel.setBounds((int)(panelW+hypX), 0, (int)panelW, (int)panelH);

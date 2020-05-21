@@ -194,9 +194,9 @@ public class ViewBoard extends ViewObject {
     public Object toCLI(){ return null; }
 
     /**
-     * Method that will return a (Object) that will represent the ViewObject on the GUI.
+     * Method that will return a BoardGeneralPanel that represents the Board on the GUI. There is only one BoardGeneralPanel to represent the Board for all the play.
      *
-     * @return (representation of Object for the GI)
+     * @return (representation of Board for the GUI)
      */
     public BoardGeneralPanel toGUI(){
         if(guiPanel == null){
@@ -215,28 +215,5 @@ public class ViewBoard extends ViewObject {
             }
         }
         return guiPanel;
-
-        /*JPanel ret = new ImagePanel(1,1,0,0, "/img/board/boardScalata.png");
-        JPanel tmp;
-        JPanel cellPanel;
-
-        double xLen = ((double)1/xDim);
-        double yLen = ((double)1/yDim);
-
-        for(int i=0; i<xDim; i++){
-            for(int j =0; j<yDim; j++){
-                tmp = new SubPanel(xLen, yLen, i*xLen, j*yLen);
-                tmp.setOpaque(false);
-                try {
-                    cellPanel = getCellAt(i, j).toGUI();
-                    System.out.println(getCellAt(i, j).toTerminal());
-                    if(cellPanel!=null){
-                        tmp.add(cellPanel);
-                        ret.add(tmp);
-                    }
-                } catch (NotFoundException ignore) {  }
-            }
-        }
-        return ret;*/
     }
 }

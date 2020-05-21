@@ -5,6 +5,11 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import java.awt.*;
 
+/**
+ * Class intended to represent the Board and give all the functionalities needed to represent it to the GUI.
+ *
+ * @author giorgio
+ */
 public class BoardGeneralPanel extends ImagePanel {
 
     private int xDim;
@@ -13,6 +18,9 @@ public class BoardGeneralPanel extends ImagePanel {
     private double xLen;
     private double yLen;
 
+    /**
+     * Class to represent the status of the buildings on the board
+     */
     private static class MyBuildingRepresentation{
 
         private SubPanel[][] cellMatrix;
@@ -80,7 +88,7 @@ public class BoardGeneralPanel extends ImagePanel {
                 System.out.println(getStatusAt(cell));
                 parent.remove(getPanelAt(cell));
                 setCell(cell);
-                parent.addComponent(cell.getX(), cell.getY(), getPanelAt(cell));
+                parent.addComponentToCell(cell, getPanelAt(cell));
                 System.out.println(getStatusAt(cell));
             }
         }
@@ -89,21 +97,55 @@ public class BoardGeneralPanel extends ImagePanel {
 
     private MyBuildingRepresentation myBuildingRepresentation;
 
+    /**
+     * Method to update the status of a cell
+     *
+     * @param cell (ViewCell to be updated)
+     */
     public void updateCell(ViewCell cell){
         myBuildingRepresentation.updateCell(cell);
     }
 
-    public void addComponent(int x, int y, SubPanel panel){
+
+    /**
+     * Method to add a component to the selected Cell.
+     *
+     * @param x (int the x pos of the cell)
+     * @param y (int the y pos of the cell)
+     * @param panel (the SubPanel to add)
+     */
+    private void addComponentToCell(int x, int y, SubPanel panel){
         if(panel == null) return;
         add(panel);
         panel.setMyRapp(xLen, yLen, x*xLen, y*yLen);
     }
 
+    /**
+     * Method to add a component to the selected Cell.
+     *
+     * @param cell (ViewCell to which the component has to be added)
+     * @param panel (SubPanel to be added)
+     */
+    private void addComponentToCell(ViewCell cell, SubPanel panel){
+        addComponentToCell(cell.getX(), cell.getY(), panel);
+    }
 
+
+    /**
+     * constructor
+     *
+     * @param fileName (String the name of the board image file)
+     */
     private BoardGeneralPanel(String fileName) {
         super(1, 1, 0, 0, fileName);
     }
 
+    /**
+     * Method to set the x and y dimension of the board.
+     *
+     * @param x (the x dimension of the board)
+     * @param y (the y dimension of the board)
+     */
     private void setXY(int x, int y){
         xDim = x;
         yDim = y;
@@ -112,6 +154,14 @@ public class BoardGeneralPanel extends ImagePanel {
         yLen = ((double)1)/yDim;
     }
 
+    /**
+     * Factory method.
+     *
+     * @param xDim (the x dimension of the board)
+     * @param yDim (the y dimension of the board)
+     * @return (the new panel created)
+     * @throws WrongParametersException (iif the dimensions are incorrect)
+     */
     public static BoardGeneralPanel buildBoard(int xDim, int yDim) throws WrongParametersException {
         if (xDim!=5 || yDim != 5)
             throw new WrongParametersException("Wrong board size!!");

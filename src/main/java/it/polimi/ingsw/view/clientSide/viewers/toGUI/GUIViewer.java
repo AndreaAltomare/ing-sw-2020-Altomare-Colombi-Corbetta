@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewers.toGUI;
 
+import it.polimi.ingsw.view.clientSide.View;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
@@ -9,6 +10,7 @@ import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.elements.Panel
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.BackgroundPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.SubPanel;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.specificGUISideClass.GUIMessageDisplayer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.specificGUISideClass.GUISelectCard;
 import it.polimi.ingsw.view.exceptions.CheckQueueException;
 import it.polimi.ingsw.view.exceptions.EmptyQueueException;
@@ -37,95 +39,45 @@ public class GUIViewer extends Viewer {
                 case EXECUTER_ERROR_MESSAGE:
                 case FROM_SERVER_ERROR:
                 case FROM_SERVER_MESSAGE:
-                    displayErrorMessage(((ViewMessage)event.getPayload()).getPayload(), ((ViewMessage)event.getPayload()).getMessageType());
+                    GUIMessageDisplayer.displayErrorMessage(((ViewMessage)event.getPayload()).getPayload(), ((ViewMessage)event.getPayload()).getMessageType());
                     break;
             }
-            System.out.println("[GUI MESSAGE]\t" + ((ViewMessage) event.getPayload()).getMessageType() + "\t" + ((ViewMessage) event.getPayload()).getPayload());
+            if(View.debugging)
+                System.out.println("[GUI MESSAGE]\t" + ((ViewMessage) event.getPayload()).getMessageType() + "\t" + ((ViewMessage) event.getPayload()).getPayload());
         } else {
             super.enqueue(event);
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    ViewerQueuedEvent queued;
-                    try {
-                        queued = getNextEvent();
-                    } catch (EmptyQueueException e) {
-                        return;
-                    }
-
-                    if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.EXIT) return;
-                    if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS) setStatus(queued);
-                    if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.CARDSELECTION)
-                        if (ViewStatus.getActual().equals(ViewStatus.GAME_PREPARATION)){
-                            GUISelectCard.attivate((CardSelection) queued.getPayload());
-                        }
-                    if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.REFRESH) {
-                        System.out.println("\t\tREFRESHING");
-                        SwingUtilities.updateComponentTreeUI(window);
-                    }
+                    executeQueuedEvent();
                 }
             });
         }
     }
 
-
-    public void displayErrorMessage(String message, ViewMessage.MessageType type){
-        String buttonImage;
-
-        JFrame errorPopup = new JFrame("ERROR");
-
-        JPanel backPanel = new BackgroundPanel("/img/background/background_error.png");
-        JPanel textPanel = new SubPanel(0.39, 0.2344, 0.29, 0.4);
-        textPanel.setOpaque(false);
-        JLabel label = new JLabel();
-        label.setFont(new Font("Serif", Font.BOLD,10));
-        label.setForeground(Color.RED);
-        label.setText(message);
-        textPanel.add(label);
-        backPanel.add(textPanel);
-
-        JButton closeButton = new JButton();
-        if(type == ViewMessage.MessageType.FATAL_ERROR_MESSAGE){
-            errorPopup.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            buttonImage = "/img/trappings/close_button.png";
-            closeButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent actionEvent) {
-                    System.exit(0);
-                }
-            });
-        }else if((type == ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE)||(type == ViewMessage.MessageType.FROM_SERVER_ERROR)){
-            errorPopup.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-            buttonImage = "/img/trappings/redButton.png";
-            closeButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent actionEvent) {
-                    errorPopup.dispose();
-                }
-            });
-        }else{
-            errorPopup.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-            buttonImage = "/img/trappings/blueButton.png";
-            closeButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent actionEvent) {
-                    errorPopup.dispose();
-                }
-            });
+    private void executeQueuedEvent(){
+        ViewerQueuedEvent queued;
+        try {
+            queued = getNextEvent();
+        } catch (EmptyQueueException e) {
+            return;
         }
 
-
-        JPanel closePanel = new PanelImageButton(1, 0.15, 0, 0.7, closeButton, buttonImage, "quit");
-        backPanel.add(closePanel);
-
-
-        errorPopup.add(backPanel);
-
-        errorPopup.setSize(320, 440);
-        errorPopup.setResizable(false);
-        errorPopup.setVisible(true);
-        errorPopup.repaint();
+        if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.EXIT) {
+            window.setVisible(false);
+            exit();
+        }
+        if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS) setStatus(queued);
+        if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.CARDSELECTION)
+            if (ViewStatus.getActual().equals(ViewStatus.GAME_PREPARATION)){
+                GUISelectCard.attivate((CardSelection) queued.getPayload());
+            }
+        if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.REFRESH) {
+            System.out.println("\t\tREFRESHING");
+            SwingUtilities.updateComponentTreeUI(window);
+        }
     }
+
 
     public GUIViewer(){
         Viewer.registerViewer(this);
@@ -168,18 +120,7 @@ public class GUIViewer extends Viewer {
         ViewerQueuedEvent queued;
         while(true){
             waitNextEvent();
-            try {
-                queued = getNextEvent();
-            } catch (EmptyQueueException e) {
-                break;
-            }
-
-            if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.EXIT) return;
-            if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS) setStatus(queued);
-            if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.REFRESH) {
-                System.out.println("\t\tREFRESHING");
-                SwingUtilities.updateComponentTreeUI(window);
-            }
+            executeQueuedEvent();
         }
     }
 
