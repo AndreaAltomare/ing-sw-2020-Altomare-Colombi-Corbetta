@@ -1,7 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetPlayerNumberExecuter;
-import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.statusViewers.NumberPlayerViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
@@ -11,7 +11,7 @@ import java.util.Scanner;
 
 public class CLINumberPlayerViewer extends CLIStatusViewer {
 
-    private StatusViewer statusViewer;
+    private NumberPlayerViewer numberPlayerViewer;
 
     final int START_SPACE = 5;
     final int DISTANCE_IN_BLOCK = 2;
@@ -19,17 +19,22 @@ public class CLINumberPlayerViewer extends CLIStatusViewer {
     final String WORDS_SECOND_BLOCK = "Players?";
 
 
-
-    public CLINumberPlayerViewer( StatusViewer statusViewer) {
-        this.statusViewer = statusViewer;
+    /**
+     * Constructor to set correct StatusViewer
+     * @param numberPlayerViewer
+     */
+    public CLINumberPlayerViewer( NumberPlayerViewer numberPlayerViewer) {
+        this.numberPlayerViewer = numberPlayerViewer;
     }
 
     /**
      * Prints request's first part to ask the number of players
-     * writing it in a block with a worker
+     * writing it in a block with a worker ( prepares second block's upper edge too)
      * example image
-     *
-     *      //todo:add it
+     *       ____________
+     *   \O/|            |
+     *    \ |  Request1  |
+     *     \|____________|__
      */
     private void showFirstRequestPart(){
 
@@ -52,11 +57,13 @@ public class CLINumberPlayerViewer extends CLIStatusViewer {
         this.printRepeatString(" ", DISTANCE_IN_BLOCK);
         System.out.println("|");
 
-        // leg and block's down edge
+        // leg and block's down edge and second block's upper edge
         this.printRepeatString(" ", START_SPACE - 1);
         System.out.print("\\|");
         this.printRepeatString("_", WORDS_FIRST_BLOCK.length() + 2*DISTANCE_IN_BLOCK);
-        System.out.println("|");
+        System.out.print("|");
+        this.printRepeatString("_", WORDS_SECOND_BLOCK.length() - 1 - (WORDS_FIRST_BLOCK.length() - 3));
+        System.out.println();
 
     }
 
@@ -65,16 +72,15 @@ public class CLINumberPlayerViewer extends CLIStatusViewer {
      * writing it in a block with two worker
      * example image
      *
-     *      //todo:add it
+     *         |            |
+     *       O |  Request2  | O
+     *       |\|____________|/|
+     *      / \              / \
      */
     private void showSecondRequestPart() {
 
-        //block's upper edge
-        this.printRepeatString(" ", START_SPACE + 4);
-        this.printRepeatString("_", WORDS_SECOND_BLOCK.length() + 2*DISTANCE_IN_BLOCK);
-        System.out.println();
 
-        //
+        // free part of block over second request's part
         this.printRepeatString(" ", START_SPACE + 3);
         System.out.print("|");
         this.printRepeatString(" ", WORDS_SECOND_BLOCK.length() + 2*DISTANCE_IN_BLOCK);
@@ -136,7 +142,7 @@ public class CLINumberPlayerViewer extends CLIStatusViewer {
      */
     private boolean checkNumberOfPlayersResponse(int response ) {
         boolean approvedResponse = false;
-        SetPlayerNumberExecuter setPlayerNumberExecuter = (SetPlayerNumberExecuter) statusViewer.getMyExecuters().get("NumberPlayers");
+        SetPlayerNumberExecuter setPlayerNumberExecuter = (SetPlayerNumberExecuter) numberPlayerViewer.getMyExecuters().get("NumberPlayers");
 
         if (response < 0) {
             System.out.println( "\n\t" +

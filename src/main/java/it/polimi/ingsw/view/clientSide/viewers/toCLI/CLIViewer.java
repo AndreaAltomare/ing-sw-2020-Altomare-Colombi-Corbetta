@@ -6,7 +6,6 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 import it.polimi.ingsw.view.exceptions.EmptyQueueException;
 
-import java.util.Scanner;
 
 public class CLIViewer extends Viewer {
 
@@ -42,36 +41,31 @@ public class CLIViewer extends Viewer {
     public void run() {
         ViewerQueuedEvent queuedEvent;
         boolean end = false;
-        boolean wait;
 
         while ( !end ) {
-            this.waitNextEvent();
 
-            wait = false;
-            while ( !wait ) {
-                try {
-                    queuedEvent = this.getNextEvent();
+            try {
+                queuedEvent = this.getNextEvent();
 
-                    switch (queuedEvent.getType()) {
-                        case EXIT:
-                            wait = true;
-                            end = true;
-                            break;
+                switch (queuedEvent.getType()) {
+                    case EXIT:
+                        end = true;
+                        break;
 
-                        case SET_STATUS:
-                            this.prepareStatusViewer(queuedEvent);
-                            break;
+                    case SET_STATUS:
+                        this.prepareStatusViewer(queuedEvent);
+                        break;
 
-                        default:
-                            ;
-                    }
-
-                } catch (EmptyQueueException e) {
-                    wait = true;
+                    default:
+                        ;
                 }
-            }
 
+            } catch (EmptyQueueException e) {
+                ;
+            }
         }
+
+
     }
 
 }

@@ -1,9 +1,11 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses;
 
-import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.statusViewers.ReadyViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 
 public class CLIReadyViewer extends CLIStatusViewer {
+
+    private ReadyViewer readyViewer;
 
     final int SCALE_HIGH = 2;
     final int STARTING_SPACE = 3 + 2*SCALE_HIGH;
@@ -15,10 +17,12 @@ public class CLIReadyViewer extends CLIStatusViewer {
     final int COLUMNS_NUMBER = ((UP_TITLE.length() - 2) / (2 * COLUMNS_THICKNESS) / 2) + 1;
     final int PEDESTAL_LENGTH = 4 * COLUMNS_THICKNESS * COLUMNS_NUMBER;
 
-    private StatusViewer statusViewer;
-
-    public CLIReadyViewer(StatusViewer statusViewer) {
-        this.statusViewer = statusViewer;
+    /**
+     * Constructor to set correct StatusViewer
+     * @param readyViewer
+     */
+    public CLIReadyViewer(ReadyViewer readyViewer) {
+        this.readyViewer = readyViewer;
     }
 
     /**

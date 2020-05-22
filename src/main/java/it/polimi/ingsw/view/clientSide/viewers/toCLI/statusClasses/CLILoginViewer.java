@@ -1,7 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetNicknameExecuter;
-import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.statusViewers.LoginViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
@@ -10,12 +10,18 @@ import java.util.Scanner;
 
 public class CLILoginViewer extends CLIStatusViewer {
 
-    private StatusViewer statusViewer;
+    private LoginViewer loginViewer;
 
     final int STARTING_SPACE = 7;
+    final String FIRST_PART = "Please, insert your";
+    final String SECOND_PART = "Nickname:";
 
-    public CLILoginViewer(StatusViewer statusViewer) {
-        this.statusViewer = statusViewer;
+    /**
+     * Constructor to set correct StatusViewer
+     * @param loginViewer
+     */
+    public CLILoginViewer(LoginViewer loginViewer) {
+        this.loginViewer = loginViewer;
     }
 
     /**
@@ -28,9 +34,7 @@ public class CLILoginViewer extends CLIStatusViewer {
      *   _/
      */
     private void showNicknameRequest() {
-        final int STARTING_SPACE = 7;
-        final String FIRST_PART = "Please, insert your";
-        final String SECOND_PART = "Nickname:";
+
         final int BLOCK_LENGTH; //after initialization it becomes constant
 
         if ( FIRST_PART.length() > SECOND_PART.length() ) {
@@ -128,7 +132,7 @@ public class CLILoginViewer extends CLIStatusViewer {
      */
     private boolean checkNicknameResponse(String response) {
         boolean approvedResponse = false;
-        SetNicknameExecuter setNicknameExecuter = (SetNicknameExecuter) statusViewer.getMyExecuters().get("NickName");
+        SetNicknameExecuter setNicknameExecuter = (SetNicknameExecuter) loginViewer.getMyExecuters().get("NickName");
 
         try {
             setNicknameExecuter.setNickname(response);
@@ -140,11 +144,9 @@ public class CLILoginViewer extends CLIStatusViewer {
         } catch (WrongParametersException e) {
             System.out.println( "\n\t" +
                                 ">< Nickname chosen is not valid, please change it");
-            e.printStackTrace(); //todo: eliminate after testing
         } catch (CannotSendEventException e) {
             System.out.printf(" \n\t" +
                                 ">< %s" +"\n", e.toString());
-            e.printStackTrace(); //todo: eliminate after testing
         }
         System.out.println();
 
