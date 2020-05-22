@@ -83,6 +83,46 @@ public enum ViewSubTurn implements ClientAddressable {
         public StateType toStateType(){
             return StateType.CONSTRUCTION;
         }
+    }, SELECTCARD ("SELECTCARD"){
+        @Override
+        public SubTurnViewer getSubViewer() {
+            return new SubTurnViewer() {
+                @Override
+                public TerminalSubTurnViewer toTerminal() {
+                    return null;
+                }
+
+                @Override
+                public GUISubTurnViewer toGUI() {
+                    return null;
+                }
+
+                @Override
+                public CLISubTurnViewer toCLI() {
+                    return null;
+                }
+            };
+        }
+    }, PLACEWORKER("PLACEWORKER"){
+        @Override
+        public SubTurnViewer getSubViewer() {
+            return new SubTurnViewer() {
+                @Override
+                public TerminalSubTurnViewer toTerminal() {
+                    return null;
+                }
+
+                @Override
+                public GUISubTurnViewer toGUI() {
+                    return null;
+                }
+
+                @Override
+                public CLISubTurnViewer toCLI() {
+                    return null;
+                }
+            };
+        }
     };
 
     private static ViewSubTurn actualSubTurn = null;
