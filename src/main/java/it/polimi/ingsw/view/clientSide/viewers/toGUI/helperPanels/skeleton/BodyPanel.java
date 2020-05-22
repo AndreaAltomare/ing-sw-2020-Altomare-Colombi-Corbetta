@@ -10,7 +10,7 @@ public class BodyPanel extends SubPanel {
 
     private int cont =0;
 
-    protected SubTurnPanel subTurnPanel = new SubTurnPanel();
+    protected JPanel subTurnPanel = new JPanel();
     protected PlayerPanel playerPanel = new PlayerPanel();
     protected JPanel boardPanel = new JPanel();
 
@@ -22,6 +22,8 @@ public class BodyPanel extends SubPanel {
         add(playerPanel);
         add(boardPanel);
         boardPanel.add(ViewBoard.getBoard().toGUI());
+        subTurnPanel.add(new SubTurnPanel());
+        subTurnPanel.setOpaque(false);
     }
 
     @Override
@@ -34,6 +36,8 @@ public class BodyPanel extends SubPanel {
         //double rapp = boardPanel.getWidthOnWeight();
         double rapp = 1.0;
 
+        int panelWMin = 10;
+
         double hypX, hypY;
         double panelW, panelH;
 
@@ -42,8 +46,8 @@ public class BodyPanel extends SubPanel {
         hypY = myDim.getHeight();
         hypX = hypY * rapp;
         panelW = (myDim.getWidth() - hypX)/2;
-        if(panelW<Math.max(playerPanel.getMinimumSize().getWidth(), subTurnPanel.getSize().getWidth())){
-            panelW = Math.max(playerPanel.getMinimumSize().getWidth(), subTurnPanel.getSize().getWidth());
+        if(panelW<panelWMin){
+            panelW = panelWMin;
             hypX = myDim.getWidth() - 2*panelW;
             hypY = hypX/rapp;
 

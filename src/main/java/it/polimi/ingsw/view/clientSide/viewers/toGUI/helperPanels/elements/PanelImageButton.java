@@ -63,6 +63,10 @@ public class PanelImageButton extends SubPanel {
             if (dy > dimension.getHeight()) {
                 dy = dimension.getHeight();
                 dx = dy / scale;
+                if(dx>dimension.getHeight()){
+                    dx = dimension.getWidth();
+                    dy = dimension.getHeight();
+                }
             }
             button.setIcon(new ImageIcon(image.getScaledInstance((int) dx, (int) dy, Image.SCALE_SMOOTH)));
         }

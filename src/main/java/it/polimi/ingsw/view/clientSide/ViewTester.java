@@ -23,7 +23,7 @@ import java.util.*;
 public class ViewTester implements ViewSender {
 
     private final static boolean addWait = false;
-    private final static boolean setDefaultChallenger = false;
+    private final static boolean setDefaultChallenger = true;
 
     private Object lock = new Object();
     private View view = new View(null, null);
@@ -231,11 +231,11 @@ public class ViewTester implements ViewSender {
         }
 
         System.out.println(ViewBoard.getBoard().toTerminal());
-        //ViewBoard.getBoard().toGUI();
+        ViewBoard.getBoard().toGUI();
         Viewer.setAllRefresh();
         System.out.println("aggiorno la board da View");
 
-        synchronized (obj) {
+        /*synchronized (obj) {
             try {
                 obj.wait(2500);
             } catch (InterruptedException e) {
@@ -245,6 +245,8 @@ public class ViewTester implements ViewSender {
 
         ViewBoard.getBoard().setSelectedCell(0, 0);
         Viewer.setAllRefresh();
+        System.out.println("aggiorno la board da VIEW");
+        //Viewer.setAllRefresh();
 
         synchronized (obj) {
             try {
@@ -277,7 +279,7 @@ public class ViewTester implements ViewSender {
         }
 
         ViewBoard.getBoard().setSelectedCell(0, 0);
-        Viewer.setAllRefresh();
+        Viewer.setAllRefresh();*/
 
     }
 

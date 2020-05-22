@@ -1,12 +1,15 @@
-package it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities;
+package it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board;
 
-import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewCell;
-import it.polimi.ingsw.view.exceptions.NotFoundException;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.boardSubTurn.BoardSubTurn;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.SubPanel;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /**
  * Class intended to represent the Board and give all the functionalities needed to represent it to the GUI.
@@ -20,6 +23,8 @@ public class BoardGeneralPanel extends ImagePanel {
 
     private double xLen;
     private double yLen;
+
+    BoardSubTurn mySubTurn;
 
 
     private ViewCell selectedCell;
@@ -91,12 +96,9 @@ public class BoardGeneralPanel extends ImagePanel {
 
         void updateCell(ViewCell cell){
             if (isDifferent(cell)){
-                System.out.println(cell.toString() + "Is different");
-                System.out.println(getStatusAt(cell));
                 parent.remove(getPanelAt(cell));
                 setCell(cell);
                 parent.addComponentToCell(cell, getPanelAt(cell));
-                System.out.println(getStatusAt(cell));
             }
         }
 
@@ -145,6 +147,33 @@ public class BoardGeneralPanel extends ImagePanel {
      */
     private BoardGeneralPanel(String fileName) {
         super(1, 1, 0, 0, fileName);
+
+        mySubTurn = new BoardSubTurn();
+        addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                int x=mouseEvent.getX();
+                int y=mouseEvent.getY();
+                mySubTurn.onCellSelected((int)(x/(getSize().getWidth()*xLen)), (int)(y/(getSize().getHeight()*yLen )));
+                repaint();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent mouseEvent) {  }
+
+            @Override
+            public void mouseReleased(MouseEvent mouseEvent) {  }
+
+            @Override
+            public void mouseEntered(MouseEvent mouseEvent) {
+                setCursor(mySubTurn.getOnEnterCursor());
+            }
+
+            @Override
+            public void mouseExited(MouseEvent mouseEvent) {
+                setCursor(mySubTurn.getOnExitCursor());
+            }
+        });
     }
 
     /**
@@ -178,18 +207,6 @@ public class BoardGeneralPanel extends ImagePanel {
         return ret;
     }
 
-    /*public void setSelectCell(int x, int y){
-        if(selectedCell!= null){
-            remove(selectPanel);
-        }
-        try {
-            selectedCell = ViewBoard.getBoard().getCellAt(x, y);
-            addComponentToCell(selectedCell, selectPanel);
-        } catch (NotFoundException e) {
-            selectedCell = null;
-        }
-    }*/
-
     public void setSelectCell(ViewCell cell){
         if(selectedCell!=null){
             JPanel back = myBuildingRepresentation.getPanelAt(selectedCell);
@@ -202,10 +219,14 @@ public class BoardGeneralPanel extends ImagePanel {
         selectedCell = cell;
         if(selectedCell!=null){
             JPanel back = myBuildingRepresentation.getPanelAt(cell);
-            if(back == null)
+            if(back == null){
                 addComponentToCell(selectedCell, selectPanel);
-            else
+            }
+
+            else{
+                selectPanel.setMyRapp(1,1,0,0);
                 back.add(selectPanel);
+            }
         }
 
     }
