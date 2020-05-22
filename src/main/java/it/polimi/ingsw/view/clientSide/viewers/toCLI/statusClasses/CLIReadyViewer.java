@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses;
 
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.ReadyViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.PrintFunction;
 
 public class CLIReadyViewer extends CLIStatusViewer {
 
@@ -47,11 +48,11 @@ public class CLIReadyViewer extends CLIStatusViewer {
      */
     private void showTitlePart( String titlePart) {
 
-        this.printRepeatString(" ", STARTING_SPACE + 1);
+        PrintFunction.printRepeatString(" ", STARTING_SPACE + 1);
         if (((PEDESTAL_LENGTH - UP_TITLE.length()) % 2) == 0) {
-            this.printRepeatString(" ", (PEDESTAL_LENGTH - 2 - UP_TITLE.length()) / 2);
+            PrintFunction.printRepeatString(" ", (PEDESTAL_LENGTH - 2 - UP_TITLE.length()) / 2);
         } else {
-            this.printRepeatString(" ", ((PEDESTAL_LENGTH - 2 - UP_TITLE.length()) / 2) + 1);
+            PrintFunction.printRepeatString(" ", ((PEDESTAL_LENGTH - 2 - UP_TITLE.length()) / 2) + 1);
         }
         System.out.println(titlePart);
     }
@@ -65,13 +66,13 @@ public class CLIReadyViewer extends CLIStatusViewer {
      */
     private void showPedestal() {
 
-        this.printRepeatString(" ", STARTING_SPACE);
-        this.printRepeatString("_", PEDESTAL_LENGTH);
+        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString("_", PEDESTAL_LENGTH);
         System.out.println();
 
-        this.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString(" ", STARTING_SPACE);
         System.out.print("\\");
-        this.printRepeatString("_", PEDESTAL_LENGTH - 2);
+        PrintFunction.printRepeatString("_", PEDESTAL_LENGTH - 2);
         System.out.print("/");
         System.out.println();
     }
@@ -88,22 +89,22 @@ public class CLIReadyViewer extends CLIStatusViewer {
     private void showColumns() {
 
         for (int i = 0; i < (COLUMNS_HIGH - 1); i++) {
-            this.printRepeatString(" ", STARTING_SPACE + 2);
+            PrintFunction.printRepeatString(" ", STARTING_SPACE + 2);
             for (int j = 0; j < COLUMNS_NUMBER; j++) {
-                this.printRepeatString("[]", COLUMNS_THICKNESS);
-                this.printRepeatString(" ", COLUMNS_THICKNESS * 2);
+                PrintFunction.printRepeatString("[]", COLUMNS_THICKNESS);
+                PrintFunction.printRepeatString(" ", COLUMNS_THICKNESS * 2);
             }
             System.out.println();
         }
 
         //last level of columns
-        this.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString(" ", STARTING_SPACE);
         System.out.print("__");
         for (int j = 0; j < (COLUMNS_NUMBER - 1); j++) {
-            this.printRepeatString("[]", COLUMNS_THICKNESS);
-            this.printRepeatString("_", COLUMNS_THICKNESS * 2);
+            PrintFunction.printRepeatString("[]", COLUMNS_THICKNESS);
+            PrintFunction.printRepeatString("_", COLUMNS_THICKNESS * 2);
         }
-        this.printRepeatString("[]", COLUMNS_THICKNESS);
+        PrintFunction.printRepeatString("[]", COLUMNS_THICKNESS);
         System.out.print("__");
         System.out.println();
 
@@ -118,11 +119,11 @@ public class CLIReadyViewer extends CLIStatusViewer {
     private void showStaircase() {
 
         for (int i = 0; i < SCALE_HIGH; i++) {
-        this.printRepeatString(" ", STARTING_SPACE - 2*i - 2);
-        System.out.print("_|");
-        this.printRepeatString("_", PEDESTAL_LENGTH + 4*i);
-        System.out.print("|_");
-        System.out.println();
+            PrintFunction.printRepeatString(" ", STARTING_SPACE - 2*i - 2);
+            System.out.print("_|");
+            PrintFunction.printRepeatString("_", PEDESTAL_LENGTH + 4*i);
+            System.out.print("|_");
+            System.out.println();
         }
 
     }

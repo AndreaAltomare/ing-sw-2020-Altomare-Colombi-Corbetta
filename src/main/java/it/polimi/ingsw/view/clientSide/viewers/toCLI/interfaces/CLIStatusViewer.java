@@ -17,17 +17,4 @@ public abstract class CLIStatusViewer implements SpecificStatusViewer {
 
     public abstract void show();
 
-    /**
-     * Methods that implements a for cycle to print on standard output
-     * a chosen String for a chosen number of times
-     *
-     * @param string string to print
-     * @param repeatsNumber number of times to print the chosen string
-     */
-    public void printRepeatString(String string, int repeatsNumber) {
-        for ( int i = 0; i < repeatsNumber; i++) {
-            System.out.printf("%s", string);
-        }
-    }
-
 }
