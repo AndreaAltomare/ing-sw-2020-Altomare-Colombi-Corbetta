@@ -6,12 +6,10 @@ import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSubTurnViewer;
 
-public class MoveViewer implements SubTurnViewer {
-
-    protected ViewSubTurn mySubTurn;
+public class MoveViewer extends SubTurnViewer {
 
     public MoveViewer (ViewSubTurn viewSubTurn){
-        mySubTurn = viewSubTurn;
+        super(viewSubTurn);
     }
 
     @Override

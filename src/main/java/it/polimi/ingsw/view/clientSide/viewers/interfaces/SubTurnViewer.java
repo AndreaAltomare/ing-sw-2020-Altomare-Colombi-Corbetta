@@ -1,14 +1,32 @@
 package it.polimi.ingsw.view.clientSide.viewers.interfaces;
 
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSubTurnViewer;
 
-public interface SubTurnViewer {
+public abstract class SubTurnViewer {
 
-    TerminalSubTurnViewer toTerminal();
+    protected ViewSubTurn mySubTurn;
 
-    GUISubTurnViewer toGUI();
+    public SubTurnViewer (ViewSubTurn viewSubTurn){
+        mySubTurn = viewSubTurn;
+    }
 
-    CLISubTurnViewer toCLI();
+    public ViewSubTurn getMySubTurn(){
+        return mySubTurn;
+    }
+
+    public TerminalSubTurnViewer toTerminal() {
+        return null;
+    }
+
+    public GUISubTurnViewer toGUI() {
+        return null;
+    }
+
+    public CLISubTurnViewer toCLI() {
+        return null;
+    }
+
 }

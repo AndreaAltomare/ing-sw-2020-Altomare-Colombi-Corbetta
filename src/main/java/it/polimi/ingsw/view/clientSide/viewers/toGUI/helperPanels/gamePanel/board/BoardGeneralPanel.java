@@ -24,7 +24,7 @@ public class BoardGeneralPanel extends ImagePanel {
     private double xLen;
     private double yLen;
 
-    BoardSubTurn mySubTurn;
+    private BoardSubTurn mySubTurn;
 
 
     private ViewCell selectedCell;
@@ -229,6 +229,10 @@ public class BoardGeneralPanel extends ImagePanel {
             }
         }
 
+    }
+
+    public void setMySubTurn(BoardSubTurn boardSubTurn){
+        mySubTurn = boardSubTurn;
     }
 
     @Override

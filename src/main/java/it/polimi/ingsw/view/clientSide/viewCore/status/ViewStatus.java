@@ -7,6 +7,7 @@ import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetPla
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ClientAddressable;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
+import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.*;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
@@ -148,7 +149,12 @@ public enum ViewStatus implements ClientAddressable {
 
         @Override
         void onLoad() {
-            //TODO: set the onLoad
+            //todo: implement it
+        }
+
+        @Override
+        public void afterLoad(){
+            Viewer.setAllSubTurnViewer(ViewSubTurn.SELECTCARD);
         }
     },
 
@@ -360,6 +366,7 @@ public enum ViewStatus implements ClientAddressable {
         actualStatus = actualStatus.getNext();
         actualStatus.onLoad();
         Viewer.setAllStatusViewer(ViewStatus.getActual().getViewer());
+        actualStatus.afterLoad();
     }
 
     /**
@@ -409,5 +416,9 @@ public enum ViewStatus implements ClientAddressable {
 
     public static ViewStatus getActual(){
         return actualStatus;
+    }
+
+    void afterLoad(){
+        ;
     }
 }
