@@ -2,10 +2,17 @@ package it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.boa
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
 
 import java.awt.*;
 
 public class BoardSubTurn {
+
+    protected GUISubTurnViewer guiSubTurnViewer;
+
+    public BoardSubTurn(GUISubTurnViewer guiSubTurnViewer){
+        this.guiSubTurnViewer = guiSubTurnViewer;
+    }
 
     public Cursor getOnEnterCursor(){
         Toolkit toolkit = Toolkit.getDefaultToolkit();

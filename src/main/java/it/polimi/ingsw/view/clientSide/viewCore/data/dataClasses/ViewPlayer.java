@@ -248,9 +248,10 @@ public class ViewPlayer extends ViewObject {
      * @throws NotFoundException (iif the searched name is of no player)
      */
     public static ViewPlayer searchByName( @NotNull String name) throws NotFoundException {
-        for (ViewPlayer i: myList)
-            if(i.getName().equals(name))
+        for (ViewPlayer i: myList) {
+            if (i.getName().equals(name))
                 return i;
+        }
         throw new NotFoundException();
     }
 

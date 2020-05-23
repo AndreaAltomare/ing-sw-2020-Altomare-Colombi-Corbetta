@@ -3,10 +3,15 @@ package it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.boa
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.boardSubTurn.BoardSubTurn;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
 
 import java.awt.*;
 
 public class ForbiddenBoardSubTurn extends BoardSubTurn {
+
+    public ForbiddenBoardSubTurn(GUISubTurnViewer guiSubTurnViewer) {
+        super(guiSubTurnViewer);
+    }
 
     @Override
     public Cursor getOnEnterCursor(){

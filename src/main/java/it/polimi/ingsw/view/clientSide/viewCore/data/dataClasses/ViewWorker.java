@@ -157,8 +157,11 @@ public class ViewWorker extends ViewObject {
      *
      * @return (representation of Object for the GI)
      */
-    public JPanel toGUI(){
-        return new ImagePanel(1, 1, 0 ,0 , "/img/board/cells/void_space.png");
+    public ImagePanel toGUI(){
+        if(ViewNickname.getMyNickname().equals(getPlayer().getName()))
+            return new ImagePanel(1, 1, 0 ,0 , "/img/board/cells/my_worker.png");
+        else
+            return new ImagePanel(1, 1, 0 ,0 , "/img/board/cells/adv_worker.png");
     }
 
     /**
@@ -218,7 +221,7 @@ public class ViewWorker extends ViewObject {
     public ViewWorker(String id, ViewPlayer player) throws NotFoundException{
         if((player == null)||(!isOfThisClass(id)))
             throw new NotFoundException();
-        this.id = Integer.parseInt(id.substring(getClassId().length()));
+        this.id = Integer.parseInt(id.substring(getClassId().length()+1));
         this.player = player;
         try {
             player.addWorker(this);
@@ -230,6 +233,10 @@ public class ViewWorker extends ViewObject {
         myList.add(this);
     }
 
+    public static boolean isOfThisClass(String id){
+        return id.startsWith(getClassId());
+    }
+
     /**
      * Constructor
      *
@@ -238,7 +245,7 @@ public class ViewWorker extends ViewObject {
      * @throws NotFoundException (iif player doesn't exists)
      */
     public ViewWorker(String id, @NotNull String player) throws NotFoundException, WrongViewObjectException {
-        this(id, (ViewPlayer)ViewPlayer.find(player));
+        this(id, findOrSearch(player));
     }
 
     public void placeOn(int x, int y){
@@ -254,5 +261,13 @@ public class ViewWorker extends ViewObject {
 
     public void removeWorker(){
         if(position!=null) position.removeWorker();
+    }
+
+    protected static ViewPlayer findOrSearch(String name) throws NotFoundException{
+        try {
+            return (ViewPlayer)ViewPlayer.find(name);
+        }  catch (WrongViewObjectException e) {
+            return ViewPlayer.searchByName(name);
+        }
     }
 }

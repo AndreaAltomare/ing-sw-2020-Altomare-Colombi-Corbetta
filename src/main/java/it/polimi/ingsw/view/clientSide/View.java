@@ -325,10 +325,18 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
     @Override
     public void update(WorkerPlacedEvent workerPlaced) {
-        try {
-            ((ViewWorker)ViewWorker.search(workerPlaced.getWorker())).placeOn(workerPlaced.getX(), workerPlaced.getY());
-        } catch (NotFoundException | WrongViewObjectException e) {
-            ViewMessage.populateAndSend("Wrong placed recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+        ViewWorker myWorker;
+
+        if(workerPlaced.success()) {
+            try {
+                myWorker = new ViewWorker(workerPlaced.getWorker(), ViewSubTurn.getActual().getPlayer());
+                myWorker.placeOn(workerPlaced.getX(), workerPlaced.getY());
+            } catch (NotFoundException | WrongViewObjectException e) {
+                ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+        }else if((ViewNickname.getMyNickname()).equals(ViewSubTurn.getActual().getPlayer())){
+            ViewMessage.populateAndSend("Cannot place theere your worker. retry", ViewMessage.MessageType.FROM_SERVER_MESSAGE);
         }
     }
 
@@ -383,6 +391,13 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     }
 
     @Override
+    public void update(RequirePlaceWorkersEvent requirePlaceWorkers) {
+        ViewSubTurn.setSubTurn(ViewSubTurn.PLACEWORKER);
+        ViewSubTurn.getActual().setPlayer(requirePlaceWorkers.getPlayer());
+        Viewer.setAllSubTurnViewer(ViewSubTurn.getActual());
+    }
+
+    @Override
     public void update(Object o) {
         ViewMessage.populateAndSend("Recived a wrong message", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
     }
@@ -413,10 +428,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
     }
 
-    @Override
-    public void update(RequirePlaceWorkersEvent requirePlaceWorkers) {
 
-    }
 
     @Override
     public void update(WorkerSelectedEvent workerSelected) {

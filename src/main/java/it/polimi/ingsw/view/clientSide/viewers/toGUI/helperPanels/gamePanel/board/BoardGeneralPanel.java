@@ -148,7 +148,7 @@ public class BoardGeneralPanel extends ImagePanel {
     private BoardGeneralPanel(String fileName) {
         super(1, 1, 0, 0, fileName);
 
-        mySubTurn = new BoardSubTurn();
+        mySubTurn = new BoardSubTurn(null);
         addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {

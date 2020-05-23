@@ -19,7 +19,7 @@ import java.util.*;
 public class ViewTester implements ViewSender {
 
 
-    private final static boolean addWait = false;
+    private final static boolean addWait = true;
     private final static boolean sendTestMessages = false;
 
     private final static boolean invalidNickname = true;
@@ -30,7 +30,7 @@ public class ViewTester implements ViewSender {
     private final static boolean isFirstCardChooser = true;
     private final static boolean isSecondCardChooser = true;
 
-    private final static boolean isFirstPlacer = false;
+    private final static boolean isFirstPlacer = true;
     private final static boolean isSecondPlacer = false;
     private final static boolean isThirdPlacer = false;
 
@@ -226,7 +226,7 @@ public class ViewTester implements ViewSender {
         }else{
             view.update(new RequirePlaceWorkersEvent("player1"));
             waiting();
-            view.update(new WorkerPlacedEvent("1", 0, 0, true));
+            view.update(new WorkerPlacedEvent("[Worker]\t1", 0, 0, true));
         }
         if(isSecondPlacer) {
             view.update(new RequirePlaceWorkersEvent(ViewNickname.getMyNickname()));
@@ -234,7 +234,8 @@ public class ViewTester implements ViewSender {
         }else{
             view.update(new RequirePlaceWorkersEvent("player1"));
             waiting();
-            view.update(new WorkerPlacedEvent("2", 0, 1, true));
+            System.out.println("HEY");
+            view.update(new WorkerPlacedEvent("[Worker]\t2", 0, 1, true));
         }
         if(isThirdPlacer) {
             view.update(new RequirePlaceWorkersEvent(ViewNickname.getMyNickname()));
@@ -242,32 +243,32 @@ public class ViewTester implements ViewSender {
         }else{
             view.update(new RequirePlaceWorkersEvent("player1"));
             waiting();
-            view.update(new WorkerPlacedEvent("3", 0, 2, true));
+            view.update(new WorkerPlacedEvent("[Worker]\t3", 0, 2, true));
         }
 
         if(isFirstPlacer) {
             view.update(new RequirePlaceWorkersEvent(ViewNickname.getMyNickname()));
             myWait();
         }else{
-            view.update(new RequirePlaceWorkersEvent("player1"));
+            view.update(new RequirePlaceWorkersEvent("player2"));
             waiting();
-            view.update(new WorkerPlacedEvent("4", 1, 0, true));
+            view.update(new WorkerPlacedEvent("[Worker]\t4", 1, 0, true));
         }
         if(isSecondPlacer) {
             view.update(new RequirePlaceWorkersEvent(ViewNickname.getMyNickname()));
             myWait();
         }else{
-            view.update(new RequirePlaceWorkersEvent("player1"));
+            view.update(new RequirePlaceWorkersEvent("player2"));
             waiting();
-            view.update(new WorkerPlacedEvent("5", 1, 1, true));
+            view.update(new WorkerPlacedEvent("[Worker]\t5", 1, 1, true));
         }
         if(isThirdPlacer) {
             view.update(new RequirePlaceWorkersEvent(ViewNickname.getMyNickname()));
             myWait();
         }else{
-            view.update(new RequirePlaceWorkersEvent("player1"));
+            view.update(new RequirePlaceWorkersEvent("player2"));
             waiting();
-            view.update(new WorkerPlacedEvent("6", 1, 2, true));
+            view.update(new WorkerPlacedEvent("[Worker]\t6", 1, 2, true));
         }
 
         //todo sistemare questa parte

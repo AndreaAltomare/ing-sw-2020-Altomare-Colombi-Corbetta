@@ -1,14 +1,9 @@
 package it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton;
 
-import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
-import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
-import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.elements.PanelComponent;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.elements.PanelImageButton;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
-import it.polimi.ingsw.view.exceptions.NotFoundException;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class SubTurnPanel extends ImagePanel {
     
@@ -20,7 +15,7 @@ public class SubTurnPanel extends ImagePanel {
     ImagePanel miniGodPanel;
 
     public SubTurnPanel(){
-        super(0.9, 0.9, 0.05, 0.05, "/img/background/turnPanel.png");
+        super(0.9, 0.9, 0.05, 0.05, "/img/background/noActionPanel.png");
 
         /*name = new JLabel();
         name.setFont(new Font("Serif", Font.ITALIC,10));
