@@ -10,6 +10,7 @@ import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
+import it.polimi.ingsw.view.events.PlaceWorkerEvent;
 import it.polimi.ingsw.view.events.SetNicknameEvent;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 
@@ -21,15 +22,23 @@ public class ViewTester implements ViewSender {
     private final static boolean addWait = false;
     private final static boolean sendTestMessages = false;
 
-    private final static boolean invalidNickname = false;
+    private final static boolean invalidNickname = true;
     private final static boolean requirePlayerNumber = false;
+    private final static boolean validPlacing = true;
 
-    private final static boolean setDefaultChallenger = true;
+    private final static boolean setDefaultChallenger = false;
     private final static boolean isFirstCardChooser = true;
     private final static boolean isSecondCardChooser = true;
 
+    private final static boolean isFirstPlacer = false;
+    private final static boolean isSecondPlacer = false;
+    private final static boolean isThirdPlacer = false;
+
 
     private final Object waitingObj = new Object();
+
+    //serve per l'update con workerplaced
+    private int myWorkerId = 10;
 
     private Object lock = new Object();
     private View view = new View(null, null);
@@ -211,6 +220,85 @@ public class ViewTester implements ViewSender {
                 myWait();
         }
 
+        if(isFirstPlacer) {
+            view.update(new RequirePlaceWorkersEvent(ViewNickname.getMyNickname()));
+            myWait();
+        }else{
+            view.update(new RequirePlaceWorkersEvent("player1"));
+            waiting();
+            view.update(new WorkerPlacedEvent("1", 0, 0, true));
+        }
+        if(isSecondPlacer) {
+            view.update(new RequirePlaceWorkersEvent(ViewNickname.getMyNickname()));
+            myWait();
+        }else{
+            view.update(new RequirePlaceWorkersEvent("player1"));
+            waiting();
+            view.update(new WorkerPlacedEvent("2", 0, 1, true));
+        }
+        if(isThirdPlacer) {
+            view.update(new RequirePlaceWorkersEvent(ViewNickname.getMyNickname()));
+            myWait();
+        }else{
+            view.update(new RequirePlaceWorkersEvent("player1"));
+            waiting();
+            view.update(new WorkerPlacedEvent("3", 0, 2, true));
+        }
+
+        if(isFirstPlacer) {
+            view.update(new RequirePlaceWorkersEvent(ViewNickname.getMyNickname()));
+            myWait();
+        }else{
+            view.update(new RequirePlaceWorkersEvent("player1"));
+            waiting();
+            view.update(new WorkerPlacedEvent("4", 1, 0, true));
+        }
+        if(isSecondPlacer) {
+            view.update(new RequirePlaceWorkersEvent(ViewNickname.getMyNickname()));
+            myWait();
+        }else{
+            view.update(new RequirePlaceWorkersEvent("player1"));
+            waiting();
+            view.update(new WorkerPlacedEvent("5", 1, 1, true));
+        }
+        if(isThirdPlacer) {
+            view.update(new RequirePlaceWorkersEvent(ViewNickname.getMyNickname()));
+            myWait();
+        }else{
+            view.update(new RequirePlaceWorkersEvent("player1"));
+            waiting();
+            view.update(new WorkerPlacedEvent("6", 1, 2, true));
+        }
+
+        //todo sistemare questa parte
+        //Finita la fase di posizionamento invio la ServerSendDataEvent
+        {
+            int boardXSize = 5;
+            int boardYSize = 5;
+            List<String> players = new ArrayList<String>();
+            Map<String,List<String>> workersToPlayer = new HashMap<String, List<String>>();
+
+            players.add("player1");
+            players.add("player2");
+            players.add(ViewNickname.getMyNickname());
+
+            List<String> w1 = new ArrayList<String>();
+            List<String> w2 = new ArrayList<String>();
+            List<String> w3 = new ArrayList<String>();
+
+            w1.add(("1"));
+            w1.add(("2"));
+            w2.add(("3"));
+            w2.add(("4"));
+            w3.add(("5"));
+            w3.add(("6"));
+
+            view.update((ServerSendDataEvent) new ServerSendDataEvent(boardXSize, boardYSize, players, workersToPlayer));
+        }
+
+        //Go to playing status
+        view.update((NextStatusEvent) new NextStatusEvent("Go to playing"));
+
 
         /*view.update((NextStatusEvent)new NextStatusEvent("Playing"));
 
@@ -328,9 +416,15 @@ public class ViewTester implements ViewSender {
     }
 
     public void send(SetNicknameEvent event){
-        if (invalidNickname)
+        if (invalidNickname){
             view.update(new InvalidNicknameEvent());
-        else
+            System.out.println("Invalid nickname");
+        } else
             myNotify();
+    }
+
+    public void send(PlaceWorkerEvent event){
+        view.update(new WorkerPlacedEvent(String.valueOf(myWorkerId), event.getX(), event.getY(), validPlacing));
+        myWorkerId++;
     }
 }

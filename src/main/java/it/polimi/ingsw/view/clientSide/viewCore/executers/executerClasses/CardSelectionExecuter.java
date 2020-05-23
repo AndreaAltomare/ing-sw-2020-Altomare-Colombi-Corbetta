@@ -79,8 +79,8 @@ public class CardSelectionExecuter extends Executer implements CardExecuter {
     @Override
     public int getRemaining() {
         if(nameCard != null)
-            return 1;
-        return 0;
+            return 0;
+        return 1;
     }
 
     @Override
@@ -111,7 +111,7 @@ public class CardSelectionExecuter extends Executer implements CardExecuter {
 
     @Override
     public boolean isSelected(ViewCard card) {
-        return nameCard.equals(card.getId());
+        return card.getId().equals(nameCard);
     }
 
     @Override
