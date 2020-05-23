@@ -251,8 +251,8 @@ public class ViewWorker extends ViewObject {
     public void placeOn(int x, int y){
         if(position != null) position.removeWorker();
         try {
-            position = ((ViewBoard)ViewBoard.search(ViewBoard.getClassId())).getCellAt(x, y);
-        } catch (NotFoundException | WrongViewObjectException e) {
+            position = ViewBoard.getBoard().getCellAt(x, y);
+        } catch (NotFoundException e) {
             position = null;
             return;
         }

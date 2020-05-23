@@ -2,10 +2,13 @@ package it.polimi.ingsw.view.clientSide.viewers.toGUI.statusClasses;
 
 import it.polimi.ingsw.view.clientSide.View;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.GamePanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton.BodyPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton.TitlePanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.subTurnClasses.NoActionSubTurn;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -17,19 +20,26 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class GUIPlaying extends GUIStatusViewer {
+    private GamePanel gamePanel;
 
-    StatusViewer myStatusViewer;
+    private StatusViewer myStatusViewer;
 
     public GUIPlaying(StatusViewer statusViewer) {
         myStatusViewer = statusViewer;
     }
 
     public boolean hasJPanel() {
-        return true;
+        return false;
     }
 
     public JPanel getJPanel(){
-        return new GamePanel();
+        gamePanel = GamePanel.getLast();
+        setSubTurn(new NoActionSubTurn(null));
+        return gamePanel;
+    }
+
+    public void setSubTurn(GUISubTurnViewer subTurnViewer){
+        gamePanel.setSubTurn(subTurnViewer);
     }
 
 

@@ -66,7 +66,7 @@ public class BoardGeneralPanel extends ImagePanel {
         }
 
         String getCellStatusEncoded(ViewCell cell){
-            return "l"+cell.getLevel()+"D"+(cell.isDoomed()?"t":"f");
+            return "l"+cell.getLevel()+"D"+(cell.isDoomed()?"t":"f") + (cell.isThereWorker()?("W" + cell.getWorkerString()):"");
         }
 
         SubPanel getPanelAt(int x, int y){

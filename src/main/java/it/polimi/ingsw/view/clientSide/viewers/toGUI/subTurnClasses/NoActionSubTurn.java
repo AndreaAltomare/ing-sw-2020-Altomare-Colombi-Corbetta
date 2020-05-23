@@ -9,15 +9,15 @@ import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer
 
 import javax.swing.*;
 
-public class SelectCardSubTurn extends GUISubTurnViewer {
+public class NoActionSubTurn extends GUISubTurnViewer {
 
-    public SelectCardSubTurn(SubTurnViewer parent){
+    public NoActionSubTurn(SubTurnViewer parent){
         super(parent);
     }
 
     @Override
     public JPanel getSubTurnPanel(){
-        return new SelectCardPanel();
+        return new NoActionSubTurnPanel();
     }
 
     @Override

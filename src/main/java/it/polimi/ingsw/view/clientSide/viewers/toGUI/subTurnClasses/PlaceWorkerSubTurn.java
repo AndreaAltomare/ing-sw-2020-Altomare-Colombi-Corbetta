@@ -5,6 +5,7 @@ import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.boar
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.boardSubTurn.specific.ForbiddenBoardSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.boardSubTurn.specific.PlaceWorkerBoardSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.subTurnPanel.NoActionSubTurnPanel;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.subTurnPanel.NoPositionPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.subTurnPanel.PlaceWorkerSubTurnPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
 
@@ -19,7 +20,7 @@ public class PlaceWorkerSubTurn extends GUISubTurnViewer {
     @Override
     public JPanel getSubTurnPanel(){
         if(!isMyTurn())
-            return new NoActionSubTurnPanel();
+            return new NoPositionPanel();
         else
             return new PlaceWorkerSubTurnPanel();
     }

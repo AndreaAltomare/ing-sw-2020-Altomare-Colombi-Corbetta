@@ -331,6 +331,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
             try {
                 myWorker = new ViewWorker(workerPlaced.getWorker(), ViewSubTurn.getActual().getPlayer());
                 myWorker.placeOn(workerPlaced.getX(), workerPlaced.getY());
+                System.out.println(workerPlaced.getWorker() + "(" + workerPlaced.getX()+":"+workerPlaced.getY()+")");
             } catch (NotFoundException | WrongViewObjectException e) {
                 ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
                 e.printStackTrace();

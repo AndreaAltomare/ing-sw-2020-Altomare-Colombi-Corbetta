@@ -2,9 +2,8 @@ package it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.boa
 
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 
-public class PlaceWorkerSubTurnPanel extends ImagePanel {
-
-    public PlaceWorkerSubTurnPanel(){
-        super(0.9, 0.9, 0.05, 0.05, "/img/background/subTurnPanel/canPositionPanel.png");
+public class SelectCardPanel extends ImagePanel {
+    public SelectCardPanel(){
+        super(0.9, 0.9, 0.05, 0.05, "/img/background/subTurnPanel/selectCardPanel.png");
     }
 }

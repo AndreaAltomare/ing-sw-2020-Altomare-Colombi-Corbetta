@@ -26,8 +26,8 @@ public class ViewTester implements ViewSender {
     private final static boolean requirePlayerNumber = false;
     private final static boolean validPlacing = true;
 
-    private final static boolean setDefaultChallenger = false;
-    private final static boolean isFirstCardChooser = true;
+    private final static boolean setDefaultChallenger = true;
+    private final static boolean isFirstCardChooser = false;
     private final static boolean isSecondCardChooser = true;
 
     private final static boolean isFirstPlacer = true;
@@ -157,15 +157,32 @@ public class ViewTester implements ViewSender {
             String player = "";
 
             cards.add(new CardInfo("Apollo", "God of Music", "Your Move: Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated."));
+
             cards.add(new CardInfo("Artemis", "Goddess of the Hunt", "Your Move: Your Worker may move one additional time, but not back to its initial space."));
+            //cards.add(new CardInfo("Artemis", "Goddess of the Hunt", "Your Move: Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated."));
+
             cards.add(new CardInfo("Athena", "Goddess of Wisdom", "Opponent’s Turn: If one of your Workers moved up on your last turn, opponent Workers cannot move up this turn."));
+            //cards.add(new CardInfo("Athena", "Goddess of Wisdom", "Your Move: Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated."));
+
             cards.add(new CardInfo("Atlas", "Titan Shouldering the Heavens", "Your Build: Your Worker may build a dome at any level."));
-            cards.add(new CardInfo("Demetra", "Goddess of the Harvest", "Your Build: Your Worker may build one additional time, but not on the same space."));
+            //cards.add(new CardInfo("Atlas", "Titan Shouldering the Heavens", "Your Move: Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated."));
+
+            cards.add(new CardInfo("Demeter", "Goddess of the Harvest", "Your Build: Your Worker may build one additional time, but not on the same space."));
+            //cards.add(new CardInfo("Demeter", "Goddess of the Harvest", "Your Move: Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated."));
+
             cards.add(new CardInfo("Hephaestus", "God of Blacksmiths", "Your Build: Your Worker may build one additional block (not dome) on top of your first block."));
+            //cards.add(new CardInfo("Hephaestus", "God of Blacksmiths", "Your Move: Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated."));
+
             cards.add(new CardInfo("Minotaur", "Bull-headed Monster", "Your Move: Your Worker may move into an opponent Worker’s space, if their Worker can be forced one space straight backwards to an unoccupied space at any level."));
+            //cards.add(new CardInfo("Minotaur", "Bull-headed Monster", "Your Move: Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated."));
+
             cards.add(new CardInfo("Pan", "God of the Wild", "Win Condition: You also win if your Worker moves down two or more levels."));
+            //cards.add(new CardInfo("Pan", "God of the Wild", "Your Move: Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated."));
+
             cards.add(new CardInfo("Prometheus", "Titan Benefactor of Mankind", "Your Turn: If your Worker does not move up, it may build both before and after moving."));
-            cards.add(new CardInfo("generalGod", "God of this dick", "DON'T CHOOSE ME."));
+            //cards.add(new CardInfo("Prometheus", "Titan Benefactor of Mankind", "Your Move: Your Worker may move into an opponent Worker’s space by forcing their Worker to the space yours just vacated."));
+
+            cards.add(new CardInfo("generalGod", "", "DON'T CHOOSE ME."));
 
 
             CardsInformationEvent cardsInformationEvent = new CardsInformationEvent( cards, challenger, player);
@@ -234,7 +251,6 @@ public class ViewTester implements ViewSender {
         }else{
             view.update(new RequirePlaceWorkersEvent("player1"));
             waiting();
-            System.out.println("HEY");
             view.update(new WorkerPlacedEvent("[Worker]\t2", 0, 1, true));
         }
         if(isThirdPlacer) {
@@ -245,6 +261,8 @@ public class ViewTester implements ViewSender {
             waiting();
             view.update(new WorkerPlacedEvent("[Worker]\t3", 0, 2, true));
         }
+
+        ViewBoard.getBoard().toGUI();
 
         if(isFirstPlacer) {
             view.update(new RequirePlaceWorkersEvent(ViewNickname.getMyNickname()));
@@ -425,7 +443,9 @@ public class ViewTester implements ViewSender {
     }
 
     public void send(PlaceWorkerEvent event){
-        view.update(new WorkerPlacedEvent(String.valueOf(myWorkerId), event.getX(), event.getY(), validPlacing));
+        System.out.println("Hey");
+        view.update(new WorkerPlacedEvent("[Worker]\t" + String.valueOf(myWorkerId), event.getX(), event.getY(), validPlacing));
         myWorkerId++;
+        myNotify();
     }
 }

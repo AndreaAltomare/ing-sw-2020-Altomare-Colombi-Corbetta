@@ -20,7 +20,7 @@ public abstract class GUISubTurnViewer implements SpecificSubTurnViewer {
     }
 
     public JPanel getSubTurnPanel(){
-        return new ImagePanel(0.9, 0.9, 0.05, 0.05, "/img/background/noActionPanel.png");
+        return new ImagePanel(0.9, 0.9, 0.05, 0.05, "/img/background/subTurnPanel/noActionPanel.png");
     }
 
     public BoardSubTurn getBoardSubTurn(){

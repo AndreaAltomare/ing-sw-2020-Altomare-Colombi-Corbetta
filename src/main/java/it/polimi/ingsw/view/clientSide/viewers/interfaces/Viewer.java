@@ -143,7 +143,7 @@ public abstract class Viewer extends Thread{
         try {
             synchronized (wakers) {
                 synchronized (myViewerQueue) {
-                    System.out.println("Remaining: " + ((ArrayBlockingQueue)myViewerQueue).size());
+                    //System.out.println("Remaining: " + ((ArrayBlockingQueue)myViewerQueue).size());
                     myViewerQueue.add(event);
                 }
             }

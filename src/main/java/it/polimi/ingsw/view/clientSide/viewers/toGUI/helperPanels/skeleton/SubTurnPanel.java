@@ -15,7 +15,7 @@ public class SubTurnPanel extends ImagePanel {
     ImagePanel miniGodPanel;
 
     public SubTurnPanel(){
-        super(0.9, 0.9, 0.05, 0.05, "/img/background/noActionPanel.png");
+        super(0.9, 0.9, 0.05, 0.05, "/img/background/subTurnPanel/noActionPanel.png");
 
         /*name = new JLabel();
         name.setFont(new Font("Serif", Font.ITALIC,10));
