@@ -23,7 +23,7 @@ import java.util.*;
 public class ViewTester implements ViewSender {
 
     private final static boolean addWait = false;
-    private final static boolean setDefaultChallenger = false;
+    private final static boolean setDefaultChallenger = true;
 
     private Object lock = new Object();
     private View view = new View(null, null);
@@ -225,14 +225,61 @@ public class ViewTester implements ViewSender {
             ViewBoard.getBoard().getCellAt(2, 0).buildLevel();
             ViewBoard.getBoard().getCellAt(3, 0).buildLevel();
             ViewBoard.getBoard().getCellAt(4, 0).buildLevel();
-            System.out.println(ViewBoard.getBoard().toTerminal());
-            ViewBoard.getBoard().toGUI();
-            Viewer.setAllRefresh();
-            System.out.println("aggiorno la board da View");
 
         } catch (NotFoundException e) {
             e.printStackTrace();
         }
+
+        System.out.println(ViewBoard.getBoard().toTerminal());
+        ViewBoard.getBoard().toGUI();
+        Viewer.setAllRefresh();
+        System.out.println("aggiorno la board da View");
+
+        /*synchronized (obj) {
+            try {
+                obj.wait(2500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        ViewBoard.getBoard().setSelectedCell(0, 0);
+        Viewer.setAllRefresh();
+        System.out.println("aggiorno la board da VIEW");
+        //Viewer.setAllRefresh();
+
+        synchronized (obj) {
+            try {
+                obj.wait(2500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        ViewBoard.getBoard().setSelectedCell(1, 1);
+        Viewer.setAllRefresh();
+
+        synchronized (obj) {
+            try {
+                obj.wait(2500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        ViewBoard.getBoard().setSelectedCell(null);
+        Viewer.setAllRefresh();
+
+        synchronized (obj) {
+            try {
+                obj.wait(2500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        ViewBoard.getBoard().setSelectedCell(0, 0);
+        Viewer.setAllRefresh();*/
 
     }
 

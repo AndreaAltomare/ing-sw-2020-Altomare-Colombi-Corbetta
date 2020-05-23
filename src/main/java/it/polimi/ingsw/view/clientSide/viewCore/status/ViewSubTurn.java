@@ -2,8 +2,14 @@ package it.polimi.ingsw.view.clientSide.viewCore.status;
 
 import it.polimi.ingsw.model.StateType;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.BuildBlockExecuter;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.MoveWorkerExecuter;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.PlaceWorkerExecuter;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SelectWorkerExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ClientAddressable;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
+import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.*;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSubTurnViewer;
@@ -14,74 +20,60 @@ public enum ViewSubTurn implements ClientAddressable {
     SELECTWORKER("SELECTWORKER"){
         @Override
         public SubTurnViewer getSubViewer() {
-            return new SubTurnViewer() {
-                @Override
-                public TerminalSubTurnViewer toTerminal() {
-                    return null;
-                }
+            return new SelectWorkerViewer(this);
+        }
 
-                @Override
-                public GUISubTurnViewer toGUI() {
-                    return null;
-                }
-
-                @Override
-                public CLISubTurnViewer toCLI() {
-                    return null;
-                }
-            };
+        @Override
+        public Executer getExecuter(){
+            return new SelectWorkerExecuter();
         }
     },
     BUILD("BUILD"){
         @Override
         public SubTurnViewer getSubViewer() {
-            return new SubTurnViewer() {
-                @Override
-                public TerminalSubTurnViewer toTerminal() {
-                    return null;
-                }
-
-                @Override
-                public GUISubTurnViewer toGUI() {
-                    return null;
-                }
-
-                @Override
-                public CLISubTurnViewer toCLI() {
-                    return null;
-                }
-            };
+            return new BuildViewer(this);
         }
 
         @Override
         public StateType toStateType(){
             return StateType.CONSTRUCTION;
         }
+
+        @Override
+        public Executer getExecuter(){
+            return new BuildBlockExecuter();
+        }
+
     },
     MOVE("MOVE"){
         @Override
         public SubTurnViewer getSubViewer() {
-            return new SubTurnViewer() {
-                @Override
-                public TerminalSubTurnViewer toTerminal() {
-                    return null;
-                }
-
-                @Override
-                public GUISubTurnViewer toGUI() {
-                    return null;
-                }
-
-                @Override
-                public CLISubTurnViewer toCLI() {
-                    return null;
-                }
-            };
+            return new MoveViewer(this);
         }
 
         @Override
         public StateType toStateType(){
             return StateType.CONSTRUCTION;
+        }
+
+        @Override
+        public Executer getExecuter(){
+            return new MoveWorkerExecuter();
+        }
+    }, SELECTCARD ("SELECTCARD"){
+        @Override
+        public SubTurnViewer getSubViewer() {
+            return new SelectCardViewer(this);
+        }
+    }, PLACEWORKER("PLACEWORKER"){
+        @Override
+        public SubTurnViewer getSubViewer() {
+            return new PlaceWorkerViewer(this);
+        }
+
+        @Override
+        public Executer getExecuter(){
+            return new PlaceWorkerExecuter();
         }
     };
 
@@ -137,4 +129,6 @@ public enum ViewSubTurn implements ClientAddressable {
     public abstract SubTurnViewer getSubViewer();
 
     public StateType toStateType(){return StateType.NONE; }
+
+    public Executer getExecuter(){ return null; }
 }

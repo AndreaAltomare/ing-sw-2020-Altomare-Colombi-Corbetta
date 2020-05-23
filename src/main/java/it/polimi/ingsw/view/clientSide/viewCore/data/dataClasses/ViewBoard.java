@@ -1,19 +1,14 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
 import it.polimi.ingsw.controller.events.ServerSendDataEvent;
-import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
-import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.BoardGeneralPanel;
-import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
-import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.SubPanel;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.BoardGeneralPanel;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
-import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.util.EventObject;
 
 /**
@@ -32,6 +27,20 @@ public class ViewBoard extends ViewObject {
     private ViewCell[][] realBoard;
 
     private static ViewBoard board;
+
+    private ViewCell selectedCell;
+
+    public void setSelectedCell(int x, int y){
+        try {
+            selectedCell = getCellAt(x, y);
+        } catch (NotFoundException e) {
+            selectedCell = null;
+        }
+    }
+
+    public void setSelectedCell(ViewCell cell){ selectedCell = cell; }
+
+    public ViewCell getSelectedCell(){ return selectedCell; }
 
     public static ViewBoard getBoard(){ return board; }
 
@@ -214,6 +223,7 @@ public class ViewBoard extends ViewObject {
                 } catch (NotFoundException ignore) {  }
             }
         }
+        guiPanel.setSelectCell(selectedCell);
         return guiPanel;
     }
 }
