@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewers.toGUI;
 
 import it.polimi.ingsw.view.clientSide.View;
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
@@ -76,7 +77,8 @@ public class GUIViewer extends Viewer {
                 GUISelectCard.attivate((CardSelection) queued.getPayload());
             }
         if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.REFRESH) {
-            System.out.println("\t\tREFRESHING");
+            if(ViewBoard.getBoard() != null)
+                ViewBoard.getBoard().toGUI();
             SwingUtilities.updateComponentTreeUI(window);
         }
         if(queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN){

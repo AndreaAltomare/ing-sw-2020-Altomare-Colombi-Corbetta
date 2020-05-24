@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.clientSide.viewCore.status;
 // TODO: write some comments to explains the meaning of every status defined
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.DataStorager;
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetNicknameExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetPlayerNumberExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ClientAddressable;

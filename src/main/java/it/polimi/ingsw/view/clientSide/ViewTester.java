@@ -27,8 +27,8 @@ public class ViewTester implements ViewSender {
     private final static boolean validPlacing = true;
 
     private final static boolean setDefaultChallenger = true;
-    private final static boolean isFirstCardChooser = false;
-    private final static boolean isSecondCardChooser = true;
+    private final static boolean isFirstCardChooser = true;
+    private final static boolean isSecondCardChooser = false;
 
     private final static boolean isFirstPlacer = true;
     private final static boolean isSecondPlacer = false;
@@ -262,8 +262,6 @@ public class ViewTester implements ViewSender {
             view.update(new WorkerPlacedEvent("[Worker]\t3", 0, 2, true));
         }
 
-        ViewBoard.getBoard().toGUI();
-
         if(isFirstPlacer) {
             view.update(new RequirePlaceWorkersEvent(ViewNickname.getMyNickname()));
             myWait();
@@ -443,7 +441,6 @@ public class ViewTester implements ViewSender {
     }
 
     public void send(PlaceWorkerEvent event){
-        System.out.println("Hey");
         view.update(new WorkerPlacedEvent("[Worker]\t" + String.valueOf(myWorkerId), event.getX(), event.getY(), validPlacing));
         myWorkerId++;
         myNotify();

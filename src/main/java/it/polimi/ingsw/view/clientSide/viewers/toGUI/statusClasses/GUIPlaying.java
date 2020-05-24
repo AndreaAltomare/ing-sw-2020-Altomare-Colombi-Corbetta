@@ -1,7 +1,9 @@
 package it.polimi.ingsw.view.clientSide.viewers.toGUI.statusClasses;
 
 import it.polimi.ingsw.view.clientSide.View;
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.GamePanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton.BodyPanel;
@@ -29,20 +31,16 @@ public class GUIPlaying extends GUIStatusViewer {
     }
 
     public boolean hasJPanel() {
+        gamePanel = GamePanel.getLast();
+        setSubTurn(new NoActionSubTurn(null));
         return false;
     }
 
     public JPanel getJPanel(){
-        gamePanel = GamePanel.getLast();
-        setSubTurn(new NoActionSubTurn(null));
         return gamePanel;
     }
 
     public void setSubTurn(GUISubTurnViewer subTurnViewer){
         gamePanel.setSubTurn(subTurnViewer);
     }
-
-
-
-
 }

@@ -339,6 +339,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         }else if((ViewNickname.getMyNickname()).equals(ViewSubTurn.getActual().getPlayer())){
             ViewMessage.populateAndSend("Cannot place theere your worker. retry", ViewMessage.MessageType.FROM_SERVER_MESSAGE);
         }
+        Viewer.setAllRefresh();
     }
 
     @Override

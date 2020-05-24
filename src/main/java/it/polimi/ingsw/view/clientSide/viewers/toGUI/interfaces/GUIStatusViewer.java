@@ -46,7 +46,9 @@ public abstract class GUIStatusViewer implements SpecificStatusViewer {
         if(hasJPanel()) {
             guiViewer.setJPanel(getJPanel());
         }
-        if(hasDirectFrameManipulation()) directFrameManipulation();
-        if(hasPopup()) this.doPopUp();
+        if(hasDirectFrameManipulation())
+            directFrameManipulation();
+        if(hasPopup())
+            this.doPopUp();
     }
 }

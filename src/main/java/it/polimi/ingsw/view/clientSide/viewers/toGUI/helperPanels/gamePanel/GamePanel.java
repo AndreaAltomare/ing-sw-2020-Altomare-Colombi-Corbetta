@@ -27,10 +27,11 @@ public class GamePanel extends BackgroundPanel {
         JPanel subTurnContainer = bodyPanel.getSubTurnPanel();
         subTurnContainer.removeAll();
         subTurnContainer.add(subTurnViewer.getSubTurnPanel());
-        Viewer.setAllRefresh();
-
         ViewBoard.getBoard().toGUI().setMySubTurn(subTurnViewer.getBoardSubTurn());
         ViewBoard.getBoard().toGUI().setVisible(true);
+        Viewer.setAllRefresh();
+
+
     }
 
     public static GamePanel getLast(){
