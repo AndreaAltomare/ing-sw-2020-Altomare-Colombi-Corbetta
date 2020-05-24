@@ -15,7 +15,7 @@ public abstract class GUISubTurnViewer implements SpecificSubTurnViewer {
     protected SubTurnViewer parent;
 
     protected GUISubTurnViewer(SubTurnViewer parent){
-        parent = parent;
+        this.parent = parent;
         if(parent != null)
             viewSubTurn = parent.getMySubTurn();
         else

@@ -5,6 +5,8 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.subTurnClasses.NoActionSubTurn;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.subTurnClasses.OpponentPlaceWorkerSubTurn;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.subTurnClasses.OpponentSelectWorkerSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSubTurnViewer;
 
 public class OpponentSelectWorkerViewer extends SubTurnViewer {
@@ -18,8 +20,8 @@ public class OpponentSelectWorkerViewer extends SubTurnViewer {
     }
 
     @Override
-    public GUISubTurnViewer toGUI()  {
-        return new NoActionSubTurn(this);
+    public GUISubTurnViewer toGUI()   {
+        return new OpponentSelectWorkerSubTurn(this);
     }
 
     @Override

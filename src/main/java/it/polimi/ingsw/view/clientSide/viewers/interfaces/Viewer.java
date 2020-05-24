@@ -43,7 +43,7 @@ public abstract class Viewer extends Thread{
     }
 
     //Blocking Queue
-    private final BlockingQueue<ViewerQueuedEvent> myViewerQueue = new ArrayBlockingQueue<ViewerQueuedEvent>(8);
+    private final BlockingQueue<ViewerQueuedEvent> myViewerQueue = new ArrayBlockingQueue<ViewerQueuedEvent>(32);
     //NON LEVARE IL COMMENTO!!!
     //private final List<ViewerQueuedEvent> myViewerQueue = new ArrayList<ViewerQueuedEvent>();
     private final Object wakers = new Object();
