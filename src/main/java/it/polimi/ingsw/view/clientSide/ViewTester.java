@@ -19,7 +19,7 @@ import java.util.*;
 public class ViewTester implements ViewSender {
 
 
-    private final static boolean addWait = true;
+    private final static boolean addWait = false;
     private final static boolean sendTestMessages = false;
 
     private final static boolean invalidNickname = true;
@@ -315,6 +315,8 @@ public class ViewTester implements ViewSender {
 
         //Go to playing status
         view.update((NextStatusEvent) new NextStatusEvent("Go to playing"));
+
+        view.update((WorkerSelectedEvent) new WorkerSelectedEvent("", "[Worker]\t2", true));
 
 
         /*view.update((NextStatusEvent)new NextStatusEvent("Playing"));

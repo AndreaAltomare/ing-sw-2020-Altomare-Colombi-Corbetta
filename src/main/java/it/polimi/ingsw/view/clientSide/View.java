@@ -435,6 +435,12 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
     @Override
     public void update(WorkerSelectedEvent workerSelected) {
+        if (workerSelected.success()){
+            try {
+                ViewWorker.populate(workerSelected);
+            } catch (WrongEventException ignore) {
+            }
+        }
         System.out.println("Worker named '" + workerSelected.getWorker() + "was correctly SELECTED");
     }
 

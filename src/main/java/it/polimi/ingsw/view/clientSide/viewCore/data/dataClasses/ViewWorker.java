@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
+import it.polimi.ingsw.controller.events.WorkerSelectedEvent;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 import it.polimi.ingsw.view.exceptions.AlreadySetException;
@@ -25,6 +26,7 @@ public class ViewWorker extends ViewObject {
     private ViewCell position;
 
     private static List<ViewWorker> myList = new ArrayList<ViewWorker>();
+    private static ViewWorker selected;
 
     /**
      * Getter method of the id of the worker
@@ -128,6 +130,24 @@ public class ViewWorker extends ViewObject {
     public static ViewObject populate( @NotNull EventObject event) throws WrongEventException{
         //TODO: implement it
         throw new WrongEventException();
+    }
+
+    /**
+     * Method that will be called on the arrival of an event to build a new Object.
+     *
+     * @param selectedEvent (the Event arrived)
+     * @return (the new object created)
+     * @throws WrongEventException (if the Event is not supported by this Class)
+     */
+    public static ViewObject populate( @NotNull WorkerSelectedEvent selectedEvent) throws WrongEventException{
+        ViewWorker worker;
+        try {
+             worker = (ViewWorker) search(selectedEvent.getWorker());
+        } catch (NotFoundException | WrongViewObjectException e) {
+            worker = null;
+        }
+        selectWorker(worker);
+        return worker;
     }
 
     /**
@@ -269,5 +289,21 @@ public class ViewWorker extends ViewObject {
         }  catch (WrongViewObjectException e) {
             return ViewPlayer.searchByName(name);
         }
+    }
+
+    public static void selectWorker(ViewWorker worker){
+        selected = worker;
+    }
+
+    public static void selectWorker(String worker){
+        try {
+            selectWorker((ViewWorker) search(worker));
+        } catch (NotFoundException | WrongViewObjectException e) {
+            selectWorker((ViewWorker)null);
+        }
+    }
+
+    public static ViewWorker getSelected(){
+        return selected;
     }
 }

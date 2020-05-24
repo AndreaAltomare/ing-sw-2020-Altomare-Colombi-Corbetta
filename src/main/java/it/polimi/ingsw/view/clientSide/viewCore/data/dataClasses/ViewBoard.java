@@ -145,7 +145,7 @@ public class ViewBoard extends ViewObject {
     /**
      * Method that will be called on the arrival of an event to build a new Object.
      *
-     * @param event (the Event arrived)
+     * @param data (the Event arrived)
      * @return (the new object created)
      * @throws WrongEventException (if the Event is not supported by this Class)
      */
@@ -219,7 +219,19 @@ public class ViewBoard extends ViewObject {
                 } catch (NotFoundException ignore) {  }
             }
         }
-        guiPanel.setSelectCell(selectedCell);
+
+        ViewCell workerCell = getSelectedWorkerCell();
+        guiPanel.setSelectedWorker(workerCell);
+        guiPanel.setSelectCell((workerCell == selectedCell? null: selectedCell));
+
         return guiPanel;
+    }
+
+    public static ViewCell getSelectedWorkerCell(){
+        try {
+            return ViewWorker.getSelected().getPosition();
+        } catch (NotFoundException | NullPointerException e) {
+            return null;
+        }
     }
 }
