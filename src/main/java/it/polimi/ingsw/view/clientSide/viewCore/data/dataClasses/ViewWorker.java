@@ -1,7 +1,10 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
+import it.polimi.ingsw.controller.events.WorkerPlacedEvent;
 import it.polimi.ingsw.controller.events.WorkerSelectedEvent;
+import it.polimi.ingsw.view.clientSide.View;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 import it.polimi.ingsw.view.exceptions.AlreadySetException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
@@ -130,6 +133,27 @@ public class ViewWorker extends ViewObject {
     public static ViewObject populate( @NotNull EventObject event) throws WrongEventException{
         //TODO: implement it
         throw new WrongEventException();
+    }
+
+    /**
+     * Method that will be called on the arrival of an event to build a new Object.
+     *
+     * @param workerPlaced (the Event arrived)
+     * @return (the new object created)
+     * @throws WrongEventException (if the Event is not supported by this Class)
+     */
+    public static ViewObject populate( @NotNull WorkerPlacedEvent workerPlaced) throws WrongEventException{
+        ViewWorker myWorker;
+        try {
+            myWorker = new ViewWorker(workerPlaced.getWorker(), ViewSubTurn.getActual().getPlayer());
+            myWorker.placeOn(workerPlaced.getX(), workerPlaced.getY());
+
+            if(View.debugging)
+                System.out.println(workerPlaced.getWorker() + "(" + workerPlaced.getX()+":"+workerPlaced.getY()+")");
+        } catch (NotFoundException | WrongViewObjectException e) {
+            throw new WrongEventException();
+        }
+        return myWorker;
     }
 
     /**

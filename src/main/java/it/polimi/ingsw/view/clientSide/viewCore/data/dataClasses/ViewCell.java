@@ -200,7 +200,7 @@ public class ViewCell extends ViewObject {
      * @return (the new object created)
      * @throws WrongEventException (if the Event is not supported by this Class)
      */
-    static ViewObject populate( @NotNull EventObject event) throws WrongEventException{
+    public static ViewObject populate(@NotNull EventObject event) throws WrongEventException{
         //todo: implement it
         throw new WrongEventException();
     }

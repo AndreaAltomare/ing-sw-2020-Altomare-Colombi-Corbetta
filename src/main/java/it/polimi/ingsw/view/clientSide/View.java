@@ -22,6 +22,7 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.TerminalViewer;
+import it.polimi.ingsw.view.exceptions.AlreadySetException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
@@ -139,6 +140,10 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         // TODO: close connection, and gracefully close the whole application
     }
 
+    //#######################UPDATE##########################
+
+    //##################TESTED####################
+
     /**
      * Method called to make the status go ahead of one step.
      *
@@ -149,6 +154,161 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     public void update(NextStatusEvent nextStatus) {
         ViewMessage.populateAndSend(nextStatus.toString(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
         ViewStatus.nextStatus();
+    }
+
+    /**
+     * Method that notify the view that is needed to select the number of players.
+     *
+     * @param requirePlayersNumber (RequirePlayersNumberEvent from the server)
+     */
+    @Override
+    public void update(RequirePlayersNumberEvent requirePlayersNumber) {
+        ViewMessage.populateAndSend(requirePlayersNumber.getMessage(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
+        ViewStatus.setStatus("NUMBER_PLAYER");
+    }
+
+    /**
+     * Method that populates all the data send by the Server with the ServerSendDataEvent.
+     *
+     * @param serverSentData (ServerSendData from the server)
+     */
+    @Override
+    public void update(ServerSendDataEvent serverSentData) {
+        try {
+            ViewBoard.populate(serverSentData);
+            ViewPlayer.populate(serverSentData);
+        } catch (WrongEventException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Method that sets the information of the cards.
+     *
+     * @param cardsInformation (CardsInformationEvent from the server)
+     */
+    @Override
+    public void update(CardsInformationEvent cardsInformation) {
+        //Non uso il populate su ViewCard per mantenereuna lista di carte selezionate in modo efficiente
+        List<CardInfo> cardList = cardsInformation.getCards();
+        List<ViewCard> cards = new ArrayList<>();
+
+        //Popolo cards list e creo le carte mancanti
+        for (CardInfo card: cardList) {
+            try{
+                cards.add((ViewCard)ViewCard.search(card.getName()));
+            }catch(WrongViewObjectException | NotFoundException e){
+                cards.add(new ViewCard(card.getName(), card.getEpithet(), card.getDescription()));
+            }
+        }
+
+        if(!cardsInformation.getPlayer().equals("")){
+            //Controllo se è il challenger
+            if(cardsInformation.getPlayer().equals(ViewNickname.getMyNickname())){
+                Viewer.setAllCardSelection(new CardSelection(cards, false));
+            }
+        }else{
+            //Controllo se è un giocatre qualsiasi
+            if(cardsInformation.getChallenger().equals(ViewNickname.getMyNickname())){
+                System.out.println("CHALLENGER");
+                Viewer.setAllCardSelection(new CardSelection(cards, true));
+            }
+        }
+    }
+
+    /**
+     * Method that notifies the placement of a worker on the board.
+     *
+     * @param workerPlaced (WorkerPlacedEvent from the server notifying the placement of the worker)
+     */
+    @Override
+    public void update(WorkerPlacedEvent workerPlaced) {
+        if(workerPlaced.success()) {
+            try {
+                ViewWorker.populate(workerPlaced);
+            } catch (WrongEventException e) {
+                ViewMessage.populateAndSend("Wrong message recived recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+            }
+            Viewer.setAllRefresh();
+        }else if((ViewNickname.getMyNickname()).equals(ViewSubTurn.getActual().getPlayer())){
+            ViewMessage.populateAndSend("Cannot place theere your worker. retry", ViewMessage.MessageType.FROM_SERVER_MESSAGE);
+        }
+        /*ViewWorker myWorker;
+
+        if(workerPlaced.success()) {
+            try {
+                myWorker = new ViewWorker(workerPlaced.getWorker(), ViewSubTurn.getActual().getPlayer());
+                myWorker.placeOn(workerPlaced.getX(), workerPlaced.getY());
+                if(View.debugging)
+                    System.out.println(workerPlaced.getWorker() + "(" + workerPlaced.getX()+":"+workerPlaced.getY()+")");
+            } catch (NotFoundException | WrongViewObjectException e) {
+                ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+        }else if((ViewNickname.getMyNickname()).equals(ViewSubTurn.getActual().getPlayer())){
+            ViewMessage.populateAndSend("Cannot place theere your worker. retry", ViewMessage.MessageType.FROM_SERVER_MESSAGE);
+        }
+        Viewer.setAllRefresh();*/
+    }
+
+    /**
+     * Method that request one player to place its worker.
+     *
+     * @param requirePlaceWorkers (RequirePlaceWorkersEvent from the server)
+     */
+    @Override
+    public void update(RequirePlaceWorkersEvent requirePlaceWorkers) {
+        ViewSubTurn.setSubTurn(ViewSubTurn.PLACEWORKER, requirePlaceWorkers.getPlayer());
+        ViewSubTurn.getActual().setPlayer(requirePlaceWorkers.getPlayer());
+        Viewer.setAllSubTurnViewer(ViewSubTurn.getActual());
+    }
+
+    /**
+     * Method that send an error message from the server to the player
+     *
+     * @param message (ErrorMessageEvent from the server)
+     */
+
+    @Override
+    public void update(ErrorMessageEvent message) {
+        ViewMessage.populateAndSend(message.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
+    }
+
+    /**
+     * Method that send a message from the server to the player
+     *
+     * @param message (MessageEvent from the server)
+     */
+
+    @Override
+    public void update(MessageEvent message) {
+        ViewMessage.populateAndSend(message.getMessage(), ViewMessage.MessageType.FROM_SERVER_MESSAGE);
+    }
+
+    /**
+     * Default method.
+     *
+     * @param o (Object parameter)
+     */
+    @Override
+    public void update(Object o) {
+        ViewMessage.populateAndSend("Recived a wrong message", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+    }
+
+
+    //##################SOON TESTED####################
+
+    /**
+     * Method that changes the turn status.
+     *
+     * @param turnStatusChange (TurnStatusChangedEvent from the server)
+     */
+    @Override
+    public void update(TurnStatusChangedEvent turnStatusChange) {
+        ViewSubTurn.set(turnStatusChange.getState().toString(), turnStatusChange.getPlayerNickname());
+        ViewSubTurn.getActual().setPlayer(turnStatusChange.getPlayerNickname());
+        Viewer.setAllSubTurnViewer(ViewSubTurn.getActual().getSubViewer());
+        //System.out.println("Turn status changed to: " + turnStatusChange.getState().toString()); // todo: check what toString() of an enum prints... [si, funziona.]
     }
 
     /**
@@ -164,15 +324,93 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     }
 
     /**
-     * Method that notify the view that is needed to select the number of players.
+     * Method that will be called if a card is selected.
      *
-     * @param requirePlayersNumber (RequirePlayersNumberEvent from the server)
+     * @param cardSelected (CardSelectedEvent from server)
      */
     @Override
-    public void update(RequirePlayersNumberEvent requirePlayersNumber) {
-        ViewMessage.populateAndSend(requirePlayersNumber.getMessage(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
-        ViewStatus.setStatus("NUMBER_PLAYER");
+    public void update(CardSelectedEvent cardSelected) {
+        try {
+            ViewPlayer.searchByName(cardSelected.getPlayerNickname()).setCard(cardSelected.getCardName());
+        } catch (NotFoundException ignored) {
+        }
+        if(ViewNickname.getMyNickname().equals(cardSelected.getPlayerNickname()))
+            ViewNickname.setMyCard(cardSelected.getCardName());
     }
+
+    @Override
+    public void update(WorkerMovedEvent workerMoved) {
+        try {
+            ViewWorker.populate(workerMoved);
+        } catch (WrongEventException e) {
+            ViewMessage.populateAndSend("Wrong message recived recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+        }
+        /*try {
+            ((ViewWorker)ViewWorker.search(workerMoved.getWorker())).placeOn(workerMoved.getFinalX(), workerMoved.getFinalY());
+        } catch (NotFoundException | WrongViewObjectException e) {
+            ViewMessage.populateAndSend("Wrong cell recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+        }*/
+    }
+
+    @Override
+    public void update(BlockBuiltEvent blockBuilt) {
+        try {
+            ViewCell.populate(blockBuilt);
+        } catch (WrongEventException e) {
+            ViewMessage.populateAndSend("Wrong message recived recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+        }
+        /*ViewCell cell;
+        try {
+            cell = ((ViewBoard) ViewBoard.search(ViewBoard.getClassId())).getCellAt(blockBuilt.getX(), blockBuilt.getY());
+        } catch (NotFoundException | WrongViewObjectException e) {
+            ViewMessage.populateAndSend("Wrong cell recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+            return;
+        }
+        if(blockBuilt.getBlockType().equals(PlaceableType.BLOCK))
+            cell.buildLevel();
+        else if(blockBuilt.getBlockType().equals(PlaceableType.DOME))
+            cell.buildDome();
+        else
+            ViewMessage.populateAndSend("Wrong block recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);*/
+    }
+
+    @Override
+    public void update(BlockRemovedEvent blockRemoved) {
+        try {
+            ViewCell.populate(blockRemoved);
+        } catch (WrongEventException e) {
+            ViewMessage.populateAndSend("Wrong message recived recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+        }
+        /*ViewCell cell;
+        try {
+            cell = ((ViewBoard) ViewBoard.search(ViewBoard.getClassId())).getCellAt(blockRemoved.getX(), blockRemoved.getY());
+        } catch (NotFoundException | WrongViewObjectException e) {
+            ViewMessage.populateAndSend("Wrong cell recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+            return;
+        }
+        if(cell.isDoomed())
+            cell.removeDome();
+        else
+            cell.removeLevel();*/
+    }
+
+    @Override
+    public void update(WorkerRemovedEvent workerRemoved) {
+        try {
+            ViewWorker.populate(workerRemoved);
+        } catch (WrongEventException e) {
+            ViewMessage.populateAndSend("Wrong message recived recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+        }
+/*
+        try {
+            ((ViewWorker)ViewWorker.search(workerRemoved.getWorker())).removeWorker();
+        } catch (NotFoundException | WrongViewObjectException e) {
+            ViewMessage.populateAndSend("Cannot remove worker", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+        }*/
+    }
+
+
+    //##################NOT YET TESTED####################
 
     /**
      * Method that the lobby is full and closes the application.
@@ -213,24 +451,10 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         }
     }
 
-    /**
-     * Method that changes the turn status.
-     *
-     * @param turnStatusChange (TurnStatusChangedEvent from the server)
-     */
-    @Override
-    public void update(TurnStatusChangedEvent turnStatusChange) {
-        ViewSubTurn.set(turnStatusChange.getState().toString(), turnStatusChange.getPlayerNickname());
-        ViewSubTurn.getActual().setPlayer(turnStatusChange.getPlayerNickname());
-        Viewer.setAllSubTurnViewer(ViewSubTurn.getActual().getSubViewer());
-        //System.out.println("Turn status changed to: " + turnStatusChange.getState().toString()); // todo: check what toString() of an enum prints... [si, funziona.]
-    }
-
     @Override
     public void update(GameOverEvent gameOver) {
 
     }
-
 
     /**
      * Method that notify that the view has to quit.
@@ -245,165 +469,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         // todo add code to handle disconnection
     }
 
-    /* Message listener */
-    /**
-     * Method that send a message from the server to the player
-     *
-     * @param message (MessageEvent from the server)
-     */
-    @Override
-    public void update(MessageEvent message) {
-        ViewMessage.populateAndSend(message.getMessage(), ViewMessage.MessageType.FROM_SERVER_MESSAGE);
-    }
-
-
-    /* Error message listener */
-    /**
-     * Method that send an error message from the server to the player
-     *
-     * @param message (ErrorMessageEvent from the server)
-     */
-    @Override
-    public void update(ErrorMessageEvent message) {
-        ViewMessage.populateAndSend(message.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
-    }
-
-
-    /**
-     * Method that populates all the data send by the Server with the ServerSendDataEvent.
-     *
-     * @param serverSentData (ServerSendData from the server)
-     */
-    @Override
-    public void update(ServerSendDataEvent serverSentData) {
-        try {
-            ViewBoard.populate(serverSentData);
-            ViewPlayer.populate(serverSentData);
-        } catch (WrongEventException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    /**
-     * Method that sets the information of the cards.
-     *
-     * @param cardsInformation (CardsInformationEvent from the server)
-     */
-    @Override
-    public void update(CardsInformationEvent cardsInformation) {
-        List<CardInfo> cardList = cardsInformation.getCards();
-        List<ViewCard> cards = new ArrayList<>();
-        for (CardInfo card: cardList) {
-            try{
-                cards.add((ViewCard)ViewCard.search(card.getName()));
-            }catch(WrongViewObjectException | NotFoundException e){
-                cards.add(new ViewCard(card.getName(), card.getEpithet(), card.getDescription()));
-            }
-        }
-        if(!cardsInformation.getPlayer().equals("")){
-            if(cardsInformation.getPlayer().equals(ViewNickname.getMyNickname())){
-                Viewer.setAllCardSelection(new CardSelection(cards, false));
-            }
-        }else{
-            if(cardsInformation.getChallenger().equals(ViewNickname.getMyNickname())){
-                System.out.println("CHALLENGER");
-                Viewer.setAllCardSelection(new CardSelection(cards, true));
-            }
-        }
-    }
-
-    /**
-     * Method that will be called if a card is selected.
-     *
-     * @param cardSelected (CardSelectedEvent from server)
-     */
-    @Override
-    public void update(CardSelectedEvent cardSelected) {
-        ViewNickname.setMyCard(cardSelected.getCardName());
-    }
-
-    @Override
-    public void update(WorkerPlacedEvent workerPlaced) {
-        ViewWorker myWorker;
-
-        if(workerPlaced.success()) {
-            try {
-                myWorker = new ViewWorker(workerPlaced.getWorker(), ViewSubTurn.getActual().getPlayer());
-                myWorker.placeOn(workerPlaced.getX(), workerPlaced.getY());
-                if(View.debugging)
-                    System.out.println(workerPlaced.getWorker() + "(" + workerPlaced.getX()+":"+workerPlaced.getY()+")");
-            } catch (NotFoundException | WrongViewObjectException e) {
-                ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
-                e.printStackTrace();
-            }
-        }else if((ViewNickname.getMyNickname()).equals(ViewSubTurn.getActual().getPlayer())){
-            ViewMessage.populateAndSend("Cannot place theere your worker. retry", ViewMessage.MessageType.FROM_SERVER_MESSAGE);
-        }
-        Viewer.setAllRefresh();
-    }
-
-    @Override
-    public void update(WorkerMovedEvent workerMoved) {
-        try {
-            ((ViewWorker)ViewWorker.search(workerMoved.getWorker())).placeOn(workerMoved.getFinalX(), workerMoved.getFinalY());
-        } catch (NotFoundException | WrongViewObjectException e) {
-            ViewMessage.populateAndSend("Wrong cell recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
-        }
-    }
-
-    @Override
-    public void update(BlockBuiltEvent blockBuilt) {
-        ViewCell cell;
-        try {
-            cell = ((ViewBoard) ViewBoard.search(ViewBoard.getClassId())).getCellAt(blockBuilt.getX(), blockBuilt.getY());
-        } catch (NotFoundException | WrongViewObjectException e) {
-            ViewMessage.populateAndSend("Wrong cell recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
-            return;
-        }
-        if(blockBuilt.getBlockType().equals(PlaceableType.BLOCK))
-            cell.buildLevel();
-        else if(blockBuilt.getBlockType().equals(PlaceableType.DOME))
-            cell.buildDome();
-        else
-            ViewMessage.populateAndSend("Wrong block recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
-    }
-
-    @Override
-    public void update(BlockRemovedEvent blockRemoved) {
-        ViewCell cell;
-        try {
-            cell = ((ViewBoard) ViewBoard.search(ViewBoard.getClassId())).getCellAt(blockRemoved.getX(), blockRemoved.getY());
-        } catch (NotFoundException | WrongViewObjectException e) {
-            ViewMessage.populateAndSend("Wrong cell recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
-            return;
-        }
-        if(cell.isDoomed())
-            cell.removeDome();
-        else
-            cell.removeLevel();
-    }
-
-    @Override
-    public void update(WorkerRemovedEvent workerRemoved) {
-        try {
-            ((ViewWorker)ViewWorker.search(workerRemoved.getWorker())).removeWorker();
-        } catch (NotFoundException | WrongViewObjectException e) {
-            ViewMessage.populateAndSend("Cannot remove worker", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
-        }
-    }
-
-    @Override
-    public void update(RequirePlaceWorkersEvent requirePlaceWorkers) {
-        ViewSubTurn.setSubTurn(ViewSubTurn.PLACEWORKER, requirePlaceWorkers.getPlayer());
-        ViewSubTurn.getActual().setPlayer(requirePlaceWorkers.getPlayer());
-        Viewer.setAllSubTurnViewer(ViewSubTurn.getActual());
-    }
-
-    @Override
-    public void update(Object o) {
-        ViewMessage.populateAndSend("Recived a wrong message", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
-    }
+    //#########################END UPDATE###################################
 
     public String getNickname() {
         String ret = ViewNickname.getMyNickname();

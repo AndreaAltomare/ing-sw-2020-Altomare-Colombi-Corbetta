@@ -20,15 +20,15 @@ public class ViewTester implements ViewSender {
 
 
     private final static boolean addWait = false;
-    private final static boolean sendTestMessages = false;
+    private final static boolean sendTestMessages = true;
 
     private final static boolean invalidNickname = true;
     private final static boolean requirePlayerNumber = false;
     private final static boolean validPlacing = true;
 
-    private final static boolean setDefaultChallenger = false;
+    private final static boolean setDefaultChallenger = true;
     private final static boolean isFirstCardChooser = false;
-    private final static boolean isSecondCardChooser = false;
+    private final static boolean isSecondCardChooser = true;
 
     private final static boolean isFirstPlacer = true;
     private final static boolean isSecondPlacer = false;
@@ -105,8 +105,8 @@ public class ViewTester implements ViewSender {
 
         //se sendTestMessages invia dei messaggi di test
         if(sendTestMessages){
-            ViewMessage.populateAndSend("test fromServerMEssage", ViewMessage.MessageType.FROM_SERVER_MESSAGE);
-            ViewMessage.populateAndSend("test serverError", ViewMessage.MessageType.FROM_SERVER_ERROR);
+            view.update((MessageEvent) new MessageEvent("test fromServerMEssage"));
+            view.update((ErrorMessageEvent) new ErrorMessageEvent("test serverError"));
             ViewMessage.populateAndSend("test executerError", ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
             ViewMessage.populateAndSend("test fatalError", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
 
