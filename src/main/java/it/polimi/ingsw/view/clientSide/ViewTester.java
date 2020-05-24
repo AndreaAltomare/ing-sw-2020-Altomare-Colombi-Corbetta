@@ -7,6 +7,7 @@ import it.polimi.ingsw.model.PlaceableType;
 import it.polimi.ingsw.model.StateType;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewWorker;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ViewSender;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
@@ -16,22 +17,23 @@ import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
 import it.polimi.ingsw.view.events.PlaceWorkerEvent;
 import it.polimi.ingsw.view.events.SetNicknameEvent;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
+import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
 
 import java.util.*;
 
 public class ViewTester implements ViewSender {
 
 
-    private final static boolean addWait = false;
-    private final static boolean sendTestMessages = true;
+    private final static boolean addWait = true;
+    private final static boolean sendTestMessages = false;
 
-    private final static boolean invalidNickname = true;
+    private final static boolean invalidNickname = false;
     private final static boolean requirePlayerNumber = false;
     private final static boolean validPlacing = true;
 
-    private final static boolean setDefaultChallenger = true;
+    private final static boolean setDefaultChallenger = false;
     private final static boolean isFirstCardChooser = false;
-    private final static boolean isSecondCardChooser = true;
+    private final static boolean isSecondCardChooser = false;
 
     private final static boolean isFirstPlacer = true;
     private final static boolean isSecondPlacer = false;
@@ -319,11 +321,9 @@ public class ViewTester implements ViewSender {
         //Go to playing status
         view.update((NextStatusEvent) new NextStatusEvent("Go to playing"));
 
-        view.update((WorkerSelectedEvent) new WorkerSelectedEvent("", "[Worker]\t2", true));
-
         waiting();
 
-        simulateTurn("player1", "[Worker]\t2", 0, 0, 1, 1, PlaceableType.BLOCK);
+        simulateTurn("player1", "[Worker]\t2", 3, 3, 1, 1, PlaceableType.BLOCK);
 
 
         /*view.update((NextStatusEvent)new NextStatusEvent("Playing"));
@@ -433,7 +433,11 @@ public class ViewTester implements ViewSender {
         waiting();
         view.update(new TurnStatusChangedEvent(player, StateType.MOVEMENT, true));
         waiting();
-        view.update(new WorkerMovedEvent(worker, 0, 0, xMov, yMov, MoveOutcomeType.EXECUTED));
+        try {
+            view.update(new WorkerMovedEvent(worker, ((ViewWorker)ViewWorker.search(worker)).getPosition().getX(), ((ViewWorker)ViewWorker.search(worker)).getPosition().getY(), xMov, yMov, MoveOutcomeType.EXECUTED));
+        } catch (NotFoundException | WrongViewObjectException e) {
+            view.update(new WorkerMovedEvent(worker, 0, 0, xMov, yMov, MoveOutcomeType.EXECUTED));
+        }
         waiting();
         view.update(new TurnStatusChangedEvent(player, StateType.CONSTRUCTION, true));
         waiting();

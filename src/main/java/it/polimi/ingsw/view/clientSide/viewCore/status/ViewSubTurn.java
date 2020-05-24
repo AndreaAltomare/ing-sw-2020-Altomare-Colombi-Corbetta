@@ -49,7 +49,7 @@ public enum ViewSubTurn implements ClientAddressable {
             return SELECTWORKER;
         }
     },
-    BUILD("BUILD"){
+    BUILD("CONSTRUCTION"){
         @Override
         public SubTurnViewer getSubViewer() {
             return new BuildViewer(this);
@@ -71,7 +71,7 @@ public enum ViewSubTurn implements ClientAddressable {
         }
 
     },
-    OPPONENT_BUILD("OPPONENT_BUILD"){
+    OPPONENT_BUILD("OPPONENT_CONSTRUCTION"){
         @Override
         public SubTurnViewer getSubViewer()  {
             return new OpponentBuildViewer(this);
@@ -88,7 +88,7 @@ public enum ViewSubTurn implements ClientAddressable {
         }
 
     },
-    MOVE("MOVE"){
+    MOVE("MOVEMENT"){
         @Override
         public SubTurnViewer getSubViewer() {
             return new MoveViewer(this);
@@ -109,7 +109,7 @@ public enum ViewSubTurn implements ClientAddressable {
             return OPPONENT_MOVE;
         }
     },
-    OPPONENT_MOVE("OPPONENT_MOVE"){
+    OPPONENT_MOVE("OPPONENT_MOVEMENT"){
         @Override
         public SubTurnViewer getSubViewer()  {
             return new OpponentMoveViewer(this);
@@ -203,7 +203,9 @@ public enum ViewSubTurn implements ClientAddressable {
 
     @Override
     public boolean isThis(String st) {
-        return this.toString().equals(st);
+        if(!this.toString().equals(st))
+            return this.getId().equals(st);
+        return true;
     }
 
     public static ViewSubTurn search(String st) throws NotFoundException {
