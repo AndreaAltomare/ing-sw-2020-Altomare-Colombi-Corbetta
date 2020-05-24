@@ -2,11 +2,13 @@ package it.polimi.ingsw.view.clientSide.viewCore.status;
 // TODO: write some comments to explains the meaning of every status defined
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.DataStorager;
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetNicknameExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetPlayerNumberExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ClientAddressable;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
+import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.*;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
@@ -148,7 +150,12 @@ public enum ViewStatus implements ClientAddressable {
 
         @Override
         void onLoad() {
-            //TODO: set the onLoad
+            //todo: implement it
+        }
+
+        @Override
+        public void afterLoad(){
+            Viewer.setAllSubTurnViewer(ViewSubTurn.SELECTCARD);
         }
     },
 
@@ -360,6 +367,7 @@ public enum ViewStatus implements ClientAddressable {
         actualStatus = actualStatus.getNext();
         actualStatus.onLoad();
         Viewer.setAllStatusViewer(ViewStatus.getActual().getViewer());
+        actualStatus.afterLoad();
     }
 
     /**
@@ -409,5 +417,9 @@ public enum ViewStatus implements ClientAddressable {
 
     public static ViewStatus getActual(){
         return actualStatus;
+    }
+
+    void afterLoad(){
+        ;
     }
 }

@@ -149,13 +149,9 @@ public class ViewBoard extends ViewObject {
      * @return (the new object created)
      * @throws WrongEventException (if the Event is not supported by this Class)
      */
-    public static ViewObject populate( @NotNull EventObject event) throws WrongEventException{
-        ServerSendDataEvent data;
-        try{
-            data = (ServerSendDataEvent) event;
-        }catch (Exception e){
-            throw new WrongEventException();
-        }
+    public static ViewObject populate( @NotNull ServerSendDataEvent data) throws WrongEventException{
+        if(board!=null)
+            return board;
 
         board = new ViewBoard();
         board.xDim = data.getBoardXsize();

@@ -4,16 +4,14 @@ import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.subTurnClasses.SelectCardSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSubTurnViewer;
 
-public class SelectCardViewer implements SubTurnViewer {
-
-    protected ViewSubTurn mySubTurn;
+public class SelectCardViewer extends SubTurnViewer {
 
     public SelectCardViewer (ViewSubTurn viewSubTurn){
-        mySubTurn = viewSubTurn;
+        super(viewSubTurn);
     }
-
 
     @Override
     public TerminalSubTurnViewer toTerminal() {
@@ -22,7 +20,7 @@ public class SelectCardViewer implements SubTurnViewer {
 
     @Override
     public GUISubTurnViewer toGUI() {
-        return null;
+        return new SelectCardSubTurn(this);
     }
 
     @Override

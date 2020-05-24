@@ -1,15 +1,18 @@
 package it.polimi.ingsw.view.clientSide.viewers.toGUI;
 
 import it.polimi.ingsw.view.clientSide.View;
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.elements.PanelImageButton;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.BackgroundPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.SubPanel;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.specificGUISideClass.GUIMessageDisplayer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.specificGUISideClass.GUISelectCard;
 import it.polimi.ingsw.view.exceptions.CheckQueueException;
@@ -27,6 +30,7 @@ import java.io.IOException;
 public class GUIViewer extends Viewer {
 
     JFrame window;
+    GUIStatusViewer actualStatus;
 
     @Override
     public void refresh() {  }
@@ -73,8 +77,12 @@ public class GUIViewer extends Viewer {
                 GUISelectCard.attivate((CardSelection) queued.getPayload());
             }
         if (queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.REFRESH) {
-            System.out.println("\t\tREFRESHING");
+            if(ViewBoard.getBoard() != null)
+                ViewBoard.getBoard().toGUI();
             SwingUtilities.updateComponentTreeUI(window);
+        }
+        if(queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN){
+            actualStatus.setSubTurn(((SubTurnViewer)queued.getPayload()).toGUI());
         }
     }
 
@@ -98,14 +106,17 @@ public class GUIViewer extends Viewer {
 
     private void setStatus(ViewerQueuedEvent queued){
         System.out.println("[GUI]\t"+ ViewStatus.getActual().toString());
-        if(((StatusViewer)queued.getPayload()).toGUI() == null){
+
+        actualStatus = ((StatusViewer)queued.getPayload()).toGUI();
+
+        if(actualStatus == null){
             //window.setVisible(false);
             return;
         }
-        ((StatusViewer)queued.getPayload()).toGUI().setMyGUIViewer(this);
+        actualStatus.setMyGUIViewer(this);
 
         try {
-            ((StatusViewer)queued.getPayload()).toGUI().execute();
+            actualStatus.execute();
         } catch (CheckQueueException ignore) {}
     }
 

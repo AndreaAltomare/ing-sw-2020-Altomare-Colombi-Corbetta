@@ -110,7 +110,10 @@ public enum ViewSubTurn implements ClientAddressable {
         throw new NotFoundException();
     }
 
-    public static void setSubTurn(ViewSubTurn subTurn){ actualSubTurn = subTurn; }
+    public static void setSubTurn(ViewSubTurn subTurn){
+        actualSubTurn = subTurn;
+    }
+
     //todo override
     public static void set(String st){
         try {
@@ -131,4 +134,6 @@ public enum ViewSubTurn implements ClientAddressable {
     public StateType toStateType(){return StateType.NONE; }
 
     public Executer getExecuter(){ return null; }
+
+    public String getPlayer(){ return player; }
 }

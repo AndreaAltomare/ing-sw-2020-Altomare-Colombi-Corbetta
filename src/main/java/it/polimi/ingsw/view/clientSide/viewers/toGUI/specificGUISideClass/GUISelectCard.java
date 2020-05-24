@@ -8,6 +8,7 @@ import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.elements.Panel
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.elements.PanelImageButton;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.BackgroundPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.SubPanel;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.EndCardSelectionException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
@@ -62,28 +63,9 @@ public class GUISelectCard {
         background = new ImagePanel(1, 1, 0, 0, "/img/background/background_select_card.png");
         godImage.add(background);
 
-        godName = new JLabel();
-        godName.setFont(new Font("Serif", Font.ITALIC,20));
-        godName.setForeground(Color.YELLOW);
 
-        JPanel godNamePanel = new PanelComponent(0.5, 0.8, 0.25, 0, godName);
-        JPanel godNameImgPanel = new ImagePanel(0.52, 0.1215, 0.0521, 0.052, "/img/trappings/god_name.png");
-        godNameImgPanel.add(godNamePanel);
-        godNamePanel.setOpaque(false);
-        background.add(godNameImgPanel);
 
-        powerImage = new ImagePanel(0.3333, 0.116, 0.666, 0.6, buildImagePowerString("Default"));
-        background.add(powerImage);
 
-        godEpitheth = new JLabel();
-        godName.setFont(new Font("Serif", Font.ITALIC,20));
-        godName.setForeground(Color.YELLOW);
-
-        JPanel godEpithethPanel = new PanelComponent(0.75, 0.8, 0.125, 0, godEpitheth);
-        JPanel godEpithethImgPanel = new ImagePanel(0.52, 0.09, 0.0521, 0.7153, "/img/trappings/epitheth_button.png");
-        godEpithethImgPanel.add(godEpithethPanel);
-        godEpithethPanel.setOpaque(false);
-        background.add(godEpithethImgPanel);
 
 
         JButton forwardButton = new JButton();
@@ -132,21 +114,52 @@ public class GUISelectCard {
         });
         background.add(selectButton);
 
-        godPower = new JLabel();
+        SubPanel contentPanel = new SubPanel(1, 1, 0, 0);
+        contentPanel.setOpaque(false);
+        background.add(contentPanel);
+
+
+
+        godName = new JLabel("");
+        godName.setFont(new Font("Serif", Font.ITALIC,20));
+        godName.setForeground(Color.YELLOW);
+
+        JPanel godNamePanel = new PanelComponent(0.5, 0.8, 0.25, 0, godName);
+        JPanel godNameImgPanel = new ImagePanel(0.52, 0.1215, 0.0521, 0.052, "/img/trappings/god_name.png");
+        godNameImgPanel.add(godNamePanel);
+        godNamePanel.setOpaque(false);
+        contentPanel.add(godNameImgPanel);
+
+        powerImage = new ImagePanel(0.3333, 0.116, 0.666, 0.6, buildImagePowerString("Default"));
+        contentPanel.add(powerImage);
+
+        godEpitheth = new JLabel("");
+        godName.setFont(new Font("Serif", Font.ITALIC,20));
+        godName.setForeground(Color.YELLOW);
+
+        JPanel godEpithethPanel = new PanelComponent(0.75, 0.8, 0.125, 0, godEpitheth);
+        JPanel godEpithethImgPanel = new ImagePanel(0.52, 0.09, 0.0521, 0.7153, "/img/trappings/epitheth_button.png");
+        godEpithethImgPanel.add(godEpithethPanel);
+        godEpithethPanel.setOpaque(false);
+        contentPanel.add(godEpithethImgPanel);
+
+        godPower = new JLabel("");
         godPower.setFont(new Font("Serif", Font.ITALIC,10));
         godPower.setForeground(Color.GREEN);
         JPanel godPowerImagePanel = new ImagePanel(0.32, 0.27778, 0.677, 0.139, "/img/background/pergamena.png");
         JPanel godPowerPanel = new PanelComponent(0.9, 0.9, 0.05, 0.05, godPower);
         godPowerPanel.setOpaque(false);
         godPowerImagePanel.add(godPowerPanel);
-        background.add(godPowerImagePanel);
+        contentPanel.add(godPowerImagePanel);
 
     }
 
     private static void setGod(ViewCard god){
         godName.setText(god.getName());
         godEpitheth.setText(god.getEpiteth());
+        //godEpitheth.setText(god.getDescription());
         godPower.setText("<html>"+ god.getDescription() +"</html>");
+        //godPower.setText( god.getEpiteth() );
         if(cardSelection.isSelected(god)){
             selectButton.setBackgroundImg("/img/trappings/redButton.png", "remove");
         }else{

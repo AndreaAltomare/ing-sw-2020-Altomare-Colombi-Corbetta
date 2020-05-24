@@ -24,7 +24,7 @@ public class BoardGeneralPanel extends ImagePanel {
     private double xLen;
     private double yLen;
 
-    BoardSubTurn mySubTurn;
+    private BoardSubTurn mySubTurn;
 
 
     private ViewCell selectedCell;
@@ -66,7 +66,7 @@ public class BoardGeneralPanel extends ImagePanel {
         }
 
         String getCellStatusEncoded(ViewCell cell){
-            return "l"+cell.getLevel()+"D"+(cell.isDoomed()?"t":"f");
+            return "l"+cell.getLevel()+"D"+(cell.isDoomed()?"t":"f") + (cell.isThereWorker()?("W" + cell.getWorkerString()):"");
         }
 
         SubPanel getPanelAt(int x, int y){
@@ -148,7 +148,7 @@ public class BoardGeneralPanel extends ImagePanel {
     private BoardGeneralPanel(String fileName) {
         super(1, 1, 0, 0, fileName);
 
-        mySubTurn = new BoardSubTurn();
+        mySubTurn = new BoardSubTurn(null);
         addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
@@ -229,6 +229,10 @@ public class BoardGeneralPanel extends ImagePanel {
             }
         }
 
+    }
+
+    public void setMySubTurn(BoardSubTurn boardSubTurn){
+        mySubTurn = boardSubTurn;
     }
 
     @Override

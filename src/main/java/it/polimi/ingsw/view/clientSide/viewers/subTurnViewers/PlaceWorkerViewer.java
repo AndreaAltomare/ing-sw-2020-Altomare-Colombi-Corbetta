@@ -4,14 +4,13 @@ import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.subTurnClasses.PlaceWorkerSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSubTurnViewer;
 
-public class PlaceWorkerViewer implements SubTurnViewer {
-
-    protected ViewSubTurn mySubTurn;
+public class PlaceWorkerViewer extends SubTurnViewer {
 
     public PlaceWorkerViewer (ViewSubTurn viewSubTurn){
-        mySubTurn = viewSubTurn;
+        super(viewSubTurn);
     }
 
     @Override
@@ -21,7 +20,7 @@ public class PlaceWorkerViewer implements SubTurnViewer {
 
     @Override
     public GUISubTurnViewer toGUI() {
-        return null;
+        return new PlaceWorkerSubTurn(this);
     }
 
     @Override

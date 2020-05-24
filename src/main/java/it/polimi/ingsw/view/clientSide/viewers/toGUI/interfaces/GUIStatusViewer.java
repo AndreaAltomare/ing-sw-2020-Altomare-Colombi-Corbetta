@@ -10,25 +10,45 @@ public abstract class GUIStatusViewer implements SpecificStatusViewer {
 
     protected GUIViewer guiViewer;
 
-    public void setMyGUIViewer (GUIViewer viewer){ guiViewer = viewer; }
+    public void setMyGUIViewer (GUIViewer viewer){
+        guiViewer = viewer;
+    }
 
-    public boolean hasJPanel(){ return false; }
+    public boolean hasJPanel(){
+        return false;
+    }
 
-    public JPanel getJPanel(){ return null; }
+    public JPanel getJPanel(){
+        return null;
+    }
 
-    public boolean hasPopup(){ return false;}
+    public boolean hasPopup(){
+        return false;
+    }
 
-    public void doPopUp(){  }
+    public void doPopUp(){
 
-    public boolean hasDirectFrameManipulation(){ return false; }
+    }
 
-    public void directFrameManipulation(){  }
+    public boolean hasDirectFrameManipulation(){
+        return false;
+    }
+
+    public void directFrameManipulation(){
+
+    }
+
+    public void setSubTurn(GUISubTurnViewer subTurnViewer){
+
+    }
 
     public void execute() throws CheckQueueException {
         if(hasJPanel()) {
             guiViewer.setJPanel(getJPanel());
         }
-        if(hasDirectFrameManipulation()) directFrameManipulation();
-        if(hasPopup()) this.doPopUp();
+        if(hasDirectFrameManipulation())
+            directFrameManipulation();
+        if(hasPopup())
+            this.doPopUp();
     }
 }

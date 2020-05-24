@@ -252,6 +252,14 @@ public class ViewCell extends ViewObject {
             System.out.println(fileName);
             ret = new ImagePanel(1, 1, 0, 0, "/img/board/cells/" + fileName + ".png");
         }
+        if (isThereWorker()){
+            ImagePanel workerToken = getWorker().toGUI();
+            if(ret == null){
+                ret = workerToken;
+            }else{
+                ret.add(workerToken);
+            }
+        }
         return ret;
     }
 

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewers.interfaces;
 
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.exceptions.CheckQueueException;
@@ -57,31 +58,58 @@ public abstract class Viewer extends Thread{
      *
      * @param viewer
      */
-    public static void registerViewer(Viewer viewer){ myViewers.add(viewer); }
+    public static void registerViewer(Viewer viewer){
+        myViewers.add(viewer);
+    }
 
     /**
      * Method that executes the "setAllStatusViewer" method on each Viewer of myViewer.
      *
      * @param statusViewer (statusViewer to be set).
      */
-    public static void setAllStatusViewer (StatusViewer statusViewer){ for (Viewer i: myViewers) i.setStatusViewer(statusViewer); }
+    public static void setAllStatusViewer (StatusViewer statusViewer){
+        for (Viewer i: myViewers)
+            i.setStatusViewer(statusViewer);
+    }
 
     /**
      * Method that executes the "setSubTurnViewer" method on each Viewer of myViewer.
      *
-     * @param subTurnViewer (SubTurnVersion to be set)
+     * @param viewSubTurn (SubTurnVersion to be set)
      */
-    public static void setAllSubTurnViewer(SubTurnViewer subTurnViewer){ for (Viewer i: myViewers) i.setSubTurnViewer(subTurnViewer); }
+    public static void setAllSubTurnViewer(ViewSubTurn viewSubTurn){
+        for (Viewer i: myViewers)
+            i.setSubTurnViewer(viewSubTurn.getSubViewer());
+    }
 
-    public static void setAllCardSelection(CardSelection cardSelection){ for (Viewer i: myViewers) i.setCardSelection(cardSelection); }
+    public static void setAllSubTurnViewer(SubTurnViewer subTurnViewer){
+        for (Viewer i: myViewers)
+            i.setSubTurnViewer(subTurnViewer);
+    }
 
-    public static void setAllRefresh(Object payload){ for (Viewer i: myViewers) i.setRefresh(payload); }
+    public static void setAllCardSelection(CardSelection cardSelection){
+        for (Viewer i: myViewers)
+            i.setCardSelection(cardSelection);
+    }
 
-    public static void setAllRefresh(){setAllRefresh(null);}
+    public static void setAllRefresh(Object payload){
+        for (Viewer i: myViewers)
+            i.setRefresh(payload);
+    }
 
-    public static void sendAllMessage(ViewMessage message) { for (Viewer i: myViewers) i.sendMessage(message); }
+    public static void setAllRefresh(){
+        setAllRefresh(null);
+    }
 
-    public static void exitAll(){ for (Viewer i: myViewers) i.exit(); }
+    public static void sendAllMessage(ViewMessage message) {
+        for (Viewer i: myViewers)
+            i.sendMessage(message);
+    }
+
+    public static void exitAll(){
+        for (Viewer i: myViewers)
+            i.exit();
+    }
 
     //Fuzione che forza un refresh della view
     public abstract void refresh();
@@ -115,7 +143,7 @@ public abstract class Viewer extends Thread{
         try {
             synchronized (wakers) {
                 synchronized (myViewerQueue) {
-                    System.out.println("Remaining: " + ((ArrayBlockingQueue)myViewerQueue).size());
+                    //System.out.println("Remaining: " + ((ArrayBlockingQueue)myViewerQueue).size());
                     myViewerQueue.add(event);
                 }
             }

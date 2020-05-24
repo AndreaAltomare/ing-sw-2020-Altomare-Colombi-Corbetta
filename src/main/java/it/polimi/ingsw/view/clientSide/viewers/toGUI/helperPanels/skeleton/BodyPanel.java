@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.BoardGeneralPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.SubPanel;
 
 import javax.swing.*;
@@ -22,7 +23,6 @@ public class BodyPanel extends SubPanel {
         add(playerPanel);
         add(boardPanel);
         boardPanel.add(ViewBoard.getBoard().toGUI());
-        subTurnPanel.add(new SubTurnPanel());
         subTurnPanel.setOpaque(false);
     }
 
@@ -62,5 +62,12 @@ public class BodyPanel extends SubPanel {
 
     }
 
+    public JPanel getBoardPanel(){
+        return boardPanel;
+    }
+
+    public JPanel getSubTurnPanel(){
+        return subTurnPanel;
+    }
 
 }
