@@ -2,6 +2,9 @@ package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
 import it.polimi.ingsw.controller.events.ServerSendDataEvent;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.Symbols;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.BoardPrintFunction;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.PrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.BoardGeneralPanel;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
@@ -9,6 +12,7 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.EventObject;
 
 /**
@@ -145,7 +149,7 @@ public class ViewBoard extends ViewObject {
     /**
      * Method that will be called on the arrival of an event to build a new Object.
      *
-     * @param event (the Event arrived)
+     * @param data (the Event arrived)
      * @return (the new object created)
      * @throws WrongEventException (if the Event is not supported by this Class)
      */
@@ -194,9 +198,87 @@ public class ViewBoard extends ViewObject {
     /**
      * Method that will return a (Object) that will represent the ViewObject on the CLI.
      *
-     * @return (representation of Object for the CLI)
      */
-    public Object toCLI(){ return null; }
+    public String toCLI(){
+        final int CELL_LENGTH = 17; // must be odd
+        final int CELL_HIGH = 7;
+        final int X_DIM = this.getXDim();
+        final int Y_DIM = this.getYDim();
+        final Symbols[] numberArray = { Symbols.NUMBER_0, Symbols.NUMBER_1, Symbols.NUMBER_2, Symbols.NUMBER_3, Symbols.NUMBER_4};
+
+        ViewCell viewCell;
+
+        System.out.println();
+        System.out.println();
+        // print number of board's columns
+        PrintFunction.printRepeatString(" ", CELL_LENGTH);
+        for (int column = 0; column < Y_DIM; column++) {
+            System.out.print(" ");
+            PrintFunction.printAtTheMiddle( numberArray[column].getUpRepresentation(), CELL_LENGTH);
+        }
+        System.out.println(" ");
+
+
+        PrintFunction.printRepeatString(" ", CELL_LENGTH);
+        for (int column = 0; column < Y_DIM; column++) {
+            System.out.print(" ");
+            PrintFunction.printAtTheMiddle( numberArray[column].getMiddleRepresentation(), CELL_LENGTH);
+        }
+        System.out.println(" ");
+
+
+        PrintFunction.printRepeatString(" ", CELL_LENGTH);
+        for (int column = 0; column < Y_DIM; column++) {
+            System.out.print(" ");
+            PrintFunction.printAtTheMiddle( numberArray[column].getDownRepresentation(), CELL_LENGTH);
+        }
+        System.out.println(" ");
+
+        System.out.println();
+
+
+        /* print board with number of board's row and players' caption */
+        for (int boardRow = 0; boardRow < X_DIM; boardRow++ ) {
+            // print up edge of cells
+            PrintFunction.printRepeatString(" ", CELL_LENGTH);
+            for ( int boardColumn = 0; boardColumn < Y_DIM; boardColumn++) {
+                System.out.print("# ");
+                PrintFunction.printRepeatString("# ", (CELL_LENGTH / 2) + 1);
+            }
+            System.out.println("#");
+
+            // print a row of cells with number of board's row and players' caption
+            for ( int cellRow = 0; cellRow < CELL_HIGH; cellRow++ ) {
+                PrintFunction.printAtTheMiddle(BoardPrintFunction.getBoardRowSymbol(numberArray[boardRow], cellRow), CELL_LENGTH);
+                for ( int boardColumn = 0; boardColumn < Y_DIM; boardColumn++ ) {
+                    System.out.print("#");
+                    try {
+                        viewCell = this.getCellAt(boardRow, boardColumn);
+                        PrintFunction.printAtTheMiddle( viewCell.toCLI(cellRow, viewCell.equals(this.selectedCell)), CELL_LENGTH);
+                    } catch (NotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+                System.out.print("#");
+                BoardPrintFunction.printPlayersCaption(boardRow, cellRow);
+                System.out.println();
+            }
+        }
+        // print down edge of board
+        PrintFunction.printRepeatString(" ", CELL_LENGTH);
+        for ( int boardColumn = 0; boardColumn < Y_DIM; boardColumn++) {
+            System.out.print("# ");
+            PrintFunction.printRepeatString("# ", (CELL_LENGTH / 2) + 1);
+        }
+        System.out.println("#");
+
+
+        System.out.println();
+        System.out.println();
+
+
+        return null;
+    }
 
     /**
      * Method that will return a BoardGeneralPanel that represents the Board on the GUI. There is only one BoardGeneralPanel to represent the Board for all the play.

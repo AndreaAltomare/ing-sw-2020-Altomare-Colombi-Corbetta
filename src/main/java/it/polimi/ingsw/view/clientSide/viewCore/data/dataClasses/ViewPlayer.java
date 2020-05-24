@@ -213,11 +213,11 @@ public class ViewPlayer extends ViewObject {
 
 
     /**
-     * Method that will return a (Object) that will represent the ViewObject on the CLI.
+     * Method that will return Player's name that will represent the ViewObject on the CLI.
      *
      * @return (representation of Object for the CLI)
      */
-    public Object toCLI(){ return null; }
+    public String toCLI(){ return this.getName(); }
 
     /**
      * Method that will return a (Object) that will represent the ViewObject on the GUI.

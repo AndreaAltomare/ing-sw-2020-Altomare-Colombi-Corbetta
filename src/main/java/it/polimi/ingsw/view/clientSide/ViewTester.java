@@ -9,6 +9,7 @@ import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ViewSender;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
 import it.polimi.ingsw.view.events.PlaceWorkerEvent;
 import it.polimi.ingsw.view.events.SetNicknameEvent;
@@ -55,8 +56,8 @@ public class ViewTester implements ViewSender {
 
     private void initialization(){
         //new TerminalViewer().start();
-        new GUIViewer().start();
-        //new CLIViewer().start();
+        //new GUIViewer().start();
+        new CLIViewer().start();
 
         Executer.setSender(this);
         ViewStatus.init();

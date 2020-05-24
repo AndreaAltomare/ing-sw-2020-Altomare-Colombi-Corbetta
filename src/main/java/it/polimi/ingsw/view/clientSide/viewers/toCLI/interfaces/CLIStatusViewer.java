@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces;
 
+import it.polimi.ingsw.controller.events.MessageEvent;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SpecificStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
 

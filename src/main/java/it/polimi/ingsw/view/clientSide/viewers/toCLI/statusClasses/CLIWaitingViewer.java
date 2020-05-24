@@ -24,7 +24,6 @@ public class CLIWaitingViewer extends CLIStatusViewer {
      */
     @Override
     public void show() {
-
         System.out.print(   "\n\t" +
                             "Please waiting");
         for (int i = 0; i < NUMBER_OF_TIME; i++) {

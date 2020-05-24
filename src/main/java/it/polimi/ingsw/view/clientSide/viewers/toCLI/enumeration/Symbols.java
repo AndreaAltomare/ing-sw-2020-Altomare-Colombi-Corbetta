@@ -14,13 +14,13 @@ public enum Symbols {
                 " | ",
                 "/ \\"),
 
-    DOME(       "     ",
-                " ___ ",
-                "/___\\"),
+    DOME(       " ___ ",
+            "/___\\",
+                "     "),
 
-    BLOCK(      "    ",
-                " __ ",
-                "|__|"),
+    BLOCK(      " __ ",
+            "|__|",
+                "    "),
 
     SELECTION_LEFT( "   /",
                     ">>( ",
@@ -28,7 +28,27 @@ public enum Symbols {
 
     SELECTION_RIGHT("\\   ",
                     " )<<",
-                    "/   ");
+                    "/   "),
+
+    NUMBER_0(   " _ ",
+                "| |",
+                "|_|"),
+
+    NUMBER_1(   " . ",
+                "/| ",
+                "_|_"),
+
+    NUMBER_2(   " _ ",
+                " _|",
+                "|_ "),
+
+    NUMBER_3(   " _ ",
+                " _|",
+                " _|"),
+
+    NUMBER_4(   "   ",
+                "|_|",
+                "  |");
 
     private String upRepresentation;
     private String middleRepresentation;

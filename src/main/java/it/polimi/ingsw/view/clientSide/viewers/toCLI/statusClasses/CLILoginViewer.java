@@ -98,17 +98,20 @@ public class CLILoginViewer extends CLIStatusViewer {
     }
 
     /**
-     * Print a little signal to notify on standard output where it is possible to write the nickname
-     * then return the read value
-     * @return the string which is read
+     * Prints a little signal to notify on standard output where it is possible to write the nickname
+     * then returns the read value if its length is 8 or minus, or its first eight char if it isn't
+     * @return the string which is read if its length is 8 or minus. its first eight char if it isn't
      */
     private String getNicknameResponse() {
         String response;
         Scanner input = new Scanner(System.in);
 
-        System.out.print(  ">>");
+        System.out.print(  ">>(Max 8):");
 
         response = input.nextLine();
+        if (response.length() > 8) {
+            response = response.substring(0,7);
+        }
 
         return response;
     }

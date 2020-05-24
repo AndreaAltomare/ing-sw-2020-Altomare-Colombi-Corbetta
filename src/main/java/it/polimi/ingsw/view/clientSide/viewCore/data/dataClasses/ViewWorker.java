@@ -1,6 +1,9 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.Symbols;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.SymbolsLevel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 import it.polimi.ingsw.view.exceptions.AlreadySetException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
@@ -146,11 +149,35 @@ public class ViewWorker extends ViewObject {
 
 
     /**
-     * Method that will return a (Object) that will represent the ViewObject on the CLI.
-     *
-     * @return (representation of Object for the CLI)
+     * Method that will return a String that will represent worker's representation
+     * of level chosen or a string of space if worker'representation isn't found
+     * @param representationLevel part of worker's representation Symbols
+     * @return String at the correct level of worker's Symbols
      */
-    public Object toCLI(){ return null; }
+    public String toCLI(SymbolsLevel representationLevel){
+        Symbols workerSymbol;
+        String workerString;
+
+        workerSymbol = CLIViewer.getWorkerSymbol( this.player);
+        if (workerSymbol != null) {
+            switch (representationLevel) {
+                case UP:
+                    workerString = workerSymbol.getUpRepresentation();
+                    break;
+                case MIDDLE:
+                    workerString = workerSymbol.getMiddleRepresentation();
+                    break;
+                case DOWN:
+                    workerString = workerSymbol.getDownRepresentation();
+                default:
+                    workerString = "   ";
+            }
+        } else {
+            workerString = "   ";
+        }
+
+        return workerString;
+    }
 
     /**
      * Method that will return a (Object) that will represent the ViewObject on the GUI.

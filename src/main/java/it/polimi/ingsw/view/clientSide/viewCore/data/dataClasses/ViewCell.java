@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CellPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
@@ -224,11 +225,39 @@ public class ViewCell extends ViewObject {
 
 
     /**
-     * Method that will return a (Object) that will represent the ViewObject on the CLI.
-     *
-     * @return (representation of Object for the CLI)
+     * Method that will return a String that will represent the different symbol in the different cell's rows
+     * @param level number of cell's row, starts from the up of cell with number 0
+     * @param isSelected boolean parameter to know if the cell is selected
+     * @return the correct String for each cell's row
      */
-    public Object toCLI(){ return null; }
+    public String toCLI(int level, boolean isSelected){
+        String symbolInRow = "";
+
+        switch (level) {
+            case 0:
+                break;
+            case 1:
+                symbolInRow = CellPrintFunction.cellRow1(this.level, this.doomed, this.thereIsWorker, this.worker, isSelected);
+                break;
+            case 2:
+                symbolInRow = CellPrintFunction.cellRow2(this.level, this.doomed, this.thereIsWorker, this.worker, isSelected);
+                break;
+            case 3:
+                symbolInRow = CellPrintFunction.cellRow3(this.level, this.doomed, this.thereIsWorker, this.worker, isSelected);
+                break;
+            case 4:
+                symbolInRow = CellPrintFunction.cellRow4(this.level, this.doomed, this.thereIsWorker, this.worker, isSelected);
+                break;
+            case 5:
+                symbolInRow = CellPrintFunction.cellRow5(this.level, this.doomed, this.thereIsWorker, this.worker, isSelected);
+                break;
+            case 6:
+            default:
+                ;
+        }
+
+        return symbolInRow;
+    }
 
     /**
      * Method that will return a (Object) that will represent the ViewObject on the GUI.
