@@ -1,10 +1,13 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
+import it.polimi.ingsw.controller.events.WorkerMovedEvent;
 import it.polimi.ingsw.controller.events.WorkerPlacedEvent;
 import it.polimi.ingsw.controller.events.WorkerSelectedEvent;
+import it.polimi.ingsw.model.MoveOutcomeType;
 import it.polimi.ingsw.view.clientSide.View;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
+import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 import it.polimi.ingsw.view.exceptions.AlreadySetException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
@@ -172,6 +175,33 @@ public class ViewWorker extends ViewObject {
         }
         selectWorker(worker);
         return worker;
+    }
+
+    /**
+     * Method that will be called on the arrival of an event to build a new Object.
+     *
+     * @param workerMovedEvent (the Event arrived)
+     * @return (the new object created)
+     * @throws WrongEventException (if the Event is not supported by this Class)
+     */
+    public static ViewObject populate( @NotNull WorkerMovedEvent workerMovedEvent) throws WrongEventException{
+        if (workerMovedEvent.getMoveOutcome()== MoveOutcomeType.EXECUTED) {
+            ViewWorker worker = null;
+            try {
+                worker = (ViewWorker) search(workerMovedEvent.getWorker());
+            } catch (NotFoundException | WrongViewObjectException e) {
+                ViewMessage.populateAndSend("Wrong worker moved", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+                return null;
+            }
+            worker.placeOn(workerMovedEvent.getFinalX(), workerMovedEvent.getFinalY());
+            ViewBoard.getBoard().setSelectedCell(workerMovedEvent.getInitialX(), workerMovedEvent.getInitialY());
+            return worker;
+        }else{
+            if(ViewSubTurn.getActual().getPlayer().equals(ViewNickname.getMyNickname())){
+                ViewMessage.populateAndSend("Built unsuccesful, retry", ViewMessage.MessageType.FROM_SERVER_ERROR);
+            }
+            return null;
+        }
     }
 
     /**

@@ -2,6 +2,9 @@ package it.polimi.ingsw.view.clientSide;
 
 import it.polimi.ingsw.controller.events.*;
 import it.polimi.ingsw.model.CardInfo;
+import it.polimi.ingsw.model.MoveOutcomeType;
+import it.polimi.ingsw.model.PlaceableType;
+import it.polimi.ingsw.model.StateType;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
@@ -318,6 +321,10 @@ public class ViewTester implements ViewSender {
 
         view.update((WorkerSelectedEvent) new WorkerSelectedEvent("", "[Worker]\t2", true));
 
+        waiting();
+
+        simulateTurn("player1", "[Worker]\t2", 0, 0, 1, 1, PlaceableType.BLOCK);
+
 
         /*view.update((NextStatusEvent)new NextStatusEvent("Playing"));
 
@@ -417,6 +424,20 @@ public class ViewTester implements ViewSender {
         ViewBoard.getBoard().setSelectedCell(0, 0);
         Viewer.setAllRefresh();*/
 
+    }
+
+    public void simulateTurn(String player, String worker, int xMov, int yMov, int xBuild, int yBuild, PlaceableType blockType){
+        view.update(new TurnStatusChangedEvent(player, StateType.MOVEMENT, true));
+        waiting();
+        view.update(new WorkerSelectedEvent(player, worker, true));
+        waiting();
+        view.update(new TurnStatusChangedEvent(player, StateType.MOVEMENT, true));
+        waiting();
+        view.update(new WorkerMovedEvent(worker, 0, 0, xMov, yMov, MoveOutcomeType.EXECUTED));
+        waiting();
+        view.update(new TurnStatusChangedEvent(player, StateType.CONSTRUCTION, true));
+        waiting();
+        view.update(new BlockBuiltEvent(xBuild, yBuild, blockType,  MoveOutcomeType.EXECUTED));
     }
 
     public static void main(String[] args) {

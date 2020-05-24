@@ -10,6 +10,7 @@ import it.polimi.ingsw.observer.Observable;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
+import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.events.*;
 import it.polimi.ingsw.controller.events.*;
@@ -210,7 +211,6 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         }else{
             //Controllo se è un giocatre qualsiasi
             if(cardsInformation.getChallenger().equals(ViewNickname.getMyNickname())){
-                System.out.println("CHALLENGER");
                 Viewer.setAllCardSelection(new CardSelection(cards, true));
             }
         }
@@ -305,10 +305,27 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
      */
     @Override
     public void update(TurnStatusChangedEvent turnStatusChange) {
-        ViewSubTurn.set(turnStatusChange.getState().toString(), turnStatusChange.getPlayerNickname());
+
+        if (turnStatusChange.success()){
+
+            //Checks if it's a change of status
+            if(!turnStatusChange.getPlayerNickname().equals(ViewSubTurn.getActual().getPlayer())){
+                ViewSubTurn.setSubTurn(ViewSubTurn.SELECTWORKER, turnStatusChange.getPlayerNickname());
+            }else{
+                //Else sets the turnStatus
+                ViewSubTurn.set(turnStatusChange.getState().toString(), turnStatusChange.getPlayerNickname());
+            }
+
+            //notify the changing of the subturn
+            Viewer.setAllSubTurnViewer(ViewSubTurn.getActual().getSubViewer());
+        }else if(turnStatusChange.getPlayerNickname().equals(ViewNickname.getMyNickname())){
+            ViewMessage.populateAndSend("You cannot do this turn change", ViewMessage.MessageType.FROM_SERVER_ERROR);
+        }
+
+        /*ViewSubTurn.set(turnStatusChange.getState().toString(), turnStatusChange.getPlayerNickname());
         ViewSubTurn.getActual().setPlayer(turnStatusChange.getPlayerNickname());
         Viewer.setAllSubTurnViewer(ViewSubTurn.getActual().getSubViewer());
-        //System.out.println("Turn status changed to: " + turnStatusChange.getState().toString()); // todo: check what toString() of an enum prints... [si, funziona.]
+        //System.out.println("Turn status changed to: " + turnStatusChange.getState().toString());*/
     }
 
     /**
@@ -345,6 +362,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         } catch (WrongEventException e) {
             ViewMessage.populateAndSend("Wrong message recived recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
         }
+        Viewer.setAllRefresh();
         /*try {
             ((ViewWorker)ViewWorker.search(workerMoved.getWorker())).placeOn(workerMoved.getFinalX(), workerMoved.getFinalY());
         } catch (NotFoundException | WrongViewObjectException e) {
@@ -359,6 +377,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         } catch (WrongEventException e) {
             ViewMessage.populateAndSend("Wrong message recived recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
         }
+        Viewer.setAllRefresh();
         /*ViewCell cell;
         try {
             cell = ((ViewBoard) ViewBoard.search(ViewBoard.getClassId())).getCellAt(blockBuilt.getX(), blockBuilt.getY());

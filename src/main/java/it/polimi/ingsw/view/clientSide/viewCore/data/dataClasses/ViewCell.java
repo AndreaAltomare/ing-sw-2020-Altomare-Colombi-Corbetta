@@ -1,6 +1,11 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
+import it.polimi.ingsw.controller.events.BlockBuiltEvent;
+import it.polimi.ingsw.model.MoveOutcomeType;
+import it.polimi.ingsw.model.PlaceableType;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
+import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
@@ -203,6 +208,36 @@ public class ViewCell extends ViewObject {
     public static ViewObject populate(@NotNull EventObject event) throws WrongEventException{
         //todo: implement it
         throw new WrongEventException();
+    }
+
+    /**
+     * Method that will be called on the arrival of an event to build a new Object.
+     *
+     * @param blockBuiltEvent (the Event arrived)
+     * @return (the new object created)
+     * @throws WrongEventException (if the Event is not supported by this Class)
+     */
+    public static ViewObject populate(@NotNull BlockBuiltEvent blockBuiltEvent) throws WrongEventException{
+        if(blockBuiltEvent.getMoveOutcome() == MoveOutcomeType.EXECUTED) {
+            ViewCell cell;
+            try {
+                cell = ViewBoard.getBoard().getCellAt(blockBuiltEvent.getX(), blockBuiltEvent.getY());
+            } catch (NotFoundException e) {
+                ViewMessage.populateAndSend("Wrong cell on which build", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+                return null;
+            }
+            if(blockBuiltEvent.getBlockType() == PlaceableType.DOME){
+                cell.buildDome();
+            }else{
+                cell.buildLevel();
+            }
+            return cell;
+        }else{
+            if(ViewSubTurn.getActual().getPlayer().equals(ViewNickname.getMyNickname())){
+                ViewMessage.populateAndSend("Built unsuccesful, retry", ViewMessage.MessageType.FROM_SERVER_ERROR);
+            }
+            return null;
+        }
     }
 
     /**
