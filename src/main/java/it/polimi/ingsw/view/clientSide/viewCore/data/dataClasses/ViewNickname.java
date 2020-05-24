@@ -142,7 +142,8 @@ public class ViewNickname extends ViewObject {
      * @param st (String that will possibly represent this)
      * @return (true iif st==this.toString())
      */
-    public boolean isThis ( @NotNull String st){
+    public boolean isThis (String st) {
+        if(st==null) return false;
         return (st.equals(this.toString())||st.equals(this.getId()));
     }
 

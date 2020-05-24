@@ -255,6 +255,13 @@ public class ViewPlayer extends ViewObject {
         throw new NotFoundException();
     }
 
+    public void setCard(String cardName){
+        try {
+            setCard((ViewCard) ViewCard.search(cardName));
+        } catch (NotFoundException | WrongViewObjectException | AlreadySetException ignored) {
+        }
+    }
+
     public ViewPlayer(String name){
         this.name = name;
         this.card = null;
@@ -268,7 +275,7 @@ public class ViewPlayer extends ViewObject {
         return myList.size();
     }
 
-    public static List<ViewPlayer> getPlayerList(){
+    public static List<ViewPlayer> getPlayerList() {
         return new ArrayList<ViewPlayer>(myList);
     }
 

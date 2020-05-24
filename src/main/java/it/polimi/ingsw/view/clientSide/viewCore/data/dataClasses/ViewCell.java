@@ -1,7 +1,11 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
+import it.polimi.ingsw.controller.events.BlockBuiltEvent;
+import it.polimi.ingsw.model.MoveOutcomeType;
+import it.polimi.ingsw.model.PlaceableType;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CellPrintFunction;
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
+import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
@@ -201,9 +205,39 @@ public class ViewCell extends ViewObject {
      * @return (the new object created)
      * @throws WrongEventException (if the Event is not supported by this Class)
      */
-    static ViewObject populate( @NotNull EventObject event) throws WrongEventException{
+    public static ViewObject populate(@NotNull EventObject event) throws WrongEventException{
         //todo: implement it
         throw new WrongEventException();
+    }
+
+    /**
+     * Method that will be called on the arrival of an event to build a new Object.
+     *
+     * @param blockBuiltEvent (the Event arrived)
+     * @return (the new object created)
+     * @throws WrongEventException (if the Event is not supported by this Class)
+     */
+    public static ViewObject populate(@NotNull BlockBuiltEvent blockBuiltEvent) throws WrongEventException{
+        if(blockBuiltEvent.getMoveOutcome() == MoveOutcomeType.EXECUTED) {
+            ViewCell cell;
+            try {
+                cell = ViewBoard.getBoard().getCellAt(blockBuiltEvent.getX(), blockBuiltEvent.getY());
+            } catch (NotFoundException e) {
+                ViewMessage.populateAndSend("Wrong cell on which build", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+                return null;
+            }
+            if(blockBuiltEvent.getBlockType() == PlaceableType.DOME){
+                cell.buildDome();
+            }else{
+                cell.buildLevel();
+            }
+            return cell;
+        }else{
+            if(ViewSubTurn.getActual().getPlayer().equals(ViewNickname.getMyNickname())){
+                ViewMessage.populateAndSend("Built unsuccesful, retry", ViewMessage.MessageType.FROM_SERVER_ERROR);
+            }
+            return null;
+        }
     }
 
     /**
@@ -225,39 +259,11 @@ public class ViewCell extends ViewObject {
 
 
     /**
-     * Method that will return a String that will represent the different symbol in the different cell's rows
-     * @param level number of cell's row, starts from the up of cell with number 0
-     * @param isSelected boolean parameter to know if the cell is selected
-     * @return the correct String for each cell's row
+     * Method that will return a (Object) that will represent the ViewObject on the CLI.
+     *
+     * @return (representation of Object for the CLI)
      */
-    public String toCLI(int level, boolean isSelected){
-        String symbolInRow = "";
-
-        switch (level) {
-            case 0:
-                break;
-            case 1:
-                symbolInRow = CellPrintFunction.cellRow1(this.level, this.doomed, this.thereIsWorker, this.worker, isSelected);
-                break;
-            case 2:
-                symbolInRow = CellPrintFunction.cellRow2(this.level, this.doomed, this.thereIsWorker, this.worker, isSelected);
-                break;
-            case 3:
-                symbolInRow = CellPrintFunction.cellRow3(this.level, this.doomed, this.thereIsWorker, this.worker, isSelected);
-                break;
-            case 4:
-                symbolInRow = CellPrintFunction.cellRow4(this.level, this.doomed, this.thereIsWorker, this.worker, isSelected);
-                break;
-            case 5:
-                symbolInRow = CellPrintFunction.cellRow5(this.level, this.doomed, this.thereIsWorker, this.worker, isSelected);
-                break;
-            case 6:
-            default:
-                ;
-        }
-
-        return symbolInRow;
-    }
+    public Object toCLI(){ return null; }
 
     /**
      * Method that will return a (Object) that will represent the ViewObject on the GUI.

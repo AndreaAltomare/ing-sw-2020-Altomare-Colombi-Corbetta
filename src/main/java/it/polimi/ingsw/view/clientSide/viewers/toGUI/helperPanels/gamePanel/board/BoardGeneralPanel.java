@@ -26,9 +26,11 @@ public class BoardGeneralPanel extends ImagePanel {
 
     private BoardSubTurn mySubTurn;
 
-
     private ViewCell selectedCell;
     private ImagePanel selectPanel = new ImagePanel(1, 1, 0, 0, "/img/board/cells/selectedCell.png");
+
+    private ViewCell selectedWorker;
+    private ImagePanel selectedWorkerPanel = new ImagePanel(1, 1, 0, 0, "/img/board/cells/selectedWorker.png");
 
     /**
      * Class to represent the status of the buildings on the board
@@ -226,6 +228,30 @@ public class BoardGeneralPanel extends ImagePanel {
             else{
                 selectPanel.setMyRapp(1,1,0,0);
                 back.add(selectPanel);
+            }
+        }
+
+    }
+
+    public void setSelectedWorker(ViewCell cell){
+        if(selectedWorker!=null){
+            JPanel back = myBuildingRepresentation.getPanelAt(selectedWorker);
+            if(back == null)
+                remove(selectedWorkerPanel);
+            else
+                back.remove(selectedWorkerPanel);
+        }
+
+        selectedWorker = cell;
+        if(selectedWorker!=null){
+            JPanel back = myBuildingRepresentation.getPanelAt(cell);
+            if(back == null){
+                addComponentToCell(selectedWorker, selectedWorkerPanel);
+            }
+
+            else{
+                selectedWorkerPanel.setMyRapp(1,1,0,0);
+                back.add(selectedWorkerPanel);
             }
         }
 

@@ -14,7 +14,7 @@ public class PlaceWorkerViewer extends SubTurnViewer {
     }
 
     @Override
-    public TerminalSubTurnViewer toTerminal() {
+    public TerminalSubTurnViewer toTerminal()  {
         return null;
     }
 
@@ -24,7 +24,7 @@ public class PlaceWorkerViewer extends SubTurnViewer {
     }
 
     @Override
-    public CLISubTurnViewer toCLI() {
+    public CLISubTurnViewer toCLI()  {
         return null;
     }
 }

@@ -301,7 +301,19 @@ public class ViewBoard extends ViewObject {
                 } catch (NotFoundException ignore) {  }
             }
         }
-        guiPanel.setSelectCell(selectedCell);
+
+        ViewCell workerCell = getSelectedWorkerCell();
+        guiPanel.setSelectedWorker(workerCell);
+        guiPanel.setSelectCell((workerCell == selectedCell? null: selectedCell));
+
         return guiPanel;
+    }
+
+    public static ViewCell getSelectedWorkerCell(){
+        try {
+            return ViewWorker.getSelected().getPosition();
+        } catch (NotFoundException | NullPointerException e) {
+            return null;
+        }
     }
 }

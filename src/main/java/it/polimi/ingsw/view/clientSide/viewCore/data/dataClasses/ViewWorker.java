@@ -1,9 +1,13 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
+import it.polimi.ingsw.controller.events.WorkerMovedEvent;
+import it.polimi.ingsw.controller.events.WorkerPlacedEvent;
+import it.polimi.ingsw.controller.events.WorkerSelectedEvent;
+import it.polimi.ingsw.model.MoveOutcomeType;
+import it.polimi.ingsw.view.clientSide.View;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.Symbols;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.SymbolsLevel;
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
+import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 import it.polimi.ingsw.view.exceptions.AlreadySetException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
@@ -28,6 +32,7 @@ public class ViewWorker extends ViewObject {
     private ViewCell position;
 
     private static List<ViewWorker> myList = new ArrayList<ViewWorker>();
+    private static ViewWorker selected;
 
     /**
      * Getter method of the id of the worker
@@ -134,6 +139,72 @@ public class ViewWorker extends ViewObject {
     }
 
     /**
+     * Method that will be called on the arrival of an event to build a new Object.
+     *
+     * @param workerPlaced (the Event arrived)
+     * @return (the new object created)
+     * @throws WrongEventException (if the Event is not supported by this Class)
+     */
+    public static ViewObject populate( @NotNull WorkerPlacedEvent workerPlaced) throws WrongEventException{
+        ViewWorker myWorker;
+        try {
+            myWorker = new ViewWorker(workerPlaced.getWorker(), ViewSubTurn.getActual().getPlayer());
+            myWorker.placeOn(workerPlaced.getX(), workerPlaced.getY());
+
+            if(View.debugging)
+                System.out.println(workerPlaced.getWorker() + "(" + workerPlaced.getX()+":"+workerPlaced.getY()+")");
+        } catch (NotFoundException | WrongViewObjectException e) {
+            throw new WrongEventException();
+        }
+        return myWorker;
+    }
+
+    /**
+     * Method that will be called on the arrival of an event to build a new Object.
+     *
+     * @param selectedEvent (the Event arrived)
+     * @return (the new object created)
+     * @throws WrongEventException (if the Event is not supported by this Class)
+     */
+    public static ViewObject populate( @NotNull WorkerSelectedEvent selectedEvent) throws WrongEventException{
+        ViewWorker worker;
+        try {
+             worker = (ViewWorker) search(selectedEvent.getWorker());
+        } catch (NotFoundException | WrongViewObjectException e) {
+            worker = null;
+        }
+        selectWorker(worker);
+        return worker;
+    }
+
+    /**
+     * Method that will be called on the arrival of an event to build a new Object.
+     *
+     * @param workerMovedEvent (the Event arrived)
+     * @return (the new object created)
+     * @throws WrongEventException (if the Event is not supported by this Class)
+     */
+    public static ViewObject populate( @NotNull WorkerMovedEvent workerMovedEvent) throws WrongEventException{
+        if (workerMovedEvent.getMoveOutcome()== MoveOutcomeType.EXECUTED) {
+            ViewWorker worker = null;
+            try {
+                worker = (ViewWorker) search(workerMovedEvent.getWorker());
+            } catch (NotFoundException | WrongViewObjectException e) {
+                ViewMessage.populateAndSend("Wrong worker moved", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+                return null;
+            }
+            worker.placeOn(workerMovedEvent.getFinalX(), workerMovedEvent.getFinalY());
+            ViewBoard.getBoard().setSelectedCell(workerMovedEvent.getInitialX(), workerMovedEvent.getInitialY());
+            return worker;
+        }else{
+            if(ViewSubTurn.getActual().getPlayer().equals(ViewNickname.getMyNickname())){
+                ViewMessage.populateAndSend("Built unsuccesful, retry", ViewMessage.MessageType.FROM_SERVER_ERROR);
+            }
+            return null;
+        }
+    }
+
+    /**
      * Method to discard all the objects of the Class.
      */
     public static void clear(){
@@ -149,35 +220,11 @@ public class ViewWorker extends ViewObject {
 
 
     /**
-     * Method that will return a String that will represent worker's representation
-     * of level chosen or a string of space if worker'representation isn't found
-     * @param representationLevel part of worker's representation Symbols
-     * @return String at the correct level of worker's Symbols
+     * Method that will return a (Object) that will represent the ViewObject on the CLI.
+     *
+     * @return (representation of Object for the CLI)
      */
-    public String toCLI(SymbolsLevel representationLevel){
-        Symbols workerSymbol;
-        String workerString;
-
-        workerSymbol = CLIViewer.getWorkerSymbol( this.player);
-        if (workerSymbol != null) {
-            switch (representationLevel) {
-                case UP:
-                    workerString = workerSymbol.getUpRepresentation();
-                    break;
-                case MIDDLE:
-                    workerString = workerSymbol.getMiddleRepresentation();
-                    break;
-                case DOWN:
-                    workerString = workerSymbol.getDownRepresentation();
-                default:
-                    workerString = "   ";
-            }
-        } else {
-            workerString = "   ";
-        }
-
-        return workerString;
-    }
+    public Object toCLI(){ return null; }
 
     /**
      * Method that will return a (Object) that will represent the ViewObject on the GUI.
@@ -296,5 +343,21 @@ public class ViewWorker extends ViewObject {
         }  catch (WrongViewObjectException e) {
             return ViewPlayer.searchByName(name);
         }
+    }
+
+    public static void selectWorker(ViewWorker worker){
+        selected = worker;
+    }
+
+    public static void selectWorker(String worker){
+        try {
+            selectWorker((ViewWorker) search(worker));
+        } catch (NotFoundException | WrongViewObjectException e) {
+            selectWorker((ViewWorker)null);
+        }
+    }
+
+    public static ViewWorker getSelected(){
+        return selected;
     }
 }

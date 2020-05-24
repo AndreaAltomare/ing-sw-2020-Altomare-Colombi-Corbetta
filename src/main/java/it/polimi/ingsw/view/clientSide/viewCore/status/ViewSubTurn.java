@@ -25,17 +25,17 @@ public enum ViewSubTurn implements ClientAddressable {
         }
 
         @Override
-        public Executer getExecuter(){
+        public Executer getExecuter() {
             return new SelectWorkerExecuter();
         }
 
         @Override
-        public ViewSubTurn getOpponent(){
+        public ViewSubTurn getOpponent() {
             return OPPONENT_SELECTWORKER;
         }
     },OPPONENT_SELECTWORKER("OPPONENT_SELECTWORKER") {
         @Override
-        public SubTurnViewer getSubViewer() {
+        public SubTurnViewer getSubViewer()  {
             return new OpponentSelectWorkerViewer(this);
         }
 
@@ -45,83 +45,83 @@ public enum ViewSubTurn implements ClientAddressable {
         }
 
         @Override
-        public ViewSubTurn getOpponent(){
+        public ViewSubTurn getOpponent() {
             return SELECTWORKER;
         }
     },
-    BUILD("BUILD"){
+    BUILD("CONSTRUCTION"){
         @Override
         public SubTurnViewer getSubViewer() {
             return new BuildViewer(this);
         }
 
         @Override
-        public StateType toStateType(){
+        public StateType toStateType() {
             return StateType.CONSTRUCTION;
         }
 
         @Override
-        public Executer getExecuter(){
+        public Executer getExecuter() {
             return new BuildBlockExecuter();
         }
 
         @Override
-        public ViewSubTurn getOpponent(){
+        public ViewSubTurn getOpponent() {
             return OPPONENT_BUILD;
         }
 
     },
-    OPPONENT_BUILD("OPPONENT_BUILD"){
+    OPPONENT_BUILD("OPPONENT_CONSTRUCTION"){
         @Override
-        public SubTurnViewer getSubViewer() {
-            return new BuildViewer(this);
+        public SubTurnViewer getSubViewer()  {
+            return new OpponentBuildViewer(this);
         }
 
         @Override
-        public Executer getExecuter(){
+        public Executer getExecuter() {
             return null;
         }
 
         @Override
-        public ViewSubTurn getOpponent(){
+        public ViewSubTurn getOpponent() {
             return BUILD;
         }
 
     },
-    MOVE("MOVE"){
+    MOVE("MOVEMENT"){
         @Override
         public SubTurnViewer getSubViewer() {
             return new MoveViewer(this);
         }
 
         @Override
-        public StateType toStateType(){
+        public StateType toStateType() {
             return StateType.CONSTRUCTION;
         }
 
         @Override
-        public Executer getExecuter(){
+        public Executer getExecuter() {
             return new MoveWorkerExecuter();
         }
 
         @Override
-        public ViewSubTurn getOpponent(){
+        public ViewSubTurn getOpponent() {
             return OPPONENT_MOVE;
         }
     },
-    OPPONENT_MOVE("OPPONENT_MOVE"){
+    OPPONENT_MOVE("OPPONENT_MOVEMENT"){
         @Override
-        public SubTurnViewer getSubViewer() {
-            return new MoveViewer(this);
+        public SubTurnViewer getSubViewer()  {
+            return new OpponentMoveViewer(this);
         }
 
         @Override
-        public Executer getExecuter(){
+        public Executer getExecuter() {
             return null;
         }
 
         @Override
-        public ViewSubTurn getOpponent(){
+        public ViewSubTurn getOpponent() {
             return MOVE;
         }
     },
@@ -132,7 +132,7 @@ public enum ViewSubTurn implements ClientAddressable {
         }
 
         @Override
-        public ViewSubTurn getOpponent(){
+        public ViewSubTurn getOpponent() {
             return SELECTCARD;
         }
     },
@@ -148,14 +148,14 @@ public enum ViewSubTurn implements ClientAddressable {
         }
 
         @Override
-        public ViewSubTurn getOpponent(){
+        public ViewSubTurn getOpponent()  {
             return OPPONENT_PLACEWORKER;
         }
     },
     OPPONENT_PLACEWORKER("OPPONENT_PLACEWORKER") {
         @Override
-        public SubTurnViewer getSubViewer() {
-            return new PlaceWorkerViewer(this);
+        public SubTurnViewer getSubViewer()  {
+            return new OpponentPlaceWorkerViewer(this);
         }
 
         @Override
@@ -164,7 +164,7 @@ public enum ViewSubTurn implements ClientAddressable {
         }
 
         @Override
-        public ViewSubTurn getOpponent(){
+        public ViewSubTurn getOpponent() {
             return PLACEWORKER;
         }
     };
@@ -203,7 +203,9 @@ public enum ViewSubTurn implements ClientAddressable {
 
     @Override
     public boolean isThis(String st) {
-        return this.toString().equals(st);
+        if(!this.toString().equals(st))
+            return this.getId().equals(st);
+        return true;
     }
 
     public static ViewSubTurn search(String st) throws NotFoundException {
@@ -216,7 +218,7 @@ public enum ViewSubTurn implements ClientAddressable {
 
     public abstract ViewSubTurn getOpponent();
 
-    public static void setSubTurn(ViewSubTurn subTurn){
+    public static void setSubTurn(ViewSubTurn subTurn) {
         actualSubTurn = subTurn;
     }
 
@@ -236,16 +238,24 @@ public enum ViewSubTurn implements ClientAddressable {
         }
     }
 
+    public static void setSubTurn(ViewSubTurn subTurn, String player) {
+        actualSubTurn = subTurn;
+        setStaticPlayer(player);
+        if(actualSubTurn != null && (!actualSubTurn.isMyTurn())){
+            actualSubTurn = actualSubTurn.getOpponent();
+        }
+    }
 
-    public static ViewSubTurn getActual(){
+
+    public static ViewSubTurn getActual() {
         return actualSubTurn;
     }
 
-    public void setPlayer(String player){
+    public void setPlayer(String player) {
         setStaticPlayer(player);
     }
 
-    public static void setStaticPlayer(String player){
+    public static void setStaticPlayer(String player) {
         ViewSubTurn.player = player;
     }
 
@@ -255,7 +265,7 @@ public enum ViewSubTurn implements ClientAddressable {
 
     public abstract SubTurnViewer getSubViewer();
 
-    public StateType toStateType(){
+    public StateType toStateType() {
         return StateType.NONE;
     }
 

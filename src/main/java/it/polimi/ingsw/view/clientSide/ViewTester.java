@@ -2,8 +2,12 @@ package it.polimi.ingsw.view.clientSide;
 
 import it.polimi.ingsw.controller.events.*;
 import it.polimi.ingsw.model.CardInfo;
+import it.polimi.ingsw.model.MoveOutcomeType;
+import it.polimi.ingsw.model.PlaceableType;
+import it.polimi.ingsw.model.StateType;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewWorker;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ViewSender;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
@@ -14,6 +18,7 @@ import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
 import it.polimi.ingsw.view.events.PlaceWorkerEvent;
 import it.polimi.ingsw.view.events.SetNicknameEvent;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
+import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
 
 import java.util.*;
 
@@ -23,12 +28,12 @@ public class ViewTester implements ViewSender {
     private final static boolean addWait = true;
     private final static boolean sendTestMessages = false;
 
-    private final static boolean invalidNickname = true;
+    private final static boolean invalidNickname = false;
     private final static boolean requirePlayerNumber = false;
     private final static boolean validPlacing = true;
 
-    private final static boolean setDefaultChallenger = true;
-    private final static boolean isFirstCardChooser = true;
+    private final static boolean setDefaultChallenger = false;
+    private final static boolean isFirstCardChooser = false;
     private final static boolean isSecondCardChooser = false;
 
     private final static boolean isFirstPlacer = true;
@@ -106,8 +111,8 @@ public class ViewTester implements ViewSender {
 
         //se sendTestMessages invia dei messaggi di test
         if(sendTestMessages){
-            ViewMessage.populateAndSend("test fromServerMEssage", ViewMessage.MessageType.FROM_SERVER_MESSAGE);
-            ViewMessage.populateAndSend("test serverError", ViewMessage.MessageType.FROM_SERVER_ERROR);
+            view.update((MessageEvent) new MessageEvent("test fromServerMEssage"));
+            view.update((ErrorMessageEvent) new ErrorMessageEvent("test serverError"));
             ViewMessage.populateAndSend("test executerError", ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
             ViewMessage.populateAndSend("test fatalError", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
 
@@ -317,6 +322,10 @@ public class ViewTester implements ViewSender {
         //Go to playing status
         view.update((NextStatusEvent) new NextStatusEvent("Go to playing"));
 
+        waiting();
+
+        simulateTurn("player1", "[Worker]\t2", 3, 3, 1, 1, PlaceableType.BLOCK);
+
 
         /*view.update((NextStatusEvent)new NextStatusEvent("Playing"));
 
@@ -416,6 +425,24 @@ public class ViewTester implements ViewSender {
         ViewBoard.getBoard().setSelectedCell(0, 0);
         Viewer.setAllRefresh();*/
 
+    }
+
+    public void simulateTurn(String player, String worker, int xMov, int yMov, int xBuild, int yBuild, PlaceableType blockType){
+        view.update(new TurnStatusChangedEvent(player, StateType.MOVEMENT, true));
+        waiting();
+        view.update(new WorkerSelectedEvent(player, worker, true));
+        waiting();
+        view.update(new TurnStatusChangedEvent(player, StateType.MOVEMENT, true));
+        waiting();
+        try {
+            view.update(new WorkerMovedEvent(worker, ((ViewWorker)ViewWorker.search(worker)).getPosition().getX(), ((ViewWorker)ViewWorker.search(worker)).getPosition().getY(), xMov, yMov, MoveOutcomeType.EXECUTED));
+        } catch (NotFoundException | WrongViewObjectException e) {
+            view.update(new WorkerMovedEvent(worker, 0, 0, xMov, yMov, MoveOutcomeType.EXECUTED));
+        }
+        waiting();
+        view.update(new TurnStatusChangedEvent(player, StateType.CONSTRUCTION, true));
+        waiting();
+        view.update(new BlockBuiltEvent(xBuild, yBuild, blockType,  MoveOutcomeType.EXECUTED));
     }
 
     public static void main(String[] args) {

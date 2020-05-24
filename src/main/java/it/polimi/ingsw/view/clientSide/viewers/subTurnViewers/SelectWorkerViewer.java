@@ -13,17 +13,17 @@ public class SelectWorkerViewer extends SubTurnViewer {
     }
 
     @Override
-    public TerminalSubTurnViewer toTerminal() {
+    public TerminalSubTurnViewer toTerminal()  {
         return null;
     }
 
     @Override
-    public GUISubTurnViewer toGUI() {
+    public GUISubTurnViewer toGUI()  {
         return null;
     }
 
     @Override
-    public CLISubTurnViewer toCLI() {
+    public CLISubTurnViewer toCLI()  {
         return null;
     }
 }
