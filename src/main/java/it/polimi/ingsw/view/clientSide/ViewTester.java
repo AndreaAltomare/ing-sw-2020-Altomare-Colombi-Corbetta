@@ -26,8 +26,8 @@ public class ViewTester implements ViewSender {
     private final static boolean requirePlayerNumber = false;
     private final static boolean validPlacing = true;
 
-    private final static boolean setDefaultChallenger = true;
-    private final static boolean isFirstCardChooser = true;
+    private final static boolean setDefaultChallenger = false;
+    private final static boolean isFirstCardChooser = false;
     private final static boolean isSecondCardChooser = false;
 
     private final static boolean isFirstPlacer = true;
