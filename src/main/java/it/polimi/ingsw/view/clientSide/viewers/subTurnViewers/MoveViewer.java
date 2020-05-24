@@ -8,22 +8,22 @@ import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSub
 
 public class MoveViewer extends SubTurnViewer {
 
-    public MoveViewer (ViewSubTurn viewSubTurn){
+    public MoveViewer (ViewSubTurn viewSubTurn) {
         super(viewSubTurn);
     }
 
     @Override
-    public TerminalSubTurnViewer toTerminal() {
+    public TerminalSubTurnViewer toTerminal()  {
         return null;
     }
 
     @Override
-    public GUISubTurnViewer toGUI() {
+    public GUISubTurnViewer toGUI()  {
         return null;
     }
 
     @Override
-    public CLISubTurnViewer toCLI() {
+    public CLISubTurnViewer toCLI()  {
         return null;
     }
 }

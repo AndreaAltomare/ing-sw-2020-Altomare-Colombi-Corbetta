@@ -9,22 +9,22 @@ import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSub
 
 public class SelectCardViewer extends SubTurnViewer {
 
-    public SelectCardViewer (ViewSubTurn viewSubTurn){
+    public SelectCardViewer (ViewSubTurn viewSubTurn) {
         super(viewSubTurn);
     }
 
     @Override
-    public TerminalSubTurnViewer toTerminal() {
+    public TerminalSubTurnViewer toTerminal()  {
         return null;
     }
 
     @Override
-    public GUISubTurnViewer toGUI() {
+    public GUISubTurnViewer toGUI()  {
         return new SelectCardSubTurn(this);
     }
 
     @Override
-    public CLISubTurnViewer toCLI() {
+    public CLISubTurnViewer toCLI()  {
         return null;
     }
 }

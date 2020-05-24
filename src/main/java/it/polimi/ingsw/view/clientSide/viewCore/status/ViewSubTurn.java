@@ -216,7 +216,7 @@ public enum ViewSubTurn implements ClientAddressable {
 
     public abstract ViewSubTurn getOpponent();
 
-    public static void setSubTurn(ViewSubTurn subTurn){
+    public static void setSubTurn(ViewSubTurn subTurn) {
         actualSubTurn = subTurn;
     }
 
@@ -236,16 +236,24 @@ public enum ViewSubTurn implements ClientAddressable {
         }
     }
 
+    public static void setSubTurn(ViewSubTurn subTurn, String player) {
+        actualSubTurn = subTurn;
+        setStaticPlayer(player);
+        if(actualSubTurn != null && (!actualSubTurn.isMyTurn())){
+            actualSubTurn = actualSubTurn.getOpponent();
+        }
+    }
 
-    public static ViewSubTurn getActual(){
+
+    public static ViewSubTurn getActual() {
         return actualSubTurn;
     }
 
-    public void setPlayer(String player){
+    public void setPlayer(String player) {
         setStaticPlayer(player);
     }
 
-    public static void setStaticPlayer(String player){
+    public static void setStaticPlayer(String player) {
         ViewSubTurn.player = player;
     }
 
@@ -255,7 +263,7 @@ public enum ViewSubTurn implements ClientAddressable {
 
     public abstract SubTurnViewer getSubViewer();
 
-    public StateType toStateType(){
+    public StateType toStateType() {
         return StateType.NONE;
     }
 

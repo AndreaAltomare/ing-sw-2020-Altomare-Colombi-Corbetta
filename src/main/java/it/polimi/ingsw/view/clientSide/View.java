@@ -220,7 +220,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
      */
     @Override
     public void update(TurnStatusChangedEvent turnStatusChange) {
-        ViewSubTurn.set(turnStatusChange.getState().toString());
+        ViewSubTurn.set(turnStatusChange.getState().toString(), turnStatusChange.getPlayerNickname());
         ViewSubTurn.getActual().setPlayer(turnStatusChange.getPlayerNickname());
         Viewer.setAllSubTurnViewer(ViewSubTurn.getActual().getSubViewer());
         //System.out.println("Turn status changed to: " + turnStatusChange.getState().toString()); // todo: check what toString() of an enum prints... [si, funziona.]
@@ -395,7 +395,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
     @Override
     public void update(RequirePlaceWorkersEvent requirePlaceWorkers) {
-        ViewSubTurn.setSubTurn(ViewSubTurn.PLACEWORKER);
+        ViewSubTurn.setSubTurn(ViewSubTurn.PLACEWORKER, requirePlaceWorkers.getPlayer());
         ViewSubTurn.getActual().setPlayer(requirePlaceWorkers.getPlayer());
         Viewer.setAllSubTurnViewer(ViewSubTurn.getActual());
     }

@@ -8,7 +8,7 @@ import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSub
 
 public class BuildViewer extends SubTurnViewer {
 
-    public BuildViewer (ViewSubTurn viewSubTurn){
+    public BuildViewer (ViewSubTurn viewSubTurn) {
         super(viewSubTurn);
     }
 
@@ -18,12 +18,12 @@ public class BuildViewer extends SubTurnViewer {
     }
 
     @Override
-    public GUISubTurnViewer toGUI() {
+    public GUISubTurnViewer toGUI()  {
         return null;
     }
 
     @Override
-    public CLISubTurnViewer toCLI() {
+    public CLISubTurnViewer toCLI()  {
         return null;
     }
 }
