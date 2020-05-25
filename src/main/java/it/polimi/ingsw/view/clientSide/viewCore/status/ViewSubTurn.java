@@ -97,7 +97,7 @@ public enum ViewSubTurn implements ClientAddressable {
 
         @Override
         public StateType toStateType() {
-            return StateType.CONSTRUCTION;
+            return StateType.MOVEMENT;
         }
 
         @Override

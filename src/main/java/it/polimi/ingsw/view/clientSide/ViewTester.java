@@ -327,8 +327,8 @@ public class ViewTester implements ViewSender {
         view.update(new TurnStatusChangedEvent(ViewNickname.getMyNickname(), StateType.MOVEMENT, true));
         myWait();
         view.update(new TurnStatusChangedEvent(ViewNickname.getMyNickname(), StateType.MOVEMENT, true));
-        myWait();
-        simulateTurn("player1", "[Worker]\t2", 3, 3, 1, 1, PlaceableType.BLOCK);
+        //myWait();
+        //simulateTurn("player1", "[Worker]\t2", 3, 3, 1, 1, PlaceableType.BLOCK);
 
 
         /*view.update((NextStatusEvent)new NextStatusEvent("Playing"));

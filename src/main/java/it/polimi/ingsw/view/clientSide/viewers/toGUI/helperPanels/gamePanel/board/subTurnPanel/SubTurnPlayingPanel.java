@@ -35,14 +35,15 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
         upperPanel.setOpaque(false);
 
 
+
         //Move Button
         JButton moveButton = new JButton();
-        upperPanel.add(new PanelImageButton(0.5, 1, 0, 0, moveButton, "/img/trappings/move_button.png", "move"));
+
         if(move){
             System.out.println("MOVE");
             selectPanel.setMyRapp(0.5, 1, 0, 0);
             upperPanel.add(selectPanel);
-        }else if (mine)
+        }else if (mine) {
             moveButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
@@ -55,13 +56,17 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
                     }
                 }
             });
+        }
+
+
 
         //Build Button
         JButton buildButton = new JButton();
-        upperPanel.add(new PanelImageButton(0.5, 1, 0.5, 0, buildButton, "/img/trappings/build_button.png", "build"));
+
         if(build) {
-            upperPanel.add(selectPanel);
+            System.out.println("BUILD");
             selectPanel.setMyRapp(0.5, 1, 0.5, 0);
+            upperPanel.add(new ImagePanel(0.5, 1, 0.5, 0,"/img/trappings/select_button.png" ));
         }else if(mine){
             buildButton.addActionListener(new ActionListener() {
                 @Override
@@ -77,6 +82,13 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
             });
         }
 
+
+
+        upperPanel.add(new PanelImageButton(0.5, 1, 0, 0, moveButton, "/img/trappings/move_button.png", "move"));
+        upperPanel.add(new PanelImageButton(0.5, 1, 0.5, 0, buildButton, "/img/trappings/build_button.png", "build"));
+
+
+
         //GodImage
         try {
             lowerPanel.add(new ImagePanel(0.5, 1, 0, 0, "/img/godPodium/" + ViewPlayer.searchByName(playerName).getCard().getName() + ".png"));
@@ -84,12 +96,15 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
             lowerPanel.add(new ImagePanel(0.5, 1, 0, 0, "/img/godPodium/Default.png"));
         }
 
+
+
         //BuildBlockButton
         JButton buildBlockButton = new JButton();
-        lowerPanel.add(new PanelImageButton(0.4, 0.4, 0.55, 0.05, buildBlockButton, "/img/trappings/build_block.png", "build Block" ));
+
         if(buildBlock) {
-            lowerPanel.add(selectPanel);
+            System.out.println("BUILD_BLOCK");
             selectPanel.setMyRapp(0.4, 0.4, 0.55, 0.05);
+            lowerPanel.add(selectPanel);
         }else if(mine){
             buildBlockButton.addActionListener(new ActionListener() {
                 @Override
@@ -109,12 +124,15 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
             });
         }
 
+
+
         //BuildDomeButton
         JButton buildDomeButton = new JButton();
-        lowerPanel.add(new PanelImageButton(0.4, 0.4, 0.55, 0.5, buildDomeButton, "/img/trappings/build_dome.png", "buildDome" ));
+
         if(buildDome) {
-            lowerPanel.add(selectPanel);
+            System.out.println("BUILD_DOME");
             selectPanel.setMyRapp(0.4, 0.4, 0.55, 0.5);
+            lowerPanel.add(selectPanel);
         }else if(mine){
             buildDomeButton.addActionListener(new ActionListener() {
                 @Override
@@ -135,10 +153,15 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
             });
         }
 
+        lowerPanel.add(new PanelImageButton(0.4, 0.4, 0.55, 0.05, buildBlockButton, "/img/trappings/build_block.png", "build Block" ));
+        lowerPanel.add(new PanelImageButton(0.4, 0.4, 0.55, 0.5, buildDomeButton, "/img/trappings/build_dome.png", "buildDome" ));
+
         contentPanel.add(upperPanel);
         contentPanel.add(lowerPanel);
 
         add(contentPanel);
+
+
 
 
 
