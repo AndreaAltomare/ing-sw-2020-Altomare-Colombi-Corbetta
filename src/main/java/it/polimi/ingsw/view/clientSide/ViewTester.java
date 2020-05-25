@@ -27,6 +27,7 @@ public class ViewTester implements ViewSender {
 
     //attributo per far eseguire le waiting
     private final static boolean addWait = true;
+    private final static boolean normalTurn = true;
     private final static boolean sendTestMessages = false;
 
     private final static boolean stopAtLogin = false;
@@ -52,7 +53,7 @@ public class ViewTester implements ViewSender {
 
     private final static boolean winning = true;
     private final static int turnNumber = 10;
-    private final static int turnLoose = 3;
+    private final static int turnLoose = 1;
 
 
     //####ATTRIBUTI RAPPRESENTANTI LO STATO INTERNO DEL SERVER -O QUALCOSA DI SIMILE####
@@ -69,7 +70,9 @@ public class ViewTester implements ViewSender {
     private final Object waitingObj = new Object();
     private Object lock = new Object();
     private Object selected = new Object();
+    private Object movedRecalled = new Object();
     private Object moved = new Object();
+    private Object built = new Object();
     private View view = new View(null, null);
 
     //####MOSSE####
@@ -210,9 +213,29 @@ public class ViewTester implements ViewSender {
     }
 
     private void myWaitMove(){
+        synchronized (movedRecalled){
+            try {
+                movedRecalled.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void myWaitMoved(){
         synchronized (moved){
             try {
                 moved.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void myWaitBuilt(){
+        synchronized (built){
+            try {
+                built.wait();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -545,7 +568,10 @@ public class ViewTester implements ViewSender {
                 }
                 if(i==numberPlayers-1){
                     if(actual< turnLoose)
-                        myTurn();
+                        if(normalTurn)
+                            myNormalTurn();
+                        else
+                            myTurn();
                 }else{
                     opponentTurn(mosse.get(actual));
                 }
@@ -612,8 +638,8 @@ public class ViewTester implements ViewSender {
         view.update(new TurnStatusChangedEvent(playerName, event.getTurnStatus(), true));
         System.out.println("Recived: "  + event.getTurnStatus());
         if(event.getTurnStatus() == StateType.MOVEMENT)
-            synchronized (moved){
-                moved.notifyAll();
+            synchronized (movedRecalled){
+                movedRecalled.notifyAll();
             }
         myNotify();
     }
@@ -626,11 +652,17 @@ public class ViewTester implements ViewSender {
         } catch (NotFoundException | WrongViewObjectException e) {
             e.printStackTrace();
         }
+        synchronized (moved){
+            moved.notifyAll();
+        }
         myNotify();
     }
 
     public void send(BuildBlockEvent event){
         view.update(new BlockBuiltEvent(event.getX(), event.getY(), event.getBlockType(), MoveOutcomeType.EXECUTED));
+        synchronized (built){
+            built.notifyAll();
+        }
         myNotify();
     }
 
@@ -682,6 +714,15 @@ public class ViewTester implements ViewSender {
         myWaitSelected();
         view.update(new TurnStatusChangedEvent(playerName, StateType.MOVEMENT, true));
         myWaitMove();
+    }
+
+    private void myNormalTurn(){
+        view.update(new TurnStatusChangedEvent(playerName, StateType.MOVEMENT, true));
+        myWaitSelected();
+        view.update(new TurnStatusChangedEvent(playerName, StateType.MOVEMENT, true));
+        myWaitMoved();
+        view.update(new TurnStatusChangedEvent(playerName, StateType.CONSTRUCTION, true));
+        myWaitBuilt();
     }
 
     /*private void myMain() {
