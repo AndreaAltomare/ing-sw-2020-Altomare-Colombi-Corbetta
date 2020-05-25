@@ -25,7 +25,7 @@ import java.util.*;
 public class ViewTester implements ViewSender {
 
 
-    private final static boolean addWait = false;
+    private final static boolean addWait = true;
     private final static boolean sendTestMessages = false;
 
     private final static boolean invalidNickname = false;
@@ -324,11 +324,13 @@ public class ViewTester implements ViewSender {
 
         waiting();
 
+        simulateTurn("player1", "[Worker]\t2", 3, 3, 1, 1, PlaceableType.BLOCK);
+
         view.update(new TurnStatusChangedEvent(ViewNickname.getMyNickname(), StateType.MOVEMENT, true));
         myWait();
         view.update(new TurnStatusChangedEvent(ViewNickname.getMyNickname(), StateType.MOVEMENT, true));
         //myWait();
-        //simulateTurn("player1", "[Worker]\t2", 3, 3, 1, 1, PlaceableType.BLOCK);
+
 
 
         /*view.update((NextStatusEvent)new NextStatusEvent("Playing"));
