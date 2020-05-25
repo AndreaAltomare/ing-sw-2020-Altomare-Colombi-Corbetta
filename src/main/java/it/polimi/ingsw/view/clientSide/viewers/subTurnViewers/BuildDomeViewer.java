@@ -4,12 +4,12 @@ import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toGUI.subTurnClasses.NoActionSubTurn;
-import it.polimi.ingsw.view.clientSide.viewers.toGUI.subTurnClasses.OpponentBuildSubTurn;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.subTurnClasses.BuildDomeSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSubTurnViewer;
 
-public class OpponentBuildViewer extends SubTurnViewer {
-    public OpponentBuildViewer(ViewSubTurn viewSubTurn) {
+public class BuildDomeViewer extends SubTurnViewer {
+
+    public BuildDomeViewer (ViewSubTurn viewSubTurn) {
         super(viewSubTurn);
     }
 
@@ -19,8 +19,8 @@ public class OpponentBuildViewer extends SubTurnViewer {
     }
 
     @Override
-    public GUISubTurnViewer toGUI()  {
-        return new OpponentBuildSubTurn(this);
+    public GUISubTurnViewer toGUI() {
+        return new BuildDomeSubTurn(this);
     }
 
     @Override

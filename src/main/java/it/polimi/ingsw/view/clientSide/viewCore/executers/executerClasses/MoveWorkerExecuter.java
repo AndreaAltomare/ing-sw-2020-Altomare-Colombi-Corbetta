@@ -98,7 +98,15 @@ public class MoveWorkerExecuter extends Executer {
     @Override
     public EventObject getMyEvent()throws CannotSendEventException {
         if(x<0||y<0) throw new CannotSendEventException("Cannot try to move without having selected the destination");
-        if(workerId == null) throw new CannotSendEventException("Cannot move without knowing which worker is trying to move");
+        if (workerId == null) {
+            workerId = ViewWorker.getSelected().toString();
+            if(workerId == null) throw new CannotSendEventException("Cannot move without knowing which worker is trying to move");
+        }
         return new MoveWorkerEvent(workerId, x, y);
+    }
+
+    public void send(EventObject event) throws NullPointerException{
+        if(event == null) throw new NullPointerException();
+        getSender().send((MoveWorkerEvent)event);
     }
 }

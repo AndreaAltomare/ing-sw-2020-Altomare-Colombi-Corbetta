@@ -14,6 +14,7 @@ import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSubTurnViewer;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
+import it.polimi.ingsw.view.exceptions.WrongParametersException;
 import it.polimi.ingsw.view.interfaces.Addressable;
 
 // TODO: 24/05/20 refacoring [eliminate superfluous getExecuter]
@@ -96,7 +97,7 @@ public enum ViewSubTurn implements ClientAddressable {
 
         @Override
         public StateType toStateType() {
-            return StateType.CONSTRUCTION;
+            return StateType.MOVEMENT;
         }
 
         @Override
@@ -166,6 +167,62 @@ public enum ViewSubTurn implements ClientAddressable {
         @Override
         public ViewSubTurn getOpponent() {
             return PLACEWORKER;
+        }
+    },
+    BUILD_BLOCK("CONSTRUCTION") {
+        //Not notified by the server
+        @Override
+        public SubTurnViewer getSubViewer() {
+            return new BuildBlockViewer(this);
+        }
+
+        @Override
+        public StateType toStateType() {
+            return StateType.CONSTRUCTION;
+        }
+
+        @Override
+        public Executer getExecuter()  {
+            BuildBlockExecuter ret = new BuildBlockExecuter();
+            try {
+                ret.setPlaceable("BLOCK");
+            } catch (WrongParametersException e) {
+                e.printStackTrace();
+            }
+            return ret;
+        }
+
+        @Override
+        public ViewSubTurn getOpponent() {
+            return OPPONENT_BUILD;
+        }
+    },
+    BUILD_DOME("CONSTRUCTION") {
+        //Not notified by the server
+        @Override
+        public SubTurnViewer getSubViewer() {
+            return new BuildDomeViewer(this);
+        }
+
+        @Override
+        public StateType toStateType() {
+            return StateType.CONSTRUCTION;
+        }
+
+        @Override
+        public Executer getExecuter() {
+            BuildBlockExecuter ret = new BuildBlockExecuter();
+            try {
+                ret.setPlaceable("DOME");
+            } catch (WrongParametersException e) {
+                e.printStackTrace();
+            }
+            return ret;
+        }
+
+        @Override
+        public ViewSubTurn getOpponent() {
+            return OPPONENT_BUILD;
         }
     };
 

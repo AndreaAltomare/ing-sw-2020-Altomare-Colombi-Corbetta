@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
+import it.polimi.ingsw.controller.events.CardSelectedEvent;
 import it.polimi.ingsw.controller.events.ServerSendDataEvent;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.exceptions.AlreadySetException;
@@ -170,17 +171,12 @@ public class ViewPlayer extends ViewObject {
     /**
      * Method that will be called on the arrival of an event to build a new Object.
      *
-     * @param event (the Event arrived)
+     * @param data (the Event arrived)
      * @return (the new object created)
      * @throws WrongEventException (if the Event is not supported by this Class)
      */
-    public static ViewObject populate( @NotNull EventObject event) throws WrongEventException{
-        ServerSendDataEvent data;
-        try{
-            data = (ServerSendDataEvent) event;
-        }catch (Exception e){
-            throw new WrongEventException();
-        }
+    public static ViewObject populate( @NotNull ServerSendDataEvent data) throws WrongEventException{
+
 
         for (String player : data.getPlayers()) {
             new ViewPlayer(player);
@@ -197,6 +193,25 @@ public class ViewPlayer extends ViewObject {
         }
         return null;
         //throw new WrongEventException();
+    }
+
+    public static ViewObject populate(CardSelectedEvent event) throws WrongEventException{
+        ViewPlayer ret;
+        try {
+            ret = ViewPlayer.searchByName(event.getPlayerNickname());
+        } catch (NotFoundException e) {
+            throw new WrongEventException();
+        }
+
+        ret.setCard(event.getCardName());
+/*
+        try {
+            System.out.println("Player:\t" + ret.getName() + " \tCard:\t" + ret.getCard().getName());
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        }*/
+
+        return ret;
     }
 
     /**

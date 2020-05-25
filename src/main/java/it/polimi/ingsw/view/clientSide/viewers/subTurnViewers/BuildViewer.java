@@ -4,6 +4,7 @@ import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.subTurnClasses.BuildSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSubTurnViewer;
 
 public class BuildViewer extends SubTurnViewer {
@@ -18,8 +19,8 @@ public class BuildViewer extends SubTurnViewer {
     }
 
     @Override
-    public GUISubTurnViewer toGUI()  {
-        return null;
+    public GUISubTurnViewer toGUI()   {
+        return new BuildSubTurn(this);
     }
 
     @Override

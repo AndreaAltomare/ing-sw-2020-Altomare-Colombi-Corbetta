@@ -2,8 +2,8 @@ package it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.boa
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 
-public class MoveSubTurnPanel extends SubTurnPlayingPanel {
-    public MoveSubTurnPanel(){
-        super (ViewNickname.getMyNickname(), true, false, false, false);
+public class BuildBlockSubTurnPanel extends SubTurnPlayingPanel {
+    public BuildBlockSubTurnPanel(){
+        super (ViewNickname.getMyNickname(), false, false, true, false);
     }
 }
