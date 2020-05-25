@@ -156,7 +156,7 @@ public abstract class ViewObject implements ClientAddressable {
      *
      * @return (representation of Object for the CLI)
      */
-    public Object toCLI(){return null;}
+    public String toCLI(){return null;}
 
     /**
      * Method that will return a (Object) that will represent the ViewObject on the GUI.

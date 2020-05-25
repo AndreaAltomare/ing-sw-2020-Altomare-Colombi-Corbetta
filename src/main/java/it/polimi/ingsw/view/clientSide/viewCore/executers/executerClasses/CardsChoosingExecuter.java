@@ -85,4 +85,9 @@ public class CardsChoosingExecuter extends Executer implements CardExecuter {
         if(cardList.size()<numberOfCards) throw new CannotSendEventException("Too few arguments");
         return new CardsChoosingEvent(cardList);
     }
+
+    public void send(EventObject event) throws NullPointerException{
+        if(event == null) throw new NullPointerException();
+        getSender().send((CardsChoosingEvent)event);
+    }
 }

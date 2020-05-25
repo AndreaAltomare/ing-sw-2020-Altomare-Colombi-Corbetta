@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
+import it.polimi.ingsw.controller.events.CardSelectedEvent;
 import it.polimi.ingsw.controller.events.ServerSendDataEvent;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.exceptions.AlreadySetException;
@@ -170,17 +171,12 @@ public class ViewPlayer extends ViewObject {
     /**
      * Method that will be called on the arrival of an event to build a new Object.
      *
-     * @param event (the Event arrived)
+     * @param data (the Event arrived)
      * @return (the new object created)
      * @throws WrongEventException (if the Event is not supported by this Class)
      */
-    public static ViewObject populate( @NotNull EventObject event) throws WrongEventException{
-        ServerSendDataEvent data;
-        try{
-            data = (ServerSendDataEvent) event;
-        }catch (Exception e){
-            throw new WrongEventException();
-        }
+    public static ViewObject populate( @NotNull ServerSendDataEvent data) throws WrongEventException{
+
 
         for (String player : data.getPlayers()) {
             new ViewPlayer(player);
@@ -199,6 +195,25 @@ public class ViewPlayer extends ViewObject {
         //throw new WrongEventException();
     }
 
+    public static ViewObject populate(CardSelectedEvent event) throws WrongEventException{
+        ViewPlayer ret;
+        try {
+            ret = ViewPlayer.searchByName(event.getPlayerNickname());
+        } catch (NotFoundException e) {
+            throw new WrongEventException();
+        }
+
+        ret.setCard(event.getCardName());
+/*
+        try {
+            System.out.println("Player:\t" + ret.getName() + " \tCard:\t" + ret.getCard().getName());
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        }*/
+
+        return ret;
+    }
+
     /**
      * Method to discard all the objects of the Class.
      */
@@ -213,11 +228,11 @@ public class ViewPlayer extends ViewObject {
 
 
     /**
-     * Method that will return a (Object) that will represent the ViewObject on the CLI.
+     * Method that will return Player's name that will represent the ViewObject on the CLI.
      *
      * @return (representation of Object for the CLI)
      */
-    public Object toCLI(){ return null; }
+    public String toCLI(){ return this.getName(); }
 
     /**
      * Method that will return a (Object) that will represent the ViewObject on the GUI.

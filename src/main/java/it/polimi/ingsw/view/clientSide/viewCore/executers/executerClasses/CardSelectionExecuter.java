@@ -118,4 +118,9 @@ public class CardSelectionExecuter extends Executer implements CardExecuter {
     public boolean isSelected(String card) {
         return nameCard.equals(card);
     }
+
+    public void send(EventObject event) throws NullPointerException{
+        if(event == null) throw new NullPointerException();
+        getSender().send((CardSelectionEvent)event);
+    }
 }

@@ -122,7 +122,8 @@ public class ViewNickname extends ViewObject {
      *
      * @return (representation of Object for the CLI)
      */
-    public Object toCLI(){
+    @Override
+    public String toCLI(){
         return null;
     }
 

@@ -348,12 +348,15 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
      */
     @Override
     public void update(CardSelectedEvent cardSelected) {
+        /*if(View.debugging)
+            System.out.println("[FROM SERVER] " + cardSelected.getPlayerNickname() + " selected: " + cardSelected.getCardName());*/
+
         try {
-            ViewPlayer.searchByName(cardSelected.getPlayerNickname()).setCard(cardSelected.getCardName());
-        } catch (NotFoundException ignored) {
+            ViewPlayer.populate(cardSelected);
+        } catch (WrongEventException e) {
+            ViewMessage.populateAndSend("Wrong card selected recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
         }
-        if(ViewNickname.getMyNickname().equals(cardSelected.getPlayerNickname()))
-            ViewNickname.setMyCard(cardSelected.getCardName());
+
     }
 
     @Override

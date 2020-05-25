@@ -57,4 +57,9 @@ public class SetPlayerNumberExecuter extends Executer {
         playerNumber = null;
         return setPlayerNumberEvent;
     }
+
+    public void send(EventObject event) throws NullPointerException{
+        if(event == null) throw new NullPointerException();
+        getSender().send((SetPlayersNumberEvent)event);
+    }
 }
