@@ -96,7 +96,7 @@ public class ViewTester implements ViewSender {
         }
 
         String getWorker(){
-            return workers[player+1][worker];
+            return workers[player][worker];
         }
 
         int getxMov(){
@@ -215,6 +215,12 @@ public class ViewTester implements ViewSender {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    private void myNotify(){
+        synchronized (lock){
+            lock.notifyAll();
         }
     }
 
@@ -514,10 +520,10 @@ public class ViewTester implements ViewSender {
         waiting();
 
         int actual;
-        for(int turn = 0; turn < turnNumber; turn ++){
-            for(int i = 0; i<Math.min(numberPlayers, mosse.size()/2); i++){
+        for(int turn = 0; turn < Math.min(turnNumber, mosse.size()/2); turn ++){
+            for(int i = 0; i<numberPlayers; i++){
                 actual = 2*turn + i;
-                if(i==numberPlayers){
+                if(i==numberPlayers-1){
                     myTurn();
                 }else{
                     opponentTurn(mosse.get(actual));
@@ -565,12 +571,62 @@ public class ViewTester implements ViewSender {
         myNotify();
     }
 
+    @Override
+    public void send(EventObject event) {
+        myNotify();
+    }
+
+    public void send(PlaceWorkerEvent event){
+        view.update(new WorkerPlacedEvent("[Worker]\t" + String.valueOf(myWorkerId), event.getX(), event.getY(), validPlacing));
+        myWorkerId++;
+        myNotify();
+    }
+
+    public void send(TurnStatusChangeEvent event){
+        view.update(new TurnStatusChangedEvent(playerName, event.getTurnStatus(), true));
+        System.out.println("Recived: "  + event.getTurnStatus());
+        if(event.getTurnStatus() == StateType.MOVEMENT)
+            synchronized (moved){
+                moved.notifyAll();
+            }
+        myNotify();
+    }
+
+
+
+    public void send(MoveWorkerEvent event){
+        try {
+            view.update(new WorkerMovedEvent(event.getWorkerId(), ((ViewWorker)ViewWorker.search(event.getWorkerId())).getPosition().getX(), ((ViewWorker)ViewWorker.search(event.getWorkerId())).getPosition().getY(), event.getX(), event.getY(), MoveOutcomeType.EXECUTED));
+        } catch (NotFoundException | WrongViewObjectException e) {
+            e.printStackTrace();
+        }
+        myNotify();
+    }
+
+    public void send(BuildBlockEvent event){
+        view.update(new BlockBuiltEvent(event.getX(), event.getY(), event.getBlockType(), MoveOutcomeType.EXECUTED));
+        myNotify();
+    }
+
+
     //####TURN METHODS####
 
     private void initMosse(){
         mosse = new ArrayList<>(32);
+
+        mosse.add(new Mossa(0,0, 0, 1, 0, 0,  PlaceableType.BLOCK));
+        mosse.add(new Mossa(1,0, 0, 1, 0, 1,  PlaceableType.BLOCK));
         mosse.add(new Mossa(0,0, 0, 0, 0, 1,  PlaceableType.BLOCK));
         mosse.add(new Mossa(1,0, 0, 1, 0, 1,  PlaceableType.BLOCK));
+        mosse.add(new Mossa(0,0, 0, 1, 0, 0,  PlaceableType.BLOCK));
+        mosse.add(new Mossa(1,0, 0, 1, 0, 1,  PlaceableType.BLOCK));
+        mosse.add(new Mossa(0,0, 0, 0, 0, 1,  PlaceableType.BLOCK));
+        mosse.add(new Mossa(1,0, 0, 1, 0, 1,  PlaceableType.BLOCK));
+        mosse.add(new Mossa(0,0, 0, 1, 0, 0,  PlaceableType.BLOCK));
+        mosse.add(new Mossa(1,0, 0, 1, 0, 1,  PlaceableType.BLOCK));
+        mosse.add(new Mossa(0,0, 0, 0, 0, 1,  PlaceableType.BLOCK));
+        mosse.add(new Mossa(1,0, 0, 1, 0, 1,  PlaceableType.BLOCK));
+
     }
 
     private void opponentTurn(Mossa mossa){
@@ -596,20 +652,13 @@ public class ViewTester implements ViewSender {
     }
 
     private void myTurn(){
-        view.update(new TurnStatusChangedEvent(ViewNickname.getMyNickname(), StateType.MOVEMENT, true));
+        view.update(new TurnStatusChangedEvent(playerName, StateType.MOVEMENT, true));
         myWaitSelected();
-        view.update(new TurnStatusChangedEvent(ViewNickname.getMyNickname(), StateType.MOVEMENT, true));
+        view.update(new TurnStatusChangedEvent(playerName, StateType.MOVEMENT, true));
         myWaitMove();
     }
 
-
-
-
-
-
-
-
-    private void myMain() {
+    /*private void myMain() {
 
 
         initialization();
@@ -858,7 +907,7 @@ public class ViewTester implements ViewSender {
 
 
 
-        /*view.update((NextStatusEvent)new NextStatusEvent("Playing"));
+        *//*view.update((NextStatusEvent)new NextStatusEvent("Playing"));
 
         synchronized (waitingObj) {
             try {
@@ -908,9 +957,9 @@ public class ViewTester implements ViewSender {
         System.out.println(ViewBoard.getBoard().toTerminal());
         ViewBoard.getBoard().toGUI();
         Viewer.setAllRefresh();
-        System.out.println("aggiorno la board da View");*/
+        System.out.println("aggiorno la board da View");*//*
 
-        /*synchronized (obj) {
+        *//*synchronized (obj) {
             try {
                 obj.wait(2500);
             } catch (InterruptedException e) {
@@ -954,57 +1003,9 @@ public class ViewTester implements ViewSender {
         }
 
         ViewBoard.getBoard().setSelectedCell(0, 0);
-        Viewer.setAllRefresh();*/
+        Viewer.setAllRefresh();*//*
 
     }
-
-
-
-
-    private void myNotify(){
-        synchronized (lock){
-            lock.notifyAll();
-        }
-    }
-
-    @Override
-    public void send(EventObject event) {
-        myNotify();
-    }
-
-
-
-    public void send(PlaceWorkerEvent event){
-        view.update(new WorkerPlacedEvent("[Worker]\t" + String.valueOf(myWorkerId), event.getX(), event.getY(), validPlacing));
-        myWorkerId++;
-        myNotify();
-    }
-
-    public void send(TurnStatusChangeEvent event){
-        view.update(new TurnStatusChangedEvent(ViewNickname.getMyNickname(), event.getTurnStatus(), true));
-        System.out.println("Recived: "  + event.getTurnStatus());
-        if(event.getTurnStatus() == StateType.MOVEMENT)
-            synchronized (moved){
-            moved.notifyAll();
-            }
-        myNotify();
-    }
-
-
-
-    public void send(MoveWorkerEvent event){
-        try {
-            view.update(new WorkerMovedEvent(event.getWorkerId(), ((ViewWorker)ViewWorker.search(event.getWorkerId())).getPosition().getX(), ((ViewWorker)ViewWorker.search(event.getWorkerId())).getPosition().getY(), event.getX(), event.getY(), MoveOutcomeType.EXECUTED));
-        } catch (NotFoundException | WrongViewObjectException e) {
-            e.printStackTrace();
-        }
-        myNotify();
-    }
-
-    public void send(BuildBlockEvent event){
-        view.update(new BlockBuiltEvent(event.getX(), event.getY(), event.getBlockType(), MoveOutcomeType.EXECUTED));
-        myNotify();
-    }
-
+*/
 
 }
