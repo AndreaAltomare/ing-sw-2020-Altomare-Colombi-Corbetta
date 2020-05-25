@@ -16,6 +16,7 @@ import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
 import it.polimi.ingsw.view.events.PlaceWorkerEvent;
 import it.polimi.ingsw.view.events.SetNicknameEvent;
+import it.polimi.ingsw.view.events.TurnStatusChangeEvent;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
 
@@ -323,11 +324,10 @@ public class ViewTester implements ViewSender {
 
         waiting();
 
-        /*view.update(new TurnStatusChangedEvent(ViewNickname.getMyNickname(), StateType.MOVEMENT, true));
+        view.update(new TurnStatusChangedEvent(ViewNickname.getMyNickname(), StateType.MOVEMENT, true));
         myWait();
         view.update(new TurnStatusChangedEvent(ViewNickname.getMyNickname(), StateType.MOVEMENT, true));
         myWait();
-*/
         simulateTurn("player1", "[Worker]\t2", 3, 3, 1, 1, PlaceableType.BLOCK);
 
 
@@ -475,6 +475,12 @@ public class ViewTester implements ViewSender {
     public void send(PlaceWorkerEvent event){
         view.update(new WorkerPlacedEvent("[Worker]\t" + String.valueOf(myWorkerId), event.getX(), event.getY(), validPlacing));
         myWorkerId++;
+        myNotify();
+    }
+
+    public void send(TurnStatusChangeEvent event){
+        view.update(new TurnStatusChangedEvent(ViewNickname.getMyNickname(), event.getTurnStatus(), true));
+        System.out.println("Recived: "  + event.getTurnStatus());
         myNotify();
     }
 }

@@ -4,6 +4,6 @@ import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 
 public class MoveSubTurnPanel extends SubTurnPlayingPanel {
     public MoveSubTurnPanel(){
-        super (ViewNickname.getMyNickname());
+        super (ViewNickname.getMyNickname(), true, false, false, false);
     }
 }

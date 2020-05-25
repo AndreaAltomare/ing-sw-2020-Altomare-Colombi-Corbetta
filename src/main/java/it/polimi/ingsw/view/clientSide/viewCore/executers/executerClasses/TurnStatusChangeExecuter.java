@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses;
 import it.polimi.ingsw.model.StateType;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
+import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.events.TurnStatusChangeEvent;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
@@ -69,6 +70,15 @@ public class TurnStatusChangeExecuter extends Executer {
      */
     public EventObject getMyEvent()throws CannotSendEventException {
         if(stato == null) throw new CannotSendEventException("No valid status set");
+        if(stato == ViewSubTurn.BUILD_BLOCK || stato == ViewSubTurn.BUILD_DOME){
+            Viewer.setAllSubTurnViewer(stato);
+            return null;
+        }
         return new TurnStatusChangeEvent(stato.toStateType());
+    }
+
+    public void send(EventObject event) throws NullPointerException{
+        if(event == null) return;
+        getSender().send((TurnStatusChangeEvent)event);
     }
 }

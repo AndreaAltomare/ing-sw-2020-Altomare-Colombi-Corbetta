@@ -1,16 +1,28 @@
 package it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.subTurnPanel;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.TurnStatusChangeExecuter;
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
+import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.elements.PanelImageButton;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.SubPanel;
+import it.polimi.ingsw.view.exceptions.CannotSendEventException;
+import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
 
-    public SubTurnPlayingPanel(String playerName){
+    ImagePanel selectPanel = new ImagePanel(1, 1, 0, 0, "/img/trappings/select_button.png");
+
+    public SubTurnPlayingPanel(String playerName, boolean move, boolean build, boolean buildBlock, boolean buildDome){
         super((ViewNickname.getMyNickname().equals(playerName)? "/img/background/subTurnPanel/canAction.png" :"/img/background/subTurnPanel/noActionPanel.png"), playerName);
+
+        boolean mine = ViewNickname.getMyNickname().equals(playerName);
 
         SubPanel contentPanel = new SubPanel(1, 1, 0, 0);
         contentPanel.setOpaque(false);
@@ -23,22 +35,105 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
         upperPanel.setOpaque(false);
 
 
+        //Move Button
         JButton moveButton = new JButton();
         upperPanel.add(new PanelImageButton(0.5, 1, 0, 0, moveButton, "/img/trappings/move_button.png", "move"));
+        if(move){
+            System.out.println("MOVE");
+            selectPanel.setMyRapp(0.5, 1, 0, 0);
+            upperPanel.add(selectPanel);
+        }else if (mine)
+            moveButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    TurnStatusChangeExecuter myExec = new TurnStatusChangeExecuter();
+                    try {
+                        myExec.setStatusId(ViewSubTurn.MOVE);
+                        myExec.doIt();
+                    } catch (WrongParametersException | CannotSendEventException e) {
+                        ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
+                    }
+                }
+            });
 
+        //Build Button
         JButton buildButton = new JButton();
         upperPanel.add(new PanelImageButton(0.5, 1, 0.5, 0, buildButton, "/img/trappings/build_button.png", "build"));
+        if(build) {
+            upperPanel.add(selectPanel);
+            selectPanel.setMyRapp(0.5, 1, 0.5, 0);
+        }else if(mine){
+            buildButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    TurnStatusChangeExecuter myExec = new TurnStatusChangeExecuter();
+                    try {
+                        myExec.setStatusId(ViewSubTurn.BUILD);
+                        myExec.doIt();
+                    } catch (WrongParametersException | CannotSendEventException e) {
+                        ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
+                    }
+                }
+            });
+        }
 
-        lowerPanel.add(new ImagePanel(0.5, 1, 0, 0, "/img/godPodium/Default.png"));
+        //GodImage
+        try {
+            lowerPanel.add(new ImagePanel(0.5, 1, 0, 0, "/img/godPodium/" + ViewPlayer.searchByName(playerName).getCard().getName() + ".png"));
+        }catch(Exception e){
+            lowerPanel.add(new ImagePanel(0.5, 1, 0, 0, "/img/godPodium/Default.png"));
+        }
 
-        JButton buildBlock = new JButton();
-        PanelImageButton buildBlockButtonPanel = new PanelImageButton(0.4, 0.4, 0.55, 0.05, buildBlock, "/img/trappings/build_block.png", "build Block" );
-        lowerPanel.add(buildBlockButtonPanel);
+        //BuildBlockButton
+        JButton buildBlockButton = new JButton();
+        lowerPanel.add(new PanelImageButton(0.4, 0.4, 0.55, 0.05, buildBlockButton, "/img/trappings/build_block.png", "build Block" ));
+        if(buildBlock) {
+            lowerPanel.add(selectPanel);
+            selectPanel.setMyRapp(0.4, 0.4, 0.55, 0.05);
+        }else if(mine){
+            buildBlockButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    if(build || buildDome || buildBlock) {
+                        TurnStatusChangeExecuter myExec = new TurnStatusChangeExecuter();
+                        try {
+                            myExec.setStatusId(ViewSubTurn.BUILD_BLOCK);
+                            myExec.doIt();
+                        } catch (WrongParametersException | CannotSendEventException e) {
+                            ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
+                        }
+                    }else{
+                        ViewMessage.populateAndSend("You have to go on building before this", ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
+                    }
+                }
+            });
+        }
 
-
+        //BuildDomeButton
         JButton buildDomeButton = new JButton();
-        PanelImageButton buildDomeButtonPanel = new PanelImageButton(0.4, 0.4, 0.55, 0.5, buildDomeButton, "/img/trappings/build_dome.png", "buildDome" );
-        lowerPanel.add(buildDomeButtonPanel);
+        lowerPanel.add(new PanelImageButton(0.4, 0.4, 0.55, 0.5, buildDomeButton, "/img/trappings/build_dome.png", "buildDome" ));
+        if(buildDome) {
+            lowerPanel.add(selectPanel);
+            selectPanel.setMyRapp(0.4, 0.4, 0.55, 0.5);
+        }else if(mine){
+            buildDomeButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    if(build || buildDome || buildBlock) {
+                        TurnStatusChangeExecuter myExec = new TurnStatusChangeExecuter();
+
+                        try {
+                            myExec.setStatusId(ViewSubTurn.BUILD_DOME);
+                            myExec.doIt();
+                        } catch (WrongParametersException | CannotSendEventException e) {
+                            ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
+                        }
+                    }else{
+                        ViewMessage.populateAndSend("You have to go on building before this", ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
+                    }
+                }
+            });
+        }
 
         contentPanel.add(upperPanel);
         contentPanel.add(lowerPanel);
