@@ -75,17 +75,17 @@ public class CLIChooseCardsPhase implements CLISubTurnViewer {
                 // second line
                 PrintFunction.printRepeatString(" ", STARTING_SPACE);
                 PrintFunction.printAtTheMiddle( this.checkLeftSelect(viewCard, SymbolsLevel.MIDDLE), SELECTION_SPACE );
-                System.out.printf("%d", cardNumber);
+                System.out.print(" ");
                 PrintFunction.printAtTheMiddle( godSymbols.getMiddleRepresentation(), GOD_SYMBOL_SPACE );
-                PrintFunction.printAtTheMiddle( viewCard.getName(), GOD_NAME_SPACE);
+                PrintFunction.printRepeatString(" ", GOD_NAME_SPACE);
                 PrintFunction.printAtTheMiddle( this.checkRightSelect(viewCard, SymbolsLevel.MIDDLE), SELECTION_SPACE);
                 System.out.println();
                 // third line
                 PrintFunction.printRepeatString(" ", STARTING_SPACE);
                 PrintFunction.printAtTheMiddle( this.checkLeftSelect(viewCard, SymbolsLevel.DOWN), SELECTION_SPACE );
-                System.out.print(" ");
+                System.out.printf("%d", cardNumber);
                 PrintFunction.printAtTheMiddle( godSymbols.getDownRepresentation(), GOD_SYMBOL_SPACE );
-                PrintFunction.printRepeatString(" ", GOD_NAME_SPACE);
+                PrintFunction.printAtTheMiddle( viewCard.getName(), GOD_NAME_SPACE);
                 PrintFunction.printAtTheMiddle( this.checkRightSelect(viewCard, SymbolsLevel.DOWN), SELECTION_SPACE);
                 System.out.println();
 

@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.clientSide.viewers.statusViewers;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses.CLIPlayingViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.statusClasses.GUIPlaying;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalStatusViewer;
@@ -13,7 +14,7 @@ public class PlayingViewer extends StatusViewer {
     public PlayingViewer(Map<String, Executer> executers){
 
         myExecuters = executers;
-        myCLI = null;
+        myCLI = new CLIPlayingViewer( this );
         myGUI = new GUIPlaying(this );
         myTerminal = null;
     }

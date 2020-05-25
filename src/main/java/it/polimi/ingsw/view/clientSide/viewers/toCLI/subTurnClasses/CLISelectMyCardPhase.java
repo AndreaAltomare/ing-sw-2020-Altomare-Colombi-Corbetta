@@ -5,6 +5,7 @@ import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.CardSe
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.GodSymbols;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.SymbolsLevel;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.PrintFunction;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
@@ -71,15 +72,15 @@ public class CLISelectMyCardPhase implements CLISubTurnViewer {
                 System.out.println();
                 // second line
                 PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("%d", cardNumber);
+                System.out.print(" ");
                 PrintFunction.printAtTheMiddle( godSymbols.getMiddleRepresentation(), GOD_SYMBOL_SPACE );
-                PrintFunction.printAtTheMiddle( viewCard.getName(), GOD_NAME_SPACE);
+                PrintFunction.printRepeatString(" ", GOD_NAME_SPACE);
                 System.out.println();
                 // third line
                 PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.print(" ");
+                System.out.printf("%d", cardNumber);
                 PrintFunction.printAtTheMiddle( godSymbols.getDownRepresentation(), GOD_SYMBOL_SPACE );
-                PrintFunction.printRepeatString(" ", GOD_NAME_SPACE);
+                PrintFunction.printAtTheMiddle( viewCard.getName(), GOD_NAME_SPACE);
                 System.out.println();
 
                 cardNumber++;

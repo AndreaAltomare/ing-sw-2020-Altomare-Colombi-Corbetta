@@ -95,7 +95,14 @@ public class CLIViewer extends Viewer {
                 switch ( cliSubTurnViewer.getSubTurn() ) {
                     case PLACEWORKER:
                     case OPPONENT_PLACEWORKER:
-                        if ( this.cliStatusViewer.getViewStatus() == ViewStatus.GAME_PREPARATION) {
+                        if ( this.cliStatusViewer.getViewStatus() == ViewStatus.GAME_PREPARATION ) {
+                            this.cliStatusViewer.setMyCLISubTurnViewer(cliSubTurnViewer);
+                            this.cliStatusViewer.show();
+                        }
+                        break;
+                    case SELECTWORKER:
+                    case OPPONENT_SELECTWORKER:
+                        if ( this.cliStatusViewer.getViewStatus() == ViewStatus.PLAYING ) {
                             this.cliStatusViewer.setMyCLISubTurnViewer(cliSubTurnViewer);
                             this.cliStatusViewer.show();
                         }
