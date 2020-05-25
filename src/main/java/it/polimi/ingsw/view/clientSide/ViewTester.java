@@ -34,6 +34,7 @@ public class ViewTester implements ViewSender {
     private final static boolean stopAtNewGame = false;
     private final static boolean stopAtGamePreparation = false;
     private final static boolean stopAtPlaying = false;
+    private final static boolean stopAtGameOver = false;
 
     private final static boolean invalidNickname = false;
     private final static boolean requirePlayerNumber = true;
@@ -49,7 +50,9 @@ public class ViewTester implements ViewSender {
 
     private final static boolean validPlacing = true;
 
+    private final static boolean winning = true;
     private final static int turnNumber = 10;
+    private final static int turnLoose = 3;
 
 
     //####ATTRIBUTI RAPPRESENTANTI LO STATO INTERNO DEL SERVER -O QUALCOSA DI SIMILE####
@@ -168,6 +171,20 @@ public class ViewTester implements ViewSender {
             return;
 
         playingStatus();
+
+        if(stopAtGameOver)
+            return;
+
+        String winner;
+        if(winning){
+            winner = playerName;
+        }else{
+            winner = players.get(1);
+        }
+        view.update(new PlayerWinEvent(winner, "You won !!!", "Ohcu, you lost..."));
+        waiting();
+
+        gameOverStatus();
 
     }
 
@@ -523,13 +540,22 @@ public class ViewTester implements ViewSender {
         for(int turn = 0; turn < Math.min(turnNumber, mosse.size()/2); turn ++){
             for(int i = 0; i<numberPlayers; i++){
                 actual = 2*turn + i;
+                if(actual == turnLoose){
+                    view.update(new PlayerLoseEvent(playerName, "You lost! KEK"));
+                }
                 if(i==numberPlayers-1){
-                    myTurn();
+                    if(actual< turnLoose)
+                        myTurn();
                 }else{
                     opponentTurn(mosse.get(actual));
                 }
             }
         }
+    }
+
+    public void gameOverStatus(){
+        view.update((NextStatusEvent) new NextStatusEvent("Go to gameOver"));
+        waiting();
     }
 
     //####SEND METHODS####
