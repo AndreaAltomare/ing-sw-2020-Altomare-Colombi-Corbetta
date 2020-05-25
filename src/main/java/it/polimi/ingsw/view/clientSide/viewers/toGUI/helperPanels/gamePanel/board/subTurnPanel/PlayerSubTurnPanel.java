@@ -15,7 +15,7 @@ public class PlayerSubTurnPanel extends ImagePanel {
         playerNameLabel.setForeground(Color.YELLOW);
 
         JPanel namePanel = new PanelComponent(0.5, 0.8, 0.25, 0, playerNameLabel);
-        JPanel namePanelImage = new ImagePanel(0.5, 0.2, 0.25, 0.12, "/img/trappings/god_name.png");
+        JPanel namePanelImage = new ImagePanel(0.7, 0.2, 0.15, 0.1, "/img/trappings/god_name.png");
         namePanelImage.add(namePanel);
         namePanel.setOpaque(false);
         add(namePanelImage);
