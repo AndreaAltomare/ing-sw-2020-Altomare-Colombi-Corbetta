@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses;
 
 import it.polimi.ingsw.model.PlaceableType;
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewCell;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewWorker;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
@@ -113,9 +114,29 @@ public class BuildBlockExecuter extends Executer {
      */
     public EventObject getMyEvent()throws CannotSendEventException {
         if(x<0||y<0) throw new CannotSendEventException("Cannot try to build a block without having selected a cell.");
-        if(placeable == null) throw new CannotSendEventException("Cannot try to build a block without knowing which kind of block you want to build");
-        if(workerId == null) throw new CannotSendEventException("Cannot build a block without knowing which worker is trying to build it");
+        if(workerId == null){
+            workerId = ViewWorker.getSelected().toString();
+            if(workerId == null) throw new CannotSendEventException("Cannot build a block without knowing which worker is trying to build it");
+        }
+        if(placeable == null){
+            ViewCell cell;
+            try {
+                cell = ViewBoard.getBoard().getCellAt(x, y);
+            } catch (NotFoundException e) {
+                throw new CannotSendEventException("Cannot try to build a block without having selected a cell.");
+            }
+            if(cell.getLevel()>=ViewCell.getMaxLevel()) {
+                placeable = "DOME";
+            }else{
+                placeable = "BLOCK";
+            }
+        }
         return new BuildBlockEvent(workerId, x, y, (placeable.equals("BLOCK")? PlaceableType.BLOCK: PlaceableType.DOME));
+    }
+
+    public void send(EventObject event) throws NullPointerException{
+        if(event == null) throw new NullPointerException();
+        getSender().send((BuildBlockEvent)event);
     }
 
 }

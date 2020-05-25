@@ -327,5 +327,9 @@ public class ViewCell extends ViewObject {
         this.worker = null;
     }
 
+    public static int getMaxLevel(){
+        return 3;
+    }
+
 
 }

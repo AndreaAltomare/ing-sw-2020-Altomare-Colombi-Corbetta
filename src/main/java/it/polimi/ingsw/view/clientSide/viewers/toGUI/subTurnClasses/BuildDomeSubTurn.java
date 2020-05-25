@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.clientSide.viewers.toGUI.subTurnClasses;
 
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.boardSubTurn.BoardSubTurn;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.boardSubTurn.specific.BuildDomeBoardSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.boardSubTurn.specific.ForbiddenBoardSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.subTurnPanel.BuildBlockSubTurnPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.subTurnPanel.BuildDomeSubTurnPanel;
@@ -21,7 +22,8 @@ public class BuildDomeSubTurn extends GUISubTurnViewer {
     }
 
     @Override
-    public BoardSubTurn getBoardSubTurn() {
-        return new ForbiddenBoardSubTurn(this);
+    public BoardSubTurn getBoardSubTurn(){
+
+        return new BuildDomeBoardSubTurn(this);
     }
 }

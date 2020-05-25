@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.clientSide.viewers.toGUI.subTurnClasses;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.boardSubTurn.BoardSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.boardSubTurn.specific.ForbiddenBoardSubTurn;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.boardSubTurn.specific.MoveBoardSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.subTurnPanel.MoveSubTurnPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.subTurnPanel.NoActionSubTurnPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
@@ -22,6 +23,6 @@ public class MoveSubTurn extends GUISubTurnViewer {
 
     @Override
     public BoardSubTurn getBoardSubTurn() {
-        return new ForbiddenBoardSubTurn(this);
+        return new MoveBoardSubTurn(this);
     }
 }

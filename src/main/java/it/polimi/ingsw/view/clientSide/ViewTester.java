@@ -14,9 +14,7 @@ import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
-import it.polimi.ingsw.view.events.PlaceWorkerEvent;
-import it.polimi.ingsw.view.events.SetNicknameEvent;
-import it.polimi.ingsw.view.events.TurnStatusChangeEvent;
+import it.polimi.ingsw.view.events.*;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
 
@@ -25,7 +23,7 @@ import java.util.*;
 public class ViewTester implements ViewSender {
 
 
-    private final static boolean addWait = true;
+    private final static boolean addWait = false;
     private final static boolean sendTestMessages = false;
 
     private final static boolean invalidNickname = false;
@@ -483,6 +481,25 @@ public class ViewTester implements ViewSender {
     public void send(TurnStatusChangeEvent event){
         view.update(new TurnStatusChangedEvent(ViewNickname.getMyNickname(), event.getTurnStatus(), true));
         System.out.println("Recived: "  + event.getTurnStatus());
+        myNotify();
+    }
+
+    public void send(SelectWorkerEvent event){
+        view.update(new WorkerSelectedEvent(ViewNickname.getMyNickname(), event.getWorkerId(), true));
+        myNotify();
+    }
+
+    public void send(MoveWorkerEvent event){
+        try {
+            view.update(new WorkerMovedEvent(event.getWorkerId(), ((ViewWorker)ViewWorker.search(event.getWorkerId())).getPosition().getX(), ((ViewWorker)ViewWorker.search(event.getWorkerId())).getPosition().getY(), event.getX(), event.getY(), MoveOutcomeType.EXECUTED));
+        } catch (NotFoundException | WrongViewObjectException e) {
+            e.printStackTrace();
+        }
+        myNotify();
+    }
+
+    public void send(BuildBlockEvent event){
+        view.update(new BlockBuiltEvent(event.getX(), event.getY(), event.getBlockType(), MoveOutcomeType.EXECUTED));
         myNotify();
     }
 }
