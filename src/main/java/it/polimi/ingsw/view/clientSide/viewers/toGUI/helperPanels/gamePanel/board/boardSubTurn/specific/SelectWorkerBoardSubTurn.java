@@ -1,6 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.boardSubTurn.specific;
 
-import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.PlaceWorkerExecuter;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SelectWorkerExecuter;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.boardSubTurn.BoardSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
@@ -9,24 +9,24 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import java.awt.*;
 
-public class PlaceWorkerBoardSubTurn extends BoardSubTurn {
+public class SelectWorkerBoardSubTurn extends BoardSubTurn {
 
-    public PlaceWorkerBoardSubTurn(GUISubTurnViewer guiSubTurnViewer)  {
+    public SelectWorkerBoardSubTurn(GUISubTurnViewer guiSubTurnViewer)  {
         super(guiSubTurnViewer);
     }
 
     @Override
     public Cursor getOnEnterCursor(){
         Toolkit toolkit = Toolkit.getDefaultToolkit();
-        Image image = toolkit.getImage(getClass().getResource("/img/cursor/place.gif"));
+        Image image = toolkit.getImage(getClass().getResource("/img/cursor/select.gif"));
         Point hotspot = new Point(16,16);
-        return toolkit.createCustomCursor(image, hotspot, "placeWorker");
+        return toolkit.createCustomCursor(image, hotspot, "selectWorker");
     }
 
     @Override
     public void onCellSelected(int x, int y){
         super.onCellSelected(x, y);
-        PlaceWorkerExecuter myExecuter = (PlaceWorkerExecuter)guiSubTurnViewer.getMyExecuter();
+        SelectWorkerExecuter myExecuter = (SelectWorkerExecuter)guiSubTurnViewer.getMyExecuter();
         try {
             myExecuter.setCell(x, y);
             myExecuter.doIt();
