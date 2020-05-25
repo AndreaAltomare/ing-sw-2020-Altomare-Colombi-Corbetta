@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetNicknameExecuter;
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.LoginViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.PrintFunction;
@@ -10,6 +11,8 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 import java.util.Scanner;
 
 public class CLILoginViewer extends CLIStatusViewer {
+
+    private final ViewStatus viewStatus = ViewStatus.LOGIN;
 
     private LoginViewer loginViewer;
 
@@ -143,6 +146,11 @@ public class CLILoginViewer extends CLIStatusViewer {
         System.out.println();
 
         return approvedResponse;
+    }
+
+    @Override
+    public ViewStatus getViewStatus() {
+        return viewStatus;
     }
 
     /**

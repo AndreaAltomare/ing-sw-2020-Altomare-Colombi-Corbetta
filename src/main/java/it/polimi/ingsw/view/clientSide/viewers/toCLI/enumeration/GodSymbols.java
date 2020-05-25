@@ -6,47 +6,47 @@ public enum GodSymbols {
 
     // Each godSymbol have and must have its up, middle and down representation at the same length
 
-    APOLLO(     "apollo",
+    APOLLO(     "Apollo",
                 " )_______( ",
                 "(   |||   )",
                 " \\  |||  / "),
 
-    ARTEMIS(    "artemis",
+    ARTEMIS(    "Artemis",
                 "   |\\   ",
                 ">>-|-|->",
                 "   |/   "),
 
-    ATHENA(     "athena",
+    ATHENA(     "Athena",
                 " /      \\ ",
                 "|(o)/\\(o)|",
                 " \\  \\/  / "),
 
-    ATLAS(      "atlas",
+    ATLAS(      "Atlas",
                 " _ ",
                 "(_)",
                 "\\o/"),
 
-    DEMETER(    "demeter",
+    DEMETER(    "Demeter",
                 "V",
                 "V",
                 "|"),
 
-    HEPHAESTUS( "hephaestus",
+    HEPHAESTUS( "Hephaestus",
                 " ___ ",
                 "|___|",
                 "  |  "),
 
-    MINOTAUR(   "minotaur",
+    MINOTAUR(   "Minotaur",
                 "     ",
                 "|___|",
                 " (_) "),
 
-    PAN(        "pan",
+    PAN(        "Pan",
                 "     ",
                 "@___@",
                 " (_) "),
 
-    PROMETHEUS( "prometheus",
+    PROMETHEUS( "Prometheus",
                 "    ",
                 " )\\ ",
                 "(())");

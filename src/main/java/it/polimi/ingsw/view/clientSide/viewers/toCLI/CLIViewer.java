@@ -1,11 +1,16 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
+import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.Symbols;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.CLIChooseCardsPhase;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.CLISelectMyCardPhase;
 import it.polimi.ingsw.view.exceptions.EmptyQueueException;
 
 import java.util.HashMap;
@@ -66,23 +71,61 @@ public class CLIViewer extends Viewer {
     }
 
     public void prepareStatusViewer(ViewerQueuedEvent queuedEvent) {
-        StatusViewer statusViewer = ((StatusViewer)queuedEvent.getPayload());
+        StatusViewer statusViewer = (StatusViewer) queuedEvent.getPayload();
         CLIStatusViewer cliStatusViewer;
 
         if ( statusViewer != null) {
             cliStatusViewer = statusViewer.toCLI();
             if ( cliStatusViewer != null ) {
                 this.cliStatusViewer = cliStatusViewer;
-                //todo:Valutare se è necessario attribuire a CliStatusViewer il CliViewer
-                cliStatusViewer.setMyCLIViewer( this );
-                cliStatusViewer.show();
+                this.cliStatusViewer.setMyCLIViewer( this );
+                this.cliStatusViewer.show();
             }
         }
     }
 
-    @Override
-    public void setSubTurnViewer(SubTurnViewer subTurnViewer) {
 
+    public void prepareSubTurnViewer(ViewerQueuedEvent queuedEvent) {
+        SubTurnViewer subTurnViewer = (SubTurnViewer) queuedEvent.getPayload();
+        CLISubTurnViewer cliSubTurnViewer;
+
+        if ( subTurnViewer != null) {
+            cliSubTurnViewer = subTurnViewer.toCLI();
+            if ( cliSubTurnViewer != null) {
+                switch ( cliSubTurnViewer.getSubTurn() ) {
+                    case PLACEWORKER:
+                    case OPPONENT_PLACEWORKER:
+                        if ( this.cliStatusViewer.getViewStatus() == ViewStatus.GAME_PREPARATION) {
+                            this.cliStatusViewer.setMyCLISubTurnViewer(cliSubTurnViewer);
+                            this.cliStatusViewer.show();
+                        }
+                        break;
+                    default:
+                        ;
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets and shows the correct CLISubTurnViewer between ChooseCardsPhase and SelectMyCardsPhase using the length of
+     * cardSelection's List in queuedEvent's payload when viewStatus == GAME_PREPARATION, or it doesn't anything for other cases
+     * @param queuedEvent Event to read ( after check that his Type == CARDSELECTION )
+     */
+    public void prepareCardsPhase(ViewerQueuedEvent queuedEvent) {
+        CardSelection cardSelection;
+
+        if(cliStatusViewer.getViewStatus() == ViewStatus.GAME_PREPARATION) {
+            cardSelection = (CardSelection) queuedEvent.getPayload();
+            if ( cardSelection != null) {
+                if (cardSelection.getCardList().size() > ViewPlayer.getNumberOfPlayers()) {
+                    this.cliStatusViewer.setMyCLISubTurnViewer( new CLIChooseCardsPhase(cardSelection) );
+                } else {
+                    this.cliStatusViewer.setMyCLISubTurnViewer( new CLISelectMyCardPhase(cardSelection) );
+                }
+                this.cliStatusViewer.show();
+            }
+        }
     }
 
     @Override
@@ -99,11 +142,15 @@ public class CLIViewer extends Viewer {
                     case EXIT:
                         end = true;
                         break;
-
                     case SET_STATUS:
                         this.prepareStatusViewer(queuedEvent);
                         break;
-
+                    case SET_SUBTURN:
+                        this.prepareSubTurnViewer(queuedEvent);
+                        break;
+                    case CARDSELECTION:
+                        this.prepareCardsPhase(queuedEvent);
+                        break;
                     default:
                         ;
                 }
@@ -112,6 +159,8 @@ public class CLIViewer extends Viewer {
                 ;
             }
         }
+
+        this.exit();
 
 
     }

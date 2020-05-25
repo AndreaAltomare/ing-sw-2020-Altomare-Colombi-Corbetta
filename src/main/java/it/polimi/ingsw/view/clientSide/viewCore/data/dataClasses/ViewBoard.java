@@ -196,9 +196,11 @@ public class ViewBoard extends ViewObject {
 
 
     /**
-     * Method that will return a (Object) that will represent the ViewObject on the CLI.
+     * Method that will print the board and Players' caption
      *
+     * @return a String == null
      */
+    @Override
     public String toCLI(){
         final int CELL_LENGTH = 17; // must be odd
         final int CELL_HIGH = 7;
@@ -243,7 +245,7 @@ public class ViewBoard extends ViewObject {
             PrintFunction.printRepeatString(" ", CELL_LENGTH);
             for ( int boardColumn = 0; boardColumn < Y_DIM; boardColumn++) {
                 System.out.print("# ");
-                PrintFunction.printRepeatString("# ", (CELL_LENGTH / 2) + 1);
+                PrintFunction.printRepeatString("# ", CELL_LENGTH / 2);
             }
             System.out.println("#");
 
@@ -268,7 +270,7 @@ public class ViewBoard extends ViewObject {
         PrintFunction.printRepeatString(" ", CELL_LENGTH);
         for ( int boardColumn = 0; boardColumn < Y_DIM; boardColumn++) {
             System.out.print("# ");
-            PrintFunction.printRepeatString("# ", (CELL_LENGTH / 2) + 1);
+            PrintFunction.printRepeatString("# ", CELL_LENGTH / 2);
         }
         System.out.println("#");
 

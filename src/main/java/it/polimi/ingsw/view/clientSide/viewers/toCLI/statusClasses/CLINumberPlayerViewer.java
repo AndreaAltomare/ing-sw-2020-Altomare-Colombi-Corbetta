@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetPlayerNumberExecuter;
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.NumberPlayerViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.PrintFunction;
@@ -11,6 +12,8 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class CLINumberPlayerViewer extends CLIStatusViewer {
+
+    private final ViewStatus viewStatus = ViewStatus.NUMBER_PLAYER;
 
     private NumberPlayerViewer numberPlayerViewer;
 
@@ -166,6 +169,11 @@ public class CLINumberPlayerViewer extends CLIStatusViewer {
 
 
         return approvedResponse;
+    }
+
+    @Override
+    public ViewStatus getViewStatus() {
+        return viewStatus;
     }
 
     /**
