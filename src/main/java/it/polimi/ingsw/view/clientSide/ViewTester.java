@@ -26,7 +26,7 @@ public class ViewTester implements ViewSender {
     //#####MODIFICABILI PER TESTARE DIVERSE CONFIGURAZIONI####
 
     //attributo per far eseguire le waiting
-    private final static boolean addWait = false;
+    private final static boolean addWait = true;
     private final static boolean normalTurn = true;
     private final static boolean sendTestMessages = false;
 
@@ -42,7 +42,7 @@ public class ViewTester implements ViewSender {
 
 
     private final static boolean setDefaultChallenger = true;
-    private final static boolean isFirstCardChooser = true;
+    private final static boolean isFirstCardChooser = false;
     private final static boolean isSecondCardChooser = false;
 
     private final static boolean isFirstPlacer = false;
@@ -53,7 +53,9 @@ public class ViewTester implements ViewSender {
 
     private final static boolean winning = true;
     private final static int turnNumber = 10;
-    private final static int turnLoose = 1;
+    private final static int turnLoose = 100;
+
+    private final static long waitingTime = 2500;
 
 
     //####ATTRIBUTI RAPPRESENTANTI LO STATO INTERNO DEL SERVER -O QUALCOSA DI SIMILE####
@@ -250,7 +252,7 @@ public class ViewTester implements ViewSender {
         if(addWait){
             synchronized (waitingObj) {
                 try {
-                    waitingObj.wait(2500);
+                    waitingObj.wait(waitingTime);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -473,12 +475,12 @@ public class ViewTester implements ViewSender {
             if(numberPlayers == 2){
                 view.update(new RequirePlaceWorkersEvent(players.get(1)));
                 waiting();
-                view.update(new WorkerPlacedEvent("[Worker]\t2", 0, 1, true));
+                view.update(new WorkerPlacedEvent("[Worker]\t2", 4, 4, true));
                 workers[0][0] = "[Worker]\t2";
             }else{
                 view.update(new RequirePlaceWorkersEvent(players.get(2)));
                 waiting();
-                view.update(new WorkerPlacedEvent("[Worker]\t2", 0, 1, true));
+                view.update(new WorkerPlacedEvent("[Worker]\t2", 4, 4, true));
                 workers[1][0] = "[Worker]\t2";
             }
         }
@@ -490,12 +492,12 @@ public class ViewTester implements ViewSender {
                 if(isFirstPlacer){
                     view.update(new RequirePlaceWorkersEvent(players.get(1)));
                     waiting();
-                    view.update(new WorkerPlacedEvent("[Worker]\t3", 0, 2, true));
+                    view.update(new WorkerPlacedEvent("[Worker]\t3", 0, 4, true));
                     workers[0][0] = "[Worker]\t3";
                 }else{
                     view.update(new RequirePlaceWorkersEvent(players.get(2)));
                     waiting();
-                    view.update(new WorkerPlacedEvent("[Worker]\t3", 0, 2, true));
+                    view.update(new WorkerPlacedEvent("[Worker]\t3", 0, 4, true));
                     workers[1][0] = "[Worker]\t3";
                 }
             }
@@ -510,7 +512,7 @@ public class ViewTester implements ViewSender {
         }else{
             view.update(new RequirePlaceWorkersEvent(players.get(1)));
             waiting();
-            view.update(new WorkerPlacedEvent("[Worker]\t4", 1, 0, true));
+            view.update(new WorkerPlacedEvent("[Worker]\t4", 4, 0, true));
             workers[0][1] = "[Worker]\t4";
         }
 
@@ -539,12 +541,12 @@ public class ViewTester implements ViewSender {
                 if(isFirstPlacer){
                     view.update(new RequirePlaceWorkersEvent(players.get(1)));
                     waiting();
-                    view.update(new WorkerPlacedEvent("[Worker]\t6", 1, 2, true));
+                    view.update(new WorkerPlacedEvent("[Worker]\t6", 3, 3, true));
                     workers[0][1] = "[Worker]\t6";
                 }else{
                     view.update(new RequirePlaceWorkersEvent(players.get(2)));
                     waiting();
-                    view.update(new WorkerPlacedEvent("[Worker]\t6", 1, 2, true));
+                    view.update(new WorkerPlacedEvent("[Worker]\t6", 3, 3, true));
                     workers[1][1] = "[Worker]\t6";
                 }
             }
@@ -673,17 +675,17 @@ public class ViewTester implements ViewSender {
         mosse = new ArrayList<>(32);
 
         mosse.add(new Mossa(0,0, 0, 1, 0, 0,  PlaceableType.BLOCK));
-        mosse.add(new Mossa(1,0, 0, 1, 0, 1,  PlaceableType.BLOCK));
+        mosse.add(new Mossa(1,0, 4, 4, 4, 3,  PlaceableType.BLOCK));
         mosse.add(new Mossa(0,0, 0, 0, 0, 1,  PlaceableType.BLOCK));
-        mosse.add(new Mossa(1,0, 0, 1, 0, 1,  PlaceableType.BLOCK));
+        mosse.add(new Mossa(1,1, 4, 3, 3, 3,  PlaceableType.BLOCK));
         mosse.add(new Mossa(0,0, 0, 1, 0, 0,  PlaceableType.BLOCK));
-        mosse.add(new Mossa(1,0, 0, 1, 0, 1,  PlaceableType.BLOCK));
+        mosse.add(new Mossa(1,0, 3, 3, 4, 4,  PlaceableType.BLOCK));
         mosse.add(new Mossa(0,0, 0, 0, 0, 1,  PlaceableType.BLOCK));
-        mosse.add(new Mossa(1,0, 0, 1, 0, 1,  PlaceableType.BLOCK));
+        mosse.add(new Mossa(1,1, 4, 4, 4, 3,  PlaceableType.DOME));
         mosse.add(new Mossa(0,0, 0, 1, 0, 0,  PlaceableType.BLOCK));
-        mosse.add(new Mossa(1,0, 0, 1, 0, 1,  PlaceableType.BLOCK));
+        mosse.add(new Mossa(1,0, 3, 4, 4, 3,  PlaceableType.BLOCK));
         mosse.add(new Mossa(0,0, 0, 0, 0, 1,  PlaceableType.BLOCK));
-        mosse.add(new Mossa(1,0, 0, 1, 0, 1,  PlaceableType.BLOCK));
+        mosse.add(new Mossa(1,1, 4, 4, 4, 4,  PlaceableType.BLOCK));
 
     }
 

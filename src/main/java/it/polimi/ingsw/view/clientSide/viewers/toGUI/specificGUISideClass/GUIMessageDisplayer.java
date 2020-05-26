@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewers.toGUI.specificGUISideClass;
 
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.elements.PanelComponent;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.elements.PanelImageButton;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.BackgroundPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.SubPanel;
@@ -17,13 +18,14 @@ public class GUIMessageDisplayer {
         JFrame errorPopup = new JFrame();
 
         BackgroundPanel backPanel = new BackgroundPanel("/img/background/background_error.png");
-        JPanel textPanel = new SubPanel(0.39, 0.2344, 0.29, 0.4);
-        textPanel.setOpaque(false);
-        JLabel label = new JLabel();
+        //JPanel textPanel = new SubPanel(0.39, 0.2344, 0.29, 0.4);
+        JLabel label = new JLabel("");
         label.setFont(new Font("Serif", Font.BOLD,15));
         label.setForeground(Color.RED);
-        label.setText("<html>" + message + "</html>");
-        textPanel.add(label);
+        label.setText("<html>"+ message +"</html>");
+        JPanel textPanel = new PanelComponent(0.39, 0.2344, 0.29, 0.3, label);
+        textPanel.setOpaque(false);
+        //textPanel.add(label);
         backPanel.add(textPanel);
 
         JButton closeButton = new JButton();

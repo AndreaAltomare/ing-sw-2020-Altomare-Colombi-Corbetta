@@ -306,10 +306,14 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
         if (turnStatusChange.success()){
 
+            if(!turnStatusChange.getPlayerNickname().equals(ViewSubTurn.getActual().getPlayer())){
+                ViewBoard.getBoard().setSelectedCell(null);
+                ViewWorker.selectWorker((ViewWorker) null);
+            }
+
             //Checks if it's a change of status
             if(!turnStatusChange.getPlayerNickname().equals(ViewSubTurn.getActual().getPlayer())){
                 ViewSubTurn.setSubTurn(ViewSubTurn.SELECTWORKER, turnStatusChange.getPlayerNickname());
-                ViewBoard.getBoard().setSelectedCell(null);
             }else{
                 //Else sets the turnStatus
                 ViewSubTurn.set(turnStatusChange.getState().toString(), turnStatusChange.getPlayerNickname());
