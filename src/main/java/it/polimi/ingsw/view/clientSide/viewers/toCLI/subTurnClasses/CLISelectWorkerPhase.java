@@ -16,7 +16,7 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-public class CLISelectWorkerPhase implements CLISubTurnViewer {
+public class CLISelectWorkerPhase extends CLISubTurnViewer {
 
     private SelectWorkerViewer selectWorkerViewer;
 
@@ -42,15 +42,15 @@ public class CLISelectWorkerPhase implements CLISubTurnViewer {
 
             System.out.println();
             PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("Please, select a command");
+            System.out.println("Please, select a command:");
             PrintFunction.printRepeatString(" ", STARTING_SPACE);
             System.out.println("1: Print all gods' details");
             PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("1: Select worker");
+            System.out.println("2: Select worker");
 
             System.out.println();
             PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println(">>");
+            System.out.print(">>");
             try {
                 actionSelected = new Scanner(System.in).nextInt();
                 switch ( actionSelected ) {

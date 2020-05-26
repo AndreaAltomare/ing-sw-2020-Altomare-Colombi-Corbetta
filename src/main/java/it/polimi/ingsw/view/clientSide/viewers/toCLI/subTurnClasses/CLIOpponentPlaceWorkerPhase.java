@@ -7,7 +7,7 @@ import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.PlaceWorkerViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.PrintFunction;
 
-public class CLIOpponentPlaceWorkerPhase implements CLISubTurnViewer {
+public class CLIOpponentPlaceWorkerPhase extends CLISubTurnViewer {
     private OpponentPlaceWorkerViewer opponentPlaceWorkerViewer;
 
     private final int STARTING_SPACE = 7;

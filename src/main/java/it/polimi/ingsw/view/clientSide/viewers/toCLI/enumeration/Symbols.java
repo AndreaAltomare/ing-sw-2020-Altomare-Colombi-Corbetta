@@ -10,7 +10,7 @@ public enum Symbols {
                 " |\\",
                 "/ \\"),
 
-    WORKER_3(   "\\O/ ",
+    WORKER_3(   "\\O/",
                 " | ",
                 "/ \\"),
 

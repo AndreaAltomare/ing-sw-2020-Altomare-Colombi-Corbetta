@@ -5,12 +5,11 @@ import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewCard;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.OpponentSelectWorkerViewer;
-import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.SelectWorkerViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.PrintFunction;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 
-public class CLIOpponentSelectWorkerPhase implements CLISubTurnViewer {
+public class CLIOpponentSelectWorkerPhase extends CLISubTurnViewer {
 
     private OpponentSelectWorkerViewer opponentSelectWorkerViewer;
 
@@ -61,7 +60,7 @@ public class CLIOpponentSelectWorkerPhase implements CLISubTurnViewer {
         System.out.println();
         System.out.println();
         PrintFunction.printRepeatString(" ", STARTING_SPACE);
-        System.out.println("A player is select his worker. please wait");
+        System.out.println("A player is selecting his worker, please wait");
         //todo: maybe add a little animation like WaitingViewer
 
     }

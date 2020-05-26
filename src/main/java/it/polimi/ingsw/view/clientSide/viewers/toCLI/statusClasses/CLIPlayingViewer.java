@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.PlayingViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 
 public class CLIPlayingViewer extends CLIStatusViewer {
 
@@ -42,7 +43,7 @@ public class CLIPlayingViewer extends CLIStatusViewer {
     /**
      * Sets build == move only if move == true
      */
-    public void setBuildTrue() {
+    public void setBuildAfterMoveTrue() {
         if ( this.move ) {
             build = true;
         }
@@ -54,6 +55,16 @@ public class CLIPlayingViewer extends CLIStatusViewer {
     public void resetValue() {
         this.move = false;
         this.build = false;
+    }
+
+    /**
+     * Uses the super same method and then sets myCLISubTurnViewer's myCLIStatusViewer with itself
+     * @param myCLISubTurnViewer
+     */
+    @Override
+    public void setMyCLISubTurnViewer(CLISubTurnViewer myCLISubTurnViewer) {
+        super.setMyCLISubTurnViewer( myCLISubTurnViewer );
+        myCLISubTurnViewer.setMyCLIStatusViewer( this );
     }
 
     @Override

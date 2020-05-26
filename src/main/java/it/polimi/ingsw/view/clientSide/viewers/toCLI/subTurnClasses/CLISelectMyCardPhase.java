@@ -5,7 +5,6 @@ import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.CardSe
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.GodSymbols;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.SymbolsLevel;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.PrintFunction;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
@@ -16,9 +15,9 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 //todo: rivedere intera classe per sistemare uso degli executer
-public class CLISelectMyCardPhase implements CLISubTurnViewer {
+public class CLISelectMyCardPhase extends CLISubTurnViewer {
 
-    private final ViewSubTurn viewSubTurn = ViewSubTurn.SELECTCARD;
+    private ViewSubTurn viewSubTurn = ViewSubTurn.SELECTCARD;
     private CardSelectionExecuter cardSelectionExecuter = new CardSelectionExecuter();
     private CardSelection cardSelection;
 
@@ -138,7 +137,7 @@ public class CLISelectMyCardPhase implements CLISubTurnViewer {
         try {
             // show card
             System.out.println();
-            seeCard = cardSelection.getCardList().get(godCardNumber);
+            seeCard = cardSelection.getCardList().get(godCardNumber - 1);
             do {
                 //todo:maybe add god's symbol
                 PrintFunction.printRepeatString(" ", STARTING_SPACE);
@@ -210,6 +209,7 @@ public class CLISelectMyCardPhase implements CLISubTurnViewer {
      */
     private void showWaitMessage() {
         System.out.println();
+        PrintFunction.printRepeatString(" ", STARTING_SPACE);
         System.out.println("A player is choosing his card, please wait");
         System.out.println();
         //todo: maybe to do an little animation like in CLIWaitingStatus
@@ -220,7 +220,7 @@ public class CLISelectMyCardPhase implements CLISubTurnViewer {
         ViewCard selectedCard;
         System.out.println();
         System.out.println();
-        if ( viewSubTurn.isMyTurn() ) {
+        if ( true ) {//if ( viewSubTurn.isMyTurn() ) { todo:check it
             selectedCard = this.showSelectInterface();
             try {
                 cardSelectionExecuter.setNameCard(selectedCard);

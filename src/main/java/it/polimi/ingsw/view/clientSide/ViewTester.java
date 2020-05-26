@@ -13,6 +13,7 @@ import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ViewSender;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
 import it.polimi.ingsw.view.events.*;
 import it.polimi.ingsw.view.exceptions.NotFoundException;

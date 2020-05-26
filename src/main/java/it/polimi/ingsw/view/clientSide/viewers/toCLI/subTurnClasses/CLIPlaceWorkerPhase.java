@@ -12,7 +12,7 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class CLIPlaceWorkerPhase implements CLISubTurnViewer {
+public class CLIPlaceWorkerPhase extends CLISubTurnViewer {
 
     private PlaceWorkerViewer placeWorkerViewer;
 
@@ -86,11 +86,19 @@ public class CLIPlaceWorkerPhase implements CLISubTurnViewer {
     @Override
     public void show() {
         int placedNumber = 0;
-        int maxWorkers = 2; //todo: may use Player to know the max number of Worker for each pLayer
+        int maxWorkers = 1; // 2  //todo: may use Player to know the max number of Worker for each pLayer
 
         while ( placedNumber < maxWorkers) {
             System.out.println();
             System.out.println();
+
+/*            //todo: valutarlo
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+*/
             ViewBoard.getBoard().toCLI();
 
             if ( this.placeWorkerRequest( maxWorkers - placedNumber) ) {
