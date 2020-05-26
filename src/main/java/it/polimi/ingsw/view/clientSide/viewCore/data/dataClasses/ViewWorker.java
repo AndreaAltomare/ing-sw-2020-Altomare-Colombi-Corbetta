@@ -260,10 +260,16 @@ public class ViewWorker extends ViewObject {
      * @return (representation of Object for the GI)
      */
     public ImagePanel toGUI(){
+        try {
+            return new ImagePanel(0.8, 0.8, 0.1 ,0.1 , "/img/godPodium/" + getPlayer().getCard().getName() + ".png");
+        } catch (Exception e) {
+            return new ImagePanel(0.8, 0.8, 0.1 ,0.1 ,  "/img/godPodium/Default.png");
+        }
+/*
         if(ViewNickname.getMyNickname().equals(getPlayer().getName()))
             return new ImagePanel(1, 1, 0 ,0 , "/img/board/cells/my_worker.png");
         else
-            return new ImagePanel(1, 1, 0 ,0 , "/img/board/cells/adv_worker.png");
+            return new ImagePanel(1, 1, 0 ,0 , "/img/board/cells/adv_worker.png");*/
     }
 
     /**

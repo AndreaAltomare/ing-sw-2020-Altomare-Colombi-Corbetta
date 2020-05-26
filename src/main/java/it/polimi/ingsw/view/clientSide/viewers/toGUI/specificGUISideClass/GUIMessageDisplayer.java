@@ -14,20 +14,21 @@ public class GUIMessageDisplayer {
     public static void displayErrorMessage(String message, ViewMessage.MessageType type){
         String buttonImage;
 
-        JFrame errorPopup = new JFrame("ERROR");
+        JFrame errorPopup = new JFrame();
 
-        JPanel backPanel = new BackgroundPanel("/img/background/background_error.png");
+        BackgroundPanel backPanel = new BackgroundPanel("/img/background/background_error.png");
         JPanel textPanel = new SubPanel(0.39, 0.2344, 0.29, 0.4);
         textPanel.setOpaque(false);
         JLabel label = new JLabel();
-        label.setFont(new Font("Serif", Font.BOLD,10));
+        label.setFont(new Font("Serif", Font.BOLD,15));
         label.setForeground(Color.RED);
-        label.setText(message);
+        label.setText("<html>" + message + "</html>");
         textPanel.add(label);
         backPanel.add(textPanel);
 
         JButton closeButton = new JButton();
         if(type == ViewMessage.MessageType.FATAL_ERROR_MESSAGE){
+            errorPopup.setTitle("FATAL ERROR");
             errorPopup.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             buttonImage = "/img/trappings/close_button.png";
             closeButton.addActionListener(new ActionListener() {
@@ -37,6 +38,7 @@ public class GUIMessageDisplayer {
                 }
             });
         }else if((type == ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE)||(type == ViewMessage.MessageType.FROM_SERVER_ERROR)){
+            errorPopup.setTitle("ERROR");
             errorPopup.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             buttonImage = "/img/trappings/redButton.png";
             closeButton.addActionListener(new ActionListener() {
@@ -45,7 +47,32 @@ public class GUIMessageDisplayer {
                     errorPopup.dispose();
                 }
             });
+        }else if(type == ViewMessage.MessageType.WIN_MESSAGE){
+            errorPopup.setTitle("VICTORY");
+            label.setForeground(Color.GREEN);
+            backPanel.setBackgroundImg("/img/background/background_win.png");
+            errorPopup.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            buttonImage = "/img/trappings/blueButton.png";
+            closeButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    errorPopup.dispose();
+                }
+            });
+        }else if(type == ViewMessage.MessageType.LOOSE_MESSAGE){
+            errorPopup.setTitle("LOOSE");
+            label.setForeground(Color.GREEN);
+            backPanel.setBackgroundImg("/img/background/background_loose.png");
+            errorPopup.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            buttonImage = "/img/trappings/blueButton.png";
+            closeButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    errorPopup.dispose();
+                }
+            });
         }else{
+            errorPopup.setTitle("Message");
             errorPopup.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             buttonImage = "/img/trappings/blueButton.png";
             closeButton.addActionListener(new ActionListener() {

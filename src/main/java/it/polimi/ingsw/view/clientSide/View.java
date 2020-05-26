@@ -296,8 +296,6 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     }
 
 
-    //##################SOON TESTED####################
-
     /**
      * Method that changes the turn status.
      *
@@ -397,6 +395,36 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
             ViewMessage.populateAndSend("Wrong block recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);*/
     }
 
+    /**
+     * Method that signals that a player wins.
+     *
+     * @param playerWin (PlayerWinEvent from the server)
+     */
+    @Override
+    public void update(PlayerWinEvent playerWin) {
+        if (ViewNickname.getMyNickname().equals(playerWin.getPlayerNickname())) {
+            ViewMessage.populateAndSend(playerWin.getWinnerMessage(), ViewMessage.MessageType.WIN_MESSAGE);
+        } else {
+            ViewMessage.populateAndSend(playerWin.getLosersMessage(), ViewMessage.MessageType.LOOSE_MESSAGE);
+        }
+    }
+
+    /**
+     * Method that signals that the player has lost.
+     *
+     * @param playerLose (PlayerLoseEvent from the server)
+     */
+    @Override
+    public void update(PlayerLoseEvent playerLose) {
+        if (ViewNickname.getMyNickname().equals(playerLose.getPlayerNickname())) {
+            ViewMessage.populateAndSend(playerLose.getMessage(), ViewMessage.MessageType.LOOSE_MESSAGE);
+        }
+    }
+
+
+    //##################SOON TESTED####################
+
+
     @Override
     public void update(BlockRemovedEvent blockRemoved) {
         try {
@@ -448,31 +476,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         // TODO: close connection, and gracefully close the whole application
     }
 
-    /**
-     * Method that signals that a player wins.
-     *
-     * @param playerWin (PlayerWinEvent from the server)
-     */
-    @Override
-    public void update(PlayerWinEvent playerWin) {
-        if (ViewNickname.getMyNickname().equals(playerWin.getPlayerNickname())) {
-            ViewMessage.populateAndSend(playerWin.getWinnerMessage(), ViewMessage.MessageType.WIN_MESSAGE);
-        } else {
-            ViewMessage.populateAndSend(playerWin.getLosersMessage(), ViewMessage.MessageType.LOOSE_MESSAGE);
-        }
-    }
 
-    /**
-     * Method that signals that the player has lost.
-     *
-     * @param playerLose (PlayerLoseEvent from the server)
-     */
-    @Override
-    public void update(PlayerLoseEvent playerLose) {
-        if (ViewNickname.getMyNickname().equals(playerLose.getPlayerNickname())) {
-            ViewMessage.populateAndSend(playerLose.getMessage(), ViewMessage.MessageType.LOOSE_MESSAGE);
-        }
-    }
 
     @Override
     public void update(GameOverEvent gameOver) {

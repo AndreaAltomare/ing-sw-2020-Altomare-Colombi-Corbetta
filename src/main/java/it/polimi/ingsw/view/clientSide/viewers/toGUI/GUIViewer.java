@@ -43,6 +43,8 @@ public class GUIViewer extends Viewer {
                 case EXECUTER_ERROR_MESSAGE:
                 case FROM_SERVER_ERROR:
                 case FROM_SERVER_MESSAGE:
+                case WIN_MESSAGE:
+                case LOOSE_MESSAGE:
                     GUIMessageDisplayer.displayErrorMessage(((ViewMessage)event.getPayload()).getPayload(), ((ViewMessage)event.getPayload()).getMessageType());
                     break;
             }
