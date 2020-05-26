@@ -20,9 +20,9 @@ import java.util.List;
 import java.util.Scanner;
 
 //todo: rivedere intera classe per sistemare uso degli executer
-public class CLIChooseCardsPhase implements CLISubTurnViewer {
+public class CLIChooseCardsPhase extends CLISubTurnViewer {
 
-    private final ViewSubTurn viewSubTurn = ViewSubTurn.SELECTCARD;
+    private ViewSubTurn viewSubTurn = ViewSubTurn.SELECTCARD;
     private CardsChoosingExecuter cardsChoosingExecuter = new CardsChoosingExecuter( ViewPlayer.getNumberOfPlayers());
     private CardSelection cardSelection;
     private List<ViewCard> selectedCards= new ArrayList<>();
@@ -75,17 +75,17 @@ public class CLIChooseCardsPhase implements CLISubTurnViewer {
                 // second line
                 PrintFunction.printRepeatString(" ", STARTING_SPACE);
                 PrintFunction.printAtTheMiddle( this.checkLeftSelect(viewCard, SymbolsLevel.MIDDLE), SELECTION_SPACE );
-                System.out.printf("%d", cardNumber);
+                System.out.print(" ");
                 PrintFunction.printAtTheMiddle( godSymbols.getMiddleRepresentation(), GOD_SYMBOL_SPACE );
-                PrintFunction.printAtTheMiddle( viewCard.getName(), GOD_NAME_SPACE);
+                PrintFunction.printRepeatString(" ", GOD_NAME_SPACE);
                 PrintFunction.printAtTheMiddle( this.checkRightSelect(viewCard, SymbolsLevel.MIDDLE), SELECTION_SPACE);
                 System.out.println();
                 // third line
                 PrintFunction.printRepeatString(" ", STARTING_SPACE);
                 PrintFunction.printAtTheMiddle( this.checkLeftSelect(viewCard, SymbolsLevel.DOWN), SELECTION_SPACE );
-                System.out.print(" ");
+                System.out.printf("%d", cardNumber);
                 PrintFunction.printAtTheMiddle( godSymbols.getDownRepresentation(), GOD_SYMBOL_SPACE );
-                PrintFunction.printRepeatString(" ", GOD_NAME_SPACE);
+                PrintFunction.printAtTheMiddle( viewCard.getName(), GOD_NAME_SPACE);
                 PrintFunction.printAtTheMiddle( this.checkRightSelect(viewCard, SymbolsLevel.DOWN), SELECTION_SPACE);
                 System.out.println();
 
@@ -202,7 +202,7 @@ public class CLIChooseCardsPhase implements CLISubTurnViewer {
         try {
             // show card
             System.out.println();
-            seeCard = cardSelection.getCardList().get(godCardNumber);
+            seeCard = cardSelection.getCardList().get(godCardNumber - 1);
             do {
                 //todo:maybe add god's symbol
                 PrintFunction.printRepeatString(" ", STARTING_SPACE);
@@ -234,9 +234,9 @@ public class CLIChooseCardsPhase implements CLISubTurnViewer {
         System.out.println();
         PrintFunction.printRepeatString(" ", STARTING_SPACE);
         if ( selectedCards.contains(viewCard) ) {
-            System.out.println( selectionRequest );
-        } else {
             System.out.println( deselectionRequest );
+        } else {
+            System.out.println( selectionRequest );
         }
 
         PrintFunction.printRepeatString(" ", STARTING_SPACE);
@@ -273,6 +273,7 @@ public class CLIChooseCardsPhase implements CLISubTurnViewer {
      */
     private void showWaitMessage() {
         System.out.println();
+        PrintFunction.printRepeatString(" ", STARTING_SPACE);
         System.out.println("A player is choosing the cards, please wait");
         System.out.println();
         //todo: maybe to do an little animation like in CLIWaitingStatus
@@ -287,7 +288,7 @@ public class CLIChooseCardsPhase implements CLISubTurnViewer {
 
         System.out.println();
         System.out.println();
-        if ( viewSubTurn.isMyTurn() ) {
+        if ( true ) {//if ( viewSubTurn.isMyTurn() ) { todo:check it
             this.showChooseInterface();
             for (ViewCard viewCard : selectedCards) {
                 try {

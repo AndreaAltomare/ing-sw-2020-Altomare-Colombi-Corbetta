@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI;
 
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
@@ -68,9 +69,14 @@ public class CLIViewer extends Viewer {
     @Override
     public void refresh() {
 
+        System.out.println();
+        System.out.println();
+        ViewBoard.getBoard().toCLI();
+        System.out.println();
+
     }
 
-    public void prepareStatusViewer(ViewerQueuedEvent queuedEvent) {
+    private void prepareStatusViewer(ViewerQueuedEvent queuedEvent) {
         StatusViewer statusViewer = (StatusViewer) queuedEvent.getPayload();
         CLIStatusViewer cliStatusViewer;
 
@@ -85,7 +91,7 @@ public class CLIViewer extends Viewer {
     }
 
 
-    public void prepareSubTurnViewer(ViewerQueuedEvent queuedEvent) {
+    private void prepareSubTurnViewer(ViewerQueuedEvent queuedEvent) {
         SubTurnViewer subTurnViewer = (SubTurnViewer) queuedEvent.getPayload();
         CLISubTurnViewer cliSubTurnViewer;
 
@@ -95,7 +101,18 @@ public class CLIViewer extends Viewer {
                 switch ( cliSubTurnViewer.getSubTurn() ) {
                     case PLACEWORKER:
                     case OPPONENT_PLACEWORKER:
-                        if ( this.cliStatusViewer.getViewStatus() == ViewStatus.GAME_PREPARATION) {
+                        if ( this.cliStatusViewer.getViewStatus() == ViewStatus.GAME_PREPARATION ) {
+                            this.cliStatusViewer.setMyCLISubTurnViewer(cliSubTurnViewer);
+                            this.cliStatusViewer.show();
+                        }
+                        break;
+                    case SELECTWORKER:
+                    case OPPONENT_SELECTWORKER:
+                    case MOVE:
+                    case OPPONENT_MOVE:
+                    case BUILD:
+                    case OPPONENT_BUILD:
+                        if ( this.cliStatusViewer.getViewStatus() == ViewStatus.PLAYING ) {
                             this.cliStatusViewer.setMyCLISubTurnViewer(cliSubTurnViewer);
                             this.cliStatusViewer.show();
                         }
@@ -112,7 +129,7 @@ public class CLIViewer extends Viewer {
      * cardSelection's List in queuedEvent's payload when viewStatus == GAME_PREPARATION, or it doesn't anything for other cases
      * @param queuedEvent Event to read ( after check that his Type == CARDSELECTION )
      */
-    public void prepareCardsPhase(ViewerQueuedEvent queuedEvent) {
+    private void prepareCardsPhase(ViewerQueuedEvent queuedEvent) {
         CardSelection cardSelection;
 
         if(cliStatusViewer.getViewStatus() == ViewStatus.GAME_PREPARATION) {
@@ -151,6 +168,8 @@ public class CLIViewer extends Viewer {
                     case CARDSELECTION:
                         this.prepareCardsPhase(queuedEvent);
                         break;
+                    case REFRESH:
+//                        this.refresh();
                     default:
                         ;
                 }

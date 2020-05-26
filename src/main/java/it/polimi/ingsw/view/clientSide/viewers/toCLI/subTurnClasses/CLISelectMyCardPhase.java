@@ -15,9 +15,9 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 //todo: rivedere intera classe per sistemare uso degli executer
-public class CLISelectMyCardPhase implements CLISubTurnViewer {
+public class CLISelectMyCardPhase extends CLISubTurnViewer {
 
-    private final ViewSubTurn viewSubTurn = ViewSubTurn.SELECTCARD;
+    private ViewSubTurn viewSubTurn = ViewSubTurn.SELECTCARD;
     private CardSelectionExecuter cardSelectionExecuter = new CardSelectionExecuter();
     private CardSelection cardSelection;
 
@@ -71,15 +71,15 @@ public class CLISelectMyCardPhase implements CLISubTurnViewer {
                 System.out.println();
                 // second line
                 PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("%d", cardNumber);
+                System.out.print(" ");
                 PrintFunction.printAtTheMiddle( godSymbols.getMiddleRepresentation(), GOD_SYMBOL_SPACE );
-                PrintFunction.printAtTheMiddle( viewCard.getName(), GOD_NAME_SPACE);
+                PrintFunction.printRepeatString(" ", GOD_NAME_SPACE);
                 System.out.println();
                 // third line
                 PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.print(" ");
+                System.out.printf("%d", cardNumber);
                 PrintFunction.printAtTheMiddle( godSymbols.getDownRepresentation(), GOD_SYMBOL_SPACE );
-                PrintFunction.printRepeatString(" ", GOD_NAME_SPACE);
+                PrintFunction.printAtTheMiddle( viewCard.getName(), GOD_NAME_SPACE);
                 System.out.println();
 
                 cardNumber++;
@@ -137,7 +137,7 @@ public class CLISelectMyCardPhase implements CLISubTurnViewer {
         try {
             // show card
             System.out.println();
-            seeCard = cardSelection.getCardList().get(godCardNumber);
+            seeCard = cardSelection.getCardList().get(godCardNumber - 1);
             do {
                 //todo:maybe add god's symbol
                 PrintFunction.printRepeatString(" ", STARTING_SPACE);
@@ -209,6 +209,7 @@ public class CLISelectMyCardPhase implements CLISubTurnViewer {
      */
     private void showWaitMessage() {
         System.out.println();
+        PrintFunction.printRepeatString(" ", STARTING_SPACE);
         System.out.println("A player is choosing his card, please wait");
         System.out.println();
         //todo: maybe to do an little animation like in CLIWaitingStatus
@@ -219,7 +220,7 @@ public class CLISelectMyCardPhase implements CLISubTurnViewer {
         ViewCard selectedCard;
         System.out.println();
         System.out.println();
-        if ( viewSubTurn.isMyTurn() ) {
+        if ( true ) {//if ( viewSubTurn.isMyTurn() ) { todo:check it
             selectedCard = this.showSelectInterface();
             try {
                 cardSelectionExecuter.setNameCard(selectedCard);

@@ -268,6 +268,12 @@ public class ViewCell extends ViewObject {
     public String toCLI(int level, boolean isSelected){
         String symbolInRow = "";
 
+        if ( this.thereIsWorker ) {
+            if ( worker.equals( ViewWorker.getSelected() )) {
+                isSelected = true;
+            }
+        }
+
         switch (level) {
             case 0:
                 break;
