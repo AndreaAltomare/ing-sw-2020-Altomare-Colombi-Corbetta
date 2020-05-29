@@ -27,9 +27,11 @@ public class ViewTester implements ViewSender {
     //#####MODIFICABILI PER TESTARE DIVERSE CONFIGURAZIONI####
 
     //attributo per far eseguire le waiting
-    private final static boolean addWait = true;
+    private final static boolean addWait = false;
     private final static boolean normalTurn = true;
     private final static boolean sendTestMessages = false;
+
+    private final static boolean testError = false;
 
     private final static boolean stopAtLogin = false;
     private final static boolean stopAtWaiting = false;
@@ -56,7 +58,7 @@ public class ViewTester implements ViewSender {
     private final static int turnNumber = 10;
     private final static int turnLoose = 100;
 
-    private final static long waitingTime = 2500;
+    private final static long waitingTime = 1500;
 
 
     //####ATTRIBUTI RAPPRESENTANTI LO STATO INTERNO DEL SERVER -O QUALCOSA DI SIMILE####
@@ -329,6 +331,10 @@ public class ViewTester implements ViewSender {
     private void numberPlayerRequired(){
 
         view.update((RequirePlayersNumberEvent) new RequirePlayersNumberEvent());
+
+        if(testError)
+            ViewMessage.populateAndSend("Fatal Error ocurred in connection", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+
         myWait();
 
     }
