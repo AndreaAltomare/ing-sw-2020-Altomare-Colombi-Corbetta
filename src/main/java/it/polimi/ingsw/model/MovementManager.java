@@ -29,7 +29,7 @@ public class MovementManager extends TurnManager {
      * @throws WrongWorkerException (Exception handled by Controller)
      */
     @Override
-    public boolean handle(Move move, Worker worker) throws WinException,LoseException,RunOutMovesException,WrongWorkerException {
+    public boolean handle(Move move, Worker worker) throws WinException,LoseException,RunOutMovesException,WrongWorkerException,TurnSwitchedException {
         if(!worker.isChosen())
             throw new WrongWorkerException();
 
@@ -56,7 +56,7 @@ public class MovementManager extends TurnManager {
      * @throws LoseException (Exception handled by Controller)
      * @throws RunOutMovesException (Exception handled by Controller)
      */
-    private boolean moveWorker(Move move, Worker worker) throws WinException,LoseException,RunOutMovesException {
+    private boolean moveWorker(Move move, Worker worker) throws WinException,LoseException,RunOutMovesException,TurnSwitchedException {
         moveAllowed = true;
 
         if(this.getMovesLeft() < 1)
@@ -85,6 +85,10 @@ public class MovementManager extends TurnManager {
             card.setMovementExecuted(true);
             card.getMyMove().decreaseMovesLeft();
         }
+
+        /* If Movement Moves are over, switch the Turn */
+        if(card.getMyMove().getMovesLeft() < 1)
+            throw new TurnSwitchedException(); // TODO: check if the Exception to switch the Player's Turn works fine (just to check, REMOVE THIS COMMENT)
 
         return moveAllowed;
     }

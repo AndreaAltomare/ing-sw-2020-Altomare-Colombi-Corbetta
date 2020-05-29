@@ -25,4 +25,8 @@ public class MovementObserver extends TurnObserver {
         if(adversaryMoveObserver.checkMove(move, worker) == false)
             throw new DeniedMoveException("Move denied by other Player's Card!");
     }
+
+    public AdversaryMove getAdversaryMoveObserver() {
+        return adversaryMoveObserver;
+    }
 }

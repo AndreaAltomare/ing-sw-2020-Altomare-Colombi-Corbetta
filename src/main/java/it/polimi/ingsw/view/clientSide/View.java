@@ -337,7 +337,13 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 //        ViewSubTurn.getActual().setPlayer(turnStatusChange.getPlayerNickname());
 //        Viewer.setAllSubTurnViewer(ViewSubTurn.getActual().getSubViewer());
         //System.out.println("Turn status changed to: " + turnStatusChange.getState().toString()); // todo: check what toString() of an enum prints... [si, funziona.]
-        System.out.println("[TurnStatusChangedEvent] Your turn is now: " + turnStatusChange.getState().toString()); // todo [debug]
+        if(turnStatusChange.getPlayerNickname().equals(nickname))
+            if(turnStatusChange.success())
+                System.out.println("[TurnStatusChangedEvent] Your turn is now: " + turnStatusChange.getState().toString()); // todo [debug]
+            else
+                System.out.println("[TurnStatusChangedEvent] Cannot change to state: " + turnStatusChange.getState().toString()); // todo [debug]
+        else
+            System.out.println("[TurnStatusChangedEvent] Player " + turnStatusChange.getPlayerNickname() + "'s turn is now: " + turnStatusChange.getState().toString());
     }
 
     @Override
@@ -497,7 +503,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 //        } catch (NotFoundException | WrongViewObjectException e) {
 //            ViewMessage.populateAndSend("Wrong cell received", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
 //        }
-        if(workerMoved.getMoveOutcome() == MoveOutcomeType.EXECUTED) {
+        if(workerMoved.getMoveOutcome() == MoveOutcomeType.EXECUTED || workerMoved.getMoveOutcome() == MoveOutcomeType.TURN_SWITCHED || workerMoved.getMoveOutcome() == MoveOutcomeType.TURN_OVER || workerMoved.getMoveOutcome() == MoveOutcomeType.LOSS || workerMoved.getMoveOutcome() == MoveOutcomeType.WIN) {
             System.out.println("[WorkerMovedEvent] Worker '" + workerMoved.getWorker() + "' was correctly moved:"); // todo [debug]
             System.out.println("    Initial position: ( " + workerMoved.getInitialX() + " , " + workerMoved.getInitialY() + " )"); // todo [debug]
             System.out.println("    Current position: ( " + workerMoved.getFinalX() + " , " + workerMoved.getFinalY() + " )"); // todo [debug]
@@ -521,10 +527,10 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 //            cell.buildDome();
 //        else
 //            ViewMessage.populateAndSend("Wrong block recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
-        if(blockBuilt.getMoveOutcome() == MoveOutcomeType.EXECUTED)
+        if(blockBuilt.getMoveOutcome() == MoveOutcomeType.EXECUTED || blockBuilt.getMoveOutcome() == MoveOutcomeType.TURN_SWITCHED || blockBuilt.getMoveOutcome() == MoveOutcomeType.TURN_OVER || blockBuilt.getMoveOutcome() == MoveOutcomeType.LOSS || blockBuilt.getMoveOutcome() == MoveOutcomeType.WIN)
             System.out.println("[BlockBuiltEvent] A '" + blockBuilt.getBlockType().toString() + "' was correctly built in place: ( " + blockBuilt.getX() + " , " + blockBuilt.getY() + " )"); // todo [debug]
         else
-            System.out.println("[BlockBuiltEvent] '" + blockBuilt.getBlockType().toString() + " was NOT built. Invalid BuildMove."); // todo [debug]
+            System.out.println("[BlockBuiltEvent] '" + blockBuilt.getBlockType().toString() + "' was NOT built. Invalid BuildMove."); // todo [debug]
     }
 
     @Override
@@ -551,7 +557,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 //        } catch (NotFoundException | WrongViewObjectException e) {
 //            ViewMessage.populateAndSend("Cannot remove worker", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
 //        }
-        System.out.println("[WorkerRemovedEvent] Worker" + workerRemoved.getWorker() + "was correctly removed from position: ( " + workerRemoved.getX() + " , " + workerRemoved.getY() + " )"); // todo [debug]
+        System.out.println("[WorkerRemovedEvent] Worker '" + workerRemoved.getWorker() + "' was correctly removed from position: ( " + workerRemoved.getX() + " , " + workerRemoved.getY() + " )"); // todo [debug]
     }
 
     @Override

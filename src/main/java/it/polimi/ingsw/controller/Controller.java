@@ -81,27 +81,30 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         System.out.println(" - Challenger Player set: '" + model.challenger() + "'"); // Server control message
         notify(new MessageEvent("The Challenger Player has been chosen. It's: " + model.challenger())); // notify players that the Challenger has been chosen
 
-        /* 2- Challenger choose the Cards for this game match */
-        notify(new NextStatusEvent("Game preparation"));
-        List<CardInfo> cardInfoList = ResourceManager.getCardsInformation();
-        challengerChoosesCards(cardInfoList);
-        printCardsInGame(cardsInGame);
+        prepareGame(3); // TODO: just to for debug. REMOVE
 
-        /* 3- In "clockwise" order, every Player choose a Card (among the Cards chosen by the Challenger) */
-        List<CardInfo> cardsToChoose = cardInfoList.stream().filter(c -> cardsInGame.contains(c.getName())).collect(Collectors.toList());
-        playersChooseCards(cardsToChoose);
-        //System.out.println(""); // Server control message   --->   in playersChooseCards(...) method
-
-        /* 4- Ask the Challenger for the Start Player */
-        challengerChoosesStartPlayer();
-        System.out.println(" - Challenger Player has chosen Start Player: '" + model.startPlayer() + "'"); // Server control message
-        //notify(new MessageEvent("Other players are placing their workers. Wait...")); // notify other Players // todo maybe it's useless: to remove
-
-        /* 5- Sort the list of Players */
-        sortPlayers();
-
-        /* 6- In "clockwise" order, starting from Start Player, every Player places his/her Workers on the Board */
-        playersPlaceWorkers();
+//        /* 2- Challenger choose the Cards for this game match */
+//        notify(new NextStatusEvent("Game preparation"));
+//        List<CardInfo> cardInfoList = ResourceManager.getCardsInformation();
+//        challengerChoosesCards(cardInfoList);
+//        printCardsInGame(cardsInGame);
+//
+//        /* 3- In "clockwise" order, every Player choose a Card (among the Cards chosen by the Challenger) */
+//        List<CardInfo> cardsToChoose = cardInfoList.stream().filter(c -> cardsInGame.contains(c.getName())).collect(Collectors.toList());
+//        playersChooseCards(cardsToChoose);
+//        registerTurnObservers();
+//        //System.out.println(""); // Server control message   --->   in playersChooseCards(...) method
+//
+//        /* 4- Ask the Challenger for the Start Player */
+//        challengerChoosesStartPlayer();
+//        System.out.println(" - Challenger Player has chosen Start Player: '" + model.startPlayer() + "'"); // Server control message
+//        //notify(new MessageEvent("Other players are placing their workers. Wait...")); // notify other Players // todo maybe it's useless: to remove
+//
+//        /* 5- Sort the list of Players */
+//        sortPlayers();
+//
+//        /* 6- In "clockwise" order, starting from Start Player, every Player places his/her Workers on the Board */
+//        playersPlaceWorkers();
 
         /* 7- Send general game info data to all Views so the game can start */
         System.out.println(" - Notifying Players that the game is starting..."); // Server control message
@@ -111,7 +114,431 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         notify(new NextStatusEvent("The game has started!"));
         startGame();
         System.out.println("\n##### Game started #####\n"); // Server control message
+        System.out.println("### It's " + model.startPlayer() + "'s turn.");
+
+        simulateGame(5); // TODO: just to for debug. REMOVE
     }
+
+
+
+
+
+
+
+
+
+
+    /* Method for integration testing [Game Preparation phase] */
+    private void prepareGame(int nPlayer) {
+        // prepare cards
+        cardsInGame = new ArrayList<>(nPlayer);
+        cardsInGame.add("Atlas");
+        cardsInGame.add("Apollo");
+        if(nPlayer == 3)
+            cardsInGame.add("Minotaur");
+        model.setCardsInGame(cardsInGame);
+        // set cards
+        model.setPlayerCard("Atlas", "giorgio");
+        model.setPlayerCard("Apollo", "andrea");
+        if(nPlayer == 3)
+            model.setPlayerCard("Minotaur", "marco");
+        registerTurnObservers();
+        // set start player
+        model.setStartPlayer("andrea");
+        // sort players
+        sortPlayers();
+        // place workers
+        model.placeWorker(0, 0, "andrea"); // worker's starting position
+        model.placeWorker(4, 4, "andrea"); // worker's starting position
+        model.placeWorker(1, 3, "giorgio"); // worker's starting position
+        model.placeWorker(3, 3, "giorgio"); // worker's starting position
+        if(nPlayer == 3) {
+            model.placeWorker(2, 0, "marco"); // worker's starting position
+            model.placeWorker(2, 4, "marco"); // worker's starting position
+        }
+    }
+
+    /* Method for integration testing [Playing phase]*/
+    private void simulateGame(int suite) {
+        // game simulation
+        String andrea = "andrea";
+        String giorgio = "giorgio";
+        String marco = "marco";
+        String worker0 = "[Worker]\t0";
+        String worker1 = "[Worker]\t1";
+        String worker2 = "[Worker]\t2";
+        String worker3 = "[Worker]\t3";
+        String worker4 = "[Worker]\t4";
+        String worker5 = "[Worker]\t5";
+
+        switch(suite) {
+            /* 2-Players Game: a Player wins */
+            case 1:
+                model.selectWorker(worker0, andrea);
+                model.moveWorker(worker0, 1, 1, andrea);
+                model.buildBlock(worker0, 0, 1, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker2, giorgio);
+                model.moveWorker(worker2, 0, 3, giorgio);
+                model.buildBlock(worker2, 0, 4, PlaceableType.BLOCK, giorgio);
+                model.switchPlayer();
+
+                model.selectWorker(worker0, andrea);
+                model.moveWorker(worker0, 1, 2, andrea);
+                model.buildBlock(worker0, 1, 1, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker3, giorgio);
+                model.moveWorker(worker3, 3, 4, giorgio);
+                model.buildBlock(worker3, 2, 4, PlaceableType.BLOCK, giorgio);
+                model.switchPlayer();
+
+                model.selectWorker(worker0, andrea);
+                model.moveWorker(worker0, 0, 2, andrea);
+                model.buildBlock(worker0, 1, 1, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker2, giorgio);
+                model.moveWorker(worker2, 1, 2, giorgio);
+                model.buildBlock(worker2, 1, 1, PlaceableType.BLOCK, giorgio);
+                model.switchPlayer();
+
+                model.selectWorker(worker0, andrea);
+                model.moveWorker(worker0, 0, 1, andrea);
+                model.buildBlock(worker0, 1, 1, PlaceableType.DOME, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker2, giorgio);
+                model.moveWorker(worker2, 0, 3, giorgio);
+                model.buildBlock(worker2, 0, 2, PlaceableType.BLOCK, giorgio);
+                model.switchPlayer();
+
+                model.selectWorker(worker0, andrea);
+                model.moveWorker(worker0, 1, 2, andrea);
+                model.buildBlock(worker0, 0, 2, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker2, giorgio);
+                model.moveWorker(worker2, 1, 3, giorgio);
+                model.buildBlock(worker2, 0, 2, PlaceableType.BLOCK, giorgio);
+                model.switchPlayer();
+
+                model.selectWorker(worker0, andrea);
+                model.moveWorker(worker0, 0, 1, andrea);
+                model.buildBlock(worker0, 0, 0, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker3, giorgio);
+                model.moveWorker(worker3, 2, 3, giorgio);
+                model.buildBlock(worker3, 2, 2, PlaceableType.BLOCK, giorgio);
+                model.switchPlayer();
+
+                model.selectWorker(worker0, andrea);
+                model.moveWorker(worker0, 0, 0, andrea);
+                model.buildBlock(worker0, 0, 1, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker3, giorgio);
+                model.moveWorker(worker3, 2, 2, giorgio);
+                model.buildBlock(worker3, 2, 3, PlaceableType.BLOCK, giorgio);
+                model.switchPlayer();
+
+                model.selectWorker(worker0, andrea);
+                model.moveWorker(worker0, 0, 1, andrea);
+                model.buildBlock(worker0, 0, 0, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker3, giorgio);
+                model.moveWorker(worker3, 2, 3, giorgio);
+                model.buildBlock(worker3, 2, 4, PlaceableType.BLOCK, giorgio);
+                model.switchPlayer();
+
+                model.selectWorker(worker1, andrea);
+                model.moveWorker(worker1, 4, 3, andrea);
+                model.buildBlock(worker1, 4, 4, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker3, giorgio);
+                model.moveWorker(worker3, 2, 4, giorgio);
+                model.buildBlock(worker3, 2, 3, PlaceableType.BLOCK, giorgio);
+                model.switchPlayer();
+
+                // win
+//                model.selectWorker(worker0, andrea);
+//                model.moveWorker(worker0, 0, 2, andrea);
+                break;
+
+            /* 2-Players Game: a Player loses when starting its Turn (both of its Workers cannot make any Movement) */
+            case 2:
+                model.selectWorker(worker0, andrea);
+                model.moveWorker(worker0, 1, 0, andrea);
+                model.buildBlock(worker0, 0, 1, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker2, giorgio);
+                model.moveWorker(worker2, 1, 2, giorgio);
+                model.buildBlock(worker2, 0, 1, PlaceableType.BLOCK, giorgio);
+                model.switchPlayer();
+
+                model.selectWorker(worker0, andrea);
+                model.moveWorker(worker0, 0, 0, andrea);
+                model.buildBlock(worker0, 1, 1, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker2, giorgio);
+                model.moveWorker(worker2, 2, 1, giorgio);
+                model.buildBlock(worker2, 1, 0, PlaceableType.BLOCK, giorgio);
+                model.switchPlayer();
+
+                model.selectWorker(worker0, andrea);
+                model.moveWorker(worker0, 1, 1, andrea);
+                model.buildBlock(worker0, 1, 0, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker3, giorgio);
+                model.moveWorker(worker3, 4, 3, giorgio);
+                model.buildBlock(worker3, 3, 4, PlaceableType.BLOCK, giorgio);
+                model.switchPlayer();
+
+                // at this point worker0 shall lose
+                model.selectWorker(worker0, andrea);
+                model.moveWorker(worker0, 0, 0, andrea);
+                model.buildBlock(worker0, 1, 1, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker3, giorgio);
+                model.moveWorker(worker3, 3, 4, giorgio);
+                model.buildBlock(worker3, 4, 3, PlaceableType.BLOCK, giorgio);
+                model.switchPlayer(); // here check if worker0 has lost (when switching player)
+
+                model.selectWorker(worker0, andrea); // check that a selection of worker0 is now denied (worker has lost)
+                model.selectWorker(worker1, andrea);
+                model.moveWorker(worker1, 4, 3, andrea);
+                model.buildBlock(worker1, 3, 3, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker3, giorgio);
+                model.moveWorker(worker3, 2, 4, giorgio);
+                model.buildBlock(worker3, 3, 3, PlaceableType.BLOCK, giorgio);
+                model.switchPlayer();
+
+                model.selectWorker(worker1, andrea);
+                model.moveWorker(worker1, 4, 4, andrea);
+                model.buildBlock(worker1, 4, 3, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                // at this point worker1 shall lose
+                model.selectWorker(worker3, giorgio);
+                model.moveWorker(worker3, 2, 3, giorgio);
+                model.buildBlock(worker3, 3, 4, PlaceableType.BLOCK, giorgio);
+                model.switchPlayer(); // by this point, when trying to switch the player, 'andrea' should lose and 'giorgio' should be declared the winner.
+                break;
+
+            /* 2-Players Game: a Player loses when changing its Turn from Construction to Movement
+             * (cannot make any Movement within the already chosen Worker).
+             */
+            case 3:
+                model.selectWorker(worker0, andrea);
+                model.changeTurnStatus(StateType.CONSTRUCTION, andrea);
+                model.buildBlock(worker0, 1, 0, PlaceableType.BLOCK, andrea);
+                model.changeTurnStatus(StateType.MOVEMENT, andrea);
+                model.moveWorker(worker0, 0, 1, andrea);
+                model.buildBlock(worker0, 1, 1, PlaceableType.BLOCK, andrea);
+                model.switchPlayer(); // check if everything is ok by this point
+
+                model.selectWorker(worker2, giorgio);
+                model.moveWorker(worker2, 1, 2, giorgio);
+                model.buildBlock(worker2, 0, 2, PlaceableType.DOME, giorgio); // check if the DOME is correctly built
+                model.switchPlayer();
+
+                model.selectWorker(worker0, andrea);
+                model.moveWorker(worker0, 0, 0, andrea);
+                model.buildBlock(worker0, 1, 0, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker2, giorgio);
+                model.moveWorker(worker2, 1, 1, giorgio);
+                model.buildBlock(worker2, 0, 1, PlaceableType.BLOCK, giorgio);
+                model.switchPlayer();
+
+                // at this point worker0 shall lose
+                model.selectWorker(worker0, andrea);
+                model.changeTurnStatus(StateType.CONSTRUCTION, andrea);
+                model.buildBlock(worker0, 0, 1, PlaceableType.BLOCK, andrea);
+//                model.changeTurnStatus(StateType.MOVEMENT, andrea); // by this point, when trying to switch the Turn Type, 'andrea' should lose and 'giorgio' should be declared the winner.
+//                model.moveWorker(worker0, 0, 1, andrea);
+//                model.buildBlock(worker0, 1, 1, PlaceableType.BLOCK, andrea);
+//                model.switchPlayer();
+                break;
+
+            /* 2-Players Game: a Player loses when changing its Turn from Movement to Construction
+             * (cannot make any Construction within the already chosen Worker).
+             */
+            case 4:
+                model.selectWorker(worker0, andrea);
+                model.moveWorker(worker0, 1, 0, andrea);
+                model.buildBlock(worker0, 0, 1, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker2, giorgio);
+                model.moveWorker(worker2, 0, 2, giorgio);
+                model.buildBlock(worker2, 0, 1, PlaceableType.DOME, giorgio);
+                model.switchPlayer();
+
+                model.selectWorker(worker0, andrea);
+                model.moveWorker(worker0, 1, 1, andrea);
+                model.buildBlock(worker0, 1, 2, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker2, giorgio);
+                model.moveWorker(worker2, 1, 2, giorgio);
+                model.buildBlock(worker2, 1, 3, PlaceableType.DOME, giorgio);
+                model.switchPlayer();
+
+                model.selectWorker(worker1, andrea);
+                model.moveWorker(worker1, 3, 3, andrea); // here: check if Apollo's power works correctly.
+                model.buildBlock(worker1, 3, 4, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker2, giorgio);
+                model.moveWorker(worker2, 0, 3, giorgio);
+                model.buildBlock(worker2, 1, 2, PlaceableType.DOME, giorgio);
+                model.switchPlayer();
+
+                model.selectWorker(worker1, andrea);
+                model.moveWorker(worker1, 4, 3, andrea);
+                model.buildBlock(worker1, 4, 2, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker2, giorgio);
+                model.moveWorker(worker2, 0, 2, giorgio);
+                model.buildBlock(worker2, 0, 3, PlaceableType.DOME, giorgio);
+                model.switchPlayer();
+
+                // at this point worker0 shall lose
+                model.selectWorker(worker0, andrea);
+//                model.moveWorker(worker0, 0, 2, andrea); // after done the Movement, worker0 cannot Build, so Player 'andrea' lose the game.
+//                model.buildBlock(worker0, 1, 2, PlaceableType.BLOCK, andrea);
+//                model.switchPlayer();
+                break;
+
+            /* 3-Players Game:
+             *     - Complete match (Turn flow)
+             *     - A Player loses (Workers removal)
+             *     - A Player wins
+             */
+            case 5:
+                model.selectWorker(worker0, andrea);
+                model.moveWorker(worker0, 1, 0, andrea);
+                model.buildBlock(worker0, 0, 1, PlaceableType.BLOCK, andrea);
+                model.switchPlayer(); // check which player is being chosen
+
+                model.selectWorker(worker4, marco);
+                model.moveWorker(worker4, 2, 1, marco);
+                model.buildBlock(worker4, 2, 0, PlaceableType.BLOCK, marco);
+                model.switchPlayer(); // check if Player n. 3 is correctly chosen by this point
+
+                model.selectWorker(worker2, giorgio);
+                model.moveWorker(worker2, 0, 2, giorgio);
+                model.buildBlock(worker2, 0, 1, PlaceableType.DOME, giorgio);
+                model.switchPlayer();
+
+                model.selectWorker(worker0, andrea);
+                model.moveWorker(worker0, 1, 1, andrea);
+                model.buildBlock(worker0, 1, 2, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker4, marco);
+                model.moveWorker(worker4, 2, 2, marco);
+                model.buildBlock(worker4, 2, 1, PlaceableType.BLOCK, marco);
+                model.switchPlayer();
+
+                model.selectWorker(worker2, giorgio);
+                model.moveWorker(worker2, 1, 2, giorgio);
+                model.buildBlock(worker2, 1, 3, PlaceableType.DOME, giorgio);
+                model.switchPlayer();
+
+                model.selectWorker(worker1, andrea);
+                model.moveWorker(worker1, 3, 3, andrea); // here: check if Apollo's power works correctly.
+                model.buildBlock(worker1, 3, 4, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker4, marco);
+                model.moveWorker(worker4, 2, 3, marco);
+                model.buildBlock(worker4, 2, 2, PlaceableType.BLOCK, marco);
+                model.switchPlayer();
+
+                model.selectWorker(worker2, giorgio);
+                model.moveWorker(worker2, 0, 3, giorgio);
+                model.buildBlock(worker2, 1, 2, PlaceableType.DOME, giorgio);
+                model.switchPlayer();
+
+                model.selectWorker(worker1, andrea);
+                model.moveWorker(worker1, 4, 3, andrea);
+                model.buildBlock(worker1, 4, 2, PlaceableType.BLOCK, andrea);
+                model.switchPlayer();
+
+                model.selectWorker(worker4, marco);
+                model.moveWorker(worker4, 3, 2, marco);
+                model.buildBlock(worker4, 2, 2, PlaceableType.BLOCK, marco);
+                model.switchPlayer();
+
+                model.selectWorker(worker2, giorgio);
+                model.moveWorker(worker2, 0, 2, giorgio);
+                model.buildBlock(worker2, 0, 3, PlaceableType.DOME, giorgio);
+                model.switchPlayer();
+
+                // at this point worker0 shall lose
+                model.selectWorker(worker0, andrea);
+                model.moveWorker(worker0, 0, 2, andrea); // after done the Movement, worker0 cannot Build, so Player 'andrea' lose the game.
+                checkForSwitching(andrea);
+
+                // by this point, check if the selection of the next playing worker is correct.
+                model.selectWorker(worker4, marco); // check if cells where andreas's workers where placed are now free. ( 0 , 2 ) and ( 4 , 3 )
+                model.moveWorker(worker4, 2, 1, marco);
+                model.buildBlock(worker4, 2, 2, PlaceableType.BLOCK, marco);
+                model.switchPlayer(); // check if next player is chosen correctly
+
+                model.selectWorker(worker3, giorgio);
+                model.moveWorker(worker3, 4, 3, giorgio);
+                model.buildBlock(worker3, 4, 4, PlaceableType.BLOCK, giorgio);
+                model.switchPlayer(); // again: check if next worker is selected correctly.
+
+                model.selectWorker(worker4, marco);
+                model.moveWorker(worker4, 2, 0, marco);
+                model.buildBlock(worker4, 2, 1, PlaceableType.BLOCK, marco);
+                model.switchPlayer();
+
+                model.selectWorker(worker3, giorgio);
+                model.moveWorker(worker3, 4, 2, giorgio);
+                model.buildBlock(worker3, 4, 3, PlaceableType.BLOCK, giorgio);
+                model.switchPlayer();
+
+                model.selectWorker(worker4, marco);
+                model.moveWorker(worker4, 2, 1, marco);
+                model.buildBlock(worker4, 3, 1, PlaceableType.BLOCK, marco);
+                model.switchPlayer();
+
+                model.selectWorker(worker3, giorgio);
+                model.moveWorker(worker3, 4, 1, giorgio);
+                model.buildBlock(worker3, 3, 1, PlaceableType.BLOCK, giorgio);
+                model.switchPlayer();
+
+                // win
+                model.selectWorker(worker4, marco);
+//                model.moveWorker(worker4, 2, 2, marco); // at this point Player 'marco' shall win
+//                model.buildBlock(worker4, 3, 1, PlaceableType.BLOCK, marco);
+//                model.switchPlayer();
+                break;
+
+            default:
+                break;
+        }
+    }
+
+
+
 
 
 
@@ -120,6 +547,13 @@ public class Controller extends Observable<Object> implements VCEventListener, R
 
 
 
+
+    /**
+     * This method initialize observers for Players' Turns.
+     */
+    private void registerTurnObservers() {
+        model.registerTurnObservers();
+    }
 
     /**
      * This method encapsulates the logic for the Workers placement by every Player.
@@ -454,23 +888,35 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      */
     @Override
     public synchronized void update(CardsChoosingEvent chosenCards, String playerNickname) {
-        System.out.println("[CardsChoosingEvent] received from Player: '" + playerNickname + "'"); // Server control message
-        if(playerNickname.equals(model.challenger())) {
-            synchronized (challengerLock) {
-                cardsInGame = chosenCards.getCards();
-                challengerHasChosen = true; // todo remember to set this to false when a new game starts (if necessary)
-                challengerLock.notifyAll();
+        if(!model.hasGameStarted()) {
+            System.out.println("[CardsChoosingEvent] received from Player: '" + playerNickname + "'"); // Server control message
+            if (playerNickname.equals(model.challenger())) {
+                synchronized (challengerLock) {
+                    cardsInGame = chosenCards.getCards();
+                    challengerHasChosen = true; // todo remember to set this to false when a new game starts (if necessary)
+                    challengerLock.notifyAll();
+                }
             }
+        }
+        else {
+            System.out.println("!INVALID! [CardsChoosingEvent] received from Player: '" + playerNickname + "'"); // Server control message
+            notify(new ErrorMessageEvent("Game has already started! You cannot choose Cards for this game."), playerNickname);
         }
     }
 
     @Override
     public synchronized void update(CardSelectionEvent card, String playerNickname) {
-        System.out.println("[CardSelectionEvent] received from Player: '" + playerNickname + "'"); // Server control message
-        synchronized (clientLock) {
-            genericResponse = card.getCardName();
-            clientResponded = true;
-            clientLock.notifyAll();
+        if(!model.hasGameStarted()) {
+            System.out.println("[CardSelectionEvent] received from Player: '" + playerNickname + "'"); // Server control message
+            synchronized (clientLock) {
+                genericResponse = card.getCardName();
+                clientResponded = true;
+                clientLock.notifyAll();
+            }
+        }
+        else {
+            System.out.println("!INVALID! [CardsSelectionEvent] received from Player: '" + playerNickname + "'"); // Server control message
+            notify(new ErrorMessageEvent("Game has already started! You can no longer select a Card for this game."), playerNickname);
         }
     }
 
@@ -482,34 +928,45 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      */
     @Override
     public synchronized void update(SetStartPlayerEvent startPlayer, String playerNickname) {
-        System.out.println("[SetStartPlayerEvent] received from Player: '" + playerNickname + "'"); // Server control message
-        if(playerNickname.equals(model.challenger())) {
-            synchronized (challengerLock) {
-                this.startPlayer = startPlayer.getStartPlayer();
-                challengerHasChosen = true; // todo remember to set this to false when a new game starts (if necessary)
-                challengerLock.notifyAll();
+        if(!model.hasGameStarted()) {
+            System.out.println("[SetStartPlayerEvent] received from Player: '" + playerNickname + "'"); // Server control message
+            if (playerNickname.equals(model.challenger())) {
+                synchronized (challengerLock) {
+                    this.startPlayer = startPlayer.getStartPlayer();
+                    challengerHasChosen = true; // todo remember to set this to false when a new game starts (if necessary)
+                    challengerLock.notifyAll();
+                }
             }
+        }
+        else {
+            System.out.println("!INVALID! [SetStartPlayerEvent] received from Player: '" + playerNickname + "'"); // Server control message
+            notify(new ErrorMessageEvent("Game has already started! You cannot choose the Start Player for this game."), playerNickname);
         }
     }
 
     @Override
     public synchronized void update(PlaceWorkerEvent workerToPlace, String playerNickname) {
-        System.out.println("[PlaceWorkerEvent] received from Player: '" + playerNickname + "'"); // Server control message
-        synchronized (clientLock) {
-            String workerId = model.placeWorker(workerToPlace.getX(), workerToPlace.getY(), playerNickname);
-            if(workerId != null) {
-                workersPlaced++;
-                notify(new WorkerPlacedEvent(workerId, workerToPlace.getX(), workerToPlace.getY(), true)); // broadcast notification of a worker placed event
-                System.out.println(" - Player '" + playerNickname + "' placed a Worker in position: ( " + workerToPlace.getX() + " , " + workerToPlace.getY() + " )"); // Server control message
-            }
-            else {
-                notify(new ErrorMessageEvent("Your choice is invalid! Try to place your worker again."), playerNickname);
-            }
+        if(!model.hasGameStarted()) {
+            System.out.println("[PlaceWorkerEvent] received from Player: '" + playerNickname + "'"); // Server control message
+            synchronized (clientLock) {
+                String workerId = model.placeWorker(workerToPlace.getX(), workerToPlace.getY(), playerNickname);
+                if (workerId != null) {
+                    workersPlaced++;
+                    notify(new WorkerPlacedEvent(workerId, workerToPlace.getX(), workerToPlace.getY(), true)); // broadcast notification of a worker placed event
+                    System.out.println(" - Player '" + playerNickname + "' placed a Worker in position: ( " + workerToPlace.getX() + " , " + workerToPlace.getY() + " )"); // Server control message
+                } else {
+                    notify(new ErrorMessageEvent("Your choice is invalid! Try to place your worker again."), playerNickname);
+                }
 
-            if(workersPlaced == model.WORKERS_PER_PLAYER) {
-                clientResponded = true;
-                clientLock.notifyAll();
+                if (workersPlaced == model.WORKERS_PER_PLAYER) {
+                    clientResponded = true;
+                    clientLock.notifyAll();
+                }
             }
+        }
+        else {
+            System.out.println("!INVALID! [PlaceWorkerEvent] received from Player: '" + playerNickname + "'"); // Server control message
+            notify(new ErrorMessageEvent("Game has already started! Your Workers have already been placed."), playerNickname);
         }
     }
 
@@ -525,8 +982,10 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         /*else
             notify(new ErrorMessageEvent("This Worker cannot be selected! Please try again."), playerNickname);*/
         }
-        else
+        else {
+            System.out.println("!INVALID! [SelectWorkerEvent] received from Player: '" + playerNickname + "'"); // Server control message
             notify(new ErrorMessageEvent("Game has not started yet! Hold on..."), playerNickname);
+        }
     }
 
     @Override
@@ -539,8 +998,10 @@ public class Controller extends Observable<Object> implements VCEventListener, R
                 checkForSwitching(playerNickname);
             }
         }
-        else
+        else {
+            System.out.println("!INVALID! [MoveWorkerEvent] received from Player: '" + playerNickname + "'"); // Server control message
             notify(new ErrorMessageEvent("Game has not started yet! Hold on..."), playerNickname);
+        }
     }
 
     @Override
@@ -553,8 +1014,10 @@ public class Controller extends Observable<Object> implements VCEventListener, R
                 checkForSwitching(playerNickname);
             }
         }
-        else
+        else {
+            System.out.println("!INVALID! [BuildBlockEvent] received from Player: '" + playerNickname + "'"); // Server control message
             notify(new ErrorMessageEvent("Game has not started yet! Hold on..."), playerNickname);
+        }
     }
 
     @Override
@@ -568,8 +1031,10 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             /* ANSWER FROM THE CONTROLLER (Notify the View) */
             /*notify(new WorkerRemovedEvent(workerToRemove.getWorkerId(),workerToRemove.getX(),workerToRemove.getY()));*/ // todo: retrieve X and Y position by using Worker's unique ID
         }
-        else
+        else {
+            System.out.println("!INVALID! [RemoveWorkerEvent] received from Player: '" + playerNickname + "'"); // Server control message
             notify(new ErrorMessageEvent("Game has not started yet! Hold on..."), playerNickname);
+        }
     }
 
     @Override
@@ -583,8 +1048,10 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             /* ANSWER FROM THE CONTROLLER (Notify the View) */
             /*notify(new BlockRemovedEvent(blockToRemove.getX(),blockToRemove.getY(), PlaceableType.DOME));*/
         }
-        else
+        else {
+            System.out.println("!INVALID! [RemoveBlockEvent] received from Player: '" + playerNickname + "'"); // Server control message
             notify(new ErrorMessageEvent("Game has not started yet! Hold on..."), playerNickname);
+        }
     }
 
 
@@ -602,8 +1069,10 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             /* ANSWER FROM THE CONTROLLER (Notify the View) */
             /*notify(new TurnStatusChangedEvent(playerNickname, turnStatus.getTurnStatus()), playerNickname);*/
         }
-        else
+        else {
+            System.out.println("!INVALID! [TurnStatusChangeEvent] received from Player: '" + playerNickname + "'"); // Server control message
             notify(new ErrorMessageEvent("Game has not started yet! Hold on..."), playerNickname);
+        }
     }
 
 
@@ -636,11 +1105,11 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             model.startGame(); // start the game
             model.setGameStarted(true);
             String playingPlayer = model.getPlayingPlayer();
-            notify(new TurnStatusChangedEvent(playingPlayer, StateType.MOVEMENT, true));
+            notify(new TurnStatusChangedEvent(playingPlayer, StateType.MOVEMENT, true), playingPlayer);
             // Notify other Players too
             for(String player : players)
                 if (!player.equals(playingPlayer))
-                    notify(new TurnStatusChangedEvent(playingPlayer, StateType.NONE, true));
+                    notify(new TurnStatusChangedEvent(player, StateType.NONE, true), player);
         }
         catch (LoseException ex) {
             System.err.println("An error has occurred during the starting of the game!");
@@ -719,10 +1188,12 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      */
     private void checkForSwitching(String playerNickname) {
         /* After the Player notification, if the player's turn is over (or other triggering conditions), switch the playing Player */
-        if (model.getMoveOutcome() == MoveOutcomeType.TURN_OVER)
+        if (model.getMoveOutcome() == MoveOutcomeType.TURN_SWITCHED)
+            notify(new TurnStatusChangedEvent(playerNickname, StateType.CONSTRUCTION, true), playerNickname);
+        else if (model.getMoveOutcome() == MoveOutcomeType.TURN_OVER)
             model.switchPlayer();
         else if (model.getMoveOutcome() == MoveOutcomeType.LOSS) {
-            notify(new PlayerLoseEvent(playerNickname, "Player " + playerNickname + " has lost the game!"));
+            //notify(new PlayerLoseEvent(playerNickname, "Player " + playerNickname + " has lost the game!")); // todo maybe it's to remove (useless)
             model.handlePlayerLoss(playerNickname);
             model.switchPlayer();
         } else if (model.getMoveOutcome() == MoveOutcomeType.WIN) {
@@ -749,13 +1220,29 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         notify(o, playerNickname);
     }
 
+    public void gameOver() {
+        printControlMessage("\n##### Game Over #####\n");
+        List<String> players = model.players();
+        players.forEach(this::gameOverMessage);
+    }
+
     /**
-     * Remove the Virtual View bounded to the provided Player.
+     * Notify a given Player that the Game is Over.
      *
      * @param nickname (Player's nickname)
      */
-    public void removeView(String nickname) {
-        notify(new GameOverEvent("You are being disconnected from the game..."), nickname);
+    public void gameOverMessage(String nickname) {
+        notify(new GameOverEvent("Game Over!"), nickname);
+    }
+
+    /**
+     * Removes the Virtual View bounded to the provided Player,
+     * so disconnects him/her from the game.
+     *
+     * @param nickname (Player's nickname)
+     */
+    public void disconnectPlayer(String nickname) {
+        notify(new ServerQuitEvent("You are being disconnected from the game..."), nickname);
     }
 
     /**

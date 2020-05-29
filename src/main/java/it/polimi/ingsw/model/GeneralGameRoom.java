@@ -27,4 +27,5 @@ public abstract class GeneralGameRoom {
     public abstract void setupGame();
     public abstract void chooseChallenger(String nickname);
     public abstract void chooseStartingPlayer(String nickname);
+    public abstract void registerObservers();
 }

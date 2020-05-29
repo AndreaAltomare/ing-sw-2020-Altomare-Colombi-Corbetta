@@ -27,6 +27,7 @@ public class Model {
     private Board board;
     private List<String> cards;
     private volatile MoveOutcomeType moveOutcome; // tells the outcome of a move being executed at a certain point
+    private volatile int lastPlayingIndex;
 
     /**
      * Constructor.
@@ -39,6 +40,7 @@ public class Model {
         this.cards = new ArrayList<>();
         this.WORKERS_PER_PLAYER = 2;
         this.moveOutcome = MoveOutcomeType.NONE;
+        this.lastPlayingIndex = 0;
     }
 
     /**
@@ -84,6 +86,13 @@ public class Model {
 
 
 
+
+    /**
+     * Registers Players' Turns Observers.
+     */
+    public void registerTurnObservers() {
+        gameRoom.registerObservers();
+    }
 
     /**
      * Sort the Players within the given list's new order.
@@ -192,7 +201,8 @@ public class Model {
 
         /* 2- Try to place th Worker */
         try {
-            placed = board.getCellAt(x, y).placeOn(worker);
+            placed = worker.place(board.getCellAt(x, y));
+            //placed = board.getCellAt(x, y).placeOn(worker);
         }
         catch (OutOfBoardException ex) {
             placed = false;
@@ -247,6 +257,14 @@ public class Model {
         return "";
     }
 
+
+
+
+    /* ############################## MOVE EXECUTION METHODS ################################ */
+
+
+
+
     /**
      * Select a Worker to play with this turn.
      *
@@ -266,7 +284,8 @@ public class Model {
             w = player.getWorker(workerId);
 
             /* 2- Execute move */
-            moveSuccess = player.chooseWorker(w);
+            if (w != null)
+                moveSuccess = player.chooseWorker(w);
 
             /* 3- Return the result */
             return new WorkerSelectedEvent(playerNickname, workerId, moveSuccess);
@@ -274,12 +293,6 @@ public class Model {
 
         return null;
     }
-
-
-
-
-    /* ############################## MOVE EXECUTION METHODS ################################ */
-
 
 
 
@@ -307,6 +320,11 @@ public class Model {
                 if (moveSuccess)
                     moveOutcome = MoveOutcomeType.EXECUTED;
             }
+            catch(TurnSwitchedException ex) {
+                moveSuccess = true;
+                moveOutcome = MoveOutcomeType.TURN_SWITCHED;
+                //controller.notifyFromModel(new TurnStatusChangedEvent(playerNickname, StateType.CONSTRUCTION, true), playerNickname); // todo: useless, to remove.
+            }
             catch(TurnOverException ex) {
                 moveSuccess = true;
                 moveOutcome = MoveOutcomeType.TURN_OVER;
@@ -315,6 +333,7 @@ public class Model {
             catch(LoseException ex) { // when a Player perform a Move which he/she could not execute
                 moveSuccess = true; // move was executed, but in this case, a Lose Condition is thereby triggered
                 moveOutcome = MoveOutcomeType.LOSS;
+                lastPlayingIndex = gameRoom.getPlayersList().indexOf(player);
             }
             catch(WinException ex) {
                 moveSuccess = true;
@@ -368,6 +387,11 @@ public class Model {
                 if (moveSuccess)
                     moveOutcome = MoveOutcomeType.EXECUTED;
             }
+            catch(TurnSwitchedException ex) {
+                moveSuccess = true;
+                moveOutcome = MoveOutcomeType.TURN_SWITCHED;
+                //controller.notifyFromModel(new TurnStatusChangedEvent(playerNickname, StateType.MOVEMENT, true), playerNickname); // todo: useless, to remove.
+            }
             catch(TurnOverException ex) {
                 moveSuccess = true;
                 moveOutcome = MoveOutcomeType.TURN_OVER;
@@ -376,6 +400,7 @@ public class Model {
             catch(LoseException ex) { // when a Player perform a Move which he/she could not execute
                 moveSuccess = true; // move was executed, but in this case, a Lose Condition is thereby triggered
                 moveOutcome = MoveOutcomeType.LOSS;
+                lastPlayingIndex = gameRoom.getPlayersList().indexOf(player);
             }
             catch(WinException ex) {
                 moveSuccess = true;
@@ -427,11 +452,11 @@ public class Model {
 
             /* 2- Execute move */
             try {
-                player.chooseState(turnStatus);
-                changeSuccess = true;
+                changeSuccess = player.chooseState(turnStatus);
             }
             catch (LoseException ex) {
                 moveOutcome = MoveOutcomeType.LOSS; // todo gestire nel controller
+                lastPlayingIndex = gameRoom.getPlayersList().indexOf(player);
             }
 
             /* 3- Return the result */
@@ -450,21 +475,23 @@ public class Model {
 
 
     public void switchPlayer() {
+        String playingPlayer;
+        Player player;
+        int playerIndex; // index of a Player who is already removed from the gameRoom's players' list (decremented so to maintain the playing order)
         boolean playerSwitched = false; // tells when a switching among Players has been executed
 
-        /* 1- End the current playing Player's turn */
-        String playingPlayer = getPlayingPlayer();
-        if (!playingPlayer.equals(""))
-            endPlayerTurn(playingPlayer);
-
         while(!playerSwitched && gameStarted) {
-            /* 2- Select the next Player */
-            Player nextPlayer;
+            /* 1- End the current playing Player's turn */
             playingPlayer = getPlayingPlayer();
-            if (!playingPlayer.equals(""))
-                nextPlayer = selectNextPlayer(playingPlayer);
+            if (!playingPlayer.equals("")) {
+                player = gameRoom.getPlayer(playingPlayer);
+                playerIndex = gameRoom.getPlayersList().indexOf(player);
+                endPlayerTurn(playingPlayer);
+            }
             else
-                nextPlayer = selectNextPlayer(gameRoom.getPlayer(0).getNickname());
+                playerIndex = lastPlayingIndex - 1;
+            /* 2- Select the next Player */
+            Player nextPlayer = selectNextPlayer(playerIndex);
             /* 3- Next Player starts to play */
             try {
                 nextPlayer.startTurn();
@@ -474,8 +501,9 @@ public class Model {
                 controller.notifyFromModel(new TurnStatusChangedEvent(nextPlayer.getNickname(), StateType.MOVEMENT, true));
             } catch (LoseException ex) {
                 /* 4- Handle the loss of the Player */
-                controller.notifyFromModel(new PlayerLoseEvent(nextPlayer.getNickname(), "Player " + nextPlayer.getNickname() + " has lost the game!"));
+                //controller.notifyFromModel(new PlayerLoseEvent(nextPlayer.getNickname(), "Player " + nextPlayer.getNickname() + " has lost the game!")); // todo: to remove
                 // todo if the message doesn't arrive, think about setting-up a timer (thread-related problems...)
+                lastPlayingIndex = gameRoom.getPlayersList().indexOf(nextPlayer);
                 handlePlayerLoss(nextPlayer);
             }
         }
@@ -493,7 +521,10 @@ public class Model {
 
     private void handlePlayerLoss(Player losingPlayer) {
         /* 1- Unregister the Player from the game */
+        /* 3- Notify all Players in game about the losingPlayer's loss */
+        controller.notifyFromModel(new PlayerLoseEvent(losingPlayer.getNickname(), "Player " + losingPlayer.getNickname() + " has lost the game!"));
         unregisterPlayer(losingPlayer);
+        controller.printControlMessage("### Player '" + losingPlayer.getNickname() + "' has lost the game.");
         /* 2- Check if there is just one Player left in the game */
         if(onlyOnePlayerLeft()) {
             /* 3- Get the last Player left in the game */
@@ -517,16 +548,18 @@ public class Model {
         stopGame();
         /* 2- Notify Players about the Player win */
         controller.notifyFromModel(new PlayerWinEvent(winningPlayer.getNickname(), "You won!", "Player " + winningPlayer.getNickname() + " has won the game."));
+        controller.printControlMessage("### Player '" + winningPlayer.getNickname() + "' has won.");
+        controller.gameOver();
     }
 
     /**
      *
-     * @param playingPlayer (Current playing Player)
+     * @param index (Last playing Player's index)
      * @return Next playing Player
      */
-    private Player selectNextPlayer(String playingPlayer) {
-        Player player = gameRoom.getPlayer(playingPlayer);
-        int index = gameRoom.getPlayersList().indexOf(player);
+    private Player selectNextPlayer(int index) {
+//        Player player = gameRoom.getPlayer(playingPlayer); // todo: maybe to remove (useless)
+//        int index = gameRoom.getPlayersList().indexOf(player); // todo: maybe to remove (useless)
         index++;
         Player nextPlayer = gameRoom.getPlayer((index % gameRoom.getPlayersList().size()));
         return nextPlayer;
@@ -552,8 +585,8 @@ public class Model {
         removedWorkers.forEach(x -> controller.notifyFromModel(x));
         /* 2- Remove the Player from the Players list */
         gameRoom.removePlayer(losingPlayer.getNickname());
-        /* 3- Remove the Player-associated Virtual View */
-        controller.removeView(losingPlayer.getNickname());
+        /* 3- Remove the Player-associated Virtual View */ // todo: to remove (creates problems...)
+        //controller.removeView(losingPlayer.getNickname()); // todo: to remove (creates problems...)
     }
 
     public MoveOutcomeType getMoveOutcome() {
@@ -562,5 +595,9 @@ public class Model {
 
     public synchronized void setMoveOutcome(MoveOutcomeType moveOutcome) {
         this.moveOutcome = moveOutcome;
+    }
+
+    public List<String> players() {
+        return gameRoom.getPlayersList().stream().map(p -> p.getNickname()).collect(Collectors.toList());
     }
 }

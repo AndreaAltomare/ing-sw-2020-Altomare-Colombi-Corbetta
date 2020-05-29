@@ -47,13 +47,18 @@ public class Player {
      * @throws WrongWorkerException (Exception handled by Controller)
      * @throws TurnOverException (Exception handled by Controller)
      */
-    public boolean executeMove(Move move,Worker worker) throws WinException,LoseException,RunOutMovesException,BuildBeforeMoveException,WrongWorkerException,TurnOverException {
+    public boolean executeMove(Move move,Worker worker) throws WinException,LoseException,RunOutMovesException,BuildBeforeMoveException,WrongWorkerException,TurnOverException,TurnSwitchedException {
         boolean executionResult = false;
 
         try {
             executionResult = turn.handle(move, worker);
         }
-        catch (TurnOverException | LoseException ex) {
+        catch(TurnSwitchedException ex) {
+            // Movement has been done. Now it's turn for the Construction move
+            chooseState(StateType.CONSTRUCTION);
+            throw ex;
+        }
+        catch (LoseException ex) {
             this.playing = false;
             throw ex;
         }
@@ -69,12 +74,12 @@ public class Player {
      * @throws LoseException (Exception handled by Controller)
      */
     public void startTurn() throws LoseException {
-        /* 0- Check if there is a Lose Condition */
+        /* 0- Reset Player's Move Manager values */
+        card.resetForStart();
+
+        /* 1- Check if there is a Lose Condition */
         if(checkForLostByMovement())
             throw new LoseException(this, "Player " + nickname + "has lost! (Cannot perform any Movement)");
-
-        /* 1- Reset Player's Move Manager values */
-        card.resetForStart();
 
         /* 2- Reset Workers Turn values */
         workers.forEach(x -> x.setChosen(ChooseType.CAN_BE_CHOSEN));
@@ -101,19 +106,55 @@ public class Player {
      * This method shall be called by the Controller
      *
      * @param state (Chosen State type)
+     * @return (State-switching is admitted ? true : false)
      * @throws LoseException (Exception handled by Controller)
      */
-    public void chooseState(StateType state) throws LoseException {
+    public boolean chooseState(StateType state) throws LoseException {
+        boolean changeAdmitted = false;
+
         switch(state) {
             case MOVEMENT:
-                this.switchState(movementState);
+                changeAdmitted = preliminaryCheck(state);
+                if(changeAdmitted)
+                    changeAdmitted = this.switchState(movementState);
                 break;
             case CONSTRUCTION:
-                this.switchState(constructionState);
+                changeAdmitted = preliminaryCheck(state);
+                if(changeAdmitted)
+                    changeAdmitted = this.switchState(constructionState);
                 break;
             default:
                 break;
         }
+
+        return changeAdmitted;
+    }
+
+    /**
+     * Preliminary check to first understand if the switch is possible or not.
+     *
+     * @param state (Chosen State type)
+     * @return (State-switching is admitted ? true : false)
+     */
+    private boolean preliminaryCheck(StateType state) {
+        boolean canChangeTurn = false;
+
+        switch(state) {
+            case MOVEMENT:
+                if(card.getMyMove().getMovesLeft() >= 1)
+                    canChangeTurn = true;
+                break;
+
+            case CONSTRUCTION:
+                if(card.getMyConstruction().getConstructionLeft() >= 1)
+                    canChangeTurn = true;
+                break;
+
+            default:
+                break;
+        }
+
+        return canChangeTurn;
     }
 
     /**
@@ -121,9 +162,10 @@ public class Player {
      * that controls the Turn flow.
      *
      * @param nextState (Next FSM State to go in)
+     * @return (State-switching is admitted ? true : false)
      * @throws LoseException (Exception handled by Controller)
      */
-    public void switchState(TurnManager nextState) throws LoseException {
+    public boolean switchState(TurnManager nextState) throws LoseException {
         // TODO: maybe REFACTOR this check into a method in MovementManager class
         /* Check if a Lose Condition (by denied movements) occurs */
         if(nextState.state() == StateType.MOVEMENT)
@@ -136,6 +178,7 @@ public class Player {
                 throw new LoseException(this, "Player " + nickname + "has lost! (Cannot perform any Construction)");
 
         this.turn = nextState;
+        return true; // everything ok
     }
 
 
@@ -172,6 +215,10 @@ public class Player {
      * @return (Worker has been correctly chosen ? true : false)
      */
     public boolean chooseWorker(Worker worker) {
+        /* 0- if the Worker has already been chosen, do not change anything */
+        if(worker.isChosen())
+            return true;
+
         /* 1- if a Worker is in a Lose condition, don't let the Player to select it */
         /* In this case, just a Lose condition triggered by denied Movements is checked,
         * because conditions to make a Movement are more stringent than the ones to make
@@ -184,7 +231,7 @@ public class Player {
         if(!worker.getOwner().getNickname().equals(this.nickname))
             return false;
 
-        if(worker.getChosenStatus() == ChooseType.CAN_BE_CHOSEN || worker.isChosen()) {
+        if(worker.getChosenStatus() == ChooseType.CAN_BE_CHOSEN) {
             /* 2.1- Set the Worker status to CHOSEN */
             worker.setChosen(ChooseType.CHOSEN);
 
@@ -208,11 +255,17 @@ public class Player {
      */
     private boolean checkForLostByMovement() {
         List<Cell> adjacentCells;
+        boolean workerHasLost = false;
 
         /* For each worker check if a Move can be performed */
-        for(Worker workerObj : workers)
-            if(!checkForWorkerLostByMovement(workerObj))
+        for(Worker workerObj : workers) {
+            workerHasLost = checkForWorkerLostByMovement(workerObj);
+            if (!workerHasLost)
                 return false;
+
+            if(card.hasExecutedConstruction() && workerObj.isChosen())
+                return true; // no more actions possible within the same SELECTED worker.
+        }
 
         return true;
     }
@@ -227,9 +280,13 @@ public class Player {
         List<Cell> adjacentCells;
 
         /* For each worker check if a BuildMove can be performed */
-        for(Worker workerObj : workers)
-            if(!checkForWorkerLostByConstruction(workerObj))
+        for(Worker workerObj : workers) {
+            if (!checkForWorkerLostByConstruction(workerObj))
                 return false;
+
+            if(card.hasExecutedMovement() && workerObj.isChosen())
+                return true; // no more actions possible within the same SELECTED worker.
+        }
 
         return true;
     }

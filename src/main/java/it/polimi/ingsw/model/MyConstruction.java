@@ -40,9 +40,9 @@ public class MyConstruction {
             if(!godPower.isActiveOnMyConstruction()) {
                 /* default construction execution */
                 if(move.getBlockType() == PlaceableType.BLOCK)
-                    move.getSelectedCell().buildBlock();
+                    moveAllowed = move.getSelectedCell().buildBlock();
                 else if(move.getBlockType() == PlaceableType.DOME)
-                    move.getSelectedCell().buildDome();
+                    moveAllowed = move.getSelectedCell().buildDome();
                 else
                     moveAllowed = false;
             }
@@ -50,15 +50,16 @@ public class MyConstruction {
                 /* special rules when performing a Movement */
                 // todo: all construction-based Gods (atlas, demeter, hephaestus, and prometheus) just need to check if the move is possible, before executing it (just to check, REMOVE THIS COMMENT)
                 if(move.getBlockType() == PlaceableType.BLOCK)
-                    move.getSelectedCell().buildBlock();
+                    moveAllowed = move.getSelectedCell().buildBlock();
                 else if(move.getBlockType() == PlaceableType.DOME)
-                    move.getSelectedCell().buildDome();
+                    moveAllowed = move.getSelectedCell().buildDome();
                 else
                     moveAllowed = false;
             }
 
             /* Register the executed move */
-            registerLastMove(move);
+            if(moveAllowed)
+                registerLastMove(move);
         }
 
         return moveAllowed; // true if the move was executed

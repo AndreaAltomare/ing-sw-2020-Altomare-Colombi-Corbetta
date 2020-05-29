@@ -78,4 +78,8 @@ public class Card {
     public GodPower getGodPower() {
         return godPower;
     }
+
+    public String getName() {
+        return name;
+    }
 }

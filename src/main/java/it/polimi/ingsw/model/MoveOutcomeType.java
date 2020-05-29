@@ -13,6 +13,7 @@ public enum MoveOutcomeType {
     RUN_OUT_OF_MOVES,
     BUILD_BEFORE_MOVE,
     WRONG_WORKER,
+    TURN_SWITCHED,
     TURN_OVER,
     WIN,
     LOSS,

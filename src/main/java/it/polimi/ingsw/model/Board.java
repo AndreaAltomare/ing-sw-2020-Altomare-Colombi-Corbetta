@@ -77,7 +77,7 @@ public abstract class Board {
                 try {
                     Cell cell = getCellAt(i, j);
                     Worker worker = cell.getWorker();
-                    if(worker.getOwner().equals(player))
+                    if(worker != null && worker.getOwner().equals(player))
                         cell.removeWorker();
                 } catch (OutOfBoardException ignore) {
                 }

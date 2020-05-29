@@ -184,7 +184,8 @@ public class GameRoom extends GeneralGameRoom {
      * Cards whose power is active on opponents turn, must be
      * registered as Turn Observers in their respective Turn Managers
      */
-    private void registerObservers() {
+    @Override
+    public void registerObservers() {
         /* 1- Take all the AdversaryMove objects */ // TODO: Check if Lambda expression works fine
         List<Player> selectedPlayers = players.stream().filter(x -> x.getCard().getGodPower().isActiveOnOpponentMovement()).collect(Collectors.toList());
 
@@ -201,6 +202,7 @@ public class GameRoom extends GeneralGameRoom {
         /* 4- Register each AdversaryMove element in every Player's appropriate Turn Observer */
         for(MovementObserver movementObs : movementObservers)
             for(Player playerObj : players)
-                playerObj.getMovementManager().registerObservers(movementObs);
+                if(!playerObj.getCard().getName().equals(movementObs.getAdversaryMoveObserver().getParentCard().getName()))
+                    playerObj.getMovementManager().registerObservers(movementObs);
     }
 }

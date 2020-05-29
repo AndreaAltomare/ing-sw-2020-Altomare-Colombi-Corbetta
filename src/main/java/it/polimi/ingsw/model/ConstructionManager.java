@@ -78,7 +78,7 @@ public class ConstructionManager extends TurnManager {
                 throw new BuildBeforeMoveException("Player has already made a Construction! Need to perform a Movement now.");
         }
 
-        /* 1- Check if my Card allow this move */
+        /* 1- Check if my Card allow this move */ // TODO: qui andrebbe messo un try-catch per gestire la seguente situazione: un player che ha già fatto un movimento, switcha al turno CONSTRUCTION ma fa comunque una MOVEMENT. Il cast dovrebbe non essere consentito e quindi dovrebbe lanciare eccezione a runtime.
         moveAllowed = card.getMyConstruction().checkMove((BuildMove)move, worker);
 
         /* 2- Check if my opponent's Card allow this move */
@@ -88,7 +88,7 @@ public class ConstructionManager extends TurnManager {
         /* 3- Execute this move */
         if(moveAllowed) {
             try {
-                card.getMyConstruction().executeMove((BuildMove)move, worker);
+                moveAllowed = card.getMyConstruction().executeMove((BuildMove)move, worker);
             }
             catch(OutOfBoardException ex) {
                 moveAllowed = false;

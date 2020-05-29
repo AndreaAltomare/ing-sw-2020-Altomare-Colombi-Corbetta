@@ -66,4 +66,8 @@ public class AdversaryMove {
 
         return true; // everything ok
     }
+
+    public Card getParentCard() {
+        return parentCard;
+    }
 }
