@@ -141,12 +141,9 @@ public abstract class Viewer extends Thread{
 
     protected void enqueue(ViewerQueuedEvent event){
         try {
-            //todo sistemare doppio sincronised
-            synchronized (wakers) {
-                synchronized (myViewerQueue) {
-                    //System.out.println("Remaining: " + ((ArrayBlockingQueue)myViewerQueue).size());
-                    myViewerQueue.add(event);
-                }
+            synchronized (myViewerQueue) {
+                //System.out.println("Remaining: " + ((ArrayBlockingQueue)myViewerQueue).size());
+                myViewerQueue.add(event);
             }
         }catch (IllegalStateException ignore){
             System.out.println("FUCK IT BLOCKING QUEUE");
