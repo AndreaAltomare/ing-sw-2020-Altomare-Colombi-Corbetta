@@ -449,12 +449,18 @@ public class Model {
         if(getPlayingPlayer().equals(playerNickname)) {
             /* 1- Gather needed data */
             player = gameRoom.getPlayer(playerNickname);
+            moveOutcome = MoveOutcomeType.NOT_EXECUTED;
 
             /* 2- Execute move */
             try {
                 changeSuccess = player.chooseState(turnStatus);
             }
+            catch (TurnOverException ex) {
+                changeSuccess = true;
+                moveOutcome = MoveOutcomeType.TURN_OVER;
+            }
             catch (LoseException ex) {
+                changeSuccess = true;
                 moveOutcome = MoveOutcomeType.LOSS; // todo gestire nel controller
                 lastPlayingIndex = gameRoom.getPlayersList().indexOf(player);
             }

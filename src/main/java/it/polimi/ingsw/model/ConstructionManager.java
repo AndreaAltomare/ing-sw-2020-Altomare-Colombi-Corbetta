@@ -99,6 +99,13 @@ public class ConstructionManager extends TurnManager {
         if(moveAllowed) {
             card.setConstructionExecuted(true);
             card.getMyConstruction().decreaseConstructionLeft();
+
+            if(card.hasExecutedMovement()) {
+                card.setTurnCompleted(true);
+
+                if(card.getGodPower().isBuildBeforeMovement())
+                    card.getMyConstruction().decreaseConstructionLeft();
+            }
         }
 
         /* If Construction Moves are over, trigger an Exception to switch the Player */

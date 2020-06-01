@@ -212,11 +212,13 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
 
                 case "turn_change":
-                    System.out.println("Select the turn you want to switch at:\n1 - MOVEMENT\n2 - CONSTRUCTION");
+                    System.out.println("Select the turn you want to switch at:\n1 - MOVEMENT\n2 - CONSTRUCTION\n3 - PASS TURN");
                     int turn = Integer.parseInt(in.nextLine());
-                    StateType turnType = StateType.CONSTRUCTION;
+                    StateType turnType = StateType.NONE;
                     if(turn == 1)
                         turnType = StateType.MOVEMENT;
+                    else if(turn == 2)
+                        turnType = StateType.CONSTRUCTION;
                     notify(new TurnStatusChangeEvent(turnType));
                     break;
 
@@ -338,8 +340,12 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 //        Viewer.setAllSubTurnViewer(ViewSubTurn.getActual().getSubViewer());
         //System.out.println("Turn status changed to: " + turnStatusChange.getState().toString()); // todo: check what toString() of an enum prints... [si, funziona.]
         if(turnStatusChange.getPlayerNickname().equals(nickname))
-            if(turnStatusChange.success())
-                System.out.println("[TurnStatusChangedEvent] Your turn is now: " + turnStatusChange.getState().toString()); // todo [debug]
+            if(turnStatusChange.success()) {
+                if(turnStatusChange.getState().equals(StateType.NONE))
+                    System.out.println("[TurnStatusChangedEvent] You have passed your turn!"); // todo [debug]
+                else
+                    System.out.println("[TurnStatusChangedEvent] Your turn is now: " + turnStatusChange.getState().toString()); // todo [debug]
+            }
             else
                 System.out.println("[TurnStatusChangedEvent] Cannot change to state: " + turnStatusChange.getState().toString()); // todo [debug]
         else

@@ -179,6 +179,8 @@ class PlayerTest {
             player.chooseState(StateType.MOVEMENT);
         } catch (LoseException e) {
             checkLose = true;
+        } catch (TurnOverException e) {
+            System.out.println("TurnOverException during test"); // todo AGGIUNTO DA ANDREA, SOLO PER POTER COMPILARE
         }
         assertTrue( checkLose );
 
@@ -211,6 +213,8 @@ class PlayerTest {
             player.chooseState(StateType.MOVEMENT);
         } catch (LoseException e) {
             checkLose = true;
+        } catch (TurnOverException e) {
+            System.out.println("TurnOverException during test"); // todo AGGIUNTO DA ANDREA, SOLO PER POTER COMPILARE
         }
         assertTrue( !checkLose );
 
@@ -246,6 +250,8 @@ class PlayerTest {
             player.chooseState(StateType.CONSTRUCTION);
         } catch (LoseException e) {
             checkLose = true;
+        } catch (TurnOverException e) {
+            System.out.println("TurnOverException during test"); // todo AGGIUNTO DA ANDREA, SOLO PER POTER COMPILARE
         }
         assertTrue( checkLose );
 
@@ -278,6 +284,8 @@ class PlayerTest {
             player.chooseState(StateType.CONSTRUCTION);
         } catch (LoseException e) {
             checkLose = true;
+        } catch (TurnOverException e) {
+            System.out.println("TurnOverException during test"); // todo AGGIUNTO DA ANDREA, SOLO PER POTER COMPILARE
         }
         assertTrue( !checkLose );
 

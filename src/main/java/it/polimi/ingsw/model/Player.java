@@ -85,7 +85,12 @@ public class Player {
         workers.forEach(x -> x.setChosen(ChooseType.CAN_BE_CHOSEN));
 
         /* 3- Get to the initial State */
-        chooseState(StateType.MOVEMENT);
+        try {
+            chooseState(StateType.MOVEMENT);
+        }
+        catch (TurnOverException ex) {
+            System.err.println("An error occurred while starting " + nickname + "'s turn!");
+        }
 
         /* 4- The Player is now playing */
         this.playing = true;
@@ -108,8 +113,9 @@ public class Player {
      * @param state (Chosen State type)
      * @return (State-switching is admitted ? true : false)
      * @throws LoseException (Exception handled by Controller)
+     * @throws TurnOverException (Exception handled by Controller)
      */
-    public boolean chooseState(StateType state) throws LoseException {
+    public boolean chooseState(StateType state) throws LoseException,TurnOverException {
         boolean changeAdmitted = false;
 
         switch(state) {
@@ -123,11 +129,27 @@ public class Player {
                 if(changeAdmitted)
                     changeAdmitted = this.switchState(constructionState);
                 break;
+            case NONE:
+                changeAdmitted = checkIfTurnCompleted();
+                if(changeAdmitted)
+                    throw new TurnOverException("Turn passed!");
+                break;
             default:
                 break;
         }
 
         return changeAdmitted;
+    }
+
+    private boolean checkIfTurnCompleted() {
+        // todo maybe to remove
+//        boolean canPassTurn = false;
+//
+//        if(card.getGodPower().isBuildBeforeMovement())
+//            return (card.hasExecutedMovement() && (card.getMyConstruction().getConstructionLeft() <= card.getGodPower().getConstructionLeft() - 2));
+//        else
+//            return (card.hasExecutedMovement() && card.hasExecutedConstruction());
+        return card.isTurnCompleted();
     }
 
     /**

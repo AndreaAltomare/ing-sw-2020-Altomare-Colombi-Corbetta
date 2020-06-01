@@ -122,13 +122,13 @@ public class MyConstruction {
         /* cannot build on the same space (for additional-time constructions) */
         // todo: demeter (just to check, REMOVE THIS COMMENT)
         if(godPower.isSameSpaceDenied())
-            if(lastMove != null && constructionLeft == 1 && move.getSelectedCell().equals(lastMove.getSelectedCell()))
+            if(parentCard.hasExecutedConstruction() && move.getSelectedCell().equals(lastMove.getSelectedCell())) // if(lastMove != null && constructionLeft == 1 && move.getSelectedCell().equals(lastMove.getSelectedCell()))
                 return false;
 
         /* force build on the same space (for additional-time constructions) */
         // todo: hephaestus (just to check, REMOVE THIS COMMENT)
         if(godPower.isForceConstructionOnSameSpace())
-            if(lastMove != null && constructionLeft == 1 && !move.getSelectedCell().equals(lastMove.getSelectedCell()) && move.getBlockType() == PlaceableType.DOME)
+            if(parentCard.hasExecutedConstruction() && (!move.getSelectedCell().equals(lastMove.getSelectedCell()) || move.getBlockType() == PlaceableType.DOME))
                 return false;
 
         return true; // everything ok

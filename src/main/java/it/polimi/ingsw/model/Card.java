@@ -16,6 +16,7 @@ public class Card {
     private AdversaryMove adversaryMove;
     private boolean movementExecuted; // tells if at least one movement was executed
     private boolean constructionExecuted; // tells if at least one construction was executed
+    private boolean turnCompleted; // tells if at least a regular turn cycle is completed
 
     public Card(GodPower godPower) {
         this.godPower = godPower;
@@ -28,6 +29,7 @@ public class Card {
         this.adversaryMove = new AdversaryMove(this, godPower);
         this.movementExecuted = false;
         this.constructionExecuted = false;
+        this.turnCompleted = false;
     }
 
     /**
@@ -41,6 +43,7 @@ public class Card {
         /* Reset Movement and Construction executed */
         movementExecuted = false;
         constructionExecuted = false;
+        turnCompleted = false;
     }
 
     public MyMove getMyMove() {
@@ -73,6 +76,14 @@ public class Card {
 
     public void setConstructionExecuted(boolean constructionExecuted) {
         this.constructionExecuted = constructionExecuted;
+    }
+
+    public boolean isTurnCompleted() {
+        return turnCompleted;
+    }
+
+    public void setTurnCompleted(boolean turnCompleted) {
+        this.turnCompleted = turnCompleted;
     }
 
     public GodPower getGodPower() {

@@ -116,7 +116,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         System.out.println("\n##### Game started #####\n"); // Server control message
         System.out.println("### It's " + model.startPlayer() + "'s turn.");
 
-        simulateGame(5); // TODO: just to for debug. REMOVE
+        //simulateGame(5); // TODO: just to for debug. REMOVE
     }
 
 
@@ -138,23 +138,23 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             cardsInGame.add("Minotaur");
         model.setCardsInGame(cardsInGame);
         // set cards
-        model.setPlayerCard("Atlas", "giorgio");
-        model.setPlayerCard("Apollo", "andrea");
+        model.setPlayerCard("Pan", "giorgio");
+        model.setPlayerCard("Prometheus", "andrea");
         if(nPlayer == 3)
-            model.setPlayerCard("Minotaur", "marco");
+            model.setPlayerCard("Demeter", "marco");
         registerTurnObservers();
         // set start player
         model.setStartPlayer("andrea");
         // sort players
         sortPlayers();
         // place workers
+        model.placeWorker(3, 0, "andrea"); // worker's starting position
         model.placeWorker(0, 0, "andrea"); // worker's starting position
-        model.placeWorker(4, 4, "andrea"); // worker's starting position
-        model.placeWorker(1, 3, "giorgio"); // worker's starting position
-        model.placeWorker(3, 3, "giorgio"); // worker's starting position
+        model.placeWorker(4, 3, "giorgio"); // worker's starting position
+        model.placeWorker(0, 1, "giorgio"); // worker's starting position
         if(nPlayer == 3) {
-            model.placeWorker(2, 0, "marco"); // worker's starting position
-            model.placeWorker(2, 4, "marco"); // worker's starting position
+            model.placeWorker(3, 2, "marco"); // worker's starting position
+            model.placeWorker(0, 2, "marco"); // worker's starting position
         }
     }
 
