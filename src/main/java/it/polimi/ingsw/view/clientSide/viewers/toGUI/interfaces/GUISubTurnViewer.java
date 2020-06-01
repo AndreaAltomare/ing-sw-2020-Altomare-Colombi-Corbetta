@@ -1,11 +1,13 @@
 package it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces;
 
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SpecificSubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.boardSubTurn.BoardSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
+import it.polimi.ingsw.view.exceptions.NotFoundException;
 
 import javax.swing.*;
 
@@ -36,5 +38,26 @@ public abstract class GUISubTurnViewer implements SpecificSubTurnViewer {
 
     public Executer getMyExecuter(){
         return viewSubTurn.getExecuter();
+    }
+
+    public String getPlayer(){
+        return viewSubTurn.getPlayer();
+    }
+
+    public String getGodName(){
+        ViewPlayer player = null;
+        if (getPlayer()==null){
+            return "";
+        }
+        try {
+            player = ViewPlayer.searchByName(getPlayer());
+        } catch (NotFoundException e) {
+            return "";
+        }
+        try {
+            return player.getCard().getName();
+        } catch (NotFoundException e) {
+            return "";
+        }
     }
 }

@@ -17,7 +17,7 @@ public class PlayerPanel extends JPanel {
 
         Graphics2D g2d = (Graphics2D) g;
 
-        g2d.setPaint(Color.DARK_GRAY);
+        g2d.setPaint(Color.GREEN);
         g2d.fill(new RoundRectangle2D.Double(myBorders, myBorders, dimension.getWidth(), dimension.getHeight(), 50, 50));
 
 

@@ -12,7 +12,7 @@ public class BodyPanel extends SubPanel {
     private int cont =0;
 
     protected JPanel subTurnPanel = new JPanel();
-    protected PlayerPanel playerPanel = new PlayerPanel();
+    protected JPanel playerPanel = new JPanel();
     protected JPanel boardPanel = new JPanel();
 
     public BodyPanel(){
@@ -24,6 +24,7 @@ public class BodyPanel extends SubPanel {
         add(boardPanel);
         boardPanel.add(ViewBoard.getBoard().toGUI());
         subTurnPanel.setOpaque(false);
+        playerPanel.setOpaque(false);
     }
 
     @Override
@@ -69,5 +70,7 @@ public class BodyPanel extends SubPanel {
     public JPanel getSubTurnPanel(){
         return subTurnPanel;
     }
+
+    public JPanel getPlayerPanel() { return playerPanel; }
 
 }
