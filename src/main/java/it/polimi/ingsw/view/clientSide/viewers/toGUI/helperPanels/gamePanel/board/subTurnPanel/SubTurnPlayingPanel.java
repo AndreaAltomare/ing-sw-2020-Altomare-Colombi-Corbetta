@@ -8,6 +8,7 @@ import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.elements.PanelImageButton;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.SubPanel;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.sounds.SoundEffect;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
@@ -72,6 +73,9 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
                     TurnStatusChangeExecuter myExec = new TurnStatusChangeExecuter();
+
+                    SoundEffect.playSound("build.wav");
+
                     try {
                         myExec.setStatusId(ViewSubTurn.BUILD);
                         myExec.doIt();
