@@ -16,9 +16,9 @@
 | GUI | [![YELLOW](https://placehold.it/15/ffdd00/ffdd00)](#) |
 | CLI | [![YELLOW](https://placehold.it/15/ffdd00/ffdd00)](#) |
 | Multiple games | [![RED](https://placehold.it/15/f03c15/f03c15)](#) |
-| Persistence | [![RED](https://placehold.it/15/f03c15/f03c15)](#) |
+| Persistence | [![YELLOW](https://placehold.it/15/ffdd00/ffdd00)](#) |
 | Advanced Gods | [![RED](https://placehold.it/15/f03c15/f03c15)](#) |
-| Undo | [![RED](https://placehold.it/15/f03c15/f03c15)](#) |
+| Undo | [![YELLOW](https://placehold.it/15/ffdd00/ffdd00)](#) |
 
 <!--
 [![RED](https://placehold.it/15/f03c15/f03c15)](#)
