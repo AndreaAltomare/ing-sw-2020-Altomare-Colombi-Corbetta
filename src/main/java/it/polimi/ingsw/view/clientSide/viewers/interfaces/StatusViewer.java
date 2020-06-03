@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.clientSide.viewers.interfaces;
 
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalStatusViewer;
 
@@ -18,6 +19,8 @@ public abstract class StatusViewer {
 
     protected GUIStatusViewer myGUI;
 
+    protected WTerminalStatusViewer myWTerminal;
+
     protected CLIStatusViewer myCLI;
 
     public Map<String, Executer> getMyExecuters() {
@@ -28,5 +31,7 @@ public abstract class StatusViewer {
 
     public GUIStatusViewer toGUI(){ return myGUI; }
 
-    public CLIStatusViewer toCLI(){ return myCLI; }
+    public WTerminalStatusViewer toWTerminal(){ return myWTerminal; }
+
+    public CLIStatusViewer toCLI() { return  myCLI; }
 }

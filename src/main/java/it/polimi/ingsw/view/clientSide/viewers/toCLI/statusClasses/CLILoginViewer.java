@@ -3,8 +3,10 @@ package it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetNicknameExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.LoginViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.PrintFunction;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
@@ -17,8 +19,16 @@ public class CLILoginViewer extends CLIStatusViewer {
     private LoginViewer loginViewer;
 
     final int STARTING_SPACE = 7;
+    final int DISTANT_FROM_EDGE = 3;
     final String FIRST_PART = "Please, insert your";
     final String SECOND_PART = "Nickname:";
+    final String DROP_COLOR = ANSIStyle.DIFFERENT_BLUE.getEscape();
+    final String HUMAN_COLOR = ANSIStyle.RESET;
+    final String BLOCK_BACK_COLOR = ANSIStyle.BACK_GREY.getEscape();
+    final String REQUEST_COLOR = ANSIStyle.BLUE.getEscape();
+    final String ERROR_COLOR_AND_SYMBOL = ANSIStyle.RED.getEscape() + UnicodeSymbol.X_MARK.getEscape();
+    final String CORRECT_COLOR_AND_SYMBOL = ANSIStyle.GREEN.getEscape() + UnicodeSymbol.CHECK_MARK.getEscape();
+    final String WRITE_MARK = ANSIStyle.UNDERSCORE.getEscape() + UnicodeSymbol.PENCIL.getEscape() + ANSIStyle.RESET;
 
     /**
      * Constructor to set correct StatusViewer
@@ -42,60 +52,54 @@ public class CLILoginViewer extends CLIStatusViewer {
         final int BLOCK_LENGTH; //after initialization it becomes constant
 
         if ( FIRST_PART.length() > SECOND_PART.length() ) {
-            BLOCK_LENGTH = FIRST_PART.length() + 3*2;
+            BLOCK_LENGTH = FIRST_PART.length() + DISTANT_FROM_EDGE*2;
         } else {
-            BLOCK_LENGTH = SECOND_PART.length() + 3*2;
+            BLOCK_LENGTH = SECOND_PART.length() + DISTANT_FROM_EDGE*2;
         }
 
 
-        // upper edge of block
-        PrintFunction.printRepeatString(" ", STARTING_SPACE + 3);
-        PrintFunction.printRepeatString("_", BLOCK_LENGTH);
-        System.out.println();
+        // head and upper block's part
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE - 1);
+        System.out.print( DROP_COLOR + "'" );
+        System.out.print( HUMAN_COLOR + "O " );
 
-        // head and block
-        PrintFunction.printRepeatString(" ", STARTING_SPACE - 1);
-        System.out.print( "'O " );
-
-        System.out.print("|");
-        PrintFunction.printRepeatString(" ", BLOCK_LENGTH);
-        System.out.print("|");
+        CLIPrintFunction.printRepeatString(BLOCK_BACK_COLOR, " ", BLOCK_LENGTH);
         System.out.println();
 
         // chest and request's first part
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-        System.out.print( "/|" );
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        System.out.print( HUMAN_COLOR + "/|" );
 
-        System.out.print("|");
-        PrintFunction.printAtTheMiddle(FIRST_PART, BLOCK_LENGTH);
-        System.out.print("|");
+        CLIPrintFunction.printAtTheMiddle(BLOCK_BACK_COLOR + REQUEST_COLOR,
+                                            FIRST_PART,
+                                            FIRST_PART.length(),
+                                            BLOCK_LENGTH);
         System.out.println();
 
         // leg, body and request's second part
-        PrintFunction.printRepeatString(" ", STARTING_SPACE - 4);
-        System.out.print( "_/\\/ |");
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE - 4);
+        System.out.print( HUMAN_COLOR + "_/\\/ |");
 
-        System.out.print("|");
-        PrintFunction.printAtTheMiddle(SECOND_PART, BLOCK_LENGTH);
-        System.out.print("|");
+        CLIPrintFunction.printAtTheMiddle(BLOCK_BACK_COLOR + REQUEST_COLOR,
+                                                SECOND_PART,
+                                                SECOND_PART.length(),
+                                                BLOCK_LENGTH);
         System.out.println();
 
         // other leg and block's down edge
-        PrintFunction.printRepeatString(" ", STARTING_SPACE -2);
-        System.out.print("/   ");
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE - 2);
+        System.out.print( HUMAN_COLOR + "/   ");
 
-        System.out.print("|");
-        PrintFunction.printRepeatString("_", BLOCK_LENGTH);
-        System.out.print("|");
+        CLIPrintFunction.printRepeatString( BLOCK_BACK_COLOR, " ", BLOCK_LENGTH);
         System.out.println();
 
         // foot
-        PrintFunction.printRepeatString(" ",STARTING_SPACE -4);
-        System.out.print( "_/    ");
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE - 4);
+        System.out.print( HUMAN_COLOR + "_/    ");
         if ( ((BLOCK_LENGTH - SECOND_PART.length()) %2) == 0) {
-            PrintFunction.printRepeatString(" ", ((BLOCK_LENGTH - SECOND_PART.length()) /2) - 2);
+            CLIPrintFunction.printRepeatString( ANSIStyle.RESET, " ", ((BLOCK_LENGTH - SECOND_PART.length()) /2) - 2);
         } else {
-            PrintFunction.printRepeatString(" ", ((BLOCK_LENGTH - SECOND_PART.length()) /2) - 1);
+            CLIPrintFunction.printRepeatString( ANSIStyle.RESET, " ", ((BLOCK_LENGTH - SECOND_PART.length()) /2) - 1);
         }
 
     }
@@ -103,17 +107,19 @@ public class CLILoginViewer extends CLIStatusViewer {
     /**
      * Prints a little signal to notify on standard output where it is possible to write the nickname
      * then returns the read value if its length is 8 or minus, or its first eight char if it isn't
+     *
      * @return the string which is read if its length is 8 or minus. its first eight char if it isn't
      */
     private String getNicknameResponse() {
+        final int maxLength = 8;
         String response;
         Scanner input = new Scanner(System.in);
 
-        System.out.print(  ">>(Max 8):");
+        System.out.printf(  WRITE_MARK + "(Max %d):", maxLength);
 
         response = input.nextLine();
-        if (response.length() > 8) {
-            response = response.substring(0,7);
+        if (response.length() > maxLength) {
+            response = response.substring(0, maxLength);
         }
 
         return response;
@@ -122,26 +128,31 @@ public class CLILoginViewer extends CLIStatusViewer {
     /**
      * Checks if the string is a possible value and sends it with the correct executer,
      * then it notifies with a message on standard output if the nickname is correct or not
+     *
      * @param response nickname chosen by player
      * @return boolean value ( true => correct nickname, false => wrong nickname
      */
     private boolean checkNicknameResponse(String response) {
+        final String CORRECT_MESSAGE = "Your Nickname is correctly set";
+        final String WRONG_PARAMETER_MESSAGE = "Nickname chosen is not valid, please change it";
         boolean approvedResponse = false;
         SetNicknameExecuter setNicknameExecuter = (SetNicknameExecuter) loginViewer.getMyExecuters().get("NickName");
 
         try {
             setNicknameExecuter.setNickname(response);
             setNicknameExecuter.doIt();
-            System.out.println( "\n\t" +
-                                "  /" + "\n\t" +
-                                "\\/ Your Nickname is correctly set" + "\n");
+            System.out.println();
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.print( CORRECT_COLOR_AND_SYMBOL + CORRECT_MESSAGE + ANSIStyle.RESET + "\n" );
             approvedResponse = true;
         } catch (WrongParametersException e) {
-            System.out.println( "\n\t" +
-                                ">< Nickname chosen is not valid, please change it");
+            System.out.println();
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.print( ERROR_COLOR_AND_SYMBOL + WRONG_PARAMETER_MESSAGE + ANSIStyle.RESET + "\n");
         } catch (CannotSendEventException e) {
-            System.out.printf(" \n\t" +
-                                ">< %s" +"\n", e.toString());
+            System.out.println();
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.printf( ERROR_COLOR_AND_SYMBOL + "%s" + ANSIStyle.RESET + "\n", e.toString());
         }
         System.out.println();
 

@@ -11,7 +11,7 @@ public class CLIGamePreparationViewer extends CLIStatusViewer {
 
     private GamePreparationViewer gamePreparationViewer;
 
-    public CLIGamePreparationViewer( GamePreparationViewer gamePreparationViewer) {
+    public CLIGamePreparationViewer(GamePreparationViewer gamePreparationViewer) {
         this.gamePreparationViewer = gamePreparationViewer;
     }
 
@@ -25,7 +25,7 @@ public class CLIGamePreparationViewer extends CLIStatusViewer {
 
         if ( this.getMyCLISubTurnViewer() == null){
             for (ViewPlayer viewPlayer : ViewPlayer.getPlayerList()) {
-                this.getMyCLIViewer().assignWorkerSymbol(viewPlayer);
+                this.getMyCLIViewer().assignPlayerColor(viewPlayer);
             }
         } else {
             this.getMyCLISubTurnViewer().show();

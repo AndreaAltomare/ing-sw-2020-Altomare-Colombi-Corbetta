@@ -3,7 +3,9 @@ package it.polimi.ingsw.view.clientSide.viewers.subTurnViewers;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.CLIBuildPhase;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTerminalBuildPhase;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.subTurnClasses.BuildSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSubTurnViewer;
@@ -25,7 +27,10 @@ public class BuildViewer extends SubTurnViewer {
     }
 
     @Override
-    public CLISubTurnViewer toCLI()  {
-        return new CLIBuildPhase( this );
+    public WTerminalSubTurnViewer toWTerminal()  {
+        return new WTerminalBuildPhase( this );
     }
+
+    @Override
+    public CLISubTurnViewer toCLI() { return new CLIBuildPhase( this ); }
 }

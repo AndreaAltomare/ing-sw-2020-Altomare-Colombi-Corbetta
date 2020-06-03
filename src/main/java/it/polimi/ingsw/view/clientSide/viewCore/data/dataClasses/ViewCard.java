@@ -2,12 +2,11 @@ package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
 //import com.sun.tools.javac.comp.Resolve;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.GodSymbols;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.SymbolsLevel;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.GodSymbols;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.SymbolsLevel;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
-import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -132,10 +131,11 @@ public class ViewCard extends ViewObject {
     /**
      * Method that will return a String that will represent GodSymbols of the card at the correct level
      * if it is found, or a Error message if it isn't
+     *
      * @param representationLevel to set the level of representation
      * @return representation's level of card's GodSymbols if it is found, a String error message if it isn't
      */
-    public String toCLI(SymbolsLevel representationLevel) {
+    public String toWTerminal(SymbolsLevel representationLevel) {
         GodSymbols godSymbols;
         String representation = ">< Error: lost God's representation";
 
@@ -160,6 +160,8 @@ public class ViewCard extends ViewObject {
 
         return representation;
     }
+
+    //todo: if necessary add a toCLI
 
     /**
      * Method that will return a (Object) that will represent the ViewObject on the GUI.

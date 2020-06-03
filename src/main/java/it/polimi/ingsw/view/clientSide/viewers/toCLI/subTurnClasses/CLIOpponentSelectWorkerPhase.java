@@ -1,16 +1,16 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
-import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewCard;
-import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.OpponentSelectWorkerViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.PrintFunction;
-import it.polimi.ingsw.view.exceptions.NotFoundException;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses.CLIPlayingViewer;
 
 public class CLIOpponentSelectWorkerPhase extends CLISubTurnViewer {
 
+    private CLIPlayingViewer myCLIStatusViewer = null;
     private OpponentSelectWorkerViewer opponentSelectWorkerViewer;
 
     private final int STARTING_SPACE = 7;
@@ -19,48 +19,23 @@ public class CLIOpponentSelectWorkerPhase extends CLISubTurnViewer {
         this.opponentSelectWorkerViewer = opponentSelectWorkerViewer;
     }
 
-    /**
-     * Prints the Name, Epithet and Description of all the player's God
-     */
-    private void showCardsDetails () {
-        ViewCard viewCard;
-
-        System.out.println("Gods' details:");
-        for (ViewPlayer viewPlayer : ViewPlayer.getPlayerList()) {
-            System.out.println();
-            System.out.println();
-            try {
-                viewCard = viewPlayer.getCard();
-                //todo:maybe add god's symbol
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Name: %s\n", viewCard.getName());
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Epithet: %s\n", viewCard.getEpiteth());
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Description: %s\n", viewCard.getDescription());
-            } catch (NotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     /**
      * Prints the board, the god's details and a waiting message
      */
     @Override
     public void show() {
+        final String WAITING_MESSAGE = "A player is selecting his worker, please wait";
 
-        System.out.println();
-        System.out.println();
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
         ViewBoard.getBoard().toCLI();
 
         System.out.println();
-        this.showCardsDetails();
+        this.showCardsDetails(STARTING_SPACE);
 
-        System.out.println();
-        System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-        System.out.println("A player is selecting his worker, please wait");
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        System.out.println(WAITING_MESSAGE);
         //todo: maybe add a little animation like WaitingViewer
 
     }
@@ -68,5 +43,13 @@ public class CLIOpponentSelectWorkerPhase extends CLISubTurnViewer {
     @Override
     public ViewSubTurn getSubTurn() {
         return opponentSelectWorkerViewer.getMySubTurn();
+    }
+
+    /**
+     * Overloading of CLISubTurnViewer's setMyCLIStatusViewer to set the correct CLIStatusViewer
+     * @param myCLIStatusViewer
+     */
+    public void setMyCLIStatusViewer( CLIPlayingViewer myCLIStatusViewer) {
+        this.myCLIStatusViewer = myCLIStatusViewer;
     }
 }

@@ -1,4 +1,4 @@
-package it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration;
+package it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration;
 
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 

@@ -8,6 +8,8 @@ public enum UnicodeSymbol {
 
     PENCIL("\u270E"),
     HAMMER("\u2692"),
+    SELECTION_LEFT("\u2771"),
+    SELECTION_RIGHT("\u2770"),
 
     //blocks
     HIGH_BLOCK_1("\u2581"),
@@ -19,7 +21,9 @@ public enum UnicodeSymbol {
     HIGH_BLOCK_7("\u2587"),
     HIGH_BLOCK_8("\u2588"),
     SCALE_RIGHT("\u2599"),
-    SCALE_LEFT("\u259F");
+    SCALE_LEFT("\u259F"),
+    PIECE_OF_BLOCK_HIGH_LEFT("\u2598"),
+    PIECE_OF_BLOCK_HIGH_RIGHT("\u259D");
 
     private String escape;
 

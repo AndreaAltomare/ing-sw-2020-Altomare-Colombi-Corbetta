@@ -1,10 +1,10 @@
-package it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces;
+package it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewCard;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.GodSymbols;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.Symbols;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.WTerminalViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.GodSymbols;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.Symbols;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 
 public interface BoardPrintFunction {
@@ -54,15 +54,15 @@ public interface BoardPrintFunction {
                 case 1:
                     switch (cellRow) {
                         case 2:
-                            stringToPrint = CLIViewer.getWorkerSymbol(viewPlayer).getUpRepresentation();
+                            stringToPrint = WTerminalViewer.getWorkerSymbol(viewPlayer).getUpRepresentation();
                             PrintFunction.printAtTheMiddle(stringToPrint, SPACE_FOR_STRING);
                             break;
                         case 3:
-                            stringToPrint = CLIViewer.getWorkerSymbol(viewPlayer).getMiddleRepresentation();
+                            stringToPrint = WTerminalViewer.getWorkerSymbol(viewPlayer).getMiddleRepresentation();
                             PrintFunction.printAtTheMiddle(stringToPrint, SPACE_FOR_STRING);
                             break;
                         case 4:
-                            stringToPrint = CLIViewer.getWorkerSymbol(viewPlayer).getDownRepresentation();
+                            stringToPrint = WTerminalViewer.getWorkerSymbol(viewPlayer).getDownRepresentation();
                             PrintFunction.printAtTheMiddle(stringToPrint, SPACE_FOR_STRING);
                             break;
                        case 5:

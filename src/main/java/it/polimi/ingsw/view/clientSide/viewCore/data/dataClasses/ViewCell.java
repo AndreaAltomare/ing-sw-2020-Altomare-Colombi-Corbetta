@@ -6,14 +6,15 @@ import it.polimi.ingsw.model.PlaceableType;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CellPrintFunction;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLICellPrintFunction;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.CellPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -265,7 +266,7 @@ public class ViewCell extends ViewObject {
      * @param isSelected boolean parameter to know if the cell is selected
      * @return the correct String for each cell's row
      */
-    public String toCLI(int level, boolean isSelected){
+    public String toWTerminal(int level, boolean isSelected){
         String symbolInRow = "";
 
         if ( this.thereIsWorker ) {
@@ -300,6 +301,46 @@ public class ViewCell extends ViewObject {
         return symbolInRow;
     }
 
+
+    /**
+     * Method that will return a String of length == symbolSpace that will represent the different symbol in the different cell's rows
+     *
+     * @param level number of cell's row, starts from the up of cell with number 0
+     * @param isSelected boolean parameter to know if the cell is selected
+     * @param symbolSpace length of returned string
+     * @return the correct String for each cell's row
+     */
+    public String toCLI(int level, boolean isSelected, int symbolSpace){
+        String symbolInRow = "";
+
+        if ( this.thereIsWorker ) {
+            if ( worker.equals( ViewWorker.getSelected() )) {
+                isSelected = true;
+            }
+        }
+
+        switch (level) {
+            case 0:
+                symbolInRow = CLICellPrintFunction.cellRow0(this.level, this.doomed, this.thereIsWorker, this.worker, isSelected, symbolSpace);
+                break;
+            case 1:
+                symbolInRow = CLICellPrintFunction.cellRow1(this.level, this.doomed, this.thereIsWorker, this.worker, isSelected, symbolSpace);
+                break;
+            case 2:
+                symbolInRow = CLICellPrintFunction.cellRow2(this.level, this.doomed, this.thereIsWorker, this.worker, isSelected, symbolSpace);
+                break;
+            case 3:
+                symbolInRow = CLICellPrintFunction.cellRow3(this.level, this.doomed, this.thereIsWorker, this.worker, isSelected, symbolSpace);
+                break;
+            case 4:
+                symbolInRow = CLICellPrintFunction.cellRow4(this.level, this.doomed, this.thereIsWorker, this.worker, isSelected, symbolSpace);
+                break;
+            default:
+                symbolInRow = CLIPrintFunction.increaseLengthWithSpace( symbolInRow, 0, symbolSpace);
+        }
+
+        return symbolInRow;
+    }
 
 
     /**

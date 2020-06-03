@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.clientSide.viewers.interfaces;
 
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSubTurnViewer;
 
@@ -25,8 +26,10 @@ public abstract class SubTurnViewer {
         return null;
     }
 
-    public CLISubTurnViewer toCLI() {
+    public WTerminalSubTurnViewer toWTerminal() {
         return null;
     }
+
+    public CLISubTurnViewer toCLI() { return null; }
 
 }

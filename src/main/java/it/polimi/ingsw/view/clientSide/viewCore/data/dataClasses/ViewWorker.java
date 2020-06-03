@@ -9,8 +9,10 @@ import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.Symbols;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.SymbolsLevel;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.WTerminalViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.CLISymbols;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.Symbols;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.SymbolsLevel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 import it.polimi.ingsw.view.exceptions.AlreadySetException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
@@ -18,7 +20,6 @@ import it.polimi.ingsw.view.exceptions.WrongEventException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -225,14 +226,15 @@ public class ViewWorker extends ViewObject {
     /**
      * Method that will return a String that will represent worker's representation
      * of level chosen or a string of space if worker'representation isn't found
+     *
      * @param representationLevel part of worker's representation Symbols
      * @return String at the correct level of worker's Symbols
      */
-    public String toCLI(SymbolsLevel representationLevel){
+    public String toWTerminal(SymbolsLevel representationLevel){
         Symbols workerSymbol;
         String workerString;
 
-        workerSymbol = CLIViewer.getWorkerSymbol( this.player);
+        workerSymbol = WTerminalViewer.getWorkerSymbol( this.player);
         if (workerSymbol != null) {
             switch (representationLevel) {
                 case UP:
@@ -250,6 +252,28 @@ public class ViewWorker extends ViewObject {
         } else {
             workerString = "   ";
         }
+
+        return workerString;
+    }
+
+    /**
+     * Method that will return a String that will represent worker's representation chosen with the player's color found
+     * or with default color if player's color isn't found
+     *
+     * @return String of worker's representation chosen with player's color if it is found
+     */
+    public String toCLI(boolean head){
+        String playerColor;
+        String workerString;
+
+        playerColor = CLIViewer.getPlayerColor( this.player );
+        if (head) {
+            workerString = CLISymbols.WORKER.getUpRepresentation();
+        } else {
+            workerString = CLISymbols.WORKER.getMiddleRepresentation();
+        }
+
+        workerString = playerColor + workerString;
 
         return workerString;
     }

@@ -1,8 +1,8 @@
-package it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces;
+package it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewWorker;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.Symbols;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.SymbolsLevel;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.Symbols;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.SymbolsLevel;
 
 public interface CellPrintFunction {
 
@@ -54,7 +54,7 @@ public interface CellPrintFunction {
                 symbolString = CellPrintFunction.tryAddSelectionSymbols(symbolString, SymbolsLevel.UP, isSelected);
             } else {
                 if ( thereIsWorker ) {
-                    symbolString = viewWorker.toCLI(SymbolsLevel.UP);
+                    symbolString = viewWorker.toWTerminal(SymbolsLevel.UP);
                     symbolString = CellPrintFunction.tryAddSelectionSymbols(symbolString, SymbolsLevel.UP, isSelected);
                 }
             }
@@ -81,7 +81,7 @@ public interface CellPrintFunction {
                 symbolString = CellPrintFunction.tryAddSelectionSymbols(symbolString, SymbolsLevel.MIDDLE, isSelected);
             } else {
                 if ( thereIsWorker ) {
-                    symbolString = viewWorker.toCLI(SymbolsLevel.MIDDLE);
+                    symbolString = viewWorker.toWTerminal(SymbolsLevel.MIDDLE);
                     symbolString = CellPrintFunction.tryAddSelectionSymbols(symbolString, SymbolsLevel.MIDDLE, isSelected);
                 } else {
                     symbolString = Symbols.BLOCK.getUpRepresentation() + "   ";
@@ -94,7 +94,7 @@ public interface CellPrintFunction {
                 symbolString = CellPrintFunction.tryAddSelectionSymbols(symbolString, SymbolsLevel.UP, isSelected);
             } else {
                 if ( thereIsWorker ) {
-                    symbolString = viewWorker.toCLI(SymbolsLevel.UP);
+                    symbolString = viewWorker.toWTerminal(SymbolsLevel.UP);
                     symbolString = CellPrintFunction.tryAddSelectionSymbols(symbolString, SymbolsLevel.UP, isSelected);
                 } else {
                     symbolString = "       ";
@@ -124,7 +124,7 @@ public interface CellPrintFunction {
                 symbolString = CellPrintFunction.tryAddSelectionSymbols(symbolString, SymbolsLevel.DOWN, isSelected);
             } else {
                 if ( thereIsWorker ) {
-                    symbolString = viewWorker.toCLI(SymbolsLevel.DOWN);
+                    symbolString = viewWorker.toWTerminal(SymbolsLevel.DOWN);
                     symbolString = CellPrintFunction.tryAddSelectionSymbols(symbolString, SymbolsLevel.DOWN, isSelected);
                 } else {
                     symbolString = Symbols.BLOCK.getMiddleRepresentation() + "  " + blockLevel.toString();
@@ -137,7 +137,7 @@ public interface CellPrintFunction {
                 symbolString = CellPrintFunction.tryAddSelectionSymbols(symbolString, SymbolsLevel.MIDDLE, isSelected);
             } else {
                 if ( thereIsWorker ) {
-                    symbolString = viewWorker.toCLI(SymbolsLevel.MIDDLE);
+                    symbolString = viewWorker.toWTerminal(SymbolsLevel.MIDDLE);
                     symbolString = CellPrintFunction.tryAddSelectionSymbols(symbolString, SymbolsLevel.MIDDLE, isSelected);
                 } else {
                     symbolString = "       ";
@@ -174,7 +174,7 @@ public interface CellPrintFunction {
                 symbolString = CellPrintFunction.tryAddSelectionSymbols(symbolString, SymbolsLevel.DOWN, isSelected);
             } else {
                 if ( thereIsWorker ) {
-                    symbolString = viewWorker.toCLI(SymbolsLevel.DOWN);
+                    symbolString = viewWorker.toWTerminal(SymbolsLevel.DOWN);
                     symbolString = CellPrintFunction.tryAddSelectionSymbols(symbolString, SymbolsLevel.DOWN, isSelected);
                 } else {
                     symbolString = "       ";

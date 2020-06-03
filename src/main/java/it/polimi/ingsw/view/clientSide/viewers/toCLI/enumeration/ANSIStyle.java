@@ -8,12 +8,12 @@ public enum ANSIStyle {
     ITALICS("\u001B[3m"),
     UNDERSCORE("\u001B[4m"),
     REVERSE("\u001B[7m"),
-    CROSSED("\u001B[9m"),
-    BIG_UNDERSCORE("\u001B[21m"),
-    ANSI_FRAMED("\u001B[51m"),
+    //CROSSED("\u001B[9m"),
+    //BIG_UNDERSCORE("\u001B[21m"),
+    //ANSI_FRAMED("\u001B[51m"),
 
     //Back Colors
-    BACK_WHITE("\u001B[40m"),
+    //BACK_WHITE("\u001B[40m"),
     BACK_RED("\u001B[41m"),
     BACK_GREEN("\u001B[42m"),
     BACK_YELLOW("\u001B[43m"),
@@ -23,7 +23,7 @@ public enum ANSIStyle {
     BACK_GREY("\u001B[47m"),
 
     //Colors
-    WHITE("\u001B[30m"),
+    //WHITE("\u001B[30m"),
     RED("\u001B[31m"),
     GREEN("\u001B[32m"),
     YELLOW("\u001B[33m"),
