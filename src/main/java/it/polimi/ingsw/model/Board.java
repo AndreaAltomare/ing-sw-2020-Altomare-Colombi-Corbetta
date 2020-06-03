@@ -98,4 +98,26 @@ public abstract class Board {
                 }
             }
     }
+
+    //TODO dunno if it works
+    public void clear(){
+        int xDim = getXDim();
+        int yDim = getYDim();
+        for(int y=0; y<yDim; y++){
+            for(int x=0; x<xDim; x++){
+                try {
+                    Cell cell = getCellAt(x, y);
+                    cell.removeWorker();
+                    if(cell.isDomed()){
+                        cell.removePlaceable();
+                    }
+                    while(cell.getHeigth()>0){
+                        cell.removePlaceable();
+                    }
+                } catch (OutOfBoardException e) {
+                    ;//DO NOTHING
+                }
+            }
+        }
+    }
 }
