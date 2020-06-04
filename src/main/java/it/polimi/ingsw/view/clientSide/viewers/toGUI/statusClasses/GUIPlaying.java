@@ -47,7 +47,7 @@ public class GUIPlaying extends GUIStatusViewer {
     }
 
     public void onLoad(){
-        SoundEffect.startLoopMusic("playing.wav");
+        SoundEffect.startLoopMusic("/statusSounds/playing.wav");
     }
 
     public void onClose(){

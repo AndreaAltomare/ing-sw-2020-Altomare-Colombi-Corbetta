@@ -11,6 +11,7 @@ import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton.Title
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.BackgroundPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.sounds.SoundEffect;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
@@ -85,4 +86,13 @@ public class GUILoginStatus extends GUIStatusViewer {
 
         return ret;
     }
+
+    public void onLoad(){
+        SoundEffect.startLoopMusic("/statusSounds/login.wav");
+    }
+
+    public void onClose(){
+        SoundEffect.stopLoopingMusic();
+    }
+
 }

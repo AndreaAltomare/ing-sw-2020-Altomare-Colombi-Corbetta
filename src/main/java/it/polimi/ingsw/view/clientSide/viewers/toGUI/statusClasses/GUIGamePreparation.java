@@ -5,6 +5,7 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.GamePanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.sounds.SoundEffect;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -31,6 +32,14 @@ public class GUIGamePreparation extends GUIStatusViewer {
 
     public void setSubTurn(GUISubTurnViewer subTurnViewer){
         gamePanel.setSubTurn(subTurnViewer);
+    }
+
+    public void onLoad(){
+        SoundEffect.startLoopMusic("/statusSounds/preparation.wav");
+    }
+
+    public void onClose(){
+        SoundEffect.stopLoopingMusic();
     }
 
 }

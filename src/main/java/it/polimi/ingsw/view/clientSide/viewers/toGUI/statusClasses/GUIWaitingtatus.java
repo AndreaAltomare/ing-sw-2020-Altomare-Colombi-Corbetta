@@ -25,7 +25,7 @@ public class GUIWaitingtatus extends GUIStatusViewer {
     }
 
     public void onLoad(){
-        SoundEffect.startLoopMusic("Homeward_bound.wav");
+        SoundEffect.startLoopMusic("/statusSounds/waiting.wav");
     }
 
     public void onClose(){

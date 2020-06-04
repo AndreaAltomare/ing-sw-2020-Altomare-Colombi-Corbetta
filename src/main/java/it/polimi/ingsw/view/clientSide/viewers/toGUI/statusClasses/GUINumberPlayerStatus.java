@@ -8,6 +8,7 @@ import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.elements.Panel
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton.TitlePanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.BackgroundPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.sounds.SoundEffect;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
@@ -103,5 +104,13 @@ public class GUINumberPlayerStatus extends GUIStatusViewer {
         frame.setVisible(true);
         frame.repaint();
 
+    }
+
+    public void onLoad(){
+        SoundEffect.startLoopMusic("/statusSounds/login.wav");
+    }
+
+    public void onClose(){
+        SoundEffect.stopLoopingMusic();
     }
 }
