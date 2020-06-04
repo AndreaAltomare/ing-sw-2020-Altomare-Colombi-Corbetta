@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 import it.polimi.ingsw.controller.events.CardSelectedEvent;
 import it.polimi.ingsw.controller.events.ServerSendDataEvent;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
 import it.polimi.ingsw.view.exceptions.AlreadySetException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
@@ -232,7 +233,29 @@ public class ViewPlayer extends ViewObject {
      *
      * @return (representation of Object for the CLI)
      */
-    public String toCLI(){ return this.getName(); }
+    @Override
+    public String toWTerminal(){ return this.getName(); }
+
+    /**
+     * Method that will return Player's name with his color, if it has a color
+     * that will represent the ViewPlayer on the CLI.
+     *
+     * @return colored name ( default color if there is a color)
+     */
+    @Override
+    public String toCLI(){
+        String playerString = this.getName();
+        String playerColor;
+
+        playerColor = CLIViewer.getPlayerColor(this);
+
+        if( playerColor != null) {
+            playerString = playerColor + playerString;
+        }
+
+        return playerString;
+
+    }
 
     /**
      * Method that will return a (Object) that will represent the ViewObject on the GUI.

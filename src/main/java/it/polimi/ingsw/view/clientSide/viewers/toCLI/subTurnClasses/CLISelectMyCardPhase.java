@@ -4,9 +4,13 @@ import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewCard;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.CardSelectionExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.GodSymbols;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.CLIGodSymbols;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.GodSymbols;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.PrintFunction;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses.CLIGamePreparationViewer;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
@@ -17,6 +21,7 @@ import java.util.Scanner;
 //todo: rivedere intera classe per sistemare uso degli executer
 public class CLISelectMyCardPhase extends CLISubTurnViewer {
 
+    private CLIGamePreparationViewer myCLIStatusViewer = null;
     private ViewSubTurn viewSubTurn = ViewSubTurn.SELECTCARD;
     private CardSelectionExecuter cardSelectionExecuter = new CardSelectionExecuter();
     private CardSelection cardSelection;
@@ -24,6 +29,10 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
     private final int STARTING_SPACE = 7;
     private final int GOD_SYMBOL_SPACE = GodSymbols.getMaxRepresentationLength() + 2;
     private final int GOD_NAME_SPACE = GodSymbols.getMaxNameLength() + 2;
+    private final String ERROR_COLOR_AND_SYMBOL = ANSIStyle.RED.getEscape() + UnicodeSymbol.X_MARK.getEscape();
+    private final String CORRECT_COLOR_AND_SYMBOL = ANSIStyle.GREEN.getEscape() + UnicodeSymbol.CHECK_MARK.getEscape();
+    private final String WRITE_MARK = ANSIStyle.UNDERSCORE.getEscape() + UnicodeSymbol.PENCIL.getEscape() + ANSIStyle.RESET;
+
 
 
     public CLISelectMyCardPhase(CardSelection cardSelection) {
@@ -31,7 +40,7 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
     }
 
     /**
-     *
+     * Uses private methods to show a list with god cards to the player as long as he chooses his god card
      */
     private ViewCard showSelectInterface() {
         ViewCard selectedCard = null;
@@ -52,35 +61,39 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
      * Prints a numbered list with Gods Symbols and god
      */
     private void printCardList() {
-        GodSymbols godSymbols;
-        int cardNumber = 1;
+        CLIGodSymbols cliGodSymbols;
+        Integer cardNumber = 1;
+        String upString;
+        String middleString;
+        String downString;
 
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        System.out.println();
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
         System.out.println("Card List:");
         for (ViewCard viewCard : cardSelection.getCardList()) {
 
             try {
-                godSymbols = GodSymbols.searchGodSymbol(viewCard.getName());
+                cliGodSymbols = CLIGodSymbols.searchGodSymbol(viewCard.getName());
 
                 System.out.println();
                 // first line
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.print(" ");
-                PrintFunction.printAtTheMiddle( godSymbols.getUpRepresentation(), GOD_SYMBOL_SPACE );
-                PrintFunction.printRepeatString(" ", GOD_NAME_SPACE);
-                System.out.println();
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                upString = "  ";
+                upString = upString + CLIPrintFunction.increaseLengthWithSpace(cliGodSymbols.getUpRepresentation(), cliGodSymbols.getRepresentationLength(), GOD_SYMBOL_SPACE);
+                upString = upString + CLIPrintFunction.increaseLengthWithSpace("", 0, GOD_NAME_SPACE);
+                System.out.println(upString);
                 // second line
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.print(" ");
-                PrintFunction.printAtTheMiddle( godSymbols.getMiddleRepresentation(), GOD_SYMBOL_SPACE );
-                PrintFunction.printRepeatString(" ", GOD_NAME_SPACE);
-                System.out.println();
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                middleString = cardNumber.toString() + ".";
+                middleString = middleString + CLIPrintFunction.increaseLengthWithSpace(cliGodSymbols.getMiddleRepresentation(), cliGodSymbols.getRepresentationLength(), GOD_SYMBOL_SPACE);
+                middleString = middleString + CLIPrintFunction.increaseLengthWithSpace(viewCard.getName(), viewCard.getName().length(), GOD_NAME_SPACE);
+                System.out.println(middleString);
                 // third line
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("%d", cardNumber);
-                PrintFunction.printAtTheMiddle( godSymbols.getDownRepresentation(), GOD_SYMBOL_SPACE );
-                PrintFunction.printAtTheMiddle( viewCard.getName(), GOD_NAME_SPACE);
-                System.out.println();
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                downString = "  ";
+                downString = downString + CLIPrintFunction.increaseLengthWithSpace(cliGodSymbols.getDownRepresentation(), cliGodSymbols.getRepresentationLength(), GOD_SYMBOL_SPACE);
+                downString = downString + CLIPrintFunction.increaseLengthWithSpace("", 0, GOD_NAME_SPACE);
+                System.out.println(downString);
 
                 cardNumber++;
 
@@ -98,29 +111,33 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
      * @return
      */
     private int showGodRequest() {
+        final String REQUEST_MESSAGE = "Please, insert the number of god which you want to see:";
+        final String WRONG_NUMBER_MESSAGE = "The chosen number isn't in the list, please change it";
+        final String WRONG_VALUE_MESSAGE = "The chosen value isn't correct, please change it";
         int numberSelected;
 
+        System.out.println();
         do {
-            System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("Please, insert the number of god which you want to see:");
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.print(">>");
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.println(REQUEST_MESSAGE);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.print(WRITE_MARK);
             try {
                 numberSelected = new Scanner(System.in).nextInt();
                 if ( (numberSelected <= 0 || numberSelected > cardSelection.getCardList().size()) ) {
-                    PrintFunction.printRepeatString(" ", STARTING_SPACE );
-                    System.out.println(">< The chosen number isn't in the list, please change it");
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE );
+                    System.out.println(ERROR_COLOR_AND_SYMBOL + WRONG_NUMBER_MESSAGE + ANSIStyle.RESET);
                 }
             } catch (InputMismatchException e) {
                 numberSelected = -1;
-                PrintFunction.printRepeatString(" ", STARTING_SPACE );
-                System.out.println(">< The chosen value isn't correct, please change it");
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE );
+                System.out.println(ERROR_COLOR_AND_SYMBOL + WRONG_VALUE_MESSAGE + ANSIStyle.RESET);
             }
         } while ( (numberSelected <= 0 || numberSelected > cardSelection.getCardList().size() ));
         System.out.println();
 
         return numberSelected;
+
     }
 
     /**
@@ -128,8 +145,10 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
      * @param godCardNumber
      */
     private ViewCard showCardAndSel( int godCardNumber) {
-        final String selectionRequest = "Do you want to use this card?";
-        final String inputChoose = ">>( 0: No/ 1: Yes ):";
+        final String WRITE_PART_STYLE = ANSIStyle.BLUE.getEscape() + ANSIStyle.BACK_GREY.getEscape();
+        final String SELECTION_REQUEST = "Do you want to use this card?";
+        final String INPUT_CHOOSE = "( 0: No/ 1: Yes ):";
+        final String WRONG_VALUE_MESSAGE = "The chosen value isn't correct, please change it";
         boolean correctResponse;
         int response;
         ViewCard seeCard = null;
@@ -140,17 +159,17 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
             seeCard = cardSelection.getCardList().get(godCardNumber - 1);
             do {
                 //todo:maybe add god's symbol
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Name: %s\n\n", seeCard.getName());
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Epithet: %s\n\n", seeCard.getEpiteth());
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Description: %s\n\n", seeCard.getDescription());
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                System.out.printf(WRITE_PART_STYLE + "Name:" + ANSIStyle.RESET +  "%s\n\n", seeCard.getName());
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                System.out.printf(WRITE_PART_STYLE + "Epithet:" + ANSIStyle.RESET + "%s\n\n", seeCard.getEpiteth());
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                System.out.printf(WRITE_PART_STYLE + "Description:" + ANSIStyle.RESET + "%s\n\n", seeCard.getDescription());
 
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.println( selectionRequest );
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.print( inputChoose );
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                System.out.println( SELECTION_REQUEST );
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                System.out.print( WRITE_MARK + INPUT_CHOOSE );
                 try {
                     response = new Scanner( System.in ).nextInt();
                 } catch ( InputMismatchException e) {
@@ -159,8 +178,8 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
                 if ( response != 1) {
                     if ( response != 0) {
                         correctResponse = false;
-                        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                        System.out.println( ">< The chosen value isn't correct, please change it");
+                        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                        System.out.println( ERROR_COLOR_AND_SYMBOL + WRONG_VALUE_MESSAGE + ANSIStyle.RESET);
                     } else {
                         correctResponse = true;
                         seeCard = null;
@@ -178,7 +197,8 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
     }
 
     private ViewCard printLastCard() {
-        final String lastCardMessage = "This is your card";
+        final String WRITE_PART_STYLE = ANSIStyle.BLUE.getEscape() + ANSIStyle.BACK_GREY.getEscape();
+        final String LAST_CARD_MESSAGE = "This is your card";
         ViewCard seeCard = null;
 
 
@@ -187,15 +207,15 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
             System.out.println();
             seeCard = cardSelection.getCardList().get(1);
             //todo:maybe add god's symbol
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.printf("Name: %s\n\n", seeCard.getName());
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.printf("Epithet: %s\n\n", seeCard.getEpiteth());
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.printf("Description: %s\n\n", seeCard.getDescription());
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.printf(WRITE_PART_STYLE + "Name:" + ANSIStyle.RESET +  "%s\n\n", seeCard.getName());
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.printf(WRITE_PART_STYLE + "Epithet:" + ANSIStyle.RESET + "%s\n\n", seeCard.getEpiteth());
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.printf(WRITE_PART_STYLE + "Description:" + ANSIStyle.RESET + "%s\n\n", seeCard.getDescription());
 
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println(lastCardMessage);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.println(LAST_CARD_MESSAGE);
         } catch (IndexOutOfBoundsException e) {
             e.printStackTrace();
         }
@@ -209,7 +229,7 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
      */
     private void showWaitMessage() {
         System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
         System.out.println("A player is choosing his card, please wait");
         System.out.println();
         //todo: maybe to do an little animation like in CLIWaitingStatus
@@ -217,9 +237,10 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
 
     @Override
     public void show() {
+        final String ALL_RIGHT_MESSAGE = "Your card is correctly set";
         ViewCard selectedCard;
-        System.out.println();
-        System.out.println();
+
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
         if ( true ) {//if ( viewSubTurn.isMyTurn() ) { todo:check it
             selectedCard = this.showSelectInterface();
             try {
@@ -230,6 +251,9 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
 
             try {
                 cardSelectionExecuter.doIt();
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                System.out.println(CORRECT_COLOR_AND_SYMBOL + ALL_RIGHT_MESSAGE + ANSIStyle.RESET);
             } catch (CannotSendEventException e) {
                 e.printStackTrace();
             }
@@ -244,4 +268,13 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
     public ViewSubTurn getSubTurn() {
         return viewSubTurn;
     }
+
+    /**
+     * Overloading of CLISubTurnViewer's setMyCLIStatusViewer to set the correct CLIStatusViewer
+     * @param myCLIStatusViewer
+     */
+    public void setMyCLIStatusViewer( CLIGamePreparationViewer myCLIStatusViewer) {
+        this.myCLIStatusViewer = myCLIStatusViewer;
+    }
+
 }

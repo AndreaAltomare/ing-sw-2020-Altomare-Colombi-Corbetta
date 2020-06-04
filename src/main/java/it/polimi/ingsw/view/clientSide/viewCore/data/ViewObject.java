@@ -150,6 +150,11 @@ public abstract class ViewObject implements ClientAddressable {
      */
     public String toTerminal(){return "404: object not found";}
 
+    /**
+     * Method that will return a String tha represent the ViewObject on the Terminal CLI
+     * @return
+     */
+    public String toWTerminal() {return null;}
 
     /**
      * Method that will return a (Object) that will represent the ViewObject on the CLI.

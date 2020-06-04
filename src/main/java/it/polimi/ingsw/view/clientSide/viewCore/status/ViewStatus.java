@@ -2,19 +2,13 @@ package it.polimi.ingsw.view.clientSide.viewCore.status;
 // TODO: write some comments to explains the meaning of every status defined
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.DataStorager;
-import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetNicknameExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetPlayerNumberExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ClientAddressable;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
-import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.*;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalStatusViewer;
-import it.polimi.ingsw.view.events.SetPlayersNumberEvent;
 import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 

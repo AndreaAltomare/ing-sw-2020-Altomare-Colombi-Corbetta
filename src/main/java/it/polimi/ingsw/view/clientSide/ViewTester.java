@@ -5,7 +5,6 @@ import it.polimi.ingsw.model.CardInfo;
 import it.polimi.ingsw.model.MoveOutcomeType;
 import it.polimi.ingsw.model.PlaceableType;
 import it.polimi.ingsw.model.StateType;
-import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewWorker;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
@@ -15,6 +14,7 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.TerminalViewer;
 import it.polimi.ingsw.view.events.*;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
@@ -274,6 +274,7 @@ public class ViewTester implements ViewSender {
     private void initialization(){
         //new TerminalViewer().start();
         new GUIViewer().start();
+        //new WTerminalViewer().start();
         //new CLIViewer().start();
 
         Executer.setSender(this);
@@ -293,7 +294,7 @@ public class ViewTester implements ViewSender {
         deck.add(new CardInfo("Minotaur", "Bull-headed Monster", "Your Move: Your Worker may move into an opponent Worker’s space, if their Worker can be forced one space straight backwards to an unoccupied space at any level."));
         deck.add(new CardInfo("Pan", "God of the Wild", "Win Condition: You also win if your Worker moves down two or more levels."));
         deck.add(new CardInfo("Prometheus", "Titan Benefactor of Mankind", "Your Turn: If your Worker does not move up, it may build both before and after moving."));
-        deck.add(new CardInfo("generalGod", "", "DON'T CHOOSE ME."));
+//        deck.add(new CardInfo("generalGod", "", "DON'T CHOOSE ME."));
     }
 
     private void setAvailable(List<String> nameList){

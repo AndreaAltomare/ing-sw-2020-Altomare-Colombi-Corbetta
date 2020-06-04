@@ -123,6 +123,16 @@ public class ViewNickname extends ViewObject {
      * @return (representation of Object for the CLI)
      */
     @Override
+    public String toWTerminal(){
+        return null;
+    }
+
+    /**
+     * Method that will return a (Object) that will represent the ViewObject on the CLI.
+     *
+     * @return (representation of Object for the CLI)
+     */
+    @Override
     public String toCLI(){
         return null;
     }

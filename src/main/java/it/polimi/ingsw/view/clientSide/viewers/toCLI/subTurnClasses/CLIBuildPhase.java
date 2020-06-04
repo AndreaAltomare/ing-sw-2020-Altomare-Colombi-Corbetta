@@ -3,13 +3,13 @@ package it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.BuildBlockExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.TurnStatusChangeExecuter;
-import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.BuildViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.Symbols;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.CLISymbols;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.PrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses.CLIPlayingViewer;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
@@ -20,12 +20,16 @@ import java.util.Scanner;
 
 public class CLIBuildPhase extends CLISubTurnViewer {
 
+    private CLIPlayingViewer myCLIStatusViewer = null;
     private BuildViewer buildViewer;
-    private CLIPlayingViewer myCLIPlayingViewer;
 
     private final int STARTING_SPACE = 7;
     private final int DIRECTION_SPACE = 15;
     private final int PLACEABLE_SPACE = 7;
+    private final String ERROR_COLOR_AND_SYMBOL = ANSIStyle.RED.getEscape() + UnicodeSymbol.X_MARK.getEscape();
+    private final String CORRECT_COLOR_AND_SYMBOL = ANSIStyle.GREEN.getEscape() + UnicodeSymbol.CHECK_MARK.getEscape();
+    private final String WRITE_MARK = ANSIStyle.UNDERSCORE.getEscape() + UnicodeSymbol.PENCIL.getEscape() + ANSIStyle.RESET;
+
 
     public CLIBuildPhase(BuildViewer buildViewer) {
         this.buildViewer = buildViewer;
@@ -33,36 +37,19 @@ public class CLIBuildPhase extends CLISubTurnViewer {
 
 
     /**
-     * Prints the Name, Epithet and Description of all the player's God
-     */
-    private void showCardsDetails () {
-        ViewCard viewCard;
-
-        for (ViewPlayer viewPlayer : ViewPlayer.getPlayerList()) {
-            System.out.println();
-            System.out.println();
-            try {
-                viewCard = viewPlayer.getCard();
-                //todo:maybe add god's symbol
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Name: %s\n", viewCard.getName());
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Epithet: %s\n", viewCard.getEpiteth());
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Description: %s\n", viewCard.getDescription());
-            } catch (NotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
      * Prints the request to build using a private method to choose block's type, checks the response,
      * notifies the construction to Viewer and returns true if it is all correct,
      * or false if it isn't ( notifies to player when the input isn't correct)
+     *
      * @return
      */
     private boolean showBuildRequest() {
+        final String DIRECTION_REQUEST = "Please, select a direction to build:";
+        final String CORRECT_MESSAGE = "Your worker has correctly built";
+        final String WRONG_DIRECTION_MESSAGE = "The selected direction doesn't exist";
+        final String WRONG_VALUE_MESSAGE = "The chosen value isn't correct";
+        final String OUT_OF_BOARD_MESSAGE = "The cell in selected direction doesn't exist";
+
         int directionResponse;
         ViewCell selectedCell;
         String pLaceableToBuild;
@@ -72,36 +59,37 @@ public class CLIBuildPhase extends CLISubTurnViewer {
         pLaceableToBuild = this.typeBlockRequest();
 
         if ( pLaceableToBuild != null) {
+
             System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("Please, select a direction to build:");
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.println(DIRECTION_REQUEST);
 
             System.out.println();
             //first line
             System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            PrintFunction.printAtTheMiddle("7: North-West", DIRECTION_SPACE);
-            PrintFunction.printAtTheMiddle("8: North", DIRECTION_SPACE);
-            PrintFunction.printAtTheMiddle("9: North-Est", DIRECTION_SPACE);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            CLIPrintFunction.printAtTheMiddle(ANSIStyle.RESET, "7: North-West", "7: North-West".length(), DIRECTION_SPACE);
+            CLIPrintFunction.printAtTheMiddle(ANSIStyle.RESET, "8: North", "8: North".length(), DIRECTION_SPACE);
+            CLIPrintFunction.printAtTheMiddle(ANSIStyle.RESET, "9: North-Est", "9: North-Est".length(), DIRECTION_SPACE);
             System.out.println();
             //second line
             System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            PrintFunction.printAtTheMiddle("4: West", DIRECTION_SPACE);
-            PrintFunction.printRepeatString(" ", DIRECTION_SPACE);
-            PrintFunction.printAtTheMiddle("6: Est", DIRECTION_SPACE);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            CLIPrintFunction.printAtTheMiddle(ANSIStyle.RESET, "4: West", "4: West".length(), DIRECTION_SPACE);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", DIRECTION_SPACE);
+            CLIPrintFunction.printAtTheMiddle(ANSIStyle.RESET, "6: Est", "6: Est".length(), DIRECTION_SPACE);
             System.out.println();
             //third line
             System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            PrintFunction.printAtTheMiddle("1: South-West", DIRECTION_SPACE);
-            PrintFunction.printAtTheMiddle("2: South", DIRECTION_SPACE);
-            PrintFunction.printAtTheMiddle("3: South-Est", DIRECTION_SPACE);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            CLIPrintFunction.printAtTheMiddle(ANSIStyle.RESET, "1: South-West", "1: South-West".length(), DIRECTION_SPACE);
+            CLIPrintFunction.printAtTheMiddle(ANSIStyle.RESET, "2: South", "2: South".length(), DIRECTION_SPACE);
+            CLIPrintFunction.printAtTheMiddle(ANSIStyle.RESET, "3: South-Est", "3: South-Est".length(), DIRECTION_SPACE);
             System.out.println();
 
             System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.print(">>");
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.print(WRITE_MARK);
             try {
                 directionResponse = new Scanner(System.in).nextInt();
                 selectedCell = this.calculateNextCell(directionResponse);
@@ -111,27 +99,31 @@ public class CLIBuildPhase extends CLISubTurnViewer {
                     buildBlockExecuter.setPlaceable(pLaceableToBuild);
                     buildBlockExecuter.doIt();
                     correctResponse = true;
+                    System.out.println();
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                    System.out.print(CORRECT_COLOR_AND_SYMBOL + CORRECT_MESSAGE + ANSIStyle.RESET);
                     //todo: a little CLI control if it isn't necessary cancel it and all its helper methods
-                    if (this.myCLIPlayingViewer != null) {
-                        myCLIPlayingViewer.setBuildAfterMoveTrue();
+                    if (this.myCLIStatusViewer != null) {
+                        myCLIStatusViewer.setBuildAfterMoveTrue();
                     }
                 } else {
                     System.out.println();
-                    PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                    System.out.print(">< The selected direction doesn't exist\n");
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                    System.out.print(ERROR_COLOR_AND_SYMBOL + WRONG_DIRECTION_MESSAGE + ANSIStyle.RESET);
                 }
             } catch (InputMismatchException e) {
                 System.out.println();
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.print(">< The chosen value isn't correct\n");
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                System.out.print(ERROR_COLOR_AND_SYMBOL + WRONG_VALUE_MESSAGE + ANSIStyle.RESET);
             } catch (NotFoundException e) {
                 System.out.println();
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.print(">< The cell in selected direction doesn't exist\n");
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                System.out.print(ERROR_COLOR_AND_SYMBOL + OUT_OF_BOARD_MESSAGE + ANSIStyle.RESET);
             } catch (WrongParametersException | CannotSendEventException e) {
                 e.printStackTrace();
             }
         }
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
 
         return correctResponse;
     }
@@ -139,43 +131,43 @@ public class CLIBuildPhase extends CLISubTurnViewer {
     /**
      * Prints the request to choose the block's type, checks the response and returns a String representing th block's type
      * if it is correct, or null and an error message to player if it isn't
+     *
      * @return
      */
     private String typeBlockRequest() {
+        final String BLOCK_TYPE_REQUEST = "Please, select what type of block you want to choose:";
+        final String WRONG_TYPE_MESSAGE = "The chosen block's type doesn't exist";
+        final String WRONG_VALUE_MESSAGE = "The chosen value isn't correct";
+        final String BLOCK_COLOR = ANSIStyle.GREY.getEscape();
+        final String DOME_COLOR = ANSIStyle.BLUE.getEscape();
+
         String blockType = null;
         int typeSelected;
 
         System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-        System.out.println("Please, select what type of block you want to choose:");
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        System.out.println(BLOCK_TYPE_REQUEST);
 
         System.out.println();
-        //block: first line
+        //block
         System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE + 2);
-        PrintFunction.printAtTheMiddle( Symbols.BLOCK.getUpRepresentation() , PLACEABLE_SPACE);
-        //block: second line
-        System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-        System.out.print("1:");
-        PrintFunction.printAtTheMiddle( Symbols.BLOCK.getMiddleRepresentation() , PLACEABLE_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        System.out.print("1: ");
+        CLIPrintFunction.printAtTheMiddle(BLOCK_COLOR, CLISymbols.BLOCK.getMiddleRepresentation(), CLISymbols.BLOCK.getLength(), PLACEABLE_SPACE);
 
         System.out.println();
 
-        //dome: first line
+        // dome
         System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE + 2);
-        PrintFunction.printAtTheMiddle( Symbols.DOME.getUpRepresentation() , PLACEABLE_SPACE);
-        //block: second line
-        System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-        System.out.print("2:");
-        PrintFunction.printAtTheMiddle( Symbols.DOME.getMiddleRepresentation() , PLACEABLE_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        System.out.print("2: ");
+        CLIPrintFunction.printAtTheMiddle(DOME_COLOR, CLISymbols.DOME.getMiddleRepresentation(), CLISymbols.DOME.getLength(), PLACEABLE_SPACE);
+
         System.out.println();
 
         System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-        System.out.print(">>");
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        System.out.print(WRITE_MARK);
         try {
             typeSelected = new Scanner(System.in).nextInt();
             switch ( typeSelected ) {
@@ -187,13 +179,13 @@ public class CLIBuildPhase extends CLISubTurnViewer {
                     break;
                 default:
                     System.out.println();
-                    PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                    System.out.print(">< The chosen block's type doesn't exist\n");
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                    System.out.println(ERROR_COLOR_AND_SYMBOL + WRONG_TYPE_MESSAGE + ANSIStyle.RESET);
             }
         } catch (InputMismatchException e) {
             System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.print(">< The chosen value isn't correct\n");
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.print(ERROR_COLOR_AND_SYMBOL + WRONG_VALUE_MESSAGE + ANSIStyle.RESET);
         }
 
         return  blockType;
@@ -202,6 +194,7 @@ public class CLIBuildPhase extends CLISubTurnViewer {
     /**
      * Calculates the cell at chosen direction and returns it if it is possible, returns null if the direction isn't correct
      * and trow a NotFoundException if the cell isn't on the board ( or the select worker isn't on the board )
+     *
      * @param direction
      * @return
      * @throws NotFoundException
@@ -253,6 +246,8 @@ public class CLIBuildPhase extends CLISubTurnViewer {
      * @return
      */
     private boolean toMovePhase() {
+        final String CORRECT_CHANGE_PHASE_MESSAGE = "You are in the Move Phase";
+
         boolean changePhase = false;
         TurnStatusChangeExecuter turnStatusChangeExecuter = new TurnStatusChangeExecuter();
 
@@ -260,6 +255,9 @@ public class CLIBuildPhase extends CLISubTurnViewer {
             turnStatusChangeExecuter.setStatusId( ViewSubTurn.MOVE );
             turnStatusChangeExecuter.doIt();
             changePhase = true;
+            System.out.println();
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.println(CORRECT_COLOR_AND_SYMBOL + CORRECT_CHANGE_PHASE_MESSAGE + ANSIStyle.RESET);
         } catch (WrongParametersException | CannotSendEventException e) {
             e.printStackTrace();
         }
@@ -273,22 +271,25 @@ public class CLIBuildPhase extends CLISubTurnViewer {
      * @return
      */
     private boolean endTurn() {
+        final String IMPOSSIBLE_CHANGE_MESSAGE = "It isn't possible to end turn, you must still ";
+
         boolean endTurn = false;
 
         //todo: little check, if it isn't necessary cancel it and all its structure
-        if ( myCLIPlayingViewer.isMove() && myCLIPlayingViewer.isBuild()) {
+        if ( myCLIStatusViewer.isMove() && myCLIStatusViewer.isBuild()) {
             //todo: change the end's turn way after testing
             endTurn = this.toMovePhase();
         } else {
             System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.print(">< It isn't possible to end turn, you must still ");
-            if ( !myCLIPlayingViewer.isMove() ) {
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.print(ERROR_COLOR_AND_SYMBOL + IMPOSSIBLE_CHANGE_MESSAGE );
+            if ( !myCLIStatusViewer.isMove() ) {
                 System.out.println("MOVE!");
             } else {
                 System.out.println("BUILD!");
             }
         }
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
 
         return endTurn;
     }
@@ -299,12 +300,18 @@ public class CLIBuildPhase extends CLISubTurnViewer {
      */
     @Override
     public void show() {
+        final String COMMAND_REQUEST = "Please, select a command:";
+        final String GODS_DETAILS_COMMAND = "Print all gods' details";
+        final String BUILD_COMMAND = "Build";
+        final String TO_MOVE_PHASE_COMMAND = "Go to Move Phase";
+        final String END_TURN_COMMAND = "End Turn";
+        final String WRONG_COMMAND_MESSAGE = "The chosen command doesn't exist, please change it";
+
         boolean endBuild = false;
         int actionSelected;
 
         while ( !endBuild ) {
-            System.out.println();
-            System.out.println();
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
 
 /*            //todo: valutarlo
             try {
@@ -316,25 +323,25 @@ public class CLIBuildPhase extends CLISubTurnViewer {
             ViewBoard.getBoard().toCLI();
 
             System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("Please, select a command:");
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("1: Print all gods' details");
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("2: Build");
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("3: Go to Move Phase");
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("4: End Turn");
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.println(COMMAND_REQUEST);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.println("1: " +  GODS_DETAILS_COMMAND );
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.println("2: " + BUILD_COMMAND);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.println("3: " + TO_MOVE_PHASE_COMMAND);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.println("4: " + END_TURN_COMMAND);
 
             System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.print(">>");
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.print(WRITE_MARK);
             try {
                 actionSelected = new Scanner(System.in).nextInt();
                 switch (actionSelected) {
                     case 1:
-                        this.showCardsDetails();
+                        this.showCardsDetails(STARTING_SPACE);
                         break;
                     case 2:
                         endBuild = this.showBuildRequest();
@@ -347,13 +354,13 @@ public class CLIBuildPhase extends CLISubTurnViewer {
                         break;
                     default:
                         System.out.println();
-                        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                        System.out.println(">< The chosen command doesn't exist, please change it");
+                        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                        System.out.println(ERROR_COLOR_AND_SYMBOL + WRONG_COMMAND_MESSAGE + ANSIStyle.RESET);
                 }
             } catch (InputMismatchException e) {
                 System.out.println();
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.println(">< The chosen command doesn't exist, please change it");
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                System.out.println(ERROR_COLOR_AND_SYMBOL + WRONG_COMMAND_MESSAGE + ANSIStyle.RESET);
             }
         }
     }
@@ -363,10 +370,11 @@ public class CLIBuildPhase extends CLISubTurnViewer {
         return buildViewer.getMySubTurn();
     }
 
-    @Override
-    public void setMyCLIStatusViewer( CLIStatusViewer myCLIStatusViewer) {
-        if ( myCLIStatusViewer.getViewStatus() == ViewStatus.PLAYING ) {
-            this.myCLIPlayingViewer = (CLIPlayingViewer) myCLIStatusViewer;
-        }
+    /**
+     * Overloading of CLISubTurnViewer's setMyCLIStatusViewer to set the correct CLIStatusViewer
+     * @param myCLIStatusViewer
+     */
+    public void setMyCLIStatusViewer( CLIPlayingViewer myCLIStatusViewer) {
+        this.myCLIStatusViewer = myCLIStatusViewer;
     }
 }

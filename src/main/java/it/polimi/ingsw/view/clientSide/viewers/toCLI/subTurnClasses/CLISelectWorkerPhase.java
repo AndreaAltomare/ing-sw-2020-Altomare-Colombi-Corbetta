@@ -4,9 +4,12 @@ import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SelectWorkerExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.SelectWorkerViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.SymbolsLevel;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.CLISymbols;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.PrintFunction;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses.CLIPlayingViewer;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
@@ -18,10 +21,14 @@ import java.util.Scanner;
 
 public class CLISelectWorkerPhase extends CLISubTurnViewer {
 
+    private CLIPlayingViewer myCLIStatusViewer = null;
     private SelectWorkerViewer selectWorkerViewer;
 
     private final int STARTING_SPACE = 7;
     private final int WORKER_SPACE = 5;
+    private final String ERROR_COLOR_AND_SYMBOL = ANSIStyle.RED.getEscape() + UnicodeSymbol.X_MARK.getEscape();
+    private final String CORRECT_COLOR_AND_SYMBOL = ANSIStyle.GREEN.getEscape() + UnicodeSymbol.CHECK_MARK.getEscape();
+    private final String WRITE_MARK = ANSIStyle.UNDERSCORE.getEscape() + UnicodeSymbol.PENCIL.getEscape() + ANSIStyle.RESET;
 
     public CLISelectWorkerPhase(SelectWorkerViewer selectWorkerViewer) {
         this.selectWorkerViewer = selectWorkerViewer;
@@ -32,89 +39,73 @@ public class CLISelectWorkerPhase extends CLISubTurnViewer {
      */
     @Override
     public void show() {
+        final String COMMAND_REQUEST = "Please, select a command:";
+        final String DETAILS_GODS_COMMAND = "Print all gods' details";
+        final String SELECT_WORKER_COMMAND = "Select worker";
+        final String WRONG_COMMAND_MESSAGE = "The chosen command doesn't exist, please change it";
         boolean selected = false;
         int actionSelected;
 
         while ( !selected ) {
-            System.out.println();
-            System.out.println();
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
             ViewBoard.getBoard().toCLI();
 
             System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("Please, select a command:");
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("1: Print all gods' details");
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("2: Select worker");
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.println(COMMAND_REQUEST);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.println("1:" + DETAILS_GODS_COMMAND);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.println("2:" + SELECT_WORKER_COMMAND);
 
             System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.print(">>");
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.print(WRITE_MARK);
             try {
                 actionSelected = new Scanner(System.in).nextInt();
                 switch ( actionSelected ) {
                     case 1:
-                        this.showCardsDetails();
+                        this.showCardsDetails(STARTING_SPACE);
                         break;
                     case 2:
                         selected = this.showSelectRequest();
                         break;
                     default:
                         System.out.println();
-                        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                        System.out.println(">< The chosen command doesn't exist, please change it");
+                        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                        System.out.println(ERROR_COLOR_AND_SYMBOL + WRONG_COMMAND_MESSAGE + ANSIStyle.RESET);
                 }
             } catch (InputMismatchException e) {
                 System.out.println();
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.println(">< The chosen command doesn't exist, please change it");
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                System.out.println(ERROR_COLOR_AND_SYMBOL + WRONG_COMMAND_MESSAGE + ANSIStyle.RESET);
             }
         }
 
     }
 
-    /**
-     * Prints the Name, Epithet and Description of all the player's God
-     */
-    private void showCardsDetails () {
-        ViewCard viewCard;
-
-        for ( ViewPlayer viewPlayer : ViewPlayer.getPlayerList() ) {
-            System.out.println();
-            System.out.println();
-            try {
-                viewCard = viewPlayer.getCard();
-                //todo:maybe add god's symbol
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Name: %s\n", viewCard.getName());
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Epithet: %s\n", viewCard.getEpiteth());
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Description: %s\n", viewCard.getDescription());
-            } catch (NotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
 
     /**
      * Prints and check the request to select the worker and returns true if the response is correct, or false if it isn't
      * @return
      */
     private boolean showSelectRequest() {
+        final String REQUEST = "Please, choose your worker:";
+        final String CORRECT_MESSAGE = "The worker is correctly selected";
+        final String WRONG_WORKER_MESSAGE = "The chosen value isn't a valid worker's number";
+        final String WRONG_VALUE_MESSAGE = "The chosen value isn't correct";
+
         boolean isSelected = false;
         int worker;
         int workerNumber = 1;
+        String playerColor;
         ViewPlayer viewPlayer;
         List<ViewWorker> workerList = new ArrayList<>();
         SelectWorkerExecuter selectWorkerExecuter = (SelectWorkerExecuter) selectWorkerViewer.getMySubTurn().getExecuter();
 
-        System.out.println();
-        System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-        System.out.println("Please, choose your worker:");
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        System.out.println(REQUEST);
 
         try {
             if (ViewNickname.getMyNickname() != null ) {
@@ -125,26 +116,30 @@ public class CLISelectWorkerPhase extends CLISubTurnViewer {
                     workerNumber++;
                 }
                 System.out.println();
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.print(">>");
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                System.out.print(WRITE_MARK);
                 worker = new Scanner( System.in ).nextInt();
                 if ( worker > 0 && worker < workerNumber) {
                     selectWorkerExecuter.setWorkerId( workerList.get( worker - 1) );
                     selectWorkerExecuter.doIt();
+                    System.out.println();
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                    System.out.print(CORRECT_COLOR_AND_SYMBOL + CORRECT_MESSAGE +ANSIStyle.RESET);
                     isSelected = true;
                 } else {
                     System.out.println();
-                    PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                    System.out.print(">< The chosen value isn't  a valid worker's number");
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                    System.out.print(ERROR_COLOR_AND_SYMBOL + WRONG_WORKER_MESSAGE + ANSIStyle.RESET);
                 }
             }
         } catch (NotFoundException | WrongParametersException | CannotSendEventException e) {
             e.printStackTrace();
         } catch (InputMismatchException i) {
             System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.print(">< The chosen value isn't correct");
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.print(ERROR_COLOR_AND_SYMBOL + WRONG_VALUE_MESSAGE + ANSIStyle.RESET);
         }
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
 
         return isSelected;
 
@@ -160,17 +155,15 @@ public class CLISelectWorkerPhase extends CLISubTurnViewer {
         try {
             System.out.println();
             //first line
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            PrintFunction.printAtTheMiddle(viewWorker.toCLI(SymbolsLevel.UP), WORKER_SPACE);
-            System.out.printf("Worker's number: %d\n", workerNumber);
-            //second line
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            PrintFunction.printAtTheMiddle(viewWorker.toCLI(SymbolsLevel.MIDDLE), WORKER_SPACE);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE + 2);
+            CLIPrintFunction.printAtTheMiddle(ANSIStyle.RESET, viewWorker.toCLI(true), CLISymbols.WORKER.getLength(), WORKER_SPACE);
             System.out.println();
-            //third line
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            PrintFunction.printAtTheMiddle(viewWorker.toCLI(SymbolsLevel.DOWN), WORKER_SPACE);
-            System.out.printf("Worker's cell: ( %d ; %d )\n", viewWorker.getPosition().getX(), viewWorker.getPosition().getY());
+            //second line
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE );
+            System.out.printf("%d.", workerNumber);
+            CLIPrintFunction.printAtTheMiddle(ANSIStyle.RESET, viewWorker.toCLI(false), CLISymbols.WORKER.getLength(), WORKER_SPACE);
+            System.out.printf("Worker's cell: ( Row: %d ; Columns: %d )", viewWorker.getPosition().getX(), viewWorker.getPosition().getY());
+            System.out.println();
         } catch (NotFoundException e) {
             e.printStackTrace();
         }
@@ -180,5 +173,13 @@ public class CLISelectWorkerPhase extends CLISubTurnViewer {
     @Override
     public ViewSubTurn getSubTurn() {
         return selectWorkerViewer.getMySubTurn();
+    }
+
+    /**
+     * Overloading of CLISubTurnViewer's setMyCLIStatusViewer to set the correct CLIStatusViewer
+     * @param myCLIStatusViewer
+     */
+    public void setMyCLIStatusViewer( CLIPlayingViewer myCLIStatusViewer) {
+        this.myCLIStatusViewer = myCLIStatusViewer;
     }
 }
