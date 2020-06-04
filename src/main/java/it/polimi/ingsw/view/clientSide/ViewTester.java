@@ -27,7 +27,7 @@ public class ViewTester implements ViewSender {
     //#####MODIFICABILI PER TESTARE DIVERSE CONFIGURAZIONI####
 
     //attributo per far eseguire le waiting
-    private final static boolean addWait = false;
+    private final static boolean addWait = true;
     private final static boolean normalTurn = true;
     private final static boolean sendTestMessages = false;
 

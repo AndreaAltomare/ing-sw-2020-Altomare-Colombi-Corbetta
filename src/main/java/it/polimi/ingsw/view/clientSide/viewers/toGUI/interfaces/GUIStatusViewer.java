@@ -42,7 +42,7 @@ public abstract class GUIStatusViewer implements SpecificStatusViewer {
 
     }
 
-    public void execute() throws CheckQueueException {
+    public final void execute() throws CheckQueueException {
         if(hasJPanel()) {
             guiViewer.setJPanel(getJPanel());
         }
@@ -50,5 +50,14 @@ public abstract class GUIStatusViewer implements SpecificStatusViewer {
             directFrameManipulation();
         if(hasPopup())
             this.doPopUp();
+        onLoad();
+    }
+
+    public void onLoad(){
+
+    }
+
+    public void onClose(){
+
     }
 }

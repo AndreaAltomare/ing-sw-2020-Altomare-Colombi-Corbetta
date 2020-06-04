@@ -4,6 +4,8 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton.TitlePanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.BackgroundPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.sounds.SoundEffect;
+import it.polimi.ingsw.view.exceptions.CheckQueueException;
 
 import javax.swing.*;
 
@@ -20,5 +22,13 @@ public class GUIWaitingtatus extends GUIStatusViewer {
         JPanel panel = new BackgroundPanel("/img/background/sized_waiting_background.png");
         new TitlePanel(panel);
         return panel;
+    }
+
+    public void onLoad(){
+        SoundEffect.startLoopMusic("Homeward_bound.wav");
+    }
+
+    public void onClose(){
+        SoundEffect.stopLoopingMusic();
     }
 }

@@ -107,8 +107,8 @@ public class GUIViewer extends Viewer {
     public JFrame getWindow(){ return window; }
 
     private void setStatus(ViewerQueuedEvent queued){
-        System.out.println("[GUI]\t"+ ViewStatus.getActual().toString());
-
+        if(actualStatus != null)
+            actualStatus.onClose();
         actualStatus = ((StatusViewer)queued.getPayload()).toGUI();
 
         if(actualStatus == null){

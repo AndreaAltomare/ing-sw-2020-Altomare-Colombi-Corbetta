@@ -41,6 +41,8 @@ public abstract class GUISubTurnViewer implements SpecificSubTurnViewer {
     }
 
     public String getPlayer(){
+        if(viewSubTurn==null)
+            return null;
         return viewSubTurn.getPlayer();
     }
 

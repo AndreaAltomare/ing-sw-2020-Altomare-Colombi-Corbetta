@@ -10,7 +10,9 @@ import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton.BodyP
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton.TitlePanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.sounds.SoundEffect;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.subTurnClasses.NoActionSubTurn;
+import it.polimi.ingsw.view.exceptions.CheckQueueException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -42,5 +44,13 @@ public class GUIPlaying extends GUIStatusViewer {
 
     public void setSubTurn(GUISubTurnViewer subTurnViewer){
         gamePanel.setSubTurn(subTurnViewer);
+    }
+
+    public void onLoad(){
+        SoundEffect.startLoopMusic("playing.wav");
+    }
+
+    public void onClose(){
+        SoundEffect.stopLoopingMusic();
     }
 }
