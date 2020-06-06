@@ -21,6 +21,7 @@ public interface MVEventListener {
     public void update(PlayerLoseEvent playerLose);
     public void update(TurnStatusChangedEvent turnStatusChange);
     public void update(GameOverEvent gameOver);
+    public void update(GameResumingEvent gameResuming);
     public void update(ServerQuitEvent serverQuit);
 
     /* Game preparation listener */

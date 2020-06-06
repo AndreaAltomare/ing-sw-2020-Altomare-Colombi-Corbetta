@@ -7,10 +7,7 @@ import it.polimi.ingsw.observer.VCEventListener;
 import it.polimi.ingsw.storage.ResourceManager;
 import it.polimi.ingsw.view.events.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -31,9 +28,11 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     private final Object clientLock; // lock used for responses from Client(s)
     private final Object challengerLock; // lock used for responses from Challenger
     private volatile String startPlayer; // the Start Player for this game
+    private volatile boolean resumeGame; // if the game needs to be resumed
     private final int DEFAULT_WAITING_TIME; // time is in milliseconds
     /* Miscellaneous */
     private volatile int workersPlaced;
+    private String lastPlayingPlayer; // only the last playing player can UNDO an action
 
     /**
      * Constructor for Controller class.
@@ -51,6 +50,8 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         this.challengerLock = new Object();
         this.DEFAULT_WAITING_TIME = 1000; // time is in milliseconds
         this.workersPlaced = 0;
+        this.lastPlayingPlayer = "";
+        this.resumeGame = false;
     }
 
 
@@ -81,42 +82,50 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         System.out.println(" - Challenger Player set: '" + model.challenger() + "'"); // Server control message
         notify(new MessageEvent("The Challenger Player has been chosen. It's: " + model.challenger())); // notify players that the Challenger has been chosen
 
-        prepareGame(3); // TODO: just to for debug. REMOVE
+        /* --- CHECK FOR GAME SAVINGS --- */
+        checkForSavings();
 
-//        /* 2- Challenger choose the Cards for this game match */
-//        notify(new NextStatusEvent("Game preparation"));
-//        List<CardInfo> cardInfoList = ResourceManager.getCardsInformation();
-//        challengerChoosesCards(cardInfoList);
-//        printCardsInGame(cardsInGame);
-//
-//        /* 3- In "clockwise" order, every Player choose a Card (among the Cards chosen by the Challenger) */
-//        List<CardInfo> cardsToChoose = cardInfoList.stream().filter(c -> cardsInGame.contains(c.getName())).collect(Collectors.toList());
-//        playersChooseCards(cardsToChoose);
-//        registerTurnObservers();
-//        //System.out.println(""); // Server control message   --->   in playersChooseCards(...) method
-//
-//        /* 4- Ask the Challenger for the Start Player */
-//        challengerChoosesStartPlayer();
-//        System.out.println(" - Challenger Player has chosen Start Player: '" + model.startPlayer() + "'"); // Server control message
-//        //notify(new MessageEvent("Other players are placing their workers. Wait...")); // notify other Players // todo maybe it's useless: to remove
-//
-//        /* 5- Sort the list of Players */
-//        sortPlayers();
-//
-//        /* 6- In "clockwise" order, starting from Start Player, every Player places his/her Workers on the Board */
-//        playersPlaceWorkers();
+        /* --- PREPARE A NEW GAME ONLY IF A PREVIOUSLY SAVED GAME WAS NOT RESUMED --- */
+        if(!resumeGame) {
+            System.out.println("[SERVER] No game saving loaded.\nPreparing a new game...");
 
-        /* 7- Send general game info data to all Views so the game can start */
-        System.out.println(" - Notifying Players that the game is starting..."); // Server control message
-        notify(new ServerSendDataEvent(model.getBoardXSize(), model.getBoardYSize(), players, model.getWorkersToPlayers()));
+            prepareGame(3); // TODO: just to for debug. REMOVE
 
-        /* 8- Game preparation phase is over. The game match can start */
-        notify(new NextStatusEvent("The game has started!"));
-        startGame();
-        System.out.println("\n##### Game started #####\n"); // Server control message
-        System.out.println("### It's " + model.startPlayer() + "'s turn.");
+//            /* 2- Challenger choose the Cards for this game match */
+//            notify(new NextStatusEvent("Game preparation"));
+//            List<CardInfo> cardInfoList = ResourceManager.getCardsInformation();
+//            challengerChoosesCards(cardInfoList);
+//            printCardsInGame(cardsInGame);
+//
+//            /* 3- In "clockwise" order, every Player choose a Card (among the Cards chosen by the Challenger) */
+//            List<CardInfo> cardsToChoose = cardInfoList.stream().filter(c -> cardsInGame.contains(c.getName())).collect(Collectors.toList());
+//            playersChooseCards(cardsToChoose);
+//            registerTurnObservers();
+//            //System.out.println(""); // Server control message   --->   in playersChooseCards(...) method
+//
+//            /* 4- Ask the Challenger for the Start Player */
+//            challengerChoosesStartPlayer();
+//            System.out.println(" - Challenger Player has chosen Start Player: '" + model.startPlayer() + "'"); // Server control message
+//            //notify(new MessageEvent("Other players are placing their workers. Wait...")); // notify other Players // todo maybe it's useless: to remove
+//
+//            /* 5- Sort the list of Players */
+//            sortPlayers();
+//
+//            /* 6- In "clockwise" order, starting from Start Player, every Player places his/her Workers on the Board */
+//            playersPlaceWorkers();
+//
+//            /* 7- Send general game info data to all Views so the game can start */
+//            System.out.println(" - Notifying Players that the game is starting..."); // Server control message
+//            notify(new ServerSendDataEvent(model.getBoardXSize(), model.getBoardYSize(), players, model.getWorkersToPlayers()));
 
-        //simulateGame(5); // TODO: just to for debug. REMOVE
+            /* 8- Game preparation phase is over. The game match can start */
+            notify(new NextStatusEvent("The game has started!"));
+            startGame();
+            System.out.println("\n##### Game started #####\n"); // Server control message
+            System.out.println("### It's " + model.startPlayer() + "'s turn.");
+
+            //simulateGame(5); // TODO: just to for debug. REMOVE
+        }
     }
 
 
@@ -132,29 +141,29 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     private void prepareGame(int nPlayer) {
         // prepare cards
         cardsInGame = new ArrayList<>(nPlayer);
-        cardsInGame.add("Atlas");
-        cardsInGame.add("Apollo");
+        cardsInGame.add("Artemis");
+        cardsInGame.add("Athena");
         if(nPlayer == 3)
-            cardsInGame.add("Minotaur");
+            cardsInGame.add("Prometheus");
         model.setCardsInGame(cardsInGame);
         // set cards
-        model.setPlayerCard("Pan", "giorgio");
-        model.setPlayerCard("Prometheus", "andrea");
+        model.setPlayerCard("Artemis", "giorgio");
+        model.setPlayerCard("Athena", "andrea");
         if(nPlayer == 3)
-            model.setPlayerCard("Demeter", "marco");
+            model.setPlayerCard("Prometheus", "marco");
         registerTurnObservers();
         // set start player
         model.setStartPlayer("andrea");
         // sort players
         sortPlayers();
         // place workers
-        model.placeWorker(3, 0, "andrea"); // worker's starting position
         model.placeWorker(0, 0, "andrea"); // worker's starting position
-        model.placeWorker(4, 3, "giorgio"); // worker's starting position
+        model.placeWorker(4, 4, "andrea"); // worker's starting position
         model.placeWorker(0, 1, "giorgio"); // worker's starting position
+        model.placeWorker(3, 3, "giorgio"); // worker's starting position
         if(nPlayer == 3) {
             model.placeWorker(3, 2, "marco"); // worker's starting position
-            model.placeWorker(0, 2, "marco"); // worker's starting position
+            model.placeWorker(1, 3, "marco"); // worker's starting position
         }
     }
 
@@ -574,8 +583,8 @@ public class Controller extends Observable<Object> implements VCEventListener, R
 
     /**
      * Sort the list of Players based on the Start Player.
-     */
-    private void sortPlayers() {
+     */                           // TODO: ricordarsi anche di registrare gli observer dei turni (tipo Athena) quando si carica un gioco salvato
+    private void sortPlayers() { // todo: ricordarsi di chiamare sortPlayers una volta ripristinato lo stato di un gioco (persistenza)
         players.remove(model.startPlayer());
         players.add(0, model.startPlayer());
     }
@@ -862,6 +871,29 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         //notify(new ErrorMessageEvent("Bad Request: Server cannot process your request!"));
     }
 
+    /**
+     * This method is reserved for the Challenger Player.
+     *
+     * @param gameResumingResponse Response from Challenger about resuming a previously saved Game
+     * @param playerNickname Player who sent the Event
+     */
+    public synchronized void update(GameResumingResponseEvent gameResumingResponse, String playerNickname) {
+        if(!model.hasGameStarted() && playerNickname.equals(model.challenger())) {
+            System.out.println("[GameResumingResponseEvent] received from Player: '" + playerNickname + "'"); // Server control message
+            if (playerNickname.equals(model.challenger())) {
+                synchronized (challengerLock) {
+                    this.resumeGame = gameResumingResponse.isWantToResumeGame();
+                    challengerHasChosen = true; // todo remember to set this to false when a new game starts (if necessary)
+                    challengerLock.notifyAll();
+                }
+            }
+        }
+        else {
+            System.out.println("!INVALID! [GameResumingResponseEvent] received from Player: '" + playerNickname + "'"); // Server control message
+            notify(new ErrorMessageEvent("Game has already started! You can no longer resume any previous game."), playerNickname);
+        }
+    }
+
     @Override
     public synchronized void update(QuitEvent quit, String playerNickname) {
         // TODO: add operations to handle disconnections of Players
@@ -949,10 +981,10 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         if(!model.hasGameStarted()) {
             System.out.println("[PlaceWorkerEvent] received from Player: '" + playerNickname + "'"); // Server control message
             synchronized (clientLock) {
-                String workerId = model.placeWorker(workerToPlace.getX(), workerToPlace.getY(), playerNickname);
-                if (workerId != null) {
+                WorkerPlacedEvent workerPlaced = model.placeWorker(workerToPlace.getX(), workerToPlace.getY(), playerNickname);
+                if (workerPlaced != null) {
                     workersPlaced++;
-                    notify(new WorkerPlacedEvent(workerId, workerToPlace.getX(), workerToPlace.getY(), true)); // broadcast notification of a worker placed event
+                    notify(workerPlaced); // broadcast notification of a worker placed event
                     System.out.println(" - Player '" + playerNickname + "' placed a Worker in position: ( " + workerToPlace.getX() + " , " + workerToPlace.getY() + " )"); // Server control message
                 } else {
                     notify(new ErrorMessageEvent("Your choice is invalid! Try to place your worker again."), playerNickname);
@@ -995,7 +1027,12 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             WorkerMovedEvent workerMoved = model.moveWorker(move.getWorkerId(), move.getX(), move.getY(), playerNickname);
             if (workerMoved != null) {
                 notify(workerMoved); // ANSWER FROM THE CONTROLLER (Notify the View)
+                // todo: here wait for action undo
                 checkForSwitching(playerNickname);
+                if(workerMoved.getMoveOutcome() == MoveOutcomeType.EXECUTED || workerMoved.getMoveOutcome() == MoveOutcomeType.TURN_SWITCHED || workerMoved.getMoveOutcome() == MoveOutcomeType.TURN_OVER || workerMoved.getMoveOutcome() == MoveOutcomeType.LOSS || workerMoved.getMoveOutcome() == MoveOutcomeType.WIN) {
+                    saveGame();
+                    this.lastPlayingPlayer = playerNickname;
+                }
             }
         }
         else {
@@ -1011,7 +1048,12 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             BlockBuiltEvent blockBuilt = model.buildBlock(build.getWorkerId(), build.getX(), build.getY(), build.getBlockType(), playerNickname);
             if (blockBuilt != null) {
                 notify(blockBuilt); // ANSWER FROM THE CONTROLLER (Notify the View)
+                // todo: here wait for action undo
                 checkForSwitching(playerNickname);
+                if(blockBuilt.getMoveOutcome() == MoveOutcomeType.EXECUTED || blockBuilt.getMoveOutcome() == MoveOutcomeType.TURN_SWITCHED || blockBuilt.getMoveOutcome() == MoveOutcomeType.TURN_OVER || blockBuilt.getMoveOutcome() == MoveOutcomeType.LOSS || blockBuilt.getMoveOutcome() == MoveOutcomeType.WIN) {
+                    saveGame();
+                    this.lastPlayingPlayer = playerNickname;
+                }
             }
         }
         else {
@@ -1094,6 +1136,124 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     /* ########################### AUXILIARY AND SUPPORT METHODS ############################ */
 
 
+    /**
+     * Check for game savings.
+     */
+    public void checkForSavings() { // todo refactor this method
+        GameState gameLoaded = loadGame();
+
+        if(gameLoaded == null) {
+            System.out.println("[SERVER] No game saving found.");
+        }
+        else {
+            /* 0- Check if last game was ongoing */
+            resumeGame = checkGameOngoing(gameLoaded);
+            if(!resumeGame)
+                return;
+
+            /* 1- Check if all (last) playing players are online now */
+            List<String> playingPlayers = getPlayingPlayers(gameLoaded);
+            resumeGame = checkForOnlinePlayers(playingPlayers);
+            if(!resumeGame)
+                return;
+
+            /* 2- Notify the Challenger about the possibility to restore a saved Game */
+            askChallengerToRestoreGame();
+
+            /* 3- If Challenger wants to resume the Game, resume it */
+            if(resumeGame) {
+                System.out.println("[SERVER] A saved game is being loaded.");
+                resumeSavedGame(gameLoaded);
+            }
+        }
+    }
+
+    private void resumeSavedGame(GameState gameState) {
+        /* Restore Game State in Model */
+        model.restoreGameState();
+        /* Notify Players in game */
+        notify(new MessageEvent("A previously saved game was resumed! The game can start.")); // todo maybe it's to change with a NextStatusEvent (parlarne con Giorgio)
+        /* Remove non-playing Players */
+        removeNonPlayingPlayers(gameState);
+        /* Register Turn Observers */
+        registerTurnObservers();
+        /* Notify Players about resumed game */
+        System.out.println(" - Notifying Players that the game is starting..."); // Server control message
+        notify(new GameResumingEvent(gameState.getBoard()));
+        /* Start resumed game */
+        startResumedGame();
+    }
+
+    private void startResumedGame() {
+        /* Preliminary action */
+        //model.sortPlayers(players); // sort the players' list before stating // todo no need for this (check...)
+        Player playingPlayer = model.getPlayingPlayerReference();
+        notify(new NextStatusEvent("The game has started!"));
+        /* Notify about the Turn changed */
+        notify(new TurnStatusChangedEvent(playingPlayer.getNickname(), playingPlayer.getTurnType(), true));
+        //startGame(); // todo no need for this (check...)
+        /* Game has started */
+        System.out.println("\n##### Game started #####\n"); // Server control message
+        System.out.println("### It's " + model.getPlayingPlayer() + "'s turn.");
+    }
+
+    private void removeNonPlayingPlayers(GameState gameState) {
+        List<String> playersInGame = new ArrayList<>(model.players());
+        List<String> playersSaved = new ArrayList<>(gameState.getPlayers().getData().keySet());
+        /* Remove all non-playing players from the game */
+        for(String nickname : playersInGame)
+            if(!playersSaved.contains(nickname))
+                model.removePlayer(nickname);
+
+            // todo: remove this piece of code
+//        for(String nickname : gameState.getPlayers().getData().keySet())
+//            if(!players.contains(nickname))
+//                model.removePlayer(nickname);
+    }
+
+    private void askChallengerToRestoreGame() {
+        challengerHasChosen = false;
+        while(!challengerHasChosen) {
+            // Send to the Challenger a request
+            notify(new GameResumingEvent(), model.challenger());
+            // Waits until Challenger has mad a choice
+            waitForChallengerResponse();
+        }
+    }
+
+    /**
+     * Gets a list of last playing Players' nicknames.
+     *
+     * @param gameState State of the Game
+     * @return List of Players' nicknames
+     */
+    private List<String> getPlayingPlayers(GameState gameState) {
+        Map<String, PlayerData> playersMap = gameState.getPlayers().getData();
+        List<PlayerData> playersData = new ArrayList<>(3);
+
+        playersMap.forEach((key, value) -> playersData.add(value));
+        return playersData.stream().map(PlayerData::getNickname).collect(Collectors.toList());
+    }
+
+    /**
+     * Tells if current online Players are the same
+     * into the list of Players provided.
+     *
+     * @param playingPlayers List of Players (nicknames)
+     * @return (Current online Players are the same into the list of Players provided ? true : false)
+     */
+    private boolean checkForOnlinePlayers(List<String> playingPlayers) {
+        return this.players.containsAll(playingPlayers);
+    }
+
+    /**
+     *
+     * @param gameState State of the Game
+     * @return (The game was ongoing ? true : false)
+     */
+    private boolean checkGameOngoing(GameState gameState) {
+        return gameState.isGameStarted();
+    }
 
 
     /**
@@ -1131,21 +1291,28 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      * Save the game.
      */
     private void saveGame() { // TODO: [MAYBE] For "Persistence" FA
-        System.out.println("The game is being saved..."); // todo [debug]
+        System.out.println("[SERVER] The game is being saved..."); // todo [debug]
         /* 1- Get game state from Model */
-//        GameState gameState = model.getGameState();
-//        /* 2- Save game state */
-//        ResourceManager.saveGameState(gameState);
+        GameState gameState = model.createGameState();
+        /* 2- Save game state */
+        ResourceManager.saveGameState(gameState);
     }
 
     /**
      * Load a saved game.
+     *
+     * @return A reference to the loaded game saving
      */
-    private void loadGame() { // TODO: [MAYBE] For "Persistence" FA
+    private GameState loadGame() { // TODO: [MAYBE] For "Persistence" FA
         /* 1- Load game state */
-//        GameState gameState = ResourceManager.loadGameState();
-//        /* 2- Restore game state to the Model */
-//        model.restoreGameState(gameState);
+        GameState gameState = ResourceManager.loadGameState(); // todo vedere che succede se il file non esiste (eccezioni lanciate, ecc...)
+        /* 2- Restore game state to the Model */
+        if(gameState != null)
+            model.setGameState(gameState);
+        else
+            System.out.println("[SERVER] No game saving found.");
+
+        return gameState;
     }
 
     public synchronized void setChallengerHasChosen(boolean challengerHasChosen) {

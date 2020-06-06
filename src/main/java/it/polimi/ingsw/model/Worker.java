@@ -1,5 +1,8 @@
 package it.polimi.ingsw.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This class is assumed to represent the workers on to the board.
  *
@@ -9,7 +12,10 @@ public class Worker extends Placeable {
 
     //Addes later
     private static int lastId = 0;
+    private static int lastColor = 0;
+    private static Color[] colors = { Color.BLUE, Color.BLUE, Color.GREY, Color.GREY, Color.BROWN, Color.BROWN };
     private int id;
+    private Color color;
 
     private Player owner;
     private ChooseType chosen; // tell whether a Worker can either be chosen for a turn or not, or it has already been chosen
@@ -139,5 +145,50 @@ public class Worker extends Placeable {
      */
     public String getWorkerId() {
         return this.toString();
+    }
+
+    /**
+     *
+     * @return Worker's color
+     * @author AndreaAltomare
+     */
+    public Color getColor() { // todo testare che funzioni
+        return color;
+    }
+
+    /**
+     *
+     * @author AndreaAltomare
+     */
+    public void registerColor() { // todo testare che funzioni
+        this.color = colors[lastColor];
+        lastColor++;
+    }
+
+    /**
+     * Given an ID as a String, it retrieve
+     * its int ID and set it.
+     *
+     * @param workerId Worker's ID
+     * @author AndreaAltomare
+     */
+    public void setId(String workerId) {
+        int id = 0;
+
+        String[] splittedId = workerId.split("\t");
+        //String stringPart = splittedId[0];
+        String numericPart = splittedId[1]; // todo: vedere se lo split funziona effettivamente
+        id = Integer.parseInt(numericPart);
+
+        this.id = id;
+    }
+
+    /**
+     *
+     * @param color Worker's color
+     * @author AndreaAltomare
+     */
+    public void setColor(Color color) {
+        this.color = color;
     }
 }

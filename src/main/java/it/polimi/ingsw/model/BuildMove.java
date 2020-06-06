@@ -14,7 +14,29 @@ public class BuildMove extends Move {
         this.blockType = blockType;
     }
 
+    /**
+     * Constructor used when restoring game data.
+     *
+     * @param floorDirection Floor cardinal direction
+     * @param levelDirection Level direction (up/down)
+     * @param levelDepth Level depth
+     * @param selectedCell Selected cell to move to
+     * @param blockType Type of block to build
+     */
+    public BuildMove(FloorDirection floorDirection, LevelDirection levelDirection, int levelDepth, Cell selectedCell, PlaceableType blockType) {
+        super(floorDirection, levelDirection, levelDepth, selectedCell);
+        this.blockType = blockType;
+    }
+
     public PlaceableType getBlockType() {
         return blockType;
+    }
+
+
+
+
+    /* ##### METHOD USED WHEN RESTORING DATA ##### */
+    public void setBlockType(PlaceableType blockType) {
+        this.blockType = blockType;
     }
 }

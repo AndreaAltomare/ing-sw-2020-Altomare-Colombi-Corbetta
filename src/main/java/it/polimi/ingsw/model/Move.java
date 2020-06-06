@@ -20,6 +20,21 @@ public class Move {
     }
 
     /**
+     * Constructor used when restoring game data.
+     *
+     * @param floorDirection Floor cardinal direction
+     * @param levelDirection Level direction (up/down)
+     * @param levelDepth Level depth
+     * @param selectedCell Selected cell to move to
+     */
+    public Move(FloorDirection floorDirection, LevelDirection levelDirection, int levelDepth, Cell selectedCell) {
+        this.floorDirection = floorDirection;
+        this.levelDirection = levelDirection;
+        this.levelDepth = levelDepth;
+        this.selectedCell = selectedCell;
+    }
+
+    /**
      * Class method: Given two Cells, calculate the Cardinal direction between them.
      *
      * @param currentCell (Cell from which calculate the Cardinal direction)
@@ -95,5 +110,31 @@ public class Move {
 
     public Cell getSelectedCell() {
         return selectedCell;
+    }
+
+
+
+
+
+
+    /* ##### METHOD USED WHEN RESTORING DATA ##### */
+    public void setFloorDirection(FloorDirection floorDirection) {
+        this.floorDirection = floorDirection;
+    }
+
+    public void setLevelDirection(LevelDirection levelDirection) {
+        this.levelDirection = levelDirection;
+    }
+
+    public void setLevelDepth(int levelDepth) {
+        this.levelDepth = levelDepth;
+    }
+
+    public void setSelectedCell(Cell selectedCell) {
+        this.selectedCell = selectedCell;
+    }
+
+    public int getLevelDepth() {
+        return levelDepth;
     }
 }

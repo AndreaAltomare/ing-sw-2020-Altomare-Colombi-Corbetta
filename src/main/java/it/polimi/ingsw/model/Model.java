@@ -2,6 +2,7 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.events.*;
+import it.polimi.ingsw.view.exceptions.WrongEventException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
  */
 public class Model {
     // TODO: All "volatile" variables needs to be changed to "Atomic" type-of variables [FORSE]
+    private GameState gameState;
     private Controller controller; // associated controller
     public final int WORKERS_PER_PLAYER;
     private volatile Boolean gameStarted; // tell if the game has started
@@ -50,6 +52,7 @@ public class Model {
         this.controller = controller;
         List<Player> playerList = players.stream().map(p -> new Player(p)).collect(Collectors.toList());
         gameRoom.setPlayers(playerList);
+        this.gameState = new GameState();
     }
 
     /**
@@ -192,7 +195,7 @@ public class Model {
      * @param playerNickname (Player who wants to place a new Worker)
      * @return The new placed Worker's ID
      */
-    public String placeWorker(int x, int y, String playerNickname) {
+    public WorkerPlacedEvent placeWorker(int x, int y, String playerNickname) {
         boolean placed = true;
 
         /* 1- Get the Player and instantiate a new Worker */
@@ -211,7 +214,8 @@ public class Model {
         /* 3- If the Worker was correctly placed, register it among the Player's Workers */
         if(placed) {
             player.registerWorker(worker);
-            return worker.getWorkerId();
+            worker.registerColor();
+            return new WorkerPlacedEvent(worker.getWorkerId(), x, y, worker.getColor(), true);
         }
         else {
             worker = null;
@@ -255,6 +259,18 @@ public class Model {
                 return player.getNickname();
 
         return "";
+    }
+
+    /**
+     *
+     * @return The playing Player's reference
+     */
+    public Player getPlayingPlayerReference() {
+        for(Player player : gameRoom.getPlayersList())
+            if (player.isPlaying())
+                return player;
+
+        return null;
     }
 
 
@@ -309,55 +325,52 @@ public class Model {
             /* 1- Gather needed data */
             player = gameRoom.getPlayer(playerNickname);
             w = player.getWorker(workerId);
-            initialPosition = w.position();
-            moveOutcome = MoveOutcomeType.NOT_EXECUTED;
 
-            /* 2- Execute move */
-            try {
-                nextPosition = board.getCellAt(x,y);
-                moveToExecute = new Move(initialPosition, nextPosition);
-                moveSuccess = player.executeMove(moveToExecute, w);
-                if (moveSuccess)
-                    moveOutcome = MoveOutcomeType.EXECUTED;
-            }
-            catch(TurnSwitchedException ex) {
-                moveSuccess = true;
-                moveOutcome = MoveOutcomeType.TURN_SWITCHED;
-                //controller.notifyFromModel(new TurnStatusChangedEvent(playerNickname, StateType.CONSTRUCTION, true), playerNickname); // todo: useless, to remove.
-            }
-            catch(TurnOverException ex) {
-                moveSuccess = true;
-                moveOutcome = MoveOutcomeType.TURN_OVER;
-                //switchPlayer();
-            }
-            catch(LoseException ex) { // when a Player perform a Move which he/she could not execute
-                moveSuccess = true; // move was executed, but in this case, a Lose Condition is thereby triggered
-                moveOutcome = MoveOutcomeType.LOSS;
-                lastPlayingIndex = gameRoom.getPlayersList().indexOf(player);
-            }
-            catch(WinException ex) {
-                moveSuccess = true;
-                moveOutcome = MoveOutcomeType.WIN;
-            }
-            catch(OutOfBoardException ex) {
-                moveSuccess = false;
-                moveOutcome = MoveOutcomeType.OUT_OF_BOARD;
-            }
-            catch(RunOutMovesException ex) {
-                moveSuccess = false;
-                moveOutcome = MoveOutcomeType.RUN_OUT_OF_MOVES;
-            }
-            catch(BuildBeforeMoveException ex) {
-                moveSuccess = false;
-                moveOutcome = MoveOutcomeType.BUILD_BEFORE_MOVE;
-            }
-            catch(WrongWorkerException ex) {
-                moveSuccess = false;
-                moveOutcome = MoveOutcomeType.WRONG_WORKER;
-            }
+            if(w != null) {
+                initialPosition = w.position();
+                moveOutcome = MoveOutcomeType.NOT_EXECUTED;
 
-            /* 3- Return the result */
-            return new WorkerMovedEvent(workerId, initialPosition.getX(), initialPosition.getY(), w.position().getX(), w.position().getY(), moveOutcome);
+                /* 2- Execute move */
+                try {
+                    nextPosition = board.getCellAt(x, y);
+                    moveToExecute = new Move(initialPosition, nextPosition);
+                    moveSuccess = player.executeMove(moveToExecute, w);
+                    if (moveSuccess)
+                        moveOutcome = MoveOutcomeType.EXECUTED;
+                } catch (TurnSwitchedException ex) {
+                    moveSuccess = true;
+                    moveOutcome = MoveOutcomeType.TURN_SWITCHED;
+                    //controller.notifyFromModel(new TurnStatusChangedEvent(playerNickname, StateType.CONSTRUCTION, true), playerNickname); // todo: useless, to remove.
+                } catch (TurnOverException ex) {
+                    moveSuccess = true;
+                    moveOutcome = MoveOutcomeType.TURN_OVER;
+                    //switchPlayer();
+                } catch (LoseException ex) { // when a Player perform a Move which he/she could not execute
+                    moveSuccess = true; // move was executed, but in this case, a Lose Condition is thereby triggered
+                    moveOutcome = MoveOutcomeType.LOSS;
+                    lastPlayingIndex = gameRoom.getPlayersList().indexOf(player);
+                } catch (WinException ex) {
+                    moveSuccess = true;
+                    moveOutcome = MoveOutcomeType.WIN;
+                } catch (OutOfBoardException ex) {
+                    moveSuccess = false;
+                    moveOutcome = MoveOutcomeType.OUT_OF_BOARD;
+                } catch (RunOutMovesException ex) {
+                    moveSuccess = false;
+                    moveOutcome = MoveOutcomeType.RUN_OUT_OF_MOVES;
+                } catch (BuildBeforeMoveException ex) {
+                    moveSuccess = false;
+                    moveOutcome = MoveOutcomeType.BUILD_BEFORE_MOVE;
+                } catch (WrongWorkerException ex) {
+                    moveSuccess = false;
+                    moveOutcome = MoveOutcomeType.WRONG_WORKER;
+                }
+
+                /* 3- Return the result */
+                return new WorkerMovedEvent(workerId, initialPosition.getX(), initialPosition.getY(), w.position().getX(), w.position().getY(), moveOutcome);
+            }
+            else
+                return new WorkerMovedEvent(workerId, 0, 0, 0, 0, MoveOutcomeType.WRONG_WORKER);
         }
 
         return null;
@@ -376,55 +389,52 @@ public class Model {
             /* 1- Gather needed data */
             player = gameRoom.getPlayer(playerNickname);
             w = player.getWorker(workerId);
-            currentPosition = w.position();
-            moveOutcome = MoveOutcomeType.NOT_EXECUTED; // TODO: dire a Giorgio di questo tipo enumerativo che specifica l'esito della mossa eseguita (in maniera più specifica rispetto a un semplice booleano)
 
-            /* 2- Execute move */
-            try {
-                selectedCell = board.getCellAt(x,y);
-                moveToExecute = new BuildMove(currentPosition, selectedCell, blockType);
-                moveSuccess = player.executeMove(moveToExecute, w); // we are sure this will call ConstructionManager because if the Player doesn't switch the turn, he cannot send a "Construction-type" request
-                if (moveSuccess)
-                    moveOutcome = MoveOutcomeType.EXECUTED;
-            }
-            catch(TurnSwitchedException ex) {
-                moveSuccess = true;
-                moveOutcome = MoveOutcomeType.TURN_SWITCHED;
-                //controller.notifyFromModel(new TurnStatusChangedEvent(playerNickname, StateType.MOVEMENT, true), playerNickname); // todo: useless, to remove.
-            }
-            catch(TurnOverException ex) {
-                moveSuccess = true;
-                moveOutcome = MoveOutcomeType.TURN_OVER;
-                //switchPlayer();
-            }
-            catch(LoseException ex) { // when a Player perform a Move which he/she could not execute
-                moveSuccess = true; // move was executed, but in this case, a Lose Condition is thereby triggered
-                moveOutcome = MoveOutcomeType.LOSS;
-                lastPlayingIndex = gameRoom.getPlayersList().indexOf(player);
-            }
-            catch(WinException ex) {
-                moveSuccess = true;
-                moveOutcome = MoveOutcomeType.WIN;
-            }
-            catch(OutOfBoardException ex) {
-                moveSuccess = false;
-                moveOutcome = MoveOutcomeType.OUT_OF_BOARD;
-            }
-            catch(RunOutMovesException ex) {
-                moveSuccess = false;
-                moveOutcome = MoveOutcomeType.RUN_OUT_OF_MOVES;
-            }
-            catch(BuildBeforeMoveException ex) {
-                moveSuccess = false;
-                moveOutcome = MoveOutcomeType.BUILD_BEFORE_MOVE;
-            }
-            catch(WrongWorkerException ex) {
-                moveSuccess = false;
-                moveOutcome = MoveOutcomeType.WRONG_WORKER;
-            }
+            if(w != null) {
+                currentPosition = w.position();
+                moveOutcome = MoveOutcomeType.NOT_EXECUTED; // TODO: dire a Giorgio di questo tipo enumerativo che specifica l'esito della mossa eseguita (in maniera più specifica rispetto a un semplice booleano)
 
-            /* 3- Return the result */
-            return new BlockBuiltEvent(x, y, blockType, moveOutcome);
+                /* 2- Execute move */
+                try {
+                    selectedCell = board.getCellAt(x, y);
+                    moveToExecute = new BuildMove(currentPosition, selectedCell, blockType);
+                    moveSuccess = player.executeMove(moveToExecute, w); // we are sure this will call ConstructionManager because if the Player doesn't switch the turn, he cannot send a "Construction-type" request
+                    if (moveSuccess)
+                        moveOutcome = MoveOutcomeType.EXECUTED;
+                } catch (TurnSwitchedException ex) {
+                    moveSuccess = true;
+                    moveOutcome = MoveOutcomeType.TURN_SWITCHED;
+                    //controller.notifyFromModel(new TurnStatusChangedEvent(playerNickname, StateType.MOVEMENT, true), playerNickname); // todo: useless, to remove.
+                } catch (TurnOverException ex) {
+                    moveSuccess = true;
+                    moveOutcome = MoveOutcomeType.TURN_OVER;
+                    //switchPlayer();
+                } catch (LoseException ex) { // when a Player perform a Move which he/she could not execute
+                    moveSuccess = true; // move was executed, but in this case, a Lose Condition is thereby triggered
+                    moveOutcome = MoveOutcomeType.LOSS;
+                    lastPlayingIndex = gameRoom.getPlayersList().indexOf(player);
+                } catch (WinException ex) {
+                    moveSuccess = true;
+                    moveOutcome = MoveOutcomeType.WIN;
+                } catch (OutOfBoardException ex) {
+                    moveSuccess = false;
+                    moveOutcome = MoveOutcomeType.OUT_OF_BOARD;
+                } catch (RunOutMovesException ex) {
+                    moveSuccess = false;
+                    moveOutcome = MoveOutcomeType.RUN_OUT_OF_MOVES;
+                } catch (BuildBeforeMoveException ex) {
+                    moveSuccess = false;
+                    moveOutcome = MoveOutcomeType.BUILD_BEFORE_MOVE;
+                } catch (WrongWorkerException ex) {
+                    moveSuccess = false;
+                    moveOutcome = MoveOutcomeType.WRONG_WORKER;
+                }
+
+                /* 3- Return the result */
+                return new BlockBuiltEvent(x, y, blockType, moveOutcome);
+            }
+            else
+                return new BlockBuiltEvent(x, y, blockType, MoveOutcomeType.WRONG_WORKER);
         }
 
         return null;
@@ -605,5 +615,335 @@ public class Model {
 
     public List<String> players() {
         return gameRoom.getPlayersList().stream().map(p -> p.getNickname()).collect(Collectors.toList());
+    }
+
+    /**
+     * Given a Player's nickname, removes it from the game.
+     *
+     * @param playerNickname Player's nickname
+     */
+    public void removePlayer(String playerNickname) {
+        gameRoom.removePlayer(playerNickname);
+    }
+
+
+
+
+
+
+
+
+    // TODO: refactor all these methods
+    /* ############################# GAME STATE HANDLING LOGIC ############################## */
+
+
+
+
+    public void restoreGameState() {
+        setPlayersState(gameState.getPlayers());
+        setBoardState(gameState.getBoard());
+        setGameStarted(gameState.isGameStarted());
+    }
+
+
+
+
+    /* ##### GAME PERSISTENCE ##### */
+    public GameState getLastGameState() {
+        return gameState;
+    }
+
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
+
+    public GameState createGameState() {
+        GameState gameState = new GameState();
+
+        gameState.setGameStarted(this.gameStarted);
+        gameState.setBoard(this.createBoardState());
+        gameState.setPlayers(this.createPlayersState());
+        this.gameState = gameState; // save reference
+
+        return gameState;
+    }
+
+
+    /* ##### ACTION UNDO ##### */
+    /* ### BOARD ### */
+
+    public BoardState getLastBoardState() {
+        return gameState.getBoard();
+    }
+
+    public void setBoardState(BoardState boardState) {
+        gameState.setBoard(boardState);
+
+        // todo modify actual game scenario accordingly (when restoring old scenario)
+        /* Modify actual game scenario accordingly (when restoring old scenario) */
+        /* 1- Clear board */
+        board.clear();
+
+        /* 2- Fill the board */
+        CellState[][] cells = boardState.getBoard();
+        for(int x = 0; x < boardState.getXSize(); x++) {
+            for(int y = 0; y < boardState.getYSize(); y++) {
+                /* 2.1- Get buildings information */
+                Deque<PlaceableData> cellBuilding = new ArrayDeque<>(cells[x][y].getBuilding());
+                int buildingHeight = cellBuilding.size();
+                for(int h = 0; h < buildingHeight; h++) {
+                    /* 2.2 - Analyze Placeable Type info and build accordingly */
+                    try {
+                        PlaceableData placeable = cellBuilding.removeFirst();
+                        if(placeable.getPlaceableType() != PlaceableType.WORKER)
+                            board.getCellAt(x, y).place(placeable.getPlaceableType());
+                        else {
+                            Worker w = getWorker(placeable.getWorkerId());
+                            if(w != null)
+                                w.place(board.getCellAt(x, y));
+                        }
+                    }
+                    catch (OutOfBoardException ex) {
+                        System.err.println("ERROR: Something went wrong when trying to restore Board's state!");
+                    }
+                }
+            }
+        }
+    }
+
+
+    public BoardState createBoardState() {
+        BoardState boardState = new BoardState();
+        CellState[][] cellStates = new CellState[board.getXDim()][board.getYDim()];
+        Deque<PlaceableData> building;
+
+        /* Cells preparation */
+        for(int x = 0; x < board.getXDim(); x++)
+            for(int y = 0; y < board.getYDim(); y++) {
+                cellStates[x][y] = new CellState();
+                /* Buildings preparation */
+                building = new ArrayDeque<>();
+                Cell cell;
+                int height = 0;
+
+                try {
+                    cell = board.getCellAt(x, y);
+                    height = cell.getHeigth();
+                }
+                catch (OutOfBoardException ex) {
+                    System.err.println("ERROR: Something went wrong when trying to save Board's state!");
+                    return null;
+                }
+
+                for(int h = 0; h < height; h++) {
+                    Placeable placeableObj = cell.getPlaceableAt(h);
+                    PlaceableData placeableDataObj = new PlaceableData();
+                    placeableDataObj.setPlaceable(placeableObj);
+
+                    building.add(placeableDataObj); // save Placeable info // todo verificare che la push funziona e che il deque rispecchia il deque della Board
+                }
+
+                cellStates[x][y].setBuilding(building); // save Cell info
+            }
+
+        /* Save Board info */
+        boardState.setBoard(cellStates);
+        boardState.setXSize(board.getXDim());
+        boardState.setYSize(board.getYDim());
+
+        return boardState;
+    }
+
+    /* ### PLAYERS ### */
+    public PlayersState getLastPlayersState() {
+        return gameState.getPlayers();
+    }
+
+    private void setPlayersState(PlayersState playersState) {
+        gameState.setPlayers(playersState);
+
+        // todo modify actual game scenario accordingly (when restoring old scenario)
+        /* Modify actual game scenario accordingly (when restoring old scenario) */
+        /* 0- Get Players' nicknames */
+        Map<String, PlayerData> playersData = new HashMap<>(playersState.getData());
+
+        /* 1- Foreach Player: restore its state */
+        Set<String> playersSet = new HashSet<>(playersData.keySet());
+        for(String playerNickname : playersSet) {
+            /* 1.1- Gather Player's data */
+            PlayerData playerData = playersData.get(playerNickname);
+            Player player = gameRoom.getPlayer(playerNickname);
+            /* 1.2- Restore basic info/flags (Challenger) */
+            player.setChallenger(playerData.isChallenger());
+            /* 1.3- Restore Card info/flags */ // todo aggiungere una classe CardData per salvare lo stato dell'esecuzione del turno
+            player.chooseCard(playerData.getCard().getName());
+                // Card info
+            CardData cardData = playerData.getCard();
+            Card card = player.getCard();
+                // Movement
+            MyMove playerMove = card.getMyMove();
+            MovementData movementData = cardData.getMovement();
+            try {
+                playerMove.setStartingPosition(board.getCellAt(movementData.getStartingPositionX(), movementData.getStartingPositionY()));
+                playerMove.setLastMove(new Move(movementData.getLastMoveFloorDirection(), movementData.getLastMoveLevelDirection(), movementData.getLastMoveLevelDepth(), board.getCellAt(movementData.getLastMoveSelectedCellX(), movementData.getLastMoveSelectedCellY())));
+            }
+            catch (OutOfBoardException ex) {
+                System.err.println("ERROR: Something went wrong when trying to restore Players' state!");
+            }
+            playerMove.setMovesLeft(movementData.getMovesLeft());
+                // Construction
+            MyConstruction playerConstruction = card.getMyConstruction();
+            ConstructionData constructionData = cardData.getConstruction();
+            try {
+                playerConstruction.setLastMove(new BuildMove(constructionData.getLastMoveFloorDirection(), constructionData.getLastMoveLevelDirection(), constructionData.getLastMoveLevelDepth(), board.getCellAt(constructionData.getLastMoveSelectedCellX(), constructionData.getLastMoveSelectedCellY()), constructionData.getLastMoveBlockType()));
+            }
+            catch (OutOfBoardException ex) {
+                System.err.println("ERROR: Something went wrong when trying to restore Players' state!");
+            }
+            playerConstruction.setConstructionLeft(constructionData.getMovesLeft());
+                // Card flags
+            card.setMovementExecuted(cardData.isMovementExecuted());
+            card.setConstructionExecuted(cardData.isConstructionExecuted());
+            card.setTurnCompleted(cardData.isTurnCompleted());
+
+            player.setTurn(playerData.getTurn());
+            /* 1.4- Restore basic info/flags */
+            player.setStartingPlayer(playerData.isStartingPlayer());
+            player.setPlaying(playerData.isPlaying());
+            /* 2- Register Workers and restore related info */
+            List<WorkerData> workersData = new ArrayList<>(playerData.getWorkers());
+            for(WorkerData wd : workersData) {
+                /* 2.1- Instantiate a new Worker */
+                Worker worker = new Worker(player);
+                /* 2.2- Restore basic Worker's info/flag */
+                worker.setId(wd.getWorkerId());
+                worker.setColor(wd.getColor());
+                worker.setChosen(wd.getChosen());
+                /* 2.3- [The Worker will be placed later] */ // todo vedere se il posizionamento posticipato funziona bene
+                /* 2.4- Register the Worker among those owned by the Player */
+                player.registerWorker(worker);
+            }
+        }
+        /* Players will be sorted by the Controller */
+        /* Turn Observers will be registered by the Controller */
+    }
+
+    public PlayersState createPlayersState() {
+        PlayersState playersState = new PlayersState();
+        Map<String, PlayerData> playersData = new HashMap<>();
+
+        /* Players info preparation */
+        for(int i = 0; i < gameRoom.getPlayersList().size(); i++) {
+            Player player = gameRoom.getPlayer(i);
+            List<Worker> workers = player.getWorkers();
+            List<WorkerData> workersData = new ArrayList<>();
+            /* Workers preparation */
+            for(int j = 0; j < workers.size(); j++) {
+                Worker w = workers.get(j);
+                WorkerData wd = new WorkerData();
+                wd.setWorkerId(w.getWorkerId());
+                wd.setChosen(w.getChosenStatus());
+                wd.setColor(w.getColor());
+                /* Save Worker data */
+                workersData.add(wd);
+            }
+
+            /* Player data preparation */
+            PlayerData pd = new PlayerData();
+            pd.setNickname(player.getNickname());
+            pd.setChallenger(player.isChallenger());
+            pd.setStartingPlayer(player.isStartingPlayer());
+            /* Gather Card info */
+            Card card = player.getCard();
+            CardData cardData = new CardData();
+            cardData.setName(card.getName());
+            cardData.setMovementExecuted(card.hasExecutedMovement());
+            cardData.setConstructionExecuted(card.hasExecutedConstruction());
+            cardData.setTurnCompleted(card.isTurnCompleted());
+            /* Gather Movement and Construction info */
+            // Movement
+            MovementData movementData = new MovementData();
+            Cell startingPosition = card.getMyMove().getStartingPosition();
+            if (startingPosition != null) {
+                movementData.setStartingPositionX(startingPosition.getX());
+                movementData.setStartingPositionY(startingPosition.getY());
+            }
+                // Gather last move data
+            Move lastMove = card.getMyMove().getLastMove();
+            if(lastMove != null) {
+                movementData.setLastMoveFloorDirection(lastMove.getFloorDirection());
+                movementData.setLastMoveLevelDirection(lastMove.getLevelDirection());
+                movementData.setLastMoveLevelDepth(lastMove.getLevelDepth());
+                movementData.setLastMoveSelectedCellX(lastMove.getSelectedCell().getX());
+                movementData.setLastMoveSelectedCellY(lastMove.getSelectedCell().getY());
+            }
+            else {
+                movementData.setLastMoveFloorDirection(FloorDirection.NONE);
+                movementData.setLastMoveLevelDirection(LevelDirection.NONE);
+                movementData.setLastMoveLevelDepth(0);
+                movementData.setLastMoveSelectedCellX(0);
+                movementData.setLastMoveSelectedCellY(0);
+            }
+                // moves left
+            movementData.setMovesLeft(card.getMyMove().getMovesLeft());
+
+            // Construction
+            ConstructionData constructionData = new ConstructionData();
+                // Gather last move data
+            BuildMove lastBuild = card.getMyConstruction().getLastMove();
+            if(lastBuild != null) {
+                constructionData.setLastMoveBlockType(lastBuild.getBlockType());
+                constructionData.setLastMoveFloorDirection(lastBuild.getFloorDirection());
+                constructionData.setLastMoveLevelDirection(lastBuild.getLevelDirection());
+                constructionData.setLastMoveLevelDepth(lastBuild.getLevelDepth());
+                constructionData.setLastMoveSelectedCellX(lastBuild.getSelectedCell().getX());
+                constructionData.setLastMoveSelectedCellY(lastBuild.getSelectedCell().getY());
+            }
+            else {
+                constructionData.setLastMoveBlockType(PlaceableType.NONE);
+                constructionData.setLastMoveFloorDirection(FloorDirection.NONE);
+                constructionData.setLastMoveLevelDirection(LevelDirection.NONE);
+                constructionData.setLastMoveLevelDepth(0);
+                constructionData.setLastMoveSelectedCellX(0);
+                constructionData.setLastMoveSelectedCellY(0);
+            }
+                // constructions left
+            constructionData.setMovesLeft(card.getMyConstruction().getConstructionLeft());
+            // remaining data
+            cardData.setMovement(movementData);
+            cardData.setConstruction(constructionData);
+            pd.setCard(cardData);
+            pd.setWorkers(workersData);
+            pd.setTurn(player.getTurnType());
+            pd.setPlaying(player.isPlaying());
+
+            /* Save Player data */
+            playersData.put(player.getNickname(), pd);
+        }
+
+        /* Save Players info */
+        playersState.setData(playersData);
+
+        return playersState;
+    }
+
+
+    /**
+     * Given a Worker's ID, find and return its Worker's instance.
+     *
+     * @param workerId Worker's ID
+     * @return Worker's instance (null if no Worker has the provided ID)
+     */
+    private Worker getWorker(String workerId) {
+        Worker w = null;
+
+        for(Player p : gameRoom.getPlayersList()) {
+            w = p.getWorker(workerId);
+
+            if(w != null)
+                return w;
+        }
+
+        return null;
     }
 }

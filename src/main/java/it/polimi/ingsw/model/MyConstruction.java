@@ -266,4 +266,17 @@ public class MyConstruction {
     private void registerLastMove(BuildMove move) {
         this.lastMove = move;
     }
+
+
+
+
+
+    /* ##### METHOD USED WHEN RESTORING DATA ##### */
+    public void setLastMove(BuildMove lastMove) {
+        this.lastMove = lastMove;
+    }
+
+    public void setConstructionLeft(int constructionLeft) {
+        this.constructionLeft = constructionLeft;
+    }
 }

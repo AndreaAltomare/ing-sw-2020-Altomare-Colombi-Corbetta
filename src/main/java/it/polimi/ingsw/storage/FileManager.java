@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class FileManager {
     private static FileManager fileManagerIstance; // may this class be synchronized upon this static attribute
-    private String filePath;
+    //private String filePath; // todo maybe to remove
 
     private FileManager() {}
 
@@ -46,19 +46,30 @@ public class FileManager {
      * @param jsonData (JSON data for the Card's power, to write on File)
      */
     public void saveNewCard(String cardName, String jsonData) {
-        filePath = cardName + ".config";
-        File cardFile;
+        String filePath = cardName + ".config";
+        this.saveFileContent(filePath, jsonData);
+    }
+
+    /**
+     * Saves any text-based content into a new file.
+     *
+     * @param fileName File's name
+     * @param fileContent Text-based content to save
+     */
+    public void saveFileContent(String fileName, String fileContent) {
+        File file;
         FileWriter fw;
         BufferedWriter bw;
 
         // create a new file and write on it
         try {
-            cardFile = new File(filePath);
-            fw = new FileWriter(cardFile);
+            file = new File(fileName);
+            fw = new FileWriter(file);
             bw = new BufferedWriter(fw);
-            bw.write(jsonData);
+            bw.write(fileContent);
             bw.flush();
             bw.close();
+            fw.close();
         }
         catch(IOException ex) {
             ex.printStackTrace();
@@ -73,7 +84,7 @@ public class FileManager {
      */
     public String getCard(String cardName) {
         String jsonData = "";
-        filePath = cardName + ".config";
+        String filePath = cardName + ".config";
 
         try {
             jsonData = getFileContent(filePath);
@@ -105,6 +116,7 @@ public class FileManager {
 
             data = br.readLine();
             br.close();
+            fr.close();
         }
         catch (FileNotFoundException ex) {
             throw new FileNotFoundException();
@@ -143,6 +155,7 @@ public class FileManager {
                 fileLines.add(data);
 
             br.close();
+            fr.close();
         }
         catch (FileNotFoundException ex) {
             throw new FileNotFoundException();

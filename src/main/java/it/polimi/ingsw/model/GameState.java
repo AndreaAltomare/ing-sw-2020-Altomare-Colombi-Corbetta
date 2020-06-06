@@ -14,7 +14,34 @@ import java.io.Serializable;
  * @author AndreaAltomare
  */
 public class GameState implements Serializable {
+    private boolean gameStarted;
+    private BoardState board;
+    private PlayersState players;
 
     /* Default Constructor */
     public GameState() {}
+
+    public BoardState getBoard() {
+        return board;
+    }
+
+    public void setBoard(BoardState board) {
+        this.board = board;
+    }
+
+    public PlayersState getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(PlayersState players) {
+        this.players = players;
+    }
+
+    public boolean isGameStarted() {
+        return gameStarted;
+    }
+
+    public void setGameStarted(boolean gameStarted) {
+        this.gameStarted = gameStarted;
+    }
 }

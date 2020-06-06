@@ -2,6 +2,7 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.storage.ResourceManager;
 
+import javax.swing.plaf.nimbus.State;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class Player {
     private boolean challenger;
     private boolean startingPlayer;
     private Card card;
+    private StateType turnType;
     private TurnManager turn;
     private MovementManager movementState;
     private ConstructionManager constructionState;
@@ -26,6 +28,7 @@ public class Player {
         this.challenger = false;
         this.startingPlayer = false;
         this.card = null;
+        this.turnType = StateType.NONE;
         this.movementState = null;
         this.constructionState = null;
         this.turn = movementState; // initial turn State
@@ -190,14 +193,20 @@ public class Player {
     public boolean switchState(TurnManager nextState) throws LoseException {
         // TODO: maybe REFACTOR this check into a method in MovementManager class
         /* Check if a Lose Condition (by denied movements) occurs */
-        if(nextState.state() == StateType.MOVEMENT)
-            if(checkForLostByMovement())
+        if(nextState.state() == StateType.MOVEMENT) {
+            if (checkForLostByMovement())
                 throw new LoseException(this, "Player " + nickname + "has lost! (Cannot perform any Movement)");
+            else
+                this.turnType = StateType.MOVEMENT;
+        }
 
         // TODO: fare in modo che se il worker con cui si ha appena  mosso non può costruire, allora la mossa costruzione "passa" all'altro Worker
-        if(nextState.state() == StateType.CONSTRUCTION)
-            if(checkForLostByConstruction())
+        if(nextState.state() == StateType.CONSTRUCTION) {
+            if (checkForLostByConstruction())
                 throw new LoseException(this, "Player " + nickname + "has lost! (Cannot perform any Construction)");
+            else
+                this.turnType = StateType.CONSTRUCTION;
+        }
 
         this.turn = nextState;
         return true; // everything ok
@@ -416,5 +425,33 @@ public class Player {
 
     public boolean isPlaying() {
         return playing;
+    }
+
+    public void setPlaying(boolean playing) {
+        this.playing = playing;
+    }
+
+    /**
+     * Given a State Type, Turn is set.
+     *
+     * @param turn State Type of Turn
+     */
+    public void setTurn(StateType turn) {
+        if (turn == StateType.MOVEMENT) {
+            this.turn = movementState;
+            this.turnType = StateType.MOVEMENT;
+        }
+        else if (turn == StateType.CONSTRUCTION) {
+            this.turn = constructionState;
+            this.turnType = StateType.CONSTRUCTION;
+        }
+        else {
+            this.turn = constructionState;
+            this.turnType = StateType.NONE;
+        }
+    }
+
+    public StateType getTurnType() {
+        return turnType;
     }
 }

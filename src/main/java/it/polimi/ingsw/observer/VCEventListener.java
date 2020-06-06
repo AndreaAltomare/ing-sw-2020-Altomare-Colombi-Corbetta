@@ -13,6 +13,7 @@ public interface VCEventListener {
     /* Client general listener */
     public void update(SetNicknameEvent submittedNickname); // handled by Server connection first
     public void update(SetPlayersNumberEvent playersNumber); // handled by Server connection first
+    public void update(GameResumingResponseEvent gameResumingResponse, String playerNickname);
     public void update(QuitEvent quit, String playerNickname);
     public void update(ViewRequestDataEvent dataRequest, String playerNickname); // Game match general data
 

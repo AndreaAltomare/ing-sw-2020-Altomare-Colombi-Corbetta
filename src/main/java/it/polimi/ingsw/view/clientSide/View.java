@@ -114,6 +114,14 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
                     break;
 
 
+                case "y":
+                    notify(new GameResumingResponseEvent(true));
+                    break;
+                case "n":
+                    notify(new GameResumingResponseEvent(false));
+                    break;
+
+
                 case "start_player":
                     input = in.nextLine();
                     notify(new SetStartPlayerEvent(input)); // submit nickname
@@ -355,6 +363,11 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     @Override
     public void update(GameOverEvent gameOver) {
         System.out.println("[GameOverEvent] Game over!"); // todo [debug]
+    }
+
+    @Override
+    public void update(GameResumingEvent gameResuming) {
+        System.out.println("[GameResumingEvent] A saved game was found. Do you want to resume it?\ny / n");
     }
 
 

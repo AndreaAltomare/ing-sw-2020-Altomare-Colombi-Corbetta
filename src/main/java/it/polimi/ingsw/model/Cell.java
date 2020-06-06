@@ -474,4 +474,22 @@ public class Cell {
             building.removeLast();
     }
 
+    /**
+     * Given a type of Placeable, place it onto the Cell.
+     *
+     * @param placeableType Type of the Placeable
+     * @return (Placeable was correctly placed ? true : false)
+     * @author AndreaAltomare
+     */
+    public boolean place(PlaceableType placeableType) {
+        switch(placeableType) {
+            case BLOCK:
+                return this.buildBlock();
+            case DOME:
+                return this.buildDome();
+            default:
+                return false;
+        }
+    }
+
 }

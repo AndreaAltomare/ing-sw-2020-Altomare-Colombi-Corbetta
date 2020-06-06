@@ -403,4 +403,25 @@ public class MyMove {
     private void registerLastMove(Move move) {
         this.lastMove = move;
     }
+
+
+
+
+
+    /* ##### METHOD USED WHEN RESTORING DATA ##### */
+    public void setStartingPosition(Cell startingPosition) {
+        this.startingPosition = startingPosition;
+    }
+
+    public void setLastMove(Move lastMove) {
+        this.lastMove = lastMove;
+    }
+
+    public void setMovesLeft(int movesLeft) {
+        this.movesLeft = movesLeft;
+    }
+
+    public Cell getStartingPosition() {
+        return startingPosition;
+    }
 }
