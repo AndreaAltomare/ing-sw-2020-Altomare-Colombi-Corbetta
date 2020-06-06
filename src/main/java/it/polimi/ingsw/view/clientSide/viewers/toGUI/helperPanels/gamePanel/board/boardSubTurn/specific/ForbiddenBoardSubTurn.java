@@ -4,6 +4,7 @@ import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.boardSubTurn.BoardSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.sounds.SoundEffect;
 
 import java.awt.*;
 
@@ -23,6 +24,6 @@ public class ForbiddenBoardSubTurn extends BoardSubTurn {
 
     @Override
     public void onCellSelected(int x, int y){
-        ;
+        SoundEffect.playSound("/actions/forbidden.wav");
     }
 }

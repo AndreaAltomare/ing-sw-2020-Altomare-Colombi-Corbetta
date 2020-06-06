@@ -11,6 +11,8 @@ public abstract class SoundEffect {
 
     public static void setEnabled(boolean _enabled){
         enabled = _enabled;
+        if(!enabled)
+            stopLoopingMusic();
     }
 
     public static boolean getEnabled(){
@@ -35,6 +37,9 @@ public abstract class SoundEffect {
 
         if(loopingMusic!=null && loopingMusic.isRunning())
             loopingMusic.stop();
+
+        if(!enabled)
+            return;
 
         new Thread(new Runnable() { // the wrapper thread is unnecessary, unless it blocks on the Clip finishing, see comments
             public void run() {

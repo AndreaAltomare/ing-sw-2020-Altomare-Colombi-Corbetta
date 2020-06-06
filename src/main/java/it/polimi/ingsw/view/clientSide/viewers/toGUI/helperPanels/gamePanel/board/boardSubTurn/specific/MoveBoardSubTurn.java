@@ -6,6 +6,7 @@ import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.PlaceW
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.boardSubTurn.BoardSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.sounds.SoundEffect;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
@@ -32,6 +33,7 @@ public class MoveBoardSubTurn extends BoardSubTurn {
         try {
             myExecuter.setCell(x, y);
             myExecuter.doIt();
+            SoundEffect.playSound("/actions/move.wav");
         } catch (WrongParametersException | CannotSendEventException e) {
             ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
         }

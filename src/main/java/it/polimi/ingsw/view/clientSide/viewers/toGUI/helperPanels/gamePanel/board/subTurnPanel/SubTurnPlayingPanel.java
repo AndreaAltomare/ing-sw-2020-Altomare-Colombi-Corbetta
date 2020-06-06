@@ -74,8 +74,6 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
                 public void actionPerformed(ActionEvent actionEvent) {
                     TurnStatusChangeExecuter myExec = new TurnStatusChangeExecuter();
 
-                    SoundEffect.playSound("build.wav");
-
                     try {
                         myExec.setStatusId(ViewSubTurn.BUILD);
                         myExec.doIt();
