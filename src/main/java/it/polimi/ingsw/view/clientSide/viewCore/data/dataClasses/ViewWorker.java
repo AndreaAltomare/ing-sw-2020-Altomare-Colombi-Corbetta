@@ -20,6 +20,7 @@ import it.polimi.ingsw.view.exceptions.WrongEventException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -34,6 +35,8 @@ public class ViewWorker extends ViewObject {
     private int id;
     private ViewPlayer player;
     private ViewCell position;
+
+    protected Color workerColor;
 
     private static List<ViewWorker> myList = new ArrayList<ViewWorker>();
     private static ViewWorker selected;
@@ -154,7 +157,7 @@ public class ViewWorker extends ViewObject {
         try {
             myWorker = new ViewWorker(workerPlaced.getWorker(), ViewSubTurn.getActual().getPlayer());
             myWorker.placeOn(workerPlaced.getX(), workerPlaced.getY());
-
+            myWorker.workerColor = workerPlaced.getColor().color;
             if(View.debugging)
                 System.out.println(workerPlaced.getWorker() + "(" + workerPlaced.getX()+":"+workerPlaced.getY()+")");
         } catch (NotFoundException | WrongViewObjectException e) {
@@ -420,5 +423,9 @@ public class ViewWorker extends ViewObject {
 
     public static ViewWorker getSelected(){
         return selected;
+    }
+
+    public Color getColor(){
+        return workerColor;
     }
 }

@@ -25,6 +25,7 @@ public abstract class SoundEffect {
                 try {
                     Clip clip = AudioSystem.getClip();
                     AudioInputStream inputStream = AudioSystem.getAudioInputStream(getClass().getResource("/sounds/" + url));
+                    System.out.println("MUSIC: "+"/sounds/" + url);
                     clip.open(inputStream);
                     clip.start();
                 } catch (Exception e) {
@@ -46,6 +47,7 @@ public abstract class SoundEffect {
                 try {
                     loopingMusic = AudioSystem.getClip();
                     AudioInputStream inputStream = AudioSystem.getAudioInputStream(getClass().getResource("/sounds/" + url));
+                    System.out.println("MUSIC: "+"/sounds/" + url);
                     loopingMusic.open(inputStream);
                     loopingMusic.loop(Clip.LOOP_CONTINUOUSLY);
                 } catch (Exception e) {

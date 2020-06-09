@@ -1,7 +1,8 @@
 package it.polimi.ingsw.view.clientSide.viewCore.status;
 // TODO: write some comments to explains the meaning of every status defined
 
-import it.polimi.ingsw.view.clientSide.viewCore.data.DataStorager;
+import it.polimi.ingsw.view.clientSide.viewCore.data.DataStorage;
+import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetNicknameExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetPlayerNumberExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ClientAddressable;
@@ -202,7 +203,7 @@ public enum ViewStatus implements ClientAddressable {
 
         @Override
         void onLoad() {
-            DataStorager.clearAll();
+            ViewObject.clearAll();
             //TODO: set the onLoad
         }
     },
