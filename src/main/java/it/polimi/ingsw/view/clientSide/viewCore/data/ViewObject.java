@@ -8,6 +8,7 @@ import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 //import sun.jvm.hotspot.types.WrongTypeException;
 
+import javax.swing.*;
 import java.util.EventObject;
 
 /**
@@ -147,21 +148,26 @@ public abstract class ViewObject implements ClientAddressable {
      *
      * @return (String representing the object and its status)
      */
-    String toTerminal(){return "404: object not found";}
+    public String toTerminal(){return "404: object not found";}
 
+    /**
+     * Method that will return a String tha represent the ViewObject on the Terminal CLI
+     * @return
+     */
+    public String toWTerminal() {return null;}
 
     /**
      * Method that will return a (Object) that will represent the ViewObject on the CLI.
      *
      * @return (representation of Object for the CLI)
      */
-    Object toCLI(){return null;}
+    public String toCLI(){return null;}
 
     /**
      * Method that will return a (Object) that will represent the ViewObject on the GUI.
      *
      * @return (representation of Object for the GI)
      */
-    Object toGUI(){return null;}
+    public JPanel toGUI(){return null;}
 
 }

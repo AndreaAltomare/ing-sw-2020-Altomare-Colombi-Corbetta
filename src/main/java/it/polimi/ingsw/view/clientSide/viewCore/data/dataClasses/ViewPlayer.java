@@ -1,7 +1,9 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
+import it.polimi.ingsw.controller.events.CardSelectedEvent;
 import it.polimi.ingsw.controller.events.ServerSendDataEvent;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
 import it.polimi.ingsw.view.exceptions.AlreadySetException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
@@ -9,6 +11,7 @@ import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
 import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -169,31 +172,47 @@ public class ViewPlayer extends ViewObject {
     /**
      * Method that will be called on the arrival of an event to build a new Object.
      *
-     * @param event (the Event arrived)
+     * @param data (the Event arrived)
      * @return (the new object created)
      * @throws WrongEventException (if the Event is not supported by this Class)
      */
-    public static ViewObject populate( @NotNull EventObject event) throws WrongEventException{
-        ServerSendDataEvent data;
-        try{
-            data = (ServerSendDataEvent) event;
-        }catch (Exception e){
+    public static ViewObject populate( @NotNull ServerSendDataEvent data) throws WrongEventException{
+
+
+        for (String player : data.getPlayers()) {
+            new ViewPlayer(player);
+            List<String> workers = data.getWorkersToPlayer().get(player);
+            if(workers!=null) {
+                for (String worker : workers) {
+                    try {
+                        new ViewWorker(worker, player);
+                    } catch (NotFoundException | WrongViewObjectException e) {
+                        throw new WrongEventException();
+                    }
+                }
+            }
+        }
+        return null;
+        //throw new WrongEventException();
+    }
+
+    public static ViewObject populate(CardSelectedEvent event) throws WrongEventException{
+        ViewPlayer ret;
+        try {
+            ret = ViewPlayer.searchByName(event.getPlayerNickname());
+        } catch (NotFoundException e) {
             throw new WrongEventException();
         }
 
-        for (String player : data.getPlayers()) {new ViewPlayer(player);
-            List<String> workers = data.getWorkersToPlayer().get(player);
-            for (String worker : workers){
-                try {
-                    new ViewWorker(worker, player);
-                } catch (NotFoundException | WrongViewObjectException e) {
-                    throw new WrongEventException();
-                }
-            }
+        ret.setCard(event.getCardName());
+/*
+        try {
+            System.out.println("Player:\t" + ret.getName() + " \tCard:\t" + ret.getCard().getName());
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        }*/
 
-        }
-        //todo: implement it
-        throw new WrongEventException();
+        return ret;
     }
 
     /**
@@ -210,18 +229,40 @@ public class ViewPlayer extends ViewObject {
 
 
     /**
-     * Method that will return a (Object) that will represent the ViewObject on the CLI.
+     * Method that will return Player's name that will represent the ViewObject on the CLI.
      *
      * @return (representation of Object for the CLI)
      */
-    public Object toCLI(){ return null; }
+    @Override
+    public String toWTerminal(){ return this.getName(); }
+
+    /**
+     * Method that will return Player's name with his color, if it has a color
+     * that will represent the ViewPlayer on the CLI.
+     *
+     * @return colored name ( default color if there is a color)
+     */
+    @Override
+    public String toCLI(){
+        String playerString = this.getName();
+        String playerColor;
+
+        playerColor = CLIViewer.getPlayerColor(this);
+
+        if( playerColor != null) {
+            playerString = playerColor + playerString;
+        }
+
+        return playerString;
+
+    }
 
     /**
      * Method that will return a (Object) that will represent the ViewObject on the GUI.
      *
      * @return (representation of Object for the GI)
      */
-    public Object toGUI(){ return null; }
+    public JPanel toGUI(){ return null; }
 
     /**
      * Method that will search the object with the passed id.
@@ -245,10 +286,18 @@ public class ViewPlayer extends ViewObject {
      * @throws NotFoundException (iif the searched name is of no player)
      */
     public static ViewPlayer searchByName( @NotNull String name) throws NotFoundException {
-        for (ViewPlayer i: myList)
-            if(i.getName().equals(name))
+        for (ViewPlayer i: myList) {
+            if (i.getName().equals(name))
                 return i;
+        }
         throw new NotFoundException();
+    }
+
+    public void setCard(String cardName){
+        try {
+            setCard((ViewCard) ViewCard.search(cardName));
+        } catch (NotFoundException | WrongViewObjectException | AlreadySetException ignored) {
+        }
     }
 
     public ViewPlayer(String name){
@@ -258,6 +307,14 @@ public class ViewPlayer extends ViewObject {
         this.workers[1] = null;
 
         myList.add(this);
+    }
+
+    public static int getNumberOfPlayers(){
+        return myList.size();
+    }
+
+    public static List<ViewPlayer> getPlayerList() {
+        return new ArrayList<ViewPlayer>(myList);
     }
 
 }

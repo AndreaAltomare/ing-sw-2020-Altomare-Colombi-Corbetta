@@ -1,11 +1,15 @@
 package it.polimi.ingsw.view.clientSide.viewers.interfaces;
 
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
+import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.exceptions.CheckQueueException;
 import it.polimi.ingsw.view.exceptions.EmptyQueueException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Interface for the various visualizer
@@ -20,6 +24,7 @@ public abstract class Viewer extends Thread{
             SET_SUBTURN,
             SET_STATUS,
             REFRESH,
+            CARDSELECTION,
             EXIT;
         }
 
@@ -37,7 +42,10 @@ public abstract class Viewer extends Thread{
 
     }
 
-    private final List<ViewerQueuedEvent> myViewerQueue = new ArrayList<ViewerQueuedEvent>();
+    //Blocking Queue
+    private final BlockingQueue<ViewerQueuedEvent> myViewerQueue = new ArrayBlockingQueue<ViewerQueuedEvent>(64);
+    //NON LEVARE IL COMMENTO!!!
+    //private final List<ViewerQueuedEvent> myViewerQueue = new ArrayList<ViewerQueuedEvent>();
     private final Object wakers = new Object();
 
     /**
@@ -50,25 +58,58 @@ public abstract class Viewer extends Thread{
      *
      * @param viewer
      */
-    public static void registerViewer(Viewer viewer){ myViewers.add(viewer); }
+    public static void registerViewer(Viewer viewer){
+        myViewers.add(viewer);
+    }
 
     /**
      * Method that executes the "setAllStatusViewer" method on each Viewer of myViewer.
      *
      * @param statusViewer (statusViewer to be set).
      */
-    public static void setAllStatusViewer (StatusViewer statusViewer){ for (Viewer i: myViewers) i.setStatusViewer(statusViewer); }
+    public static void setAllStatusViewer (StatusViewer statusViewer){
+        for (Viewer i: myViewers)
+            i.setStatusViewer(statusViewer);
+    }
 
     /**
      * Method that executes the "setSubTurnViewer" method on each Viewer of myViewer.
      *
-     * @param subTurnViewer (SubTurnVersion to be set)
+     * @param viewSubTurn (SubTurnVersion to be set)
      */
-    public static void setAllSubTurnViewer(SubTurnViewer subTurnViewer){ for (Viewer i: myViewers) i.setSubTurnViewer(subTurnViewer); }
+    public static void setAllSubTurnViewer(ViewSubTurn viewSubTurn){
+        for (Viewer i: myViewers)
+            i.setSubTurnViewer(viewSubTurn.getSubViewer());
+    }
 
-    public static void sendAllMessage(ViewMessage message) { for (Viewer i: myViewers) i.sendMessage(message); }
+    public static void setAllSubTurnViewer(SubTurnViewer subTurnViewer){
+        for (Viewer i: myViewers)
+            i.setSubTurnViewer(subTurnViewer);
+    }
 
-    public static void exitAll(){ for (Viewer i: myViewers) i.exit(); }
+    public static void setAllCardSelection(CardSelection cardSelection){
+        for (Viewer i: myViewers)
+            i.setCardSelection(cardSelection);
+    }
+
+    public static void setAllRefresh(Object payload){
+        for (Viewer i: myViewers)
+            i.setRefresh(payload);
+    }
+
+    public static void setAllRefresh(){
+        setAllRefresh(null);
+    }
+
+    public static void sendAllMessage(ViewMessage message) {
+        for (Viewer i: myViewers)
+            i.sendMessage(message);
+    }
+
+    public static void exitAll(){
+        for (Viewer i: myViewers)
+            i.exit();
+    }
 
     //Fuzione che forza un refresh della view
     public abstract void refresh();
@@ -76,30 +117,44 @@ public abstract class Viewer extends Thread{
     //Funzione che segnala al Viewer di controllare lo stato ASAP
     public void setStatusViewer(StatusViewer statusViewer){
         enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS, statusViewer));
-        wakersNotify();
     }
 
     public void setSubTurnViewer(SubTurnViewer subTurnViewer){
         enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN, subTurnViewer));
-        wakersNotify();
+    }
+
+    public void setCardSelection(CardSelection cardSelection){
+        enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.CARDSELECTION, cardSelection));
+    }
+
+    public void setRefresh(Object payload){
+        enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.REFRESH, payload));
     }
 
     public void sendMessage(ViewMessage message){
         enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.MESSAGE, message));
-        wakersNotify();
     }
 
     public void exit(){
         enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.EXIT, null));
-        wakersNotify();
     }
 
     protected void enqueue(ViewerQueuedEvent event){
-        synchronized (wakers) {
+        try {
             synchronized (myViewerQueue) {
+                //System.out.println("Remaining: " + ((ArrayBlockingQueue)myViewerQueue).size());
                 myViewerQueue.add(event);
             }
+        }catch (IllegalStateException ignore){
+            System.out.println("FUCK IT BLOCKING QUEUE");
+            wakersNotify();
+            try {
+                myViewerQueue.put(event);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+        wakersNotify();
     }
 
     protected void wakersNotify(){
@@ -132,9 +187,42 @@ public abstract class Viewer extends Thread{
 
     protected ViewerQueuedEvent getNextEvent()throws EmptyQueueException {
         synchronized (myViewerQueue){
-            if(!myViewerQueue.isEmpty()) return myViewerQueue.remove(0);
+            if(!myViewerQueue.isEmpty()) return myViewerQueue.remove();
         }
         throw new EmptyQueueException();
+    }
+
+    public ViewerQueuedEvent.ViewerQueuedEventType seeEnqueuedType() throws EmptyQueueException{
+        synchronized (myViewerQueue){
+            if(myViewerQueue.isEmpty()){
+                throw new EmptyQueueException();
+            }
+            return myViewerQueue.element().getType();
+            //return myViewerQueue.get(0).getType();
+        }
+    }
+
+
+    //Non usarlo a meno di sapere che c'è un thread che serve ogni tipo di evento
+    @Deprecated
+    public void waitNextEventType(ViewerQueuedEvent.ViewerQueuedEventType eventType){
+        while(true){
+            waitNextEvent();
+            synchronized (myViewerQueue){
+                if(!myViewerQueue.isEmpty()) {
+                    //if (myViewerQueue.get(0).getType().equals(eventType)) {
+                    if (myViewerQueue.element().getType().equals(eventType)) {
+                        return;
+                    }
+                }
+            }
+            Object obj = new Object();
+            synchronized (obj){
+                try {
+                    obj.wait(500);
+                } catch (InterruptedException ignore) {  }
+            }
+        }
     }
 
     public void waitNextEvent(){

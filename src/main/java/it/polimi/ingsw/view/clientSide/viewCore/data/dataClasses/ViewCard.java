@@ -2,12 +2,14 @@ package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
 //import com.sun.tools.javac.comp.Resolve;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.GodSymbols;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.SymbolsLevel;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
-import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -24,6 +26,10 @@ public class ViewCard extends ViewObject {
     private String description;
 
     private static List<ViewCard> myList = new ArrayList<ViewCard>();
+
+    public String getName(){ return name; }
+    public String getEpiteth() { return epiteth; }
+    public String getDescription() { return description; }
 
     @Override
     /**
@@ -63,8 +69,8 @@ public class ViewCard extends ViewObject {
      * @throws WrongViewObjectException (If the object is not of this Class).
      */
     public static ViewObject search( @NotNull String id) throws NotFoundException, WrongViewObjectException{
-        if(!isOfThisClass(id))
-            throw new WrongViewObjectException();
+        /*if(!isOfThisClass(id))
+            throw new WrongViewObjectException();*/
         return cSearch(id);
     }
 
@@ -123,20 +129,46 @@ public class ViewCard extends ViewObject {
     }
 
     /**
-     * Method that will return a (Object) that will represent the ViewObject on the CLI.
+     * Method that will return a String that will represent GodSymbols of the card at the correct level
+     * if it is found, or a Error message if it isn't
      *
-     * @return (representation of Object for the CLI)
+     * @param representationLevel to set the level of representation
+     * @return representation's level of card's GodSymbols if it is found, a String error message if it isn't
      */
-    public Object toCLI(){
-        return null;
+    public String toWTerminal(SymbolsLevel representationLevel) {
+        GodSymbols godSymbols;
+        String representation = ">< Error: lost God's representation";
+
+        try {
+            godSymbols = GodSymbols.searchGodSymbol( this.name);
+            switch (representationLevel) {
+                case UP:
+                    representation = godSymbols.getUpRepresentation();
+                    break;
+                case MIDDLE:
+                    representation = godSymbols.getMiddleRepresentation();
+                    break;
+                case DOWN:
+                    representation = godSymbols.getDownRepresentation();
+                    break;
+                default:
+                    ;
+            }
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return representation;
     }
+
+    //todo: if necessary add a toCLI
 
     /**
      * Method that will return a (Object) that will represent the ViewObject on the GUI.
      *
      * @return (representation of Object for the GI)
      */
-    public Object toGUI(){
+    public JPanel toGUI(){
         return null;
     }
 

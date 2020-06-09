@@ -33,7 +33,7 @@ public class SetPlayerNumberExecuter extends Executer {
      */
     public void setNumberOfPlayers(Integer num)throws WrongParametersException {
         //todo check correcntess of num
-        if (num==null || num == 0)throw new WrongParametersException();
+        if (num==null || num <= 0)throw new WrongParametersException("Invalid number");
         this.playerNumber = num;
     }
 
@@ -56,5 +56,10 @@ public class SetPlayerNumberExecuter extends Executer {
         SetPlayersNumberEvent setPlayerNumberEvent = new SetPlayersNumberEvent(playerNumber);
         playerNumber = null;
         return setPlayerNumberEvent;
+    }
+
+    public void send(EventObject event) throws NullPointerException{
+        if(event == null) throw new NullPointerException();
+        getSender().send((SetPlayersNumberEvent)event);
     }
 }

@@ -5,6 +5,7 @@ import it.polimi.ingsw.view.exceptions.*;
 import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.EventObject;
 
 public class ViewNickname extends ViewObject {
@@ -121,7 +122,18 @@ public class ViewNickname extends ViewObject {
      *
      * @return (representation of Object for the CLI)
      */
-    public Object toCLI(){
+    @Override
+    public String toWTerminal(){
+        return null;
+    }
+
+    /**
+     * Method that will return a (Object) that will represent the ViewObject on the CLI.
+     *
+     * @return (representation of Object for the CLI)
+     */
+    @Override
+    public String toCLI(){
         return null;
     }
 
@@ -130,7 +142,7 @@ public class ViewNickname extends ViewObject {
      *
      * @return (representation of Object for the GI)
      */
-    public Object toGUI(){
+    public JPanel toGUI(){
         return null;
     }
 
@@ -140,7 +152,8 @@ public class ViewNickname extends ViewObject {
      * @param st (String that will possibly represent this)
      * @return (true iif st==this.toString())
      */
-    public boolean isThis ( @NotNull String st){
+    public boolean isThis (String st) {
+        if(st==null) return false;
         return (st.equals(this.toString())||st.equals(this.getId()));
     }
 

@@ -1,12 +1,19 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
 import it.polimi.ingsw.controller.events.ServerSendDataEvent;
-import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.CLISymbols;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.Symbols;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.BoardPrintFunction;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIBoardPrintFunction;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.BoardGeneralPanel;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
+import it.polimi.ingsw.view.exceptions.WrongParametersException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
-import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.EventObject;
@@ -19,12 +26,30 @@ import java.util.EventObject;
  */
 public class ViewBoard extends ViewObject {
 
+    private BoardGeneralPanel guiPanel;
+
     private int xDim;
     private int yDim;
 
     private ViewCell[][] realBoard;
 
     private static ViewBoard board;
+
+    private ViewCell selectedCell;
+
+    public void setSelectedCell(int x, int y){
+        try {
+            selectedCell = getCellAt(x, y);
+        } catch (NotFoundException e) {
+            selectedCell = null;
+        }
+    }
+
+    public void setSelectedCell(ViewCell cell){ selectedCell = cell; }
+
+    public ViewCell getSelectedCell(){ return selectedCell; }
+
+    public static ViewBoard getBoard(){ return board; }
 
     /**
      * Getter of the x-dimension of the board.
@@ -48,7 +73,7 @@ public class ViewBoard extends ViewObject {
      * @throws NotFoundException (iif it's accessing outside the borders)
      */
     public ViewCell getCellAt(int x, int y) throws NotFoundException {
-        if(x<0 || x>this.getXDim() || y<0 || y>this.getYDim())
+        if(x<0 || x>=this.getXDim() || y<0 || y>=this.getYDim())
             throw new NotFoundException();
         return realBoard[x][y];
     }
@@ -127,17 +152,13 @@ public class ViewBoard extends ViewObject {
     /**
      * Method that will be called on the arrival of an event to build a new Object.
      *
-     * @param event (the Event arrived)
+     * @param data (the Event arrived)
      * @return (the new object created)
      * @throws WrongEventException (if the Event is not supported by this Class)
      */
-    public static ViewObject populate( @NotNull EventObject event) throws WrongEventException{
-        ServerSendDataEvent data;
-        try{
-            data = (ServerSendDataEvent) event;
-        }catch (Exception e){
-            throw new WrongEventException();
-        }
+    public static ViewObject populate( @NotNull ServerSendDataEvent data) throws WrongEventException{
+        if(board!=null)
+            return board;
 
         board = new ViewBoard();
         board.xDim = data.getBoardXsize();
@@ -168,7 +189,7 @@ public class ViewBoard extends ViewObject {
         for(int x = 0; x< this.getXDim(); x++) {
             for (int y = 0; y < this.getYDim(); y++) {
                 try {
-                    ret += this.getCellAt(x, y).toString();
+                    ret += this.getCellAt(x, y).toTerminal();
                 } catch (NotFoundException ignore) {   }
             }
             ret += "\n";
@@ -178,16 +199,246 @@ public class ViewBoard extends ViewObject {
 
 
     /**
-     * Method that will return a (Object) that will represent the ViewObject on the CLI.
+     * Method that will print the board and Players' caption
      *
-     * @return (representation of Object for the CLI)
+     * @return a String == null
      */
-    public Object toCLI(){ return null; }
+    public String toWTerminal(){
+        final int CELL_LENGTH = 17; // must be odd
+        final int CELL_HIGH = 7;
+        final int X_DIM = this.getXDim();
+        final int Y_DIM = this.getYDim();
+        final Symbols[] numberArray = { Symbols.NUMBER_0, Symbols.NUMBER_1, Symbols.NUMBER_2, Symbols.NUMBER_3, Symbols.NUMBER_4};
+
+        ViewCell viewCell;
+
+        System.out.println();
+        System.out.println();
+        // print number of board's columns
+        PrintFunction.printRepeatString(" ", CELL_LENGTH);
+        for (int column = 0; column < Y_DIM; column++) {
+            System.out.print(" ");
+            PrintFunction.printAtTheMiddle( numberArray[column].getUpRepresentation(), CELL_LENGTH);
+        }
+        System.out.println(" ");
+
+
+        PrintFunction.printRepeatString(" ", CELL_LENGTH);
+        for (int column = 0; column < Y_DIM; column++) {
+            System.out.print(" ");
+            PrintFunction.printAtTheMiddle( numberArray[column].getMiddleRepresentation(), CELL_LENGTH);
+        }
+        System.out.println(" ");
+
+
+        PrintFunction.printRepeatString(" ", CELL_LENGTH);
+        for (int column = 0; column < Y_DIM; column++) {
+            System.out.print(" ");
+            PrintFunction.printAtTheMiddle( numberArray[column].getDownRepresentation(), CELL_LENGTH);
+        }
+        System.out.println(" ");
+
+        System.out.println();
+
+
+        /* print board with number of board's row and players' caption */
+        for (int boardRow = 0; boardRow < X_DIM; boardRow++ ) {
+            // print up edge of cells
+            PrintFunction.printRepeatString(" ", CELL_LENGTH);
+            for ( int boardColumn = 0; boardColumn < Y_DIM; boardColumn++) {
+                System.out.print("# ");
+                PrintFunction.printRepeatString("# ", CELL_LENGTH / 2);
+            }
+            System.out.println("#");
+
+            // print a row of cells with number of board's row and players' caption
+            for ( int cellRow = 0; cellRow < CELL_HIGH; cellRow++ ) {
+                PrintFunction.printAtTheMiddle(BoardPrintFunction.getBoardRowSymbol(numberArray[boardRow], cellRow), CELL_LENGTH);
+                for ( int boardColumn = 0; boardColumn < Y_DIM; boardColumn++ ) {
+                    System.out.print("#");
+                    try {
+                        viewCell = this.getCellAt(boardRow, boardColumn);
+                        PrintFunction.printAtTheMiddle( viewCell.toWTerminal(cellRow, viewCell.equals(this.selectedCell)), CELL_LENGTH);
+                    } catch (NotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+                System.out.print("#");
+                BoardPrintFunction.printPlayersCaption(boardRow, cellRow);
+                System.out.println();
+            }
+        }
+        // print down edge of board
+        PrintFunction.printRepeatString(" ", CELL_LENGTH);
+        for ( int boardColumn = 0; boardColumn < Y_DIM; boardColumn++) {
+            System.out.print("# ");
+            PrintFunction.printRepeatString("# ", CELL_LENGTH / 2);
+        }
+        System.out.println("#");
+
+
+        System.out.println();
+        System.out.println();
+
+
+        return null;
+    }
 
     /**
-     * Method that will return a (Object) that will represent the ViewObject on the GUI.
+     * Method that will print the board and Players' caption
      *
-     * @return (representation of Object for the GI)
+     * @return a String == null
      */
-    public Object toGUI(){ return null; }
+    public String toCLI() {
+        final int PLACEABLE_LENGTH = 9; // must be odd
+        final int MIN_DISTANCE_FROM_EDGE = 1;
+        final int CELL_LENGTH = PLACEABLE_LENGTH + 2*MIN_DISTANCE_FROM_EDGE;
+        final int CELL_HIGH = 5;
+        final int EDGE_THICKNESS = 2;
+        final int X_DIM = this.getXDim();
+        final int Y_DIM = this.getYDim();
+        final CLISymbols[] numberArray = { CLISymbols.NUMBER_0, CLISymbols.NUMBER_1, CLISymbols.NUMBER_2, CLISymbols.NUMBER_3, CLISymbols.NUMBER_4};
+        final String SEA_COLOR = ANSIStyle.BACK_DIFFERENT_BLUE.getEscape();
+        final String NUMBER_COLOR = ANSIStyle.GREEN.getEscape();
+        final String CELL_COLOR = ANSIStyle.BACK_GREEN.getEscape();
+        final String EDGE_CELL_COLOR =ANSIStyle.BACK_GREY.getEscape();
+
+        ViewCell viewCell;
+
+        System.out.println();
+        System.out.println();
+        // print number of board's columns
+        CLIPrintFunction.printRepeatString( SEA_COLOR, " ", CELL_LENGTH );
+        for (int column = 0; column < Y_DIM; column++) {
+            CLIPrintFunction.printRepeatString( SEA_COLOR, " ", EDGE_THICKNESS );
+            CLIPrintFunction.printAtTheMiddle( SEA_COLOR + NUMBER_COLOR, numberArray[column].getUpRepresentation(),
+                                                numberArray[column].getUpRepresentation().length(), CELL_LENGTH);
+        }
+        CLIPrintFunction.printRepeatString( SEA_COLOR, " ", EDGE_THICKNESS + CELL_LENGTH);
+        System.out.println();
+
+
+        CLIPrintFunction.printRepeatString( SEA_COLOR, " ", CELL_LENGTH );
+        for (int column = 0; column < Y_DIM; column++) {
+            CLIPrintFunction.printRepeatString( SEA_COLOR, " ", EDGE_THICKNESS );
+            CLIPrintFunction.printAtTheMiddle( SEA_COLOR + NUMBER_COLOR, numberArray[column].getMiddleRepresentation(),
+                                                numberArray[column].getMiddleRepresentation().length(), CELL_LENGTH);
+        }
+        CLIPrintFunction.printRepeatString( SEA_COLOR, " ", EDGE_THICKNESS + CELL_LENGTH);
+        System.out.println();
+
+
+        CLIPrintFunction.printRepeatString( SEA_COLOR, " ", CELL_LENGTH );
+        for (int column = 0; column < Y_DIM; column++) {
+            CLIPrintFunction.printRepeatString( SEA_COLOR, " ", EDGE_THICKNESS );
+            CLIPrintFunction.printAtTheMiddle( SEA_COLOR + NUMBER_COLOR, numberArray[column].getDownRepresentation(),
+                                                numberArray[column].getDownRepresentation().length(), CELL_LENGTH);
+        }
+        CLIPrintFunction.printRepeatString( SEA_COLOR, " ", EDGE_THICKNESS + CELL_LENGTH);
+        System.out.println();
+
+        CLIPrintFunction.printRepeatString( SEA_COLOR, " ", CELL_LENGTH );
+        for (int column = 0; column < Y_DIM; column++) {
+            CLIPrintFunction.printRepeatString( SEA_COLOR, " ", EDGE_THICKNESS + CELL_LENGTH );
+        }
+        CLIPrintFunction.printRepeatString( SEA_COLOR, " ", EDGE_THICKNESS + CELL_LENGTH);
+        System.out.println();
+
+
+        /* print board with number of board's row and players' caption */
+        for (int boardRow = 0; boardRow < X_DIM; boardRow++ ) {
+            // print up edge of cells
+            CLIPrintFunction.printRepeatString( SEA_COLOR, " ", CELL_LENGTH);
+            for ( int boardColumn = 0; boardColumn < Y_DIM; boardColumn++) {
+                CLIPrintFunction.printRepeatString(EDGE_CELL_COLOR, " ", EDGE_THICKNESS + CELL_LENGTH);
+            }
+            CLIPrintFunction.printRepeatString(EDGE_CELL_COLOR, " ", EDGE_THICKNESS );
+            CLIPrintFunction.printRepeatString( SEA_COLOR, " ", CELL_LENGTH);
+            CLIBoardPrintFunction.printPlayersCaptionAtEdgeCell(boardRow);
+            System.out.println();
+
+            // print a row of cells with number of board's row and players' caption
+            for ( int cellRow = 0; cellRow < CELL_HIGH; cellRow++ ) {
+                CLIPrintFunction.printAtTheMiddle(SEA_COLOR + NUMBER_COLOR, CLIBoardPrintFunction.getBoardRowSymbol(numberArray[boardRow], cellRow),
+                                                    CLIBoardPrintFunction.getBoardRowSymbol(numberArray[boardRow], cellRow).length(), CELL_LENGTH);
+                for ( int boardColumn = 0; boardColumn < Y_DIM; boardColumn++ ) {
+                    CLIPrintFunction.printRepeatString( EDGE_CELL_COLOR, " ", EDGE_THICKNESS );
+                    try {
+                        viewCell = this.getCellAt(boardRow, boardColumn);
+                        CLIPrintFunction.printAtTheMiddle( CELL_COLOR, viewCell.toCLI(cellRow, viewCell.equals(this.selectedCell), PLACEABLE_LENGTH),
+                                                            PLACEABLE_LENGTH, CELL_LENGTH);
+                    } catch (NotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+                CLIPrintFunction.printRepeatString( EDGE_CELL_COLOR, " ", EDGE_THICKNESS );
+                CLIPrintFunction.printRepeatString( SEA_COLOR, " ", CELL_LENGTH);
+                CLIBoardPrintFunction.printPlayersCaptionAtCell(boardRow, cellRow);
+                System.out.println();
+            }
+        }
+        // print down edge of board
+        CLIPrintFunction.printRepeatString(SEA_COLOR," ", CELL_LENGTH);
+        for ( int boardColumn = 0; boardColumn < Y_DIM; boardColumn++) {
+            CLIPrintFunction.printRepeatString(EDGE_CELL_COLOR," ", EDGE_THICKNESS + CELL_LENGTH);
+        }
+        CLIPrintFunction.printRepeatString(EDGE_CELL_COLOR," ", EDGE_THICKNESS);
+        CLIPrintFunction.printRepeatString( SEA_COLOR, " ", CELL_LENGTH);
+        System.out.println();
+
+        //print the down part of the sea
+        for ( int levelDownSea = 0; levelDownSea < 4; levelDownSea++) {
+            CLIPrintFunction.printRepeatString(SEA_COLOR, " ", CELL_LENGTH);
+            for ( int boardColumn = 0; boardColumn < Y_DIM; boardColumn++) {
+                CLIPrintFunction.printRepeatString(SEA_COLOR," ", EDGE_THICKNESS + CELL_LENGTH);
+            }
+            CLIPrintFunction.printRepeatString(SEA_COLOR," ", EDGE_THICKNESS);
+            CLIPrintFunction.printRepeatString( SEA_COLOR, " ", CELL_LENGTH);
+            System.out.println();
+        }
+
+        System.out.println();
+        System.out.println();
+
+
+        return null;
+
+    }
+
+    /**
+     * Method that will return a BoardGeneralPanel that represents the Board on the GUI. There is only one BoardGeneralPanel to represent the Board for all the play.
+     *
+     * @return (representation of Board for the GUI)
+     */
+    public BoardGeneralPanel toGUI(){
+        if(guiPanel == null){
+            try {
+                guiPanel = BoardGeneralPanel.buildBoard(xDim, yDim);
+            } catch (WrongParametersException ignore) {
+                return null;
+            }
+        }
+
+        for(int i=0; i<xDim; i++) {
+            for (int j = 0; j < yDim; j++) {
+                try {
+                    guiPanel.updateCell(getCellAt(i, j));
+                } catch (NotFoundException ignore) {  }
+            }
+        }
+
+        ViewCell workerCell = getSelectedWorkerCell();
+        guiPanel.setSelectedWorker(workerCell);
+        guiPanel.setSelectCell((workerCell == selectedCell? null: selectedCell));
+
+        return guiPanel;
+    }
+
+    public static ViewCell getSelectedWorkerCell(){
+        try {
+            return ViewWorker.getSelected().getPosition();
+        } catch (NotFoundException | NullPointerException e) {
+            return null;
+        }
+    }
 }

@@ -35,7 +35,7 @@ public class SetNicknameExecuter extends Executer {
      */
     public void setNickname(String nickname)throws WrongParametersException {
         //todo check correcntess of nickname
-        if (nickname==null || nickname.equals(""))throw new WrongParametersException();
+        if (nickname==null || nickname.equals(""))throw new WrongParametersException("invalid nickname");
         this.nickname = nickname;
     }
 
@@ -66,5 +66,10 @@ public class SetNicknameExecuter extends Executer {
             throw new CannotSendEventException("Exists an already set nickname");
         }
         return setNicknameEvent;
+    }
+
+    public void send(EventObject event) throws NullPointerException{
+        if(event == null) throw new NullPointerException();
+        getSender().send((SetNicknameEvent)event);
     }
 }

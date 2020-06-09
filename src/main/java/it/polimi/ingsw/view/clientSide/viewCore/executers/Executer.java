@@ -69,7 +69,10 @@ public abstract class Executer{
      *
      * @throws CannotSendEventException (if the Executor doesn't have all the information required by the event)
      */
-    public void syncSend() throws CannotSendEventException { Executer.send(this.getMyEvent()); this.clear(); }
+    public void syncSend() throws CannotSendEventException {
+        send(this.getMyEvent());
+        this.clear();
+    }
 
 
     /**
@@ -77,7 +80,7 @@ public abstract class Executer{
      *
      * @param event (EventObject to be submitted to the server)
      */
-    public static void send(EventObject event) throws NullPointerException{
+    public void send(EventObject event) throws NullPointerException{
         if(event == null) throw new NullPointerException();
         sender.send(event);
     }
@@ -98,11 +101,18 @@ public abstract class Executer{
             }
 
             @Override
-            public void run() { Executer.send(myObj); }
+            public void run() {
+                send(myObj);
+            }
+
         }
 
         new asyncExecutor(this.getMyEvent()).start();
         this.clear();
+    }
+
+    public static ViewSender getSender(){
+        return sender;
     }
 
 }

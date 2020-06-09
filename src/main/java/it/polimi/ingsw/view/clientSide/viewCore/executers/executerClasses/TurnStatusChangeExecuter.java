@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses;
 import it.polimi.ingsw.model.StateType;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
+import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.events.TurnStatusChangeEvent;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
@@ -33,7 +34,7 @@ public class TurnStatusChangeExecuter extends Executer {
      * @param status (ViewSubTurn identifying the status).
      * @throws WrongParametersException (if status is null).
      */
-    public void setWorkerId(ViewSubTurn status)throws WrongParametersException {
+    public void setStatusId(ViewSubTurn status)throws WrongParametersException {
         if(status == null) throw new WrongParametersException();
         if(status.toStateType()== StateType.NONE) throw new WrongParametersException();
         this.stato = status;
@@ -45,9 +46,9 @@ public class TurnStatusChangeExecuter extends Executer {
      * @param status (String identifying the status).
      * @throws WrongParametersException (if status doesn't represent a valid status).
      */
-    public void setWorkerId(String status)throws WrongParametersException {
+    public void setStatusId(String status)throws WrongParametersException {
         try {
-            setWorkerId(ViewSubTurn.search(status));
+            setStatusId(ViewSubTurn.search(status));
         } catch (NotFoundException e) {
             throw new WrongParametersException();
         }
@@ -69,6 +70,15 @@ public class TurnStatusChangeExecuter extends Executer {
      */
     public EventObject getMyEvent()throws CannotSendEventException {
         if(stato == null) throw new CannotSendEventException("No valid status set");
+        if(stato == ViewSubTurn.BUILD_BLOCK || stato == ViewSubTurn.BUILD_DOME){
+            Viewer.setAllSubTurnViewer(stato);
+            return null;
+        }
         return new TurnStatusChangeEvent(stato.toStateType());
+    }
+
+    public void send(EventObject event) throws NullPointerException{
+        if(event == null) return;
+        getSender().send((TurnStatusChangeEvent)event);
     }
 }

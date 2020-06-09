@@ -9,10 +9,6 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.*;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalStatusViewer;
-import it.polimi.ingsw.view.events.SetPlayersNumberEvent;
 import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 
@@ -148,7 +144,12 @@ public enum ViewStatus implements ClientAddressable {
 
         @Override
         void onLoad() {
-            //TODO: set the onLoad
+            //todo: implement it
+        }
+
+        @Override
+        public void afterLoad(){
+            Viewer.setAllSubTurnViewer(ViewSubTurn.SELECTCARD);
         }
     },
 
@@ -174,7 +175,7 @@ public enum ViewStatus implements ClientAddressable {
 
         @Override
         void onLoad() {
-            //TODO: set the onLoad
+            ViewSubTurn.getActual().setPlayer("");
         }
     },
 
@@ -360,6 +361,7 @@ public enum ViewStatus implements ClientAddressable {
         actualStatus = actualStatus.getNext();
         actualStatus.onLoad();
         Viewer.setAllStatusViewer(ViewStatus.getActual().getViewer());
+        actualStatus.afterLoad();
     }
 
     /**
@@ -409,5 +411,9 @@ public enum ViewStatus implements ClientAddressable {
 
     public static ViewStatus getActual(){
         return actualStatus;
+    }
+
+    void afterLoad(){
+        ;
     }
 }

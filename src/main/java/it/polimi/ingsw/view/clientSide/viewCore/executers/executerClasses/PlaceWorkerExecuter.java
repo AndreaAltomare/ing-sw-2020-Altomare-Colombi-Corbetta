@@ -69,4 +69,10 @@ public class PlaceWorkerExecuter extends Executer {
         if(x<0||y<0) throw new CannotSendEventException("Cannot try to place the worker without having selected the destination");
         return new PlaceWorkerEvent(x, y);
     }
+
+
+    public void send(EventObject event) throws NullPointerException{
+        if(event == null) throw new NullPointerException();
+        getSender().send((PlaceWorkerEvent)event);
+    }
 }
