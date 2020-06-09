@@ -5,18 +5,13 @@ import it.polimi.ingsw.model.BoardState;
 import java.util.EventObject;
 
 /**
- * Event: A saved game can be resumed.
+ * Event: Action-Undo confirmation.
  * [MVEvent]
  */
-public class GameResumingEvent extends EventObject {
+public class UndoOkEvent extends EventObject {
     private BoardState boardState;
 
-    public GameResumingEvent() {
-        super(new Object());
-        this.boardState = null;
-    }
-
-    public GameResumingEvent(BoardState boardState) {
+    public UndoOkEvent(BoardState boardState) {
         super(new Object());
         this.boardState = boardState;
     }

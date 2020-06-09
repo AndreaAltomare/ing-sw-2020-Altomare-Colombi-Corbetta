@@ -104,6 +104,11 @@ public class VCEventSubject {
                 for(VCEventListener listener : listeners)
                     listener.update((TurnStatusChangeEvent) e, playerNickname);
             }
+        else if (e instanceof UndoActionEvent)
+            synchronized (listeners) {
+                for(VCEventListener listener : listeners)
+                    listener.update((UndoActionEvent) e, playerNickname);
+            }
         else if (e instanceof ViewRequestDataEvent)
             synchronized (listeners) {
                 for(VCEventListener listener : listeners)

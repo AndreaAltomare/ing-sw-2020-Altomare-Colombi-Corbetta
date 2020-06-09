@@ -231,6 +231,11 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
                     break;
 
 
+                case "undo":
+                    notify(new UndoActionEvent());
+                    break;
+
+
                 case "data_request":
                     notify(new ViewRequestDataEvent());
                     break;
@@ -609,6 +614,10 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         }
     }
 
+    @Override
+    public void update(UndoOkEvent undoOk) {
+        System.out.println("[UndoOkEvent] Previous move was undone.");
+    }
 
 
     @Override

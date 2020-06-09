@@ -3,7 +3,7 @@ package it.polimi.ingsw.view.events;
 import java.util.EventObject;
 
 /**
- * Event: Player has selected a Card.
+ * Event: Player wants to resume a saved game.
  * [VCEvent]
  */
 public class GameResumingResponseEvent extends EventObject {

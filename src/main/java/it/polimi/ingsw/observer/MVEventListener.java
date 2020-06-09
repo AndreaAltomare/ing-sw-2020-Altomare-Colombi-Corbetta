@@ -37,6 +37,7 @@ public interface MVEventListener {
     public void update(WorkerRemovedEvent workerRemoved);
     public void update(BlockRemovedEvent blockRemoved);
     public void update(WorkerSelectedEvent workerSelected);
+    public void update(UndoOkEvent undoOk);
 
     /* Message listener */
     public void update(MessageEvent message);

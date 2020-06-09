@@ -62,7 +62,7 @@ public class Player {
             throw ex;
         }
         catch (LoseException ex) {
-            this.playing = false;
+            //this.playing = false; // todo: maybe it's to remove (cause of problems with Undo)
             throw ex;
         }
 
@@ -236,6 +236,14 @@ public class Player {
      */
     public void registerWorker(Worker worker) {
         workers.add(worker);
+    }
+
+    /**
+     * Remove all owned Workers from
+     * the Player's Worker List.
+     */
+    public void clearWorkers() {
+        workers.clear();
     }
 
     /**

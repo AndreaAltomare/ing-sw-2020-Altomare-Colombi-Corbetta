@@ -29,6 +29,7 @@ public interface VCEventListener {
     public void update(BuildBlockEvent build, String playerNickname);
     public void update(RemoveWorkerEvent workerToRemove, String playerNickname);
     public void update(RemoveBlockEvent blockToRemove, String playerNickname);
+    public void update(UndoActionEvent undoAction, String playerNickname);
 
     /* Turn status change listener */
     public void update(TurnStatusChangeEvent turnStatus, String playerNickname);

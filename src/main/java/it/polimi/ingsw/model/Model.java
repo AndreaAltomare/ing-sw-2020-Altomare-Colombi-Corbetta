@@ -319,6 +319,8 @@ public class Model {
         Cell initialPosition;
         Cell nextPosition;
         Move moveToExecute;
+        int finalX = x;
+        int finalY = y;
 
         /* Perform the move just if the Player who requested it is the playing one */
         if(getPlayingPlayer().equals(playerNickname)) {
@@ -337,6 +339,10 @@ public class Model {
                     moveSuccess = player.executeMove(moveToExecute, w);
                     if (moveSuccess)
                         moveOutcome = MoveOutcomeType.EXECUTED;
+                    else {
+                        finalX = w.position().getX();
+                        finalY = w.position().getY();
+                    }
                 } catch (TurnSwitchedException ex) {
                     moveSuccess = true;
                     moveOutcome = MoveOutcomeType.TURN_SWITCHED;
@@ -354,20 +360,28 @@ public class Model {
                     moveOutcome = MoveOutcomeType.WIN;
                 } catch (OutOfBoardException ex) {
                     moveSuccess = false;
+                    finalX = w.position().getX();
+                    finalY = w.position().getY();
                     moveOutcome = MoveOutcomeType.OUT_OF_BOARD;
                 } catch (RunOutMovesException ex) {
                     moveSuccess = false;
+                    finalX = w.position().getX();
+                    finalY = w.position().getY();
                     moveOutcome = MoveOutcomeType.RUN_OUT_OF_MOVES;
                 } catch (BuildBeforeMoveException ex) {
                     moveSuccess = false;
+                    finalX = w.position().getX();
+                    finalY = w.position().getY();
                     moveOutcome = MoveOutcomeType.BUILD_BEFORE_MOVE;
                 } catch (WrongWorkerException ex) {
                     moveSuccess = false;
+                    finalX = w.position().getX();
+                    finalY = w.position().getY();
                     moveOutcome = MoveOutcomeType.WRONG_WORKER;
                 }
 
                 /* 3- Return the result */
-                return new WorkerMovedEvent(workerId, initialPosition.getX(), initialPosition.getY(), w.position().getX(), w.position().getY(), moveOutcome);
+                return new WorkerMovedEvent(workerId, initialPosition.getX(), initialPosition.getY(), finalX, finalY, moveOutcome);
             }
             else
                 return new WorkerMovedEvent(workerId, 0, 0, 0, 0, MoveOutcomeType.WRONG_WORKER);
@@ -536,6 +550,8 @@ public class Model {
     }
 
     private void handlePlayerLoss(Player losingPlayer) {
+        /* 0- End Player's Turn */
+        losingPlayer.endTurn();
         /* 1- Unregister the Player from the game */
         /* 3- Notify all Players in game about the losingPlayer's loss */
         controller.notifyFromModel(new PlayerLoseEvent(losingPlayer.getNickname(), "Player " + losingPlayer.getNickname() + " has lost the game!"));
@@ -812,6 +828,8 @@ public class Model {
             player.setPlaying(playerData.isPlaying());
             /* 2- Register Workers and restore related info */
             List<WorkerData> workersData = new ArrayList<>(playerData.getWorkers());
+            /* 2.0- Delete any previous Worker owned */
+            player.clearWorkers();
             for(WorkerData wd : workersData) {
                 /* 2.1- Instantiate a new Worker */
                 Worker worker = new Worker(player);

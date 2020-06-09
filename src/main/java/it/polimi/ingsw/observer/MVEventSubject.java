@@ -129,6 +129,11 @@ public class MVEventSubject {
                 for(MVEventListener listener : listeners)
                     listener.update((TurnStatusChangedEvent) e);
             }
+        else if (e instanceof UndoOkEvent)
+            synchronized (listeners) {
+                for(MVEventListener listener : listeners)
+                    listener.update((UndoOkEvent) e);
+            }
         else if (e instanceof WorkerMovedEvent)
             synchronized (listeners) {
                 for(MVEventListener listener : listeners)

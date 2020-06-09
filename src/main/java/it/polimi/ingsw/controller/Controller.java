@@ -1,6 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.controller.events.*;
+import it.polimi.ingsw.controller.undo.UndoManager;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.observer.Observable;
 import it.polimi.ingsw.observer.VCEventListener;
@@ -8,6 +9,8 @@ import it.polimi.ingsw.storage.ResourceManager;
 import it.polimi.ingsw.view.events.*;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -22,6 +25,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     private List<String> players; // these are JUST NICKNAMES (used to make interaction through Observer Pattern simpler)
     private List<String> cardsInGame; // Cards used for this game match
     /* Members for concurrency handling */
+    private ExecutorService executor = Executors.newFixedThreadPool(10); // for async operations
     private volatile String genericResponse; // String used for generic response from client
     private volatile boolean clientResponded; // used to control generic responses from Players
     private volatile boolean challengerHasChosen; // Marked as volatile because it is accessed by different threads // TODO: ensure that "volatile" attribute mark does not clash with "synchronized" methods that update this very attribute
@@ -29,9 +33,11 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     private final Object challengerLock; // lock used for responses from Challenger
     private volatile String startPlayer; // the Start Player for this game
     private volatile boolean resumeGame; // if the game needs to be resumed
+    private volatile boolean undoRequested; // tells if an Undo action has been requested
     private final int DEFAULT_WAITING_TIME; // time is in milliseconds
     /* Miscellaneous */
     private volatile int workersPlaced;
+    private UndoManager undoManager;
     private String lastPlayingPlayer; // only the last playing player can UNDO an action
 
     /**
@@ -52,6 +58,8 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         this.workersPlaced = 0;
         this.lastPlayingPlayer = "";
         this.resumeGame = false;
+        this.undoRequested = false;
+        this.undoManager = new UndoManager(clientLock);
     }
 
 
@@ -121,6 +129,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             /* 8- Game preparation phase is over. The game match can start */
             notify(new NextStatusEvent("The game has started!"));
             startGame();
+            saveGame(); // save newly started game
             System.out.println("\n##### Game started #####\n"); // Server control message
             System.out.println("### It's " + model.startPlayer() + "'s turn.");
 
@@ -1027,18 +1036,31 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             WorkerMovedEvent workerMoved = model.moveWorker(move.getWorkerId(), move.getX(), move.getY(), playerNickname);
             if (workerMoved != null) {
                 notify(workerMoved); // ANSWER FROM THE CONTROLLER (Notify the View)
-                // todo: here wait for action undo
-                checkForSwitching(playerNickname);
-                if(workerMoved.getMoveOutcome() == MoveOutcomeType.EXECUTED || workerMoved.getMoveOutcome() == MoveOutcomeType.TURN_SWITCHED || workerMoved.getMoveOutcome() == MoveOutcomeType.TURN_OVER || workerMoved.getMoveOutcome() == MoveOutcomeType.LOSS || workerMoved.getMoveOutcome() == MoveOutcomeType.WIN) {
-                    saveGame();
-                    this.lastPlayingPlayer = playerNickname;
-                }
+                postExecutionOperations(playerNickname, workerMoved.getMoveOutcome());
             }
         }
         else {
             System.out.println("!INVALID! [MoveWorkerEvent] received from Player: '" + playerNickname + "'"); // Server control message
             notify(new ErrorMessageEvent("Game has not started yet! Hold on..."), playerNickname);
         }
+    }
+
+    private void postExecutionOperations(String playerNickname, MoveOutcomeType moveOutcome) {
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                if (moveSucceeded(moveOutcome)) {
+                    checkUndo();
+                    if (undoRequested)
+                        undoHandler();
+                    else {
+                        checkForSwitching(playerNickname);
+                        saveGame();
+                        lastPlayingPlayer = playerNickname;
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -1048,12 +1070,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             BlockBuiltEvent blockBuilt = model.buildBlock(build.getWorkerId(), build.getX(), build.getY(), build.getBlockType(), playerNickname);
             if (blockBuilt != null) {
                 notify(blockBuilt); // ANSWER FROM THE CONTROLLER (Notify the View)
-                // todo: here wait for action undo
-                checkForSwitching(playerNickname);
-                if(blockBuilt.getMoveOutcome() == MoveOutcomeType.EXECUTED || blockBuilt.getMoveOutcome() == MoveOutcomeType.TURN_SWITCHED || blockBuilt.getMoveOutcome() == MoveOutcomeType.TURN_OVER || blockBuilt.getMoveOutcome() == MoveOutcomeType.LOSS || blockBuilt.getMoveOutcome() == MoveOutcomeType.WIN) {
-                    saveGame();
-                    this.lastPlayingPlayer = playerNickname;
-                }
+                postExecutionOperations(playerNickname, blockBuilt.getMoveOutcome());
             }
         }
         else {
@@ -1096,6 +1113,27 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         }
     }
 
+    @Override
+    public void update(UndoActionEvent undoAction, String playerNickname) {
+        if (model.hasGameStarted()) {
+            if (model.getPlayingPlayer().equals(playerNickname) && undoManager.isActive()) {
+                System.out.println("[UndoActionEvent] received form Player: '" + playerNickname + "'"); // Server control message
+                synchronized (clientLock) {
+                    this.undoRequested = true;
+                    clientResponded = true;
+                    undoManager.undoReceived();
+                    //clientLock.notifyAll();
+                }
+            } else {
+                System.out.println("!INVALID! [UndoActionEvent] received from Player: '" + playerNickname + "'"); // Server control message
+                notify(new ErrorMessageEvent("Cannot undo any action now..."), playerNickname);
+            }
+        } else {
+            System.out.println("!INVALID! [UndoActionEvent] received from Player: '" + playerNickname + "'"); // Server control message
+            notify(new ErrorMessageEvent("Game has not started yet! Hold on..."), playerNickname);
+        }
+    }
+
 
     /* Turn status change listener */
     @Override
@@ -1134,6 +1172,62 @@ public class Controller extends Observable<Object> implements VCEventListener, R
 
 
     /* ########################### AUXILIARY AND SUPPORT METHODS ############################ */
+
+
+    /**
+     * Tells if a move's outcome is positive or negative
+     * (i.e. if it succeeded or not).
+     *
+     * @param moveOutcome Move's outcome to check
+     * @return (Move succeeded ? true : false)
+     */
+    private boolean moveSucceeded(MoveOutcomeType moveOutcome) {
+        return (moveOutcome == MoveOutcomeType.EXECUTED || moveOutcome == MoveOutcomeType.TURN_SWITCHED || moveOutcome == MoveOutcomeType.TURN_OVER || moveOutcome == MoveOutcomeType.LOSS || moveOutcome == MoveOutcomeType.WIN);
+    }
+
+
+    private void undoHandler() {
+        /* Print log */
+        System.out.println("--- Previously action is being undo...");
+        /* Restore Game State in Model */
+        model.restoreGameState();
+        /* Register Turn Observers */
+        registerTurnObservers(); // todo maybe is useless
+        /* Notify Players about action undo */
+        notify(new UndoOkEvent(model.getLastBoardState()));
+        /* Done */
+        System.out.println("--- Action was undone.");
+    }
+
+
+    private boolean checkUndo() {
+        undoRequested = false;
+
+        executor.submit(undoManager);
+        waitForUndo();
+        undoManager.setActive(false); // disable UndoManager
+
+        return undoRequested;
+    }
+
+
+    /**
+     * (Synchronized) Waits for an Undo-Action from a Player.
+     */
+    private void waitForUndo() {
+        synchronized (clientLock) {
+            clientResponded = false;
+            while (!clientResponded) { // works like a wait // todo (IT SHOULD WORK, check it... [or if it has thread-related problems])
+                try {
+                    clientLock.wait(); // TODO: don't know if this works correctly
+                }
+                catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+                clientResponded = true; // Need this because clientLock can be released even without receiving any UndoActionEvent // todo check if it works correctly // todo maybe it's to remove
+            }
+        }
+    }
 
 
     /**
