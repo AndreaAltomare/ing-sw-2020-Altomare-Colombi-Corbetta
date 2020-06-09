@@ -35,6 +35,7 @@ public abstract class SoundEffect {
         }).start();
     }
     public static synchronized void startLoopMusic(String url){
+        System.out.println("MUSIC: "+"/sounds" + url);
 
         if(loopingMusic!=null && loopingMusic.isRunning())
             loopingMusic.stop();
@@ -46,8 +47,8 @@ public abstract class SoundEffect {
             public void run() {
                 try {
                     loopingMusic = AudioSystem.getClip();
-                    AudioInputStream inputStream = AudioSystem.getAudioInputStream(getClass().getResource("/sounds/" + url));
-                    System.out.println("MUSIC: "+"/sounds/" + url);
+                    AudioInputStream inputStream = AudioSystem.getAudioInputStream(getClass().getResource("/sounds" + url));
+                    System.out.println("MUSIC: "+"/sounds" + url);
                     loopingMusic.open(inputStream);
                     loopingMusic.loop(Clip.LOOP_CONTINUOUSLY);
                 } catch (Exception e) {

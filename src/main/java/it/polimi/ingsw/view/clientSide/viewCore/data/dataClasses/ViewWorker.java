@@ -157,7 +157,17 @@ public class ViewWorker extends ViewObject {
         try {
             myWorker = new ViewWorker(workerPlaced.getWorker(), ViewSubTurn.getActual().getPlayer());
             myWorker.placeOn(workerPlaced.getX(), workerPlaced.getY());
-            myWorker.workerColor = workerPlaced.getColor().color;
+            switch(workerPlaced.getColor()){
+                case BLUE:
+                    myWorker.workerColor = java.awt.Color.BLUE;
+                    break;
+                case BROWN:
+                    myWorker.workerColor = new java.awt.Color(153, 102,  0);
+                    break;
+                case GREY:
+                    myWorker.workerColor = java.awt.Color.GRAY;
+                    break;
+            }
             if(View.debugging)
                 System.out.println(workerPlaced.getWorker() + "(" + workerPlaced.getX()+":"+workerPlaced.getY()+")");
         } catch (NotFoundException | WrongViewObjectException e) {
