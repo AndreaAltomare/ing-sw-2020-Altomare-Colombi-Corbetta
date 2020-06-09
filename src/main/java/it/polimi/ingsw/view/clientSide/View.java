@@ -598,6 +598,11 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
     }
 
+    @Override
+    public void update(GameResumingEvent gameResuming) {
+
+    }
+
     /**
      * Method that notify that the view has to quit.
      *
@@ -652,10 +657,13 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         System.out.println("Worker named '" + workerSelected.getWorker() + "was correctly SELECTED");
     }
 
+    @Override
+    public void update(UndoOkEvent undoOk) {
+
+    }
 
 
-
-    // TODO: 09/05/20 metodi per il test 
+    // TODO: 09/05/20 metodi per il test
     /*// TODO: con questo sistema viene verificato anche che la comunicazione con Pattern Observer funzioni correttamente su thread diversi
     // TODO: ricordarsi che il metodo run() gira su un thread differente rispetto quello dove "girano" i metodi update() --> i metodi update() vengono chiamati sullo stesso thread di client.ClientConnection
     @Override
