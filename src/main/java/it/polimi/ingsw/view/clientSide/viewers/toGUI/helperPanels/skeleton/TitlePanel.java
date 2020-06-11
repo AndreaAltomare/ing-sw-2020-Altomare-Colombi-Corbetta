@@ -1,9 +1,11 @@
 package it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton;
 
 import it.polimi.ingsw.view.clientSide.View;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.UndoExecuter;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.elements.PanelImageButton;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.SubPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.sounds.SoundEffect;
+import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 
 
 import javax.imageio.ImageIO;
@@ -14,7 +16,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public class TitlePanel extends SubPanel {
+public class TitlePanel extends SubPanel implements UndoExecuter.UndoExecuterListenerUpdate {
 
     static final int minH = 20;
 
@@ -55,14 +57,30 @@ public class TitlePanel extends SubPanel {
                     soundButton.setBackgroundImg("/img/trappings/noSound.png", "mute");
             }
         });
-
         soundButton = new PanelImageButton(0.1, 0.4, 0.85, 0.1, soundRealButton, "/img/trappings/speaker.png", "sound");
         if(SoundEffect.getEnabled())
             soundButton.setBackgroundImg("/img/trappings/speaker.png", "sound on");
         else
             soundButton.setBackgroundImg("/img/trappings/noSound.png", "mute");
         add(soundButton);
+
+        JButton undoRealButton = new JButton();
+        undoRealButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                try {
+                    UndoExecuter.undoIt();
+                } catch (CannotSendEventException ignore) {
+                }
+            }
+        });
+        undoButton = new PanelImageButton(0.1, 0.4, 0.15, 0.1, undoRealButton, "/img/trappings/none.png", "");
+        add(undoButton);
+
+        UndoExecuter.getInstance().registerListener(this);
     }
+
+
 
     public TitlePanel(JPanel parent) {
         this();
@@ -85,4 +103,18 @@ public class TitlePanel extends SubPanel {
     }
 
 
+    @Override
+    public void undoLightAvailable() {
+        undoButton.setBackgroundImg("/img/trappings/undo.png", "undo");
+    }
+
+    @Override
+    public void undoWeightAvailable() {
+
+    }
+
+    @Override
+    public void undoExpired() {
+        undoButton.setBackgroundImg("/img/trappings/none.png", "");
+    }
 }
