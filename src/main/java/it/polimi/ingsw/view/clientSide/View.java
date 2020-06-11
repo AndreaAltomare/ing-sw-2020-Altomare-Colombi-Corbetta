@@ -3,11 +3,13 @@ package it.polimi.ingsw.view.clientSide;
 import it.polimi.ingsw.connection.client.ClientConnection;
 import it.polimi.ingsw.controller.events.*;
 import it.polimi.ingsw.model.CardInfo;
+import it.polimi.ingsw.model.MoveOutcomeType;
 import it.polimi.ingsw.model.PlaceableType;
 import it.polimi.ingsw.model.StateType;
 import it.polimi.ingsw.observer.MVEventListener;
 import it.polimi.ingsw.observer.Observable;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.UndoExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
@@ -480,6 +482,10 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
             ViewMessage.populateAndSend("Wrong message recived recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
         }
         Viewer.setAllRefresh();
+
+        //checks for the undo
+        if(ViewSubTurn.getActual().isMyTurn() && workerMoved.getMoveOutcome()== MoveOutcomeType.EXECUTED)
+            UndoExecuter.startUndo();
         /*try {
             ((ViewWorker)ViewWorker.search(workerMoved.getWorker())).placeOn(workerMoved.getFinalX(), workerMoved.getFinalY());
         } catch (NotFoundException | WrongViewObjectException e) {
@@ -495,6 +501,10 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
             ViewMessage.populateAndSend("Wrong message recived recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
         }
         Viewer.setAllRefresh();
+
+        //check for the undo
+        if(ViewSubTurn.getActual().isMyTurn() && blockBuilt.getMoveOutcome()==MoveOutcomeType.EXECUTED)
+            UndoExecuter.startUndo();
         /*ViewCell cell;
         try {
             cell = ((ViewBoard) ViewBoard.search(ViewBoard.getClassId())).getCellAt(blockBuilt.getX(), blockBuilt.getY());
