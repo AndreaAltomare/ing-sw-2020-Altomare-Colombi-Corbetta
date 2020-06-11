@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data;
 
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ClientAddressable;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
@@ -12,8 +13,9 @@ import javax.swing.*;
 import java.util.EventObject;
 
 /**
- * Interface for all the data representations available to the View side
+ * Interface for all the data representations available to the View side.
  *
+ * Last review: 8/06/2020
  * @author giorgio
  */
 public abstract class ViewObject implements ClientAddressable {
@@ -33,10 +35,11 @@ public abstract class ViewObject implements ClientAddressable {
 
 
     /**
-     * Method that returns the id of the specific object in the class
+     * Method that returns the id of the instance inside the class.
      *
      * @return (String the id of the object or "" if no id is needed).
      */
+    @Override
     public abstract String getId();
 
     /**
@@ -44,10 +47,11 @@ public abstract class ViewObject implements ClientAddressable {
      *
      * @return (unique string for each class)
      */
+    @Override
     public abstract String getMyClassId();
 
     /**
-     * Method to compare two ViewObjects
+     * Method to compare two ViewObjects.
      *
      * @param obj (compared object)
      * @return (true iif this == obj)
@@ -66,12 +70,12 @@ public abstract class ViewObject implements ClientAddressable {
      * @return (true iif st==this.toString())
      */
     @Override
-    public boolean isThis ( @NotNull String st){
+    public boolean isThis (String st){
         return st.equals(this.toString());
     }
 
     /**
-     * function that returns for each Class the Base of its objects identificators as "[ClassId]".
+     * function that returns for each Class the Base of its objects identifications as "[ClassId]".
      *
      * @return (String the base of Class identificators)
      */
@@ -86,7 +90,7 @@ public abstract class ViewObject implements ClientAddressable {
      * @param id (String to check)
      * @return (True iif the String will correspond to the id of an object of this class).
      */
-    public static boolean isOfThisClass( @NotNull String id){
+    protected static boolean isOfThisClass(@NotNull String id){
         return id.startsWith(getClassId());
     }
 
@@ -144,6 +148,18 @@ public abstract class ViewObject implements ClientAddressable {
     }
 
     /**
+     * Method that clears all the data represented on the View.
+     */
+    public static void clearAll(){
+        ViewBoard.clear();
+        ViewCard.clear();
+        ViewCell.clear();
+        ViewPlayer.clear();
+        ViewWorker.clear();
+        ViewObject.clear();
+    }
+
+    /**
      * Method that will return a String to write the ViewObject on the Terminal.
      *
      * @return (String representing the object and its status)
@@ -152,7 +168,7 @@ public abstract class ViewObject implements ClientAddressable {
 
     /**
      * Method that will return a String tha represent the ViewObject on the Terminal CLI
-     * @return
+     * @return (String representing the object and its status)
      */
     public String toWTerminal() {return null;}
 

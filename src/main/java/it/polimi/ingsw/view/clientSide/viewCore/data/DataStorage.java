@@ -9,7 +9,7 @@ import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
  *
  * @author giorgio
  */
-public interface DataStorager {
+public interface DataStorage {
 
     //Funzione che prende un messaggio, lo analizza e:
     // se il messaggio è una request crea il ViewObject corrispondente;
@@ -52,18 +52,4 @@ public interface DataStorager {
         } catch (Exception ignored) { }
         throw new NotFoundException();
     }
-
-    /**
-     * Method that clears all the data represented on the View.
-     */
-    static void clearAll(){
-        ViewBoard.clear();
-        ViewCard.clear();
-        ViewCell.clear();
-        ViewPlayer.clear();
-        ViewWorker.clear();
-        ViewObject.clear();
-
-    }
-
 }

@@ -17,7 +17,7 @@ public class ViewManager {
     //Controlla se il messaggio è da girare ai dati o alla gestione dello stato
     public void recivedMessage(String payload){}
 
-    //Funzione che invia una richiesta di dati (Chiamato dal DataStorager)
+    //Funzione che invia una richiesta di dati (Chiamato dal DataStorage)
     //Invia la ricchiesta request e aspetta una risposta.
     public String sendRequest(String reqest){return null;}
 

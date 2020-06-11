@@ -5,10 +5,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>it.polimi.ingsw</groupId>
-  <artifactId>AM42</artifactId>
+  <artifactId>SantoriniCLI</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>AM42</name>
+  <name>SantoriniCLI</name>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
 
