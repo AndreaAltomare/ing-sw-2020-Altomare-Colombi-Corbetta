@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
+import it.polimi.ingsw.view.events.UndoActionEvent;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 
 import java.util.ArrayList;
@@ -10,22 +11,28 @@ import java.util.List;
 public class UndoExecuter extends Executer {
     private static UndoExecuter instance = new UndoExecuter();
     private static long timeOut = 5000;
+    private static Thread thread;
 
     private final static Object lock = new Object();
 
-    public interface UndoExecuterListenerUpdate{
+    public abstract class UndoExecuterListenerUpdate{
 
 
         /**
-         * Method to be clled when the undo is available.
+         * Method to be called when the undo is available. this method must be light and no blocking cause executed on the same thread from which cames the undoReset -so, probably, the connection thread-.
          */
-        public void undoAvailable();
+        public abstract void undoLightAvailable();
+
+        /**
+         * Method to be called when the undo is available. this method is executed on the thread carying for the timeout.
+         */
+        public abstract void undoWeightAvailable();
 
 
         /**
          * Method to be called when the undo has expired.
          */
-        public void undoExpired();
+        public abstract void undoExpired();
     }
 
     private List<UndoExecuterListenerUpdate> myListener = new ArrayList<UndoExecuterListenerUpdate>(3);
@@ -61,11 +68,11 @@ public class UndoExecuter extends Executer {
 
 
     /**
-     * Method to notify all the listeners the undo is available.
+     * Method to notify all the listeners the undo is available (with the call of the light method).
      */
-    private void notifyOn(){
+    private void notifyLOn(){
         for (UndoExecuterListenerUpdate l: myListener) {
-            l.undoAvailable();
+            l.undoLightAvailable();
         }
     }
 
@@ -79,6 +86,15 @@ public class UndoExecuter extends Executer {
     }
 
     /**
+     * Method to notify all the listeners the undo is available (with the call of the weithg method).
+     */
+    private void notifyWOn(){
+        for (UndoExecuterListenerUpdate l: myListener) {
+            l.undoWeightAvailable();
+        }
+    }
+
+    /**
      * Method to be called outside the class to notify the undo is available
      */
     public static void startUndo(){
@@ -86,15 +102,19 @@ public class UndoExecuter extends Executer {
     }
 
     private void resetUndo(){
-        synchronized (lock){
-            lock.notifyAll();
+        if(thread!=null){
+            Thread t1 = thread;
+            thread = null;
+            t1.interrupt();
+            notifyOff();
         }
 
-        notifyOn();
-        (new Thread(){
+        notifyLOn();
+        thread = new Thread(){
             @Override
             public void run() {
                 super.run();
+                notifyWOn();
                 synchronized (lock){
                     try {
                         lock.wait(timeOut);
@@ -102,9 +122,14 @@ public class UndoExecuter extends Executer {
                         ;
                     }
                 }
-                notifyOff();
+                if(thread!=null) {
+                    notifyOff();
+                    thread = null;
+                }
             }
-        }).start();
+        };
+
+        thread.start();
     }
 
     public static void undoIt() throws CannotSendEventException {
@@ -138,8 +163,13 @@ public class UndoExecuter extends Executer {
      *
      * @return (The event associated to this Executer)
      */
-    public EventObject getMyEvent() {
-        return null;
+    public UndoActionEvent getMyEvent() {
+        return new UndoActionEvent();
+    }
+
+    public void send(EventObject event) throws NullPointerException{
+        if(event == null) return;
+        getSender().send((UndoActionEvent)event);
     }
 }
 
