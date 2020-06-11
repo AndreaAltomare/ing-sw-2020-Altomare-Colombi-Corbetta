@@ -171,5 +171,9 @@ public class UndoExecuter extends Executer {
         if(event == null) return;
         getSender().send((UndoActionEvent)event);
     }
+
+    public static boolean isAvailable(){
+        return thread==null;
+    }
 }
 
