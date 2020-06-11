@@ -97,34 +97,34 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         if(!resumeGame) {
             System.out.println("[SERVER] No game saving loaded.\nPreparing a new game...");
 
-            prepareGame(3); // TODO: just to for debug. REMOVE
+            //prepareGame(3); // TODO: just to for debug. REMOVE
 
-//            /* 2- Challenger choose the Cards for this game match */
-//            notify(new NextStatusEvent("Game preparation"));
-//            List<CardInfo> cardInfoList = ResourceManager.getCardsInformation();
-//            challengerChoosesCards(cardInfoList);
-//            printCardsInGame(cardsInGame);
-//
-//            /* 3- In "clockwise" order, every Player choose a Card (among the Cards chosen by the Challenger) */
-//            List<CardInfo> cardsToChoose = cardInfoList.stream().filter(c -> cardsInGame.contains(c.getName())).collect(Collectors.toList());
-//            playersChooseCards(cardsToChoose);
-//            registerTurnObservers();
-//            //System.out.println(""); // Server control message   --->   in playersChooseCards(...) method
-//
-//            /* 4- Ask the Challenger for the Start Player */
-//            challengerChoosesStartPlayer();
-//            System.out.println(" - Challenger Player has chosen Start Player: '" + model.startPlayer() + "'"); // Server control message
-//            //notify(new MessageEvent("Other players are placing their workers. Wait...")); // notify other Players // todo maybe it's useless: to remove
-//
-//            /* 5- Sort the list of Players */
-//            sortPlayers();
-//
-//            /* 6- In "clockwise" order, starting from Start Player, every Player places his/her Workers on the Board */
-//            playersPlaceWorkers();
-//
-//            /* 7- Send general game info data to all Views so the game can start */
-//            System.out.println(" - Notifying Players that the game is starting..."); // Server control message
-//            notify(new ServerSendDataEvent(model.getBoardXSize(), model.getBoardYSize(), players, model.getWorkersToPlayers()));
+            /* 2- Challenger choose the Cards for this game match */
+            notify(new NextStatusEvent("Game preparation"));
+            List<CardInfo> cardInfoList = ResourceManager.getCardsInformation();
+            challengerChoosesCards(cardInfoList);
+            printCardsInGame(cardsInGame);
+
+            /* 3- In "clockwise" order, every Player choose a Card (among the Cards chosen by the Challenger) */
+            List<CardInfo> cardsToChoose = cardInfoList.stream().filter(c -> cardsInGame.contains(c.getName())).collect(Collectors.toList());
+            playersChooseCards(cardsToChoose);
+            registerTurnObservers();
+            //System.out.println(""); // Server control message   --->   in playersChooseCards(...) method
+
+            /* 4- Ask the Challenger for the Start Player */
+            challengerChoosesStartPlayer();
+            System.out.println(" - Challenger Player has chosen Start Player: '" + model.startPlayer() + "'"); // Server control message
+            //notify(new MessageEvent("Other players are placing their workers. Wait...")); // notify other Players // todo maybe it's useless: to remove
+
+            /* 5- Sort the list of Players */
+            sortPlayers();
+
+            /* 6- In "clockwise" order, starting from Start Player, every Player places his/her Workers on the Board */
+            playersPlaceWorkers();
+
+            /* 7- Send general game info data to all Views so the game can start */
+            System.out.println(" - Notifying Players that the game is starting..."); // Server control message
+            notify(new ServerSendDataEvent(model.getBoardXSize(), model.getBoardYSize(), players, model.getWorkersToPlayers()));
 
             /* 8- Game preparation phase is over. The game match can start */
             notify(new NextStatusEvent("The game has started!"));
@@ -641,6 +641,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
 //                notify(new MessageEvent(challenger + " is choosing the God Cards for this game! Wait..."));
 //            }
 //        });
+        challengerHasChosen = false;
         while(!challengerHasChosen) {
             // 2.2- Broadcast Card's information
             notify(new CardsInformationEvent(cardInfoList, model.challenger(), "")); // todo maybe CardInformationEvent can act as a kind of "NextStatusEvent" (needs to be broadcasted of course)
@@ -1273,7 +1274,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         registerTurnObservers();
         /* Notify Players about resumed game */
         System.out.println(" - Notifying Players that the game is starting..."); // Server control message
-        notify(new GameResumingEvent(gameState.getBoard()));
+        notify(new GameResumingEvent(gameState));
         /* Start resumed game */
         startResumedGame();
     }
@@ -1282,7 +1283,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         /* Preliminary action */
         //model.sortPlayers(players); // sort the players' list before stating // todo no need for this (check...)
         Player playingPlayer = model.getPlayingPlayerReference();
-        notify(new NextStatusEvent("The game has started!"));
+        notify(new NextStatusEvent("The game has started!")); // todo ricordare di cambiare l'invio degli eventi in modo sincrono. (send() invece di asyncSend())
         /* Notify about the Turn changed */
         notify(new TurnStatusChangedEvent(playingPlayer.getNickname(), playingPlayer.getTurnType(), true));
         //startGame(); // todo no need for this (check...)

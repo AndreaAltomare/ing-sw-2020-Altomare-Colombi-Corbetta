@@ -36,7 +36,7 @@ public class ResourceManager {
     public static GodPower callGodPower(String cardName) {
         String cardPath = GAME_RESOURCES_PATH + CARDS_PATH + cardName;
         FileManager fileManager = FileManager.getIstance();
-        String json = fileManager.getCard(cardName);
+        String json = fileManager.getCard(cardPath);
 
         /* JSON DESERIALIZATION WITH GSON */
         Gson gson = new Gson();

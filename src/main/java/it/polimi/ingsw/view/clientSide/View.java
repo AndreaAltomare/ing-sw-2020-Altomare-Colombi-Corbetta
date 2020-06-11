@@ -1,5 +1,7 @@
 package it.polimi.ingsw.view.clientSide;
 
+import it.polimi.ingsw.chat.ChatMessageEvent;
+import it.polimi.ingsw.chat.ChatMessageListener;
 import it.polimi.ingsw.connection.client.ClientConnection;
 import it.polimi.ingsw.controller.events.*;
 import it.polimi.ingsw.model.CardInfo;
@@ -25,8 +27,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class View extends Observable<Object> implements MVEventListener, Runnable { // todo: maybe this class extends Observable<Object> for proper interaction with Network Handler
+    /* Multi-threading operations */
+    private ExecutorService executor = Executors.newFixedThreadPool(128);
+    /* General */
     Thread tConnection;
     private ClientConnection connection;
     private Scanner in; // Scanner unique reference
@@ -46,6 +53,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     public View(Scanner in, ClientConnection connection) {
         this.in = in;
         this.connection = connection;
+        connection.setChatMessageHandler(new ChatMessageReceiver());
     }
 
     // TODO: con questo sistema viene verificato anche che la comunicazione con Pattern Observer funzioni correttamente su thread diversi
@@ -228,6 +236,13 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
                 case "undo":
                     notify(new UndoActionEvent());
+                    break;
+
+
+                case "chat":
+                    System.out.println("Write something as a chat message to send everyone: ");
+                    String message = in.nextLine();
+                    notify(new ChatMessageEvent(nickname, message));
                     break;
 
 
@@ -1138,6 +1153,25 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
             List<String> workers = workersToPlayer.get(player);
             for (String worker : workers)
                 System.out.println("     - " + worker);
+        }
+    }
+
+    /**
+     * Helper inner class aimed to handle chat messages received
+     * form the connection socket.
+     *
+     * @author AndreaAltomare
+     */
+    private class ChatMessageReceiver implements ChatMessageListener {
+
+        @Override
+        public synchronized void update(ChatMessageEvent chatMessage) {
+            executor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println(chatMessage); // TODO PER GIORGIO: in questo metodo run() dovresti mettere il tuo codice lato front-end per mostrare il messaggio di chat. Io per ora ho messo solo una println(...) per testare che funzionasse correttamente.
+                }
+            });
         }
     }
 }
