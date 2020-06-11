@@ -234,4 +234,27 @@ public class ServerConnection {
     public synchronized void setNumberOfPlayers(int numberOfPlayers) {
         this.numberOfPlayers = numberOfPlayers;
     }
+
+    /**
+     * Sends an Object to all playing clients.
+     *
+     * @param o Object-message to send
+     */
+    public synchronized void sendAll(Object o) {
+        playingConnection.values().forEach(c -> c.asyncSend(o));
+    }
+
+    /**
+     * Sends an Object to all playing clients but the sender one.
+     *
+     * @param o Object-message to send
+     * @param sender Client who sent the message
+     */
+    public synchronized void sendAll(Object o, ClientConnection sender) {
+        playingConnection.values().forEach(c -> {
+                                                    if(c != sender) {
+                                                        c.asyncSend(o);
+                                                    }
+        });
+    }
 }

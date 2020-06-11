@@ -1,6 +1,6 @@
 package it.polimi.ingsw.controller.events;
 
-import it.polimi.ingsw.model.BoardState;
+import it.polimi.ingsw.model.GameState;
 
 import java.util.EventObject;
 
@@ -9,19 +9,19 @@ import java.util.EventObject;
  * [MVEvent]
  */
 public class GameResumingEvent extends EventObject {
-    private BoardState boardState;
+    private GameState gameState;
 
     public GameResumingEvent() {
         super(new Object());
-        this.boardState = null;
+        this.gameState = null;
     }
 
-    public GameResumingEvent(BoardState boardState) {
+    public GameResumingEvent(GameState gameState) {
         super(new Object());
-        this.boardState = boardState;
+        this.gameState = gameState;
     }
 
-    public BoardState getBoardState() {
-        return boardState;
+    public GameState getGameState() {
+        return gameState;
     }
 }

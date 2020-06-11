@@ -1,5 +1,6 @@
 package it.polimi.ingsw.connection.server;
 
+import it.polimi.ingsw.chat.ChatMessageEvent;
 import it.polimi.ingsw.connection.utility.ConnectionManager;
 import it.polimi.ingsw.connection.utility.PingObserver;
 import it.polimi.ingsw.connection.utility.PingResponse;
@@ -60,7 +61,7 @@ public class SocketClientConnection extends Observable<Object> implements Client
      */
     @Override
     public synchronized void send(Object message) {
-        try {
+        try { // TODO: vedere se l'aggiunta di un if(isActive()) mette fine agli errori di invio messaggi su socket chiusi.
             out.reset();
             out.writeObject(message);
             out.flush(); // To ensure data is sent
@@ -152,6 +153,26 @@ public class SocketClientConnection extends Observable<Object> implements Client
     public boolean pingHandler(Object o) {
         if(o instanceof PingResponse) {
             connectionManager.pingResponseReceived((PingResponse) o);
+            return true;
+        }
+        else
+            return false;
+    }
+
+    /**
+     * Takes an Object message as an argument,
+     * determines if it is a ChatMessageEvent,
+     * then send the chat message to all playing-players
+     * by using {@code sendAll(...)} method in ServerConnection.
+     *
+     * Returns true if the Object argument is an actual ChatMessageEvent.
+     *
+     * @param o (Object message)
+     * @return (Object o is an actual ChatMessageEvent ? true : false)
+     */
+    public boolean chatMessageHandler(Object o) {
+        if(o instanceof ChatMessageEvent) {
+            server.sendAll(o, this);
             return true;
         }
         else
@@ -259,7 +280,7 @@ public class SocketClientConnection extends Observable<Object> implements Client
             /* 5- Keep listening to te Client while connection is active */
             while(isActive()) {
                 read = in.readObject();
-                if(!pingHandler(read)) // if the Object read is a Ping response, do not notify the Game Controller
+                if(!pingHandler(read) && !chatMessageHandler(read)) // if the Object read is a Ping response or a Chat message, do not notify the Game Controller
                     notify(read); // notify also in case of QuitEvents, to let the Controller take action on it
 
                 if(read instanceof QuitEvent) {

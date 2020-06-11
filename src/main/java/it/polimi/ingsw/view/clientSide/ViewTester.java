@@ -472,7 +472,7 @@ public class ViewTester implements ViewSender {
         }else{
             view.update(new RequirePlaceWorkersEvent(players.get(1)));
             waiting();
-            view.update(new WorkerPlacedEvent("[Worker]\t1", 0, 0, true));
+//            view.update(new WorkerPlacedEvent("[Worker]\t1", 0, 0, true));
             workers[0][0] = "[Worker]\t1";
         }
 
@@ -483,12 +483,12 @@ public class ViewTester implements ViewSender {
             if(numberPlayers == 2){
                 view.update(new RequirePlaceWorkersEvent(players.get(1)));
                 waiting();
-                view.update(new WorkerPlacedEvent("[Worker]\t2", 4, 4, true));
+//                view.update(new WorkerPlacedEvent("[Worker]\t2", 4, 4, true));
                 workers[0][0] = "[Worker]\t2";
             }else{
                 view.update(new RequirePlaceWorkersEvent(players.get(2)));
                 waiting();
-                view.update(new WorkerPlacedEvent("[Worker]\t2", 4, 4, true));
+//                view.update(new WorkerPlacedEvent("[Worker]\t2", 4, 4, true));
                 workers[1][0] = "[Worker]\t2";
             }
         }
@@ -500,12 +500,12 @@ public class ViewTester implements ViewSender {
                 if(isFirstPlacer){
                     view.update(new RequirePlaceWorkersEvent(players.get(1)));
                     waiting();
-                    view.update(new WorkerPlacedEvent("[Worker]\t3", 0, 4, true));
+//                    view.update(new WorkerPlacedEvent("[Worker]\t3", 0, 4, true));
                     workers[0][0] = "[Worker]\t3";
                 }else{
                     view.update(new RequirePlaceWorkersEvent(players.get(2)));
                     waiting();
-                    view.update(new WorkerPlacedEvent("[Worker]\t3", 0, 4, true));
+//                    view.update(new WorkerPlacedEvent("[Worker]\t3", 0, 4, true));
                     workers[1][0] = "[Worker]\t3";
                 }
             }
@@ -520,7 +520,7 @@ public class ViewTester implements ViewSender {
         }else{
             view.update(new RequirePlaceWorkersEvent(players.get(1)));
             waiting();
-            view.update(new WorkerPlacedEvent("[Worker]\t4", 4, 0, true));
+//            view.update(new WorkerPlacedEvent("[Worker]\t4", 4, 0, true));
             workers[0][1] = "[Worker]\t4";
         }
 
@@ -531,12 +531,12 @@ public class ViewTester implements ViewSender {
             if(numberPlayers == 2){
                 view.update(new RequirePlaceWorkersEvent(players.get(1)));
                 waiting();
-                view.update(new WorkerPlacedEvent("[Worker]\t5", 1, 1, true));
+//                view.update(new WorkerPlacedEvent("[Worker]\t5", 1, 1, true));
                 workers[0][1] = "[Worker]\t5";
             }else{
                 view.update(new RequirePlaceWorkersEvent(players.get(2)));
                 waiting();
-                view.update(new WorkerPlacedEvent("[Worker]\t5", 1, 1, true));
+//                view.update(new WorkerPlacedEvent("[Worker]\t5", 1, 1, true));
                 workers[1][1] = "[Worker]\t5";
             }
         }
@@ -549,12 +549,12 @@ public class ViewTester implements ViewSender {
                 if(isFirstPlacer){
                     view.update(new RequirePlaceWorkersEvent(players.get(1)));
                     waiting();
-                    view.update(new WorkerPlacedEvent("[Worker]\t6", 3, 3, true));
+//                    view.update(new WorkerPlacedEvent("[Worker]\t6", 3, 3, true));
                     workers[0][1] = "[Worker]\t6";
                 }else{
                     view.update(new RequirePlaceWorkersEvent(players.get(2)));
                     waiting();
-                    view.update(new WorkerPlacedEvent("[Worker]\t6", 3, 3, true));
+//                    view.update(new WorkerPlacedEvent("[Worker]\t6", 3, 3, true));
                     workers[1][1] = "[Worker]\t6";
                 }
             }
@@ -639,7 +639,7 @@ public class ViewTester implements ViewSender {
     }
 
     public void send(PlaceWorkerEvent event){
-        view.update(new WorkerPlacedEvent("[Worker]\t" + String.valueOf(myWorkerId), event.getX(), event.getY(), validPlacing));
+//        view.update(new WorkerPlacedEvent("[Worker]\t" + String.valueOf(myWorkerId), event.getX(), event.getY(), validPlacing));
         myWorkerId++;
         myNotify();
     }

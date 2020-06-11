@@ -1,5 +1,7 @@
 package it.polimi.ingsw.connection.client;
 
+import it.polimi.ingsw.chat.ChatMessageEvent;
+import it.polimi.ingsw.chat.ChatMessageListener;
 import it.polimi.ingsw.connection.utility.ClientConnectionManager;
 import it.polimi.ingsw.connection.utility.PingMessage;
 import it.polimi.ingsw.connection.utility.PingResponse;
@@ -37,6 +39,7 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
     private int port;
     private ObjectInputStream socketIn;
     private ObjectOutputStream socketOut;
+    private ChatMessageListener chatMessageHandler;
     /* Network-related */
     private ClientConnectionManager connectionManager;
     /* Connection properties */
@@ -81,7 +84,7 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
                 try {
                     while(isActive()) {
                         Object inputObject = socketIn.readObject();
-                        if(!pingHandler(inputObject))
+                        if(!pingHandler(inputObject) && !chatMessage(inputObject))
                             notifyMVEventsListeners(inputObject); // actually notify the View as a MVEventListener
                     }
                 }
@@ -207,6 +210,25 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
     }
 
     /**
+     * Takes an Object message as an argument,
+     * determines if it is a ChatMessageEvent,
+     * then call the {@code update(...)} method on the Chat Message Handler (Listener).
+     *
+     * Returns true if the Object argument is an actual ChatMessageEvent.
+     *
+     * @param o (Object message)
+     * @return (Object o is an actual ChatMessageEvent ? true : false)
+     */
+    public boolean chatMessage(Object o) {
+        if(o instanceof ChatMessageEvent) {
+            chatMessageHandler.update((ChatMessageEvent) o);
+            return true;
+        }
+        else
+            return false;
+    }
+
+    /**
      * This method send Event Object generated from View
      * to the Server by using Socket communication methods.
      *
@@ -261,4 +283,8 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
         t.start();
         return t;
     }*/
+
+    public void setChatMessageHandler(ChatMessageListener chatMessageHandler) {
+        this.chatMessageHandler = chatMessageHandler;
+    }
 }
