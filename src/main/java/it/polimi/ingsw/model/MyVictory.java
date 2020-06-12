@@ -49,7 +49,7 @@ public class MyVictory {
         /* check for new Victory condition first */
         if(move.getLevelDirection() == godPower.getHotLastMoveDirection())
             // todo: pan (just to check, REMOVE THIS COMMENT)
-            if(move.levelDepth <= panLevelDepth)
+            if(move.levelDepth <= godPower.getHotLevelDepth())
                 return true;
 
         /* check for a default Victory otherwise */

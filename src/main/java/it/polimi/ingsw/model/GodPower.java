@@ -41,7 +41,8 @@ public class GodPower implements Serializable {
     // in case of other power will be added in future
 
     /* Active to my Victory */
-    private boolean newVictoryCondition; // tells if there is a new win condition when an "hotLastMoveDirection" occur
+    private boolean newVictoryCondition; // tells if there is a new win condition when an "hotLastMoveDirection" occurs
+    private int hotLevelDepth; // level depth threshold to validate a new victory condition
 
     /* Active to opponents Victory */
     // in case of other power will be added in future
@@ -210,5 +211,13 @@ public class GodPower implements Serializable {
 
     public void setNewVictoryCondition(boolean newVictoryCondition) {
         this.newVictoryCondition = newVictoryCondition;
+    }
+
+    public int getHotLevelDepth() {
+        return hotLevelDepth;
+    }
+
+    public void setHotLevelDepth(int hotLevelDepth) {
+        this.hotLevelDepth = hotLevelDepth;
     }
 }
