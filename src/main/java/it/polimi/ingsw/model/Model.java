@@ -30,6 +30,7 @@ public class Model {
     private List<String> cards;
     private volatile MoveOutcomeType moveOutcome; // tells the outcome of a move being executed at a certain point
     private volatile int lastPlayingIndex;
+    private WorkerMovedEvent mainWorkerMoved;
 
     /**
      * Constructor.
@@ -312,7 +313,8 @@ public class Model {
 
 
 
-    public WorkerMovedEvent moveWorker(String workerId, int x, int y, String playerNickname) {
+    public List<WorkerMovedEvent> moveWorker(String workerId, int x, int y, String playerNickname) {
+        List<WorkerMovedEvent> workersMoved = new ArrayList<>();
         boolean moveSuccess = false;
         Player player;
         Worker w;
@@ -381,10 +383,17 @@ public class Model {
                 }
 
                 /* 3- Return the result */
-                return new WorkerMovedEvent(workerId, initialPosition.getX(), initialPosition.getY(), finalX, finalY, moveOutcome);
+                mainWorkerMoved = new WorkerMovedEvent(workerId, initialPosition.getX(), initialPosition.getY(), finalX, finalY, moveOutcome);
+                workersMoved.add(mainWorkerMoved);
+                if(player.forcedOpponentMove() != null)
+                    workersMoved.add(new WorkerMovedEvent(player.forcedOpponentMove().getWorkerId(), player.forcedOpponentMove().getInitialX(), player.forcedOpponentMove().getInitialY(), player.forcedOpponentMove().getFinalX(), player.forcedOpponentMove().getFinalY(), MoveOutcomeType.OPPONENT_WORKER_MOVED));
             }
-            else
-                return new WorkerMovedEvent(workerId, 0, 0, 0, 0, MoveOutcomeType.WRONG_WORKER);
+            else {
+                mainWorkerMoved = new WorkerMovedEvent(workerId, 0, 0, 0, 0, MoveOutcomeType.WRONG_WORKER);
+                workersMoved.add(mainWorkerMoved);
+            }
+
+            return workersMoved;
         }
 
         return null;
@@ -963,5 +972,14 @@ public class Model {
         }
 
         return null;
+    }
+
+
+    public WorkerMovedEvent getMainWorkerMoved() {
+        return mainWorkerMoved;
+    }
+
+    public void setMainWorkerMoved(WorkerMovedEvent mainWorkerMoved) {
+        this.mainWorkerMoved = mainWorkerMoved;
     }
 }

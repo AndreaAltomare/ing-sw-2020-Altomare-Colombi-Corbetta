@@ -462,4 +462,8 @@ public class Player {
     public StateType getTurnType() {
         return turnType;
     }
+
+    public MyMove.WorkerMoved forcedOpponentMove() {
+        return card.getMyMove().getOpponentForcedMove();
+    }
 }

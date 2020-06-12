@@ -17,6 +17,7 @@ public enum MoveOutcomeType {
     TURN_OVER,
     WIN,
     LOSS,
+    OPPONENT_WORKER_MOVED,
     NONE, // undefined [control value]
     ANY // any possible outcome [control value]
 }

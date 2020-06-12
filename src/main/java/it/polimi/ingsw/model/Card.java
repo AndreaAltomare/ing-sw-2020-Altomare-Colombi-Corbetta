@@ -38,6 +38,7 @@ public class Card {
     public void resetForStart() {
         /* Reset the number of Moves Left */
         myMove.resetMovesLeft();
+        myMove.resetOpponentForcedMove();
         myConstruction.resetConstructionLeft();
 
         /* Reset Movement and Construction executed */

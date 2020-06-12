@@ -1050,6 +1050,11 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
             System.out.println("    Initial position: ( " + workerMoved.getInitialX() + " , " + workerMoved.getInitialY() + " )"); // todo [debug]
             System.out.println("    Current position: ( " + workerMoved.getFinalX() + " , " + workerMoved.getFinalY() + " )"); // todo [debug]
         }
+        else if(workerMoved.getMoveOutcome() == MoveOutcomeType.OPPONENT_WORKER_MOVED) {
+            System.out.println("[WorkerMovedEvent] Opponent's Worker '" + workerMoved.getWorker() + "' was forced to move:"); // todo [debug]
+            System.out.println("    Initial position: ( " + workerMoved.getInitialX() + " , " + workerMoved.getInitialY() + " )"); // todo [debug]
+            System.out.println("    Current position: ( " + workerMoved.getFinalX() + " , " + workerMoved.getFinalY() + " )"); // todo [debug]
+        }
         else
             System.out.println("[WorkerMovedEvent] Worker '" + workerMoved.getWorker() + "' movement is not valid!"); // todo [debug]
     }

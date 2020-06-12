@@ -12,6 +12,7 @@ public class MyMove {
     private GodPower godPower; // state of chosen God's power
     private Card parentCard;
     private int movesLeft;
+    private WorkerMoved opponentForcedMove; // tells data of an Opponent's Worker forced move
 
     public MyMove(Card parentCard, GodPower godPower) {
         this.parentCard = parentCard;
@@ -358,7 +359,13 @@ public class MyMove {
      * @param destinationCell (Cell into which force the Opponent's Worker)
      */
     private void forceMove(Worker opponentWorker, Cell destinationCell) {
+        String oppWorkerId = opponentWorker.getWorkerId();
+        int initialX = opponentWorker.position().getX(); // todo: check if this works correctly
+        int initialY = opponentWorker.position().getY(); // todo: check if this works correctly
         opponentWorker.place(destinationCell);
+        int finalX = opponentWorker.position().getX();
+        int finalY = opponentWorker.position().getY();
+        opponentForcedMove = new WorkerMoved(oppWorkerId, initialX, initialY, finalX, finalY);
     }
 
     /**
@@ -423,5 +430,51 @@ public class MyMove {
 
     public Cell getStartingPosition() {
         return startingPosition;
+    }
+
+
+    public class WorkerMoved {
+        private String workerId;
+        private int initialX;
+        private int initialY;
+        private int finalX;
+        private int finalY;
+
+        public WorkerMoved(String workerId, int initialX, int initialY, int finalX, int finalY) {
+            this.workerId = workerId;
+            this.initialX = initialX;
+            this.initialY = initialY;
+            this.finalX = finalX;
+            this.finalY = finalY;
+        }
+
+        public String getWorkerId() {
+            return workerId;
+        }
+
+        public int getInitialX() {
+            return initialX;
+        }
+
+        public int getInitialY() {
+            return initialY;
+        }
+
+        public int getFinalX() {
+            return finalX;
+        }
+
+        public int getFinalY() {
+            return finalY;
+        }
+    }
+
+
+    public WorkerMoved getOpponentForcedMove() {
+        return opponentForcedMove;
+    }
+
+    public void resetOpponentForcedMove() {
+        opponentForcedMove = null;
     }
 }

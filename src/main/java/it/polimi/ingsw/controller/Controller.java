@@ -151,15 +151,15 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         // prepare cards
         cardsInGame = new ArrayList<>(nPlayer);
         cardsInGame.add("Pan");
-        cardsInGame.add("Athena");
+        cardsInGame.add("Apollo");
         if(nPlayer == 3)
-            cardsInGame.add("Prometheus");
+            cardsInGame.add("Minotaur");
         model.setCardsInGame(cardsInGame);
         // set cards
         model.setPlayerCard("Pan", "giorgio");
-        model.setPlayerCard("Athena", "andrea");
+        model.setPlayerCard("Apollo", "andrea");
         if(nPlayer == 3)
-            model.setPlayerCard("Prometheus", "marco");
+            model.setPlayerCard("Minotaur", "marco");
         registerTurnObservers();
         // set start player
         model.setStartPlayer("andrea");
@@ -1034,16 +1034,26 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     public synchronized void update(MoveWorkerEvent move, String playerNickname) {
         if(model.hasGameStarted()) {
             System.out.println("[MoveWorkerEvent] received form Player: '" + playerNickname + "'"); // Server control message
-            WorkerMovedEvent workerMoved = model.moveWorker(move.getWorkerId(), move.getX(), move.getY(), playerNickname);
-            if (workerMoved != null) {
-                notify(workerMoved); // ANSWER FROM THE CONTROLLER (Notify the View)
-                postExecutionOperations(playerNickname, workerMoved.getMoveOutcome());
+            List<WorkerMovedEvent> workersMoved = model.moveWorker(move.getWorkerId(), move.getX(), move.getY(), playerNickname);
+            if (workersMoved != null) {
+                notifyWorkersMoved(workersMoved);
+                //notify(workerMoved); // ANSWER FROM THE CONTROLLER (Notify the View) // todo: to remove (useless)
+                postExecutionOperations(playerNickname, model.getMainWorkerMoved().getMoveOutcome());
             }
         }
         else {
             System.out.println("!INVALID! [MoveWorkerEvent] received from Player: '" + playerNickname + "'"); // Server control message
             notify(new ErrorMessageEvent("Game has not started yet! Hold on..."), playerNickname);
         }
+    }
+
+    /**
+     * Notify View about all Workers' Movements happened in this turn.
+     *
+     * @param workersMoved List of Workers moved
+     */
+    private void notifyWorkersMoved(List<WorkerMovedEvent> workersMoved) {
+        workersMoved.forEach(this::notify);
     }
 
     private void postExecutionOperations(String playerNickname, MoveOutcomeType moveOutcome) {
