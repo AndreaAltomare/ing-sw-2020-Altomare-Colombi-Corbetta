@@ -1,9 +1,7 @@
 package it.polimi.ingsw.view.serverSide;
 
 import it.polimi.ingsw.connection.server.ClientConnection;
-import it.polimi.ingsw.controller.events.GameOverEvent;
-import it.polimi.ingsw.controller.events.PlayerLoseEvent;
-import it.polimi.ingsw.controller.events.ServerQuitEvent;
+import it.polimi.ingsw.controller.events.*;
 import it.polimi.ingsw.observer.Observer;
 import it.polimi.ingsw.observer.VCEventSubject;
 
@@ -89,16 +87,33 @@ public class VirtualView extends VCEventSubject implements Observer<Object> {
         if (playerNickname.equals(nickname)) {
             //connection.asyncSend(o);
 
-            /* Check if connection has to be closed */
-            if (o instanceof GameOverEvent)
+            if(objectNeedsToBeSentInSynchronousMode(o))
                 connection.send(o);
-            else if (o instanceof ServerQuitEvent) { // todo forse PlayerLoseEvent è da togliere
-                connection.send(o); // todo vedere se funziona (senza l'attesa di sleep(...))
-                connection.unregisterAndClose();
-            }
             else
                 connection.asyncSend(o);
+
+            // todo: maybe this block of code needs to be removed
+            /* Check if connection has to be closed */
+//            if (o instanceof GameOverEvent)
+//                connection.send(o);
+//            else if (o instanceof ServerQuitEvent) { // todo forse PlayerLoseEvent è da togliere
+//                connection.send(o); // todo vedere se funziona (senza l'attesa di sleep(...))
+//                connection.unregisterAndClose(); // todo probabilmente qeusto va tolto (problemi di sincronizzazione sui lock)
+//            }
+//            else
+//                connection.asyncSend(o);
         }
+    }
+
+
+    /**
+     * Tells if an Object message needs to be sent in a synchronous mode.
+     *
+     * @param o Object message
+     * @return (Object message needs to be sent in a synchronous mode ? true : false)
+     */
+    private boolean objectNeedsToBeSentInSynchronousMode(Object o) {
+        return (o instanceof NextStatusEvent || o instanceof PlayerLoseEvent || o instanceof PlayerWinEvent || o instanceof ServerSendDataEvent || o instanceof GameResumingEvent || o instanceof GameOverEvent || o instanceof ServerQuitEvent);
     }
 
 
