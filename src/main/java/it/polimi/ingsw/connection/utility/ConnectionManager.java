@@ -26,7 +26,8 @@ public class ConnectionManager extends PingObservable implements Runnable {
     /* Timer handling */
     private final int TIMER_INITIAL_DELAY = 1000; // time in milliseconds
     private final int TIMER_TIME_PERIOD = 1000; // time in milliseconds
-    private final int MAXIMUM_TIMEOUTS_NUMBER = 10;
+    private final int MAXIMUM_TIMEOUTS_NUMBER = 10; // todo rimettere a 10
+    private Timer timer;
     /* Socket references */
     private final SocketClientConnection socketClient;
 
@@ -48,7 +49,7 @@ public class ConnectionManager extends PingObservable implements Runnable {
     @Override
     public void run() {
         /* 1- Instantiate Timer */
-        Timer timer = new Timer();
+        timer = new Timer();
 
         /* 2- Create Lambda expression */
         TimeExpiredInterface timeExpiredHandler = (responseReceived) -> {
@@ -77,5 +78,10 @@ public class ConnectionManager extends PingObservable implements Runnable {
      */
     public synchronized void pingResponseReceived(PingResponse o) {
         notifyPingObservers(o); // notify TimerCount
+    }
+
+    public void stop() {
+        if(timer != null)
+            timer.cancel();
     }
 }

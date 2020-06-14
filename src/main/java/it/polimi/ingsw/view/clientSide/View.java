@@ -904,8 +904,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 //        ViewStatus.setStatus("CLOSING");
 //        ViewMessage.populateAndSend(serverQuit.getMessage(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
 //        ViewMessage.populateAndSend(serverQuit.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
-        System.out.println("[ServerQuitEvent] Server quit the connection.\nMessage: " + serverQuit.getMessage()); // todo [debug]
-        // todo add code to handle disconnection
+        System.out.println("[ServerQuitEvent] " + serverQuit.getMessage()); // todo [debug]
+        connection.closeConnection(); // TODO PER GIORGIO: aggiungi questo statement nel tuo metodo update() (questo lo usavo per i miei test): serve a chiudere la connessione ed i relativi thread.
     }
 
     /* Message listener */

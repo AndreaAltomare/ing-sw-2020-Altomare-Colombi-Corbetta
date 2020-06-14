@@ -14,6 +14,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.EventObject;
@@ -88,7 +89,12 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
                             notifyMVEventsListeners(inputObject); // actually notify the View as a MVEventListener
                     }
                 }
+                catch(SocketTimeoutException ex) {
+                    System.err.println("Socket timed out.\nMESSAGE: " + ex.getMessage());
+                    setActive(false);
+                }
                 catch (Exception ex) {
+                    //System.err.println("ERROR: " + ex.getMessage());
                     setActive(false);
                 }
             }
@@ -118,8 +124,15 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
                     socketOut.writeObject(objectToWrite);
                     socketOut.flush(); // To ensure data is sent
                 }
+                else
+                    System.err.println("Connection not active.");
+            }
+            catch(SocketTimeoutException ex) {
+                System.err.println("Socket timed out.\nMESSAGE: " + ex.getMessage());
+                setActive(false);
             }
             catch (Exception ex) {
+                //System.err.println("ERROR: " + ex.getMessage());
                 setActive(false);
             }
         }
@@ -168,14 +181,17 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
             //t1.join();
         }
         catch(InterruptedException | NoSuchElementException ex) {
+            System.err.println("ERROR: " + ex.getMessage());
             System.out.println("Connection closed from the client side.");
         }
         finally {
             // TODO: forse questi metodi danno problemi
             //stdin.close();
+            connectionManager.stop();
             socketIn.close();
             socketOut.close();
             socket.close();
+            System.out.println("Connection closed."); // todo [debug]
         }
     }
 

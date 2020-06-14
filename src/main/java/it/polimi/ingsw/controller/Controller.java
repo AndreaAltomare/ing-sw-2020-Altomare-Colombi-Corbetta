@@ -1,5 +1,6 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.connection.utility.ServerResetException;
 import it.polimi.ingsw.controller.events.*;
 import it.polimi.ingsw.controller.undo.UndoManager;
 import it.polimi.ingsw.model.*;
@@ -38,6 +39,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     /* Miscellaneous */
     private volatile int workersPlaced;
     private UndoManager undoManager;
+    private volatile boolean gameWasQuit;
     private String lastPlayingPlayer; // only the last playing player can UNDO an action
 
     /**
@@ -57,6 +59,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         this.DEFAULT_WAITING_TIME = 1000; // time is in milliseconds
         this.workersPlaced = 0;
         this.lastPlayingPlayer = "";
+        this.gameWasQuit = false;
         this.resumeGame = false;
         this.undoRequested = false;
         this.undoManager = new UndoManager(clientLock);
@@ -97,30 +100,30 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         if(!resumeGame) {
             System.out.println("[SERVER] No game saving loaded.\nPreparing a new game...");
 
-            prepareGame(3); // TODO: just to for debug. REMOVE
+            //prepareGame(3); // TODO: just to for debug. REMOVE
 
-//            /* 2- Challenger choose the Cards for this game match */
-//            notify(new NextStatusEvent("Game preparation"));
-//            List<CardInfo> cardInfoList = ResourceManager.getCardsInformation();
-//            challengerChoosesCards(cardInfoList);
-//            printCardsInGame(cardsInGame);
-//
-//            /* 3- In "clockwise" order, every Player choose a Card (among the Cards chosen by the Challenger) */
-//            List<CardInfo> cardsToChoose = cardInfoList.stream().filter(c -> cardsInGame.contains(c.getName())).collect(Collectors.toList());
-//            playersChooseCards(cardsToChoose);
-//            registerTurnObservers();
-//            //System.out.println(""); // Server control message   --->   in playersChooseCards(...) method
-//
-//            /* 4- Ask the Challenger for the Start Player */
-//            challengerChoosesStartPlayer();
-//            System.out.println(" - Challenger Player has chosen Start Player: '" + model.startPlayer() + "'"); // Server control message
-//            //notify(new MessageEvent("Other players are placing their workers. Wait...")); // notify other Players // todo maybe it's useless: to remove
-//
-//            /* 5- Sort the list of Players */
-//            sortPlayers();
-//
-//            /* 6- In "clockwise" order, starting from Start Player, every Player places his/her Workers on the Board */
-//            playersPlaceWorkers();
+            /* 2- Challenger choose the Cards for this game match */
+            notify(new NextStatusEvent("Game preparation"));
+            List<CardInfo> cardInfoList = ResourceManager.getCardsInformation();
+            challengerChoosesCards(cardInfoList);
+            printCardsInGame(cardsInGame);
+
+            /* 3- In "clockwise" order, every Player choose a Card (among the Cards chosen by the Challenger) */
+            List<CardInfo> cardsToChoose = cardInfoList.stream().filter(c -> cardsInGame.contains(c.getName())).collect(Collectors.toList());
+            playersChooseCards(cardsToChoose);
+            registerTurnObservers();
+            //System.out.println(""); // Server control message   --->   in playersChooseCards(...) method
+
+            /* 4- Ask the Challenger for the Start Player */
+            challengerChoosesStartPlayer();
+            System.out.println(" - Challenger Player has chosen Start Player: '" + model.startPlayer() + "'"); // Server control message
+            //notify(new MessageEvent("Other players are placing their workers. Wait...")); // notify other Players // todo maybe it's useless: to remove
+
+            /* 5- Sort the list of Players */
+            sortPlayers();
+
+            /* 6- In "clockwise" order, starting from Start Player, every Player places his/her Workers on the Board */
+            playersPlaceWorkers();
 
             /* 7- Send general game info data to all Views so the game can start */
             System.out.println(" - Notifying Players that the game is starting..."); // Server control message
@@ -906,11 +909,11 @@ public class Controller extends Observable<Object> implements VCEventListener, R
 
     @Override
     public synchronized void update(QuitEvent quit, String playerNickname) {
-        // TODO: add operations to handle disconnections of Players
         System.out.println("[QuitEvent] received from Player " + playerNickname + ": quitting...");
+        gameWasQuit = true;
         this.stopGame();
         notify(new GameOverEvent("A player quit. This game can no longer continue."));
-        // TODO: inserire operazioni per distruggere oggetti nel Server e tornare in uno stato in cui si accettano nuovi giocatori
+        //resetGame(); // todo maybe it's useless, it's to remove
     }
 
     /* Not actually necessary for Distributed-MVC Pattern */
@@ -1386,21 +1389,25 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      * Stops the game.
      */
     private void stopGame() {
+        /* 0- Stop timer(s) */
+        undoManager.stop();
         /* 1- Stop the game */
         model.stopGame();
         /* 2- Save the match */ // TODO: [MAYBE] For "Persistence" FA
-        saveGame();
+        //saveGame(); // no need for this, since the game state is saved every move.
     }
 
     /**
      * Save the game.
      */
     private void saveGame() { // TODO: [MAYBE] For "Persistence" FA
-        System.out.println("[SERVER] The game is being saved..."); // todo [debug]
-        /* 1- Get game state from Model */
-        GameState gameState = model.createGameState();
-        /* 2- Save game state */
-        ResourceManager.saveGameState(gameState);
+        if(!gameWasQuit) {
+            System.out.println("[SERVER] The game is being saved..."); // todo [debug]
+            /* 1- Get game state from Model */
+            GameState gameState = model.createGameState();
+            /* 2- Save game state */
+            ResourceManager.saveGameState(gameState);
+        }
     }
 
     /**
@@ -1505,6 +1512,16 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      */
     public void gameOverMessage(String nickname) {
         notify(new GameOverEvent("Game Over!"), nickname);
+    }
+
+    /**
+     * Resets the game.
+     * (To Server)
+     */
+    private void resetGame() {
+        (new Thread(() -> {
+            throw new ServerResetException(); // disconnect all the Players and reset the Server for a new game.
+        })).start();
     }
 
     /**

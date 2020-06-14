@@ -35,7 +35,7 @@ public class TimeoutCounter extends TimerTask {
      */
     @Override
     public void run() {
-        System.out.println("Printed debug string"); // todo [debug]
+        //System.out.println("Printed debug string"); // todo [debug]
         if(check(++timeoutCounter)) {
             synchronized (undoLock) {
                 undoLock.notifyAll(); // TODO: check if notify the Controller by this way works correctly

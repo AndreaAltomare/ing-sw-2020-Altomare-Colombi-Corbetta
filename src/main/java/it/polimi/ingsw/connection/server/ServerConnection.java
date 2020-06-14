@@ -1,15 +1,14 @@
 package it.polimi.ingsw.connection.server;
 
 import it.polimi.ingsw.controller.Controller;
-import it.polimi.ingsw.controller.events.LobbyFullEvent;
-import it.polimi.ingsw.controller.events.MessageEvent;
-import it.polimi.ingsw.controller.events.NextStatusEvent;
+import it.polimi.ingsw.controller.events.*;
 import it.polimi.ingsw.model.Model;
 import it.polimi.ingsw.view.serverSide.VirtualView;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,7 +37,7 @@ public class ServerConnection {
     public final int MAXIMUM_CLIENTS_REQUIRED = 3; // public because it can never change (by definition of Game match)
     //public final Object serverLock = new Object(); // public lock to synchronize some ServerConnection operation // TODO: maybe it's useless: to remove.
     private int numberOfPlayers;
-    private boolean lobbyCreated;
+    private volatile boolean lobbyCreated;
 
     private Model model;
     private Controller controller;
@@ -94,28 +93,30 @@ public class ServerConnection {
      */
     public synchronized void unregisterConnection(ClientConnection c) {
         // TODO: handle the case in which the client disconnects before the lobby is created
+        // todo: maybe it's useless (basta chiamare la clear() su tutte le collezioni di questo tipo)
         /* 1- Unregister Observer(s) */
-        if(lobbyCreated)
-            for(VirtualView vw : virtualViews)
-                if(vw.getConnection().equals(c)) {
-                    vw.removeVCEventsListener(controller);
-                    controller.removeObserver(vw);
-                    vw = null;
-                }
+        if(!lobbyCreated || (lobbyCreated && !playingConnection.containsValue(c))) {
+//            for (VirtualView vw : virtualViews) // TODO: USELESS: REMOVE
+//                if (vw.getConnection().equals(c)) {
+//                    vw.removeVCEventsListener(controller);
+//                    controller.removeObserver(vw);
+//                    vw = null;
+//                }
 
 
-        /* 2- Remove connection entries (and items) */
-        connections.remove(c);
-        //ClientConnection playerConnection = playingConnection.get(c);
-        // TODO: maybe remove all this "if" part, which is useless
-        //if(playerConnection != null) {
+            /* 2- Remove connection entries (and items) */
+            connections.remove(c);
+            //ClientConnection playerConnection = playingConnection.get(c);
+            // TODO: maybe remove all this "if" part, which is useless
+            //if(playerConnection != null) {
             //playerConnection.closeConnection(); // todo remove (redundant)
             //playingConnection.remove(c);
             //playingConnection.remove(playerConnection); // TODO: non e' ridondante questo metodo? c e playerConnection dovrebbero essere lo stesso oggetto di classe ClientConnection...
-        //}
+            //}
 
-        waitingConnection.keySet().removeIf(s -> waitingConnection.get(s) == c); // todo check if it works
-        playingConnection.keySet().removeIf(s -> playingConnection.get(s) == c); // todo check if it works
+            waitingConnection.keySet().removeIf(s -> waitingConnection.get(s) == c); // todo check if it works
+            playingConnection.keySet().removeIf(s -> playingConnection.get(s) == c); // todo check if it works
+        }
         /*Iterator<String> iterator = waitingConnection.keySet().iterator();
         while(iterator.hasNext()) {
             if(waitingConnection.get(iterator.next()) == c) {
@@ -138,7 +139,7 @@ public class ServerConnection {
     public synchronized void lobby(ClientConnection c, String nickname) {
         if(lobbyCreated) {
             c.send(new LobbyFullEvent());
-            c.closeConnection();
+            c.closeConnection(true);
             unregisterConnection(c);
         }
         else {
@@ -256,5 +257,56 @@ public class ServerConnection {
                                                         c.asyncSend(o);
                                                     }
         });
+    }
+
+    /**
+     * If the game has already started
+     * and the Client who quit was a playing player:
+     * quits the connection with every Client
+     * and resets the Server to accept new ones;
+     *
+     * else: do not reset the Server.
+     *
+     * @param c Connection of the Client who quit
+     * @return True if all connection have been closed and the Server has been reset.
+     */
+    public synchronized boolean quitAndReset(ClientConnection c) {
+        if(lobbyCreated && playingConnection.containsValue(c)) {
+            quit();
+            reset();
+            return true;
+        }
+        return false;
+    }
+
+    private void reset() {
+        /* Reset connections */
+        connections.clear();
+        waitingConnection.clear();
+        playingConnection.clear();
+        /* Reset flags and basic data */
+        numberOfPlayers = -1; // initialized to a non-valid value
+        lobbyCreated = false;
+        /* Reset game-system objects */
+        model = null;
+        controller = null;
+        virtualViews.clear();
+        // todo resettare il sistema dei ping
+    }
+
+    private void quit() {
+        notifyClients();
+        closeConnections();
+    }
+
+    private void closeConnections() {
+        playingConnection.values().forEach(ClientConnection::unregisterAndClose);
+    }
+
+    private void notifyClients() {
+        /* Send a quit message from Server */
+        playingConnection.values().forEach(c -> {
+            c.send(new MessageEvent("Server closed the connection.")); // todo forse si può far diventare questo messaggio parametrico, nel caso ci siano disconnessioni dovute da altri fattori
+        }); // todo rimettere ServerQuitEvent (forse)
     }
 }

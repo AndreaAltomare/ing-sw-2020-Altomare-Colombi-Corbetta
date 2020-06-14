@@ -11,6 +11,7 @@ import it.polimi.ingsw.observer.Observer;
 public interface ClientConnection {
     void unregisterAndClose();
     void closeConnection();
+    void closeConnection(boolean additionalOperations);
     void addObserver(Observer<Object> observer);
     void asyncSend(Object message);
     void send(Object message);

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -40,6 +41,7 @@ public class SocketClientConnection extends Observable<Object> implements Client
     private ConnectionManager connectionManager;
     /* Connection properties */
     private boolean active = true;
+    private boolean lobbyFull = false; // tells if a connection is closed because the lobby is full
 
     /**
      * Socket for Server-Client communication initialization.
@@ -66,8 +68,13 @@ public class SocketClientConnection extends Observable<Object> implements Client
             out.writeObject(message);
             out.flush(); // To ensure data is sent
         }
+        catch(SocketTimeoutException ex) {
+            System.err.println("Socket timed out.\nMessage: " + ex.getMessage());
+            //setActive(false);
+        }
         catch(IOException ex) {
             System.err.println(ex.getMessage());
+            //setActive(false);
         }
     }
 
@@ -118,6 +125,18 @@ public class SocketClientConnection extends Observable<Object> implements Client
     }
 
     /**
+     * Method called when a connection needs to be closed
+     * because the lobby is full.
+     *
+     * @param lobbyFull Lobby is full (boolean parameter)
+     */
+    @Override
+    public void closeConnection(boolean lobbyFull) {
+        this.lobbyFull = lobbyFull;
+        closeConnection();
+    }
+
+    /**
      * Takes an Object message as an argument,
      * determines if it is a QuitEvent,
      * then execute quitting operation for the Client.
@@ -130,9 +149,16 @@ public class SocketClientConnection extends Observable<Object> implements Client
      */
     public boolean quitHandler(Object o) {
         if(o instanceof QuitEvent) {
-            System.out.println("\n" + nickname + " is being disconnected...");
-            send(new ServerQuitEvent("Connection with Server is closed!"));
-            close(); // close the connection with the Client
+            if(!server.quitAndReset(this)) {
+                if(isActive()) {
+                    System.out.println("\n" + nickname + " is being disconnected..."); // todo maybe useless
+                    send(new MessageEvent("Server closed the connection."));
+                    close();
+                }
+            }
+//            System.out.println("\n" + nickname + " is being disconnected...");
+//            send(new ServerQuitEvent("Connection with Server is closed!"));
+//            close(); // close the connection with the Client
             return true;
         }
         else
@@ -186,6 +212,15 @@ public class SocketClientConnection extends Observable<Object> implements Client
      */
     private synchronized boolean isActive() {
         return active;
+    }
+
+    /**
+     * Set connection activity (boolean) information.
+     *
+     * @param active (Connection activity boolean information)
+     */
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     /**
@@ -275,7 +310,7 @@ public class SocketClientConnection extends Observable<Object> implements Client
             server.lobby(this, nickname);
 
             /* 4- Execute Connection manager to handle network problems */
-            //executor.submit(connectionManager); // TODO: commentato temporaneamente per permettere il debug. RIATTIVARE!!
+            executor.submit(connectionManager); // TODO: commentato temporaneamente per permettere il debug. RIATTIVARE!!
 
             /* 5- Keep listening to te Client while connection is active */
             while(isActive()) {
@@ -292,15 +327,23 @@ public class SocketClientConnection extends Observable<Object> implements Client
         catch (ClassNotFoundException ex) {
             System.err.println("Error! Serialized class not found.");
         }
+        catch(SocketTimeoutException ex) {
+            System.err.println("Socket timed out.\nMessage: " + ex.getMessage());
+        }
         catch (IOException | NoSuchElementException ex) {
-            System.err.println("Error! " + ex.getMessage());
+            //System.err.println("Error! " + ex.getMessage());
+            System.err.println("Connection stopped!");
         }
         finally {
+            /* Stop ping system */
+            connectionManager.stop();
             /* Close connection with an error message just if it is still active (so the error is Server-side) */
             if(isActive()) {
-                send(new ServerQuitEvent("An error on Server occurred. You are being disconnected...")); // Inform the Client that connection is being closed since an error occurred. // TODO: check if this works correctly
-                close(); // close the connection with the Client
+                send(new ErrorMessageEvent("An error on Server occurred. You are being disconnected...")); // Inform the Client that connection is being closed since an error occurred. // TODO: check if this works correctly
+                //close(); // close the connection with the Client // todo: maybe useless: remove
             }
+            if(!lobbyFull)
+                quitHandler(new QuitEvent()); // close the connection
         }
     }
 
