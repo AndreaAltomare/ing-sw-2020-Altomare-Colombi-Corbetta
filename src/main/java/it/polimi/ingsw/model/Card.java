@@ -1,5 +1,14 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.card.adversaryMove.AdversaryMoveChecker;
+import it.polimi.ingsw.model.card.build.BuildChecker;
+import it.polimi.ingsw.model.card.build.BuildExecutor;
+import it.polimi.ingsw.model.card.move.MoveChecker;
+import it.polimi.ingsw.model.card.move.MoveExecutor;
+import it.polimi.ingsw.model.card.win.WinChecker;
+
+import java.util.List;
+
 /**
  * Class representing game Cards with their powers.
  *
@@ -18,15 +27,15 @@ public class Card {
     private boolean constructionExecuted; // tells if at least one construction was executed
     private boolean turnCompleted; // tells if at least a regular turn cycle is completed
 
-    public Card(GodPower godPower) {
+    public Card(GodPower godPower, List<MoveChecker> moveCheckers, MoveExecutor moveExecutor, List<BuildChecker> buildCheckers, BuildExecutor buildExecutor, List<WinChecker> winCheckers, List<AdversaryMoveChecker> adversaryMoveCheckers) {
         this.godPower = godPower;
         this.name = godPower.getName();
         this.epithet = godPower.getEpithet();
         this.description = godPower.getDescription();
-        this.myMove = new MyMove(this, godPower);
-        this.myConstruction = new MyConstruction(this, godPower);
-        this.myVictory = new MyVictory(this, godPower);
-        this.adversaryMove = new AdversaryMove(this, godPower);
+        this.myMove = new MyMove(this, godPower, moveCheckers, moveExecutor);
+        this.myConstruction = new MyConstruction(this, godPower, buildCheckers, buildExecutor);
+        this.myVictory = new MyVictory(this, godPower, winCheckers);
+        this.adversaryMove = new AdversaryMove(this, godPower, adversaryMoveCheckers);
         this.movementExecuted = false;
         this.constructionExecuted = false;
         this.turnCompleted = false;

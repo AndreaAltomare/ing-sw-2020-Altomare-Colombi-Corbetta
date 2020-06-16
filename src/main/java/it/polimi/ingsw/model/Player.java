@@ -1,8 +1,14 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.card.CardParser;
+import it.polimi.ingsw.model.card.adversaryMove.AdversaryMoveChecker;
+import it.polimi.ingsw.model.card.build.BuildChecker;
+import it.polimi.ingsw.model.card.build.BuildExecutor;
+import it.polimi.ingsw.model.card.move.MoveChecker;
+import it.polimi.ingsw.model.card.move.MoveExecutor;
+import it.polimi.ingsw.model.card.win.WinChecker;
 import it.polimi.ingsw.storage.ResourceManager;
 
-import javax.swing.plaf.nimbus.State;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -220,9 +226,15 @@ public class Player {
      */
     public void chooseCard(String cardName) {
         GodPower godPower = ResourceManager.callGodPower(cardName);
+        List<MoveChecker> moveCheckers = CardParser.getMoveCheckers(godPower);
+        MoveExecutor moveExecutor = CardParser.getMoveExecutor(godPower);
+        List<BuildChecker> buildCheckers = CardParser.getBuildCheckers(godPower);
+        BuildExecutor buildExecutor = CardParser.getBuildExecutor(godPower);
+        List<WinChecker> winCheckers = CardParser.getWinCheckers(godPower);
+        List<AdversaryMoveChecker> adversaryMoveCheckers = CardParser.getAdversaryMoveCheckers(godPower);
 
         /* Card initialization */
-        this.card = new Card(godPower);
+        this.card = new Card(godPower, moveCheckers, moveExecutor, buildCheckers, buildExecutor, winCheckers, adversaryMoveCheckers);
         this.movementState = new MovementManager(card);
         this.constructionState = new ConstructionManager(card);
         this.turn = movementState;

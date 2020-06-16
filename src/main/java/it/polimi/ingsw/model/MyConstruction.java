@@ -1,5 +1,12 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.card.build.BuildChecker;
+import it.polimi.ingsw.model.card.build.BuildExecutor;
+import it.polimi.ingsw.model.card.move.MoveChecker;
+import it.polimi.ingsw.model.card.move.MoveExecutor;
+
+import java.util.List;
+
 /**
  * Class representing a Player's Construction and providing
  * all the operations it needs to evaluate a Construction move correctness.
@@ -13,12 +20,16 @@ public class MyConstruction {
     private GodPower godPower; // state of chosen God's power
     private Card parentCard;
     private int constructionLeft;
+    private List<BuildChecker> checkers;
+    private BuildExecutor executor;
 
-    public MyConstruction(Card parentCard, GodPower godPower) {
+    public MyConstruction(Card parentCard, GodPower godPower, List<BuildChecker> checkers, BuildExecutor executor) {
         this.parentCard = parentCard;
         this.godPower = godPower;
         this.lastMove = null;
         this.constructionLeft = godPower.getConstructionLeft();
+        this.checkers = checkers;
+        this.executor = executor;
     }
 
     /**
@@ -31,31 +42,32 @@ public class MyConstruction {
      * @throws OutOfBoardException (Exception handled by Controller)
      */
     public boolean executeMove(BuildMove move, Worker worker) throws OutOfBoardException {
-        boolean moveAllowed;
+        boolean moveAllowed = true;
 
-        moveAllowed = checkMove(move, worker);
+        //moveAllowed = checkMove(move, worker); // todo forse è inutile [debug]
 
         /* perform the construction just if it's allowed */
         if(moveAllowed) {
-            if(!godPower.isActiveOnMyConstruction()) {
-                /* default construction execution */
-                if(move.getBlockType() == PlaceableType.BLOCK)
-                    moveAllowed = move.getSelectedCell().buildBlock();
-                else if(move.getBlockType() == PlaceableType.DOME)
-                    moveAllowed = move.getSelectedCell().buildDome();
-                else
-                    moveAllowed = false;
-            }
-            else {
-                /* special rules when performing a Movement */
-                // todo: all construction-based Gods (atlas, demeter, hephaestus, and prometheus) just need to check if the move is possible, before executing it (just to check, REMOVE THIS COMMENT)
-                if(move.getBlockType() == PlaceableType.BLOCK)
-                    moveAllowed = move.getSelectedCell().buildBlock();
-                else if(move.getBlockType() == PlaceableType.DOME)
-                    moveAllowed = move.getSelectedCell().buildDome();
-                else
-                    moveAllowed = false;
-            }
+            moveAllowed = executor.executeBuild(move, worker); // todo debug
+//            if(!godPower.isActiveOnMyConstruction()) {
+//                /* default construction execution */
+//                if(move.getBlockType() == PlaceableType.BLOCK)
+//                    moveAllowed = move.getSelectedCell().buildBlock();
+//                else if(move.getBlockType() == PlaceableType.DOME)
+//                    moveAllowed = move.getSelectedCell().buildDome();
+//                else
+//                    moveAllowed = false;
+//            }
+//            else {
+//                /* special rules when performing a Movement */
+//                // todo: all construction-based Gods (atlas, demeter, hephaestus, and prometheus) just need to check if the move is possible, before executing it (just to check, REMOVE THIS COMMENT)
+//                if(move.getBlockType() == PlaceableType.BLOCK)
+//                    moveAllowed = move.getSelectedCell().buildBlock();
+//                else if(move.getBlockType() == PlaceableType.DOME)
+//                    moveAllowed = move.getSelectedCell().buildDome();
+//                else
+//                    moveAllowed = false;
+//            }
 
             /* Register the executed move */
             if(moveAllowed)
@@ -73,14 +85,19 @@ public class MyConstruction {
      * @return (Move is allowed ? true : false)
      */
     public boolean checkMove(BuildMove move, Worker worker) {
-        boolean moveAllowed = false;
-
-        if(!godPower.isActiveOnMyConstruction())
-            moveAllowed = checkDefaultRules(move, worker);
-        else
-            moveAllowed = checkSpecialRules(move, worker);
-
-        return moveAllowed;
+        for(BuildChecker checker : checkers) {
+            if(!checker.checkBuild(move, worker, lastMove, constructionLeft, parentCard))
+                return false;
+        }
+        return true;
+//        boolean moveAllowed = false;
+//
+//        if(!godPower.isActiveOnMyConstruction())
+//            moveAllowed = checkDefaultRules(move, worker);
+//        else
+//            moveAllowed = checkSpecialRules(move, worker);
+//
+//        return moveAllowed;
     }
 
     /**
@@ -182,7 +199,7 @@ public class MyConstruction {
      * @param b (Second provided Cell)
      * @return (Cell a and Cell b are equal ? true : false)
      */
-    private boolean isSameCell(Cell a, Cell b) {
+    public static boolean isSameCell(Cell a, Cell b) {
         return a.equals(b);
     }
 
@@ -193,7 +210,7 @@ public class MyConstruction {
      * @param b (Second provided Cell)
      * @return (Cell a and Cell b are adjacent ? true : false)
      */
-    private boolean beyondAdjacentCells(Cell a, Cell b) {
+    public static boolean beyondAdjacentCells(Cell a, Cell b) {
         // x axis check
         if(!((a.getX() <= (b.getX() + 1)) && (a.getX() >= (b.getX() - 1))))
             return true;
@@ -210,7 +227,7 @@ public class MyConstruction {
      * @param cell (Provided Cell)
      * @return (Cell is occupied ? true : false)
      */
-    private boolean occupiedCell(Cell cell) {
+    public static boolean occupiedCell(Cell cell) {
         return cell.isOccupied();
     }
 
@@ -220,7 +237,7 @@ public class MyConstruction {
      * @param cell (Provided Cell)
      * @return (There is a Dome on the Cell ? true : false)
      */
-    private boolean domedCell(Cell cell) {
+    public static boolean domedCell(Cell cell) {
         return cell.isDomed();
     }
 

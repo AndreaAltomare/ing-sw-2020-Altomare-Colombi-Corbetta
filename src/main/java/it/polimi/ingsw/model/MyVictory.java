@@ -1,5 +1,9 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.card.win.WinChecker;
+
+import java.util.List;
+
 /**
  * Class representing a Player's Victory rule set and providing
  * all the operations it needs to evaluate if a Win occurs.
@@ -11,10 +15,12 @@ public class MyVictory {
     private GodPower godPower; // state of chosen God's power
     private Card parentCard;
     private final int panLevelDepth = -2;
+    private List<WinChecker> checkers;
 
-    public MyVictory(Card parentCard, GodPower godPower) {
+    public MyVictory(Card parentCard, GodPower godPower, List<WinChecker> checkers) {
         this.parentCard = parentCard;
         this.godPower = godPower;
+        this.checkers = checkers;
         //this.lastMove = null;
     }
 
@@ -26,14 +32,20 @@ public class MyVictory {
      * @return (There is a Win condition ? true : false)
      */
     public boolean checkMove(Move move, Worker worker) {
-        boolean isVictory = false;
+        for(WinChecker checker : checkers) {
+            if(checker.checkWin(move, worker))
+                return true;
+        }
+        return false;
 
-        if(!godPower.isNewVictoryCondition())
-            isVictory = checkDefaultRules(move, worker);
-        else
-            isVictory = checkSpecialRules(move, worker);
-
-        return isVictory;
+//        boolean isVictory = false;
+//
+//        if(!godPower.isNewVictoryCondition())
+//            isVictory = checkDefaultRules(move, worker);
+//        else
+//            isVictory = checkSpecialRules(move, worker);
+//
+//        return isVictory;
     }
 
     /**

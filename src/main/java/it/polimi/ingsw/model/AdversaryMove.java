@@ -1,5 +1,9 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.card.adversaryMove.AdversaryMoveChecker;
+
+import java.util.List;
+
 /**
  * Class representing a Player's Adversary Movement Observer and providing
  * all the operations it needs to evaluate an Opponent's Movement move correctness.
@@ -11,11 +15,13 @@ public class AdversaryMove {
     //private Move lastMove; // opponent's last move
     private GodPower godPower; // state of chosen God's power
     private Card parentCard;
+    private List<AdversaryMoveChecker> checkers;
 
-    public AdversaryMove(Card parentCard, GodPower godPower) {
+    public AdversaryMove(Card parentCard, GodPower godPower, List<AdversaryMoveChecker> checkers) {
         this.parentCard = parentCard;
         this.godPower = godPower; // TODO: maybe refactor this to be only on Card class, so to remove duplicated code
         this.startingPosition = null;
+        this.checkers = checkers;
         //this.lastMove = null;
     }
 
@@ -29,13 +35,19 @@ public class AdversaryMove {
      * @return (Opponent move is allowed ? true : false)
      */
     public boolean checkMove(Move move, Worker worker) throws LoseException {
-        boolean moveAllowed = true;
+        for(AdversaryMoveChecker checker : checkers) {
+            if(!checker.checkMove(move, worker, parentCard))
+                return false;
+        }
+        return true;
 
-        /* move can be denied only if the God's power has to be applied to opponent's move */
-        if(godPower.isActiveOnOpponentMovement())
-            moveAllowed = checkSpecialRules(move, worker);
-
-        return moveAllowed;
+//        boolean moveAllowed = true;
+//
+//        /* move can be denied only if the God's power has to be applied to opponent's move */
+//        if(godPower.isActiveOnOpponentMovement())
+//            moveAllowed = checkSpecialRules(move, worker);
+//
+//        return moveAllowed;
     }
 
     /**
