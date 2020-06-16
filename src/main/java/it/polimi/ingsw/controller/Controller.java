@@ -1021,7 +1021,9 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     public synchronized void update(SelectWorkerEvent selectedWorker, String playerNickname) {
         if(model.hasGameStarted()) {
             System.out.println("[SelectWorkerEvent] received form Player: '" + playerNickname + "'"); // Server control message
-            WorkerSelectedEvent workerSelected = model.selectWorker(selectedWorker.getWorkerId(), playerNickname);
+            WorkerSelectedEvent workerSelected = null;
+            if(!undoManager.isActive())
+                workerSelected = model.selectWorker(selectedWorker.getWorkerId(), playerNickname);
             if (workerSelected != null)
                 notify(workerSelected); // ANSWER FROM THE CONTROLLER (Notify the View)
         /*else
@@ -1037,7 +1039,9 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     public synchronized void update(MoveWorkerEvent move, String playerNickname) {
         if(model.hasGameStarted()) {
             System.out.println("[MoveWorkerEvent] received form Player: '" + playerNickname + "'"); // Server control message
-            List<WorkerMovedEvent> workersMoved = model.moveWorker(move.getWorkerId(), move.getX(), move.getY(), playerNickname);
+            List<WorkerMovedEvent> workersMoved = null;
+            if(!undoManager.isActive())
+                workersMoved = model.moveWorker(move.getWorkerId(), move.getX(), move.getY(), playerNickname);
             if (workersMoved != null) {
                 notifyWorkersMoved(workersMoved);
                 //notify(workerMoved); // ANSWER FROM THE CONTROLLER (Notify the View) // todo: to remove (useless)
@@ -1050,38 +1054,13 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         }
     }
 
-    /**
-     * Notify View about all Workers' Movements happened in this turn.
-     *
-     * @param workersMoved List of Workers moved
-     */
-    private void notifyWorkersMoved(List<WorkerMovedEvent> workersMoved) {
-        workersMoved.forEach(this::notify);
-    }
-
-    private void postExecutionOperations(String playerNickname, MoveOutcomeType moveOutcome) {
-        executor.submit(new Runnable() {
-            @Override
-            public void run() {
-                if (moveSucceeded(moveOutcome)) {
-                    checkUndo();
-                    if (undoRequested)
-                        undoHandler();
-                    else {
-                        checkForSwitching(playerNickname);
-                        saveGame();
-                        lastPlayingPlayer = playerNickname;
-                    }
-                }
-            }
-        });
-    }
-
     @Override
     public synchronized void update(BuildBlockEvent build, String playerNickname) {
         if(model.hasGameStarted()) {
             System.out.println("[BuildBlockEvent] received form Player: '" + playerNickname + "'"); // Server control message
-            BlockBuiltEvent blockBuilt = model.buildBlock(build.getWorkerId(), build.getX(), build.getY(), build.getBlockType(), playerNickname);
+            BlockBuiltEvent blockBuilt = null;
+            if(!undoManager.isActive())
+                blockBuilt = model.buildBlock(build.getWorkerId(), build.getX(), build.getY(), build.getBlockType(), playerNickname);
             if (blockBuilt != null) {
                 notify(blockBuilt); // ANSWER FROM THE CONTROLLER (Notify the View)
                 postExecutionOperations(playerNickname, blockBuilt.getMoveOutcome());
@@ -1097,7 +1076,9 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     public synchronized void update(RemoveWorkerEvent workerToRemove, String playerNickname) {
         if(model.hasGameStarted()) {
             System.out.println("[RemoveWorkerEvent] received form Player: '" + playerNickname + "'"); // Server control message
-            WorkerRemovedEvent workerRemoved = model.removeWorker(workerToRemove.getWorkerId(), workerToRemove.getX(), workerToRemove.getY(), playerNickname);
+            WorkerRemovedEvent workerRemoved = null;
+            if(!undoManager.isActive())
+                workerRemoved = model.removeWorker(workerToRemove.getWorkerId(), workerToRemove.getX(), workerToRemove.getY(), playerNickname);
             if (workerRemoved != null)
                 notify(workerRemoved); // ANSWER FROM THE CONTROLLER (Notify the View)
 
@@ -1114,7 +1095,9 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     public synchronized void update(RemoveBlockEvent blockToRemove, String playerNickname) {
         if(model.hasGameStarted()) {
             System.out.println("[RemoveBlockEvent] received form Player: '" + playerNickname + "'"); // Server control message
-            BlockRemovedEvent blockRemoved = model.removeBlock(blockToRemove.getWorkerId(), blockToRemove.getX(), blockToRemove.getY(), playerNickname);
+            BlockRemovedEvent blockRemoved = null;
+            if(!undoManager.isActive())
+                blockRemoved = model.removeBlock(blockToRemove.getWorkerId(), blockToRemove.getX(), blockToRemove.getY(), playerNickname);
             if (blockRemoved != null)
                 notify(blockRemoved); // ANSWER FROM THE CONTROLLER (Notify the View)
 
@@ -1154,7 +1137,9 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     public synchronized void update(TurnStatusChangeEvent turnStatus, String playerNickname) {
         if(model.hasGameStarted()) {
             System.out.println("[TurnStatusChangeEvent] received form Player: '" + playerNickname + "'"); // Server control message
-            TurnStatusChangedEvent turnStatusChanged = model.changeTurnStatus(turnStatus.getTurnStatus(), playerNickname);
+            TurnStatusChangedEvent turnStatusChanged = null;
+            if(!undoManager.isActive())
+                turnStatusChanged = model.changeTurnStatus(turnStatus.getTurnStatus(), playerNickname);
             if (turnStatusChanged != null) {
                 notify(turnStatusChanged, playerNickname); // ANSWER FROM THE CONTROLLER (Notify the View)
                 checkForSwitching(playerNickname);
@@ -1186,6 +1171,34 @@ public class Controller extends Observable<Object> implements VCEventListener, R
 
 
     /* ########################### AUXILIARY AND SUPPORT METHODS ############################ */
+
+
+    /**
+     * Notify View about all Workers' Movements happened in this turn.
+     *
+     * @param workersMoved List of Workers moved
+     */
+    private void notifyWorkersMoved(List<WorkerMovedEvent> workersMoved) {
+        workersMoved.forEach(this::notify);
+    }
+
+    private void postExecutionOperations(String playerNickname, MoveOutcomeType moveOutcome) {
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                if (moveSucceeded(moveOutcome)) {
+                    checkUndo();
+                    if (undoRequested)
+                        undoHandler();
+                    else {
+                        checkForSwitching(playerNickname);
+                        saveGame();
+                        lastPlayingPlayer = playerNickname;
+                    }
+                }
+            }
+        });
+    }
 
 
     /**
