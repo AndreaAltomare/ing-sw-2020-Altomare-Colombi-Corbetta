@@ -119,7 +119,7 @@ public class Move {
 
 
 
-    /* ##### METHOD USED WHEN RESTORING DATA ##### */
+    /* ##### METHODS USED WHEN RESTORING DATA ##### */
     public void setFloorDirection(FloorDirection floorDirection) {
         this.floorDirection = floorDirection;
     }

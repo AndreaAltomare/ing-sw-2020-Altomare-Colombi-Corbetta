@@ -78,26 +78,32 @@ public class CardParser {
                         // check that the worker is opponent's worker
                         if (move.getSelectedCell().getWorker().getOwner().equals(worker.getOwner()))
                             return false;
-
-                        // just apollo can have ANY as a FloorDirection (it means to move the worker into the vacant Cell)
-                        // todo: apollo (just to check, REMOVE THIS COMMENT)
-                        if (godPower.getForceOpponentInto() != FloorDirection.ANY) {
-                            // todo: minotaur (just to check, REMOVE THIS COMMENT)
-                            // check if the opponent's Worker can be moved into the right cell (as with Minotaur Card's power)
-                            Cell nextOpponentCell;
-                            try {
-                                nextOpponentCell = MyMove.calculateNextCell(move);
-                            } catch (OutOfBoardException ex) {
-                                return false;
-                            }
-                            checkResult = MyMove.checkNextCell(nextOpponentCell); // check if opponent's Worker can be forced into the next calculated Cell
-                            if (checkResult == false)
-                                return false;
-                        }
                     }
 
                     return true; // everything ok
                 });
+
+                // just apollo can have ANY as a FloorDirection (it means to move the worker into the vacant Cell)
+                // todo: apollo (just to check, REMOVE THIS COMMENT)
+                if (godPower.getForceOpponentInto() != FloorDirection.ANY) { // todo anche per questo va fatto un lambda a parte...
+                    checkers.add((move, worker, startingPosition, movesLeft, parentCard) -> {
+                        boolean checkResult = true;
+
+                        // todo: minotaur (just to check, REMOVE THIS COMMENT)
+                        // check if the opponent's Worker can be moved into the right cell (as with Minotaur Card's power)
+                        Cell nextOpponentCell;
+                        try {
+                            nextOpponentCell = MyMove.calculateNextCell(move);
+                        } catch (OutOfBoardException ex) {
+                            return false;
+                        }
+                        checkResult = MyMove.checkNextCell(nextOpponentCell); // check if opponent's Worker can be forced into the next calculated Cell
+                        if (checkResult == false)
+                            return false;
+
+                        return true;
+                    });
+                }
             }
 
 
@@ -145,13 +151,14 @@ public class CardParser {
             };
         }
         else {
-            executor = (move, worker, parentCard) -> {
-                boolean placed = true;
-                /* special rules when performing a Movement */
-                // if the Cell is occupied, force the opponent's Worker into another Cell otherwise perform the Movement
-                if(MyMove.occupiedCell(move.getSelectedCell())) {
-                    // todo: apollo (just to check, REMOVE THIS COMMENT)
-                    if (godPower.getForceOpponentInto() == FloorDirection.ANY) {
+            // todo: apollo (just to check, REMOVE THIS COMMENT)
+            if (godPower.getForceOpponentInto() == FloorDirection.ANY) {
+                executor = (move, worker, parentCard) -> {
+                    boolean placed = true;
+
+                    /* special rules when performing a Movement */
+                    // if the Cell is occupied, force the opponent's Worker into another Cell otherwise perform the Movement
+                    if(MyMove.occupiedCell(move.getSelectedCell())) {
                         Worker opponentWorker = move.getSelectedCell().removeWorker(); // get opponent's Worker from its Cell
                         Cell myWorkerCurrentPosition = worker.position();
                         placed = worker.place(move.getSelectedCell()); // place my Worker into the selected Cell
@@ -163,7 +170,19 @@ public class CardParser {
                         int finalY = opponentWorker.position().getY();
                         parentCard.getMyMove().setOpponentForcedMove(new MyMove.WorkerMoved(oppWorkerId, initialX, initialY, finalX, finalY));
                     }
-                    else if(godPower.getForceOpponentInto() == FloorDirection.SAME) { // todo: minotaur (just to check, REMOVE THIS COMMENT)
+                    else
+                        placed = worker.place(move.getSelectedCell());
+
+                    return placed;
+                };
+            }
+            else if(godPower.getForceOpponentInto() == FloorDirection.SAME) { // todo: minotaur (just to check, REMOVE THIS COMMENT)
+                executor = (move, worker, parentCard) -> {
+                    boolean placed = true;
+
+                    /* special rules when performing a Movement */
+                    // if the Cell is occupied, force the opponent's Worker into another Cell otherwise perform the Movement
+                    if(MyMove.occupiedCell(move.getSelectedCell())) {
                         Worker opponentWorker = move.getSelectedCell().getWorker(); // get opponent's Worker
                         String oppWorkerId = opponentWorker.getWorkerId();
                         int initialX = opponentWorker.position().getX(); // todo: check if this works correctly
@@ -174,19 +193,24 @@ public class CardParser {
                         parentCard.getMyMove().setOpponentForcedMove(new MyMove.WorkerMoved(oppWorkerId, initialX, initialY, finalX, finalY));
                         placed = worker.place(move.getSelectedCell()); // place my Worker into the selected Cell
                     }
-                }
-                else {
-                    // todo: artemis (just to check, REMOVE THIS COMMENT)
-                    placed = worker.place(move.getSelectedCell());
-                }
-                return placed;
-            };
+                    else
+                        placed = worker.place(move.getSelectedCell());
+
+                    return placed;
+                };
+            }
+            else {
+                executor = (move, worker, parentCard) -> { // todo: artemis (just to check, REMOVE THIS COMMENT)
+                    if(MyMove.occupiedCell(move.getSelectedCell()))
+                        return false;
+                    else
+                        return worker.place(move.getSelectedCell());
+                };
+            }
         }
 
         return executor;
     }
-
-
 
 
 

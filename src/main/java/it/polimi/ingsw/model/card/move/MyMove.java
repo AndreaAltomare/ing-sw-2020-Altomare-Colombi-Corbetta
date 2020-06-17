@@ -382,7 +382,7 @@ public class MyMove {
      * @param destinationCell (Cell into which force the Opponent's Worker)
      */
     public static void forceMove(Worker opponentWorker, Cell destinationCell) {
-        String oppWorkerId = opponentWorker.getWorkerId();
+        String oppWorkerId = opponentWorker.getWorkerId(); // todo: cancellare questi attributi (sono già nella lambda expression)
         int initialX = opponentWorker.position().getX(); // todo: check if this works correctly
         int initialY = opponentWorker.position().getY(); // todo: check if this works correctly
         opponentWorker.place(destinationCell);

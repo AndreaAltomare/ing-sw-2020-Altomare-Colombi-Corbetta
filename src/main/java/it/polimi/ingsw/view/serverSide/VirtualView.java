@@ -70,7 +70,10 @@ public class VirtualView extends VCEventSubject implements Observer<Object> {
      */
     @Override
     public void update(Object o) {
-        connection.asyncSend(o); // sent the [MVEvent] Object to the network via Socket
+        if(objectNeedsToBeSentInSynchronousMode(o))
+            connection.send(o);
+        else
+            connection.asyncSend(o); // sent the [MVEvent] Object to the network via Socket
         //c.asyncSend("Write something... [ASYNCHRONOUS send method]");
         //c.send("Write something... [SYNCHRONOUS send method]");
     }

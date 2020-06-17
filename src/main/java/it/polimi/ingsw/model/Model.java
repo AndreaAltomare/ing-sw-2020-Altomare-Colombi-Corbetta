@@ -123,9 +123,8 @@ public class Model {
     public void sortPlayers(List<String> players) {
         List<Player> sortedList = new ArrayList<>();
 
-        for(int i = 0; i < players.size(); i++) {
+        for(int i = 0; i < players.size(); i++)
             sortedList.add(gameRoom.getPlayer(players.get(i)));
-        }
 
         gameRoom.setPlayers(sortedList);
     }
@@ -220,7 +219,7 @@ public class Model {
         Player player = gameRoom.getPlayer(playerNickname);
         Worker worker = new Worker(player);
 
-        /* 2- Try to place th Worker */
+        /* 2- Try to place the Worker */
         try {
             placed = worker.place(board.getCellAt(x, y));
             //placed = board.getCellAt(x, y).placeOn(worker);
@@ -251,7 +250,7 @@ public class Model {
         if(challenger != null)
             return challenger.getNickname();
         else
-            return "CHALLENGER_NOT_SET_YET";
+            return "CHALLENGER_NOT_SET_YET"; // never actually returns this
     }
 
     /**
@@ -264,7 +263,7 @@ public class Model {
         if(startPlayer != null)
             return startPlayer.getNickname();
         else
-            return "START_PLAYER_NOT_SET_YET";
+            return "START_PLAYER_NOT_SET_YET"; // never actually returns this
     }
 
     /**
@@ -538,14 +537,7 @@ public class Model {
 
         while(!playerSwitched && gameStarted) {
             /* 1- End the current playing Player's turn */
-            playingPlayer = getPlayingPlayer();
-            if (!playingPlayer.equals("")) {
-                player = gameRoom.getPlayer(playingPlayer);
-                playerIndex = gameRoom.getPlayersList().indexOf(player);
-                endPlayerTurn(playingPlayer);
-            }
-            else
-                playerIndex = lastPlayingIndex - 1;
+            playerIndex = endCurrentPlayerTurn();
             /* 2- Select the next Player */
             Player nextPlayer = selectNextPlayer(playerIndex);
             /* 3- Next Player starts to play */
@@ -566,6 +558,26 @@ public class Model {
     }
 
     /**
+     * End current Player's turn.
+     *
+     * @return Last current Player's index
+     */
+    private int endCurrentPlayerTurn() {
+        String playingPlayer;
+        Player player;
+        int playerIndex;
+        playingPlayer = getPlayingPlayer();
+        if (!playingPlayer.equals("")) {
+            player = gameRoom.getPlayer(playingPlayer);
+            playerIndex = gameRoom.getPlayersList().indexOf(player);
+            endPlayerTurn(playingPlayer);
+        }
+        else
+            playerIndex = lastPlayingIndex - 1;
+        return playerIndex;
+    }
+
+    /**
      * Overloaded method to call from Controller.
      * Handle the Player's loss.
      *
@@ -578,12 +590,12 @@ public class Model {
     private void handlePlayerLoss(Player losingPlayer) {
         /* 0- End Player's Turn */
         losingPlayer.endTurn();
-        /* 1- Unregister the Player from the game */
-        /* 3- Notify all Players in game about the losingPlayer's loss */
+        /* 1- Notify all Players in game about the losingPlayer's loss */
         controller.notifyFromModel(new PlayerLoseEvent(losingPlayer.getNickname(), "Player " + losingPlayer.getNickname() + " has lost the game!"));
+        /* 2- Unregister the Player from the game */
         unregisterPlayer(losingPlayer);
         controller.printControlMessage("### Player '" + losingPlayer.getNickname() + "' has lost the game.");
-        /* 2- Check if there is just one Player left in the game */
+        /* 3- Check if there is just one Player left in the game */
         if(onlyOnePlayerLeft()) {
             /* 3- Get the last Player left in the game */
             Player lastPlayer = getLastPlayerInGame();
@@ -636,15 +648,24 @@ public class Model {
     }
 
     private void unregisterPlayer(Player losingPlayer) {
-        /* 1- Take Player's Workers, remove them and notify views*/
-        List<Worker> workers = losingPlayer.getWorkers();
-        List<WorkerRemovedEvent> removedWorkers = workers.stream().map(x -> new WorkerRemovedEvent(x.getWorkerId(), x.position().getX(), x.position().getY(), true)).collect(Collectors.toList());
-        board.removeWorkers(losingPlayer);
-        removedWorkers.forEach(x -> controller.notifyFromModel(x));
+        /* 1- Take Player's Workers, remove them and notify views */
+        removePlayerWorkers(losingPlayer);
         /* 2- Remove the Player from the Players list */
         gameRoom.removePlayer(losingPlayer.getNickname());
         /* 3- Remove the Player-associated Virtual View */ // todo: to remove (creates problems...)
         //controller.removeView(losingPlayer.getNickname()); // todo: to remove (creates problems...)
+    }
+
+    /**
+     * Take Player's Workers, remove them and notify Views.
+     *
+     * @param losingPlayer Player whose Workers are to be removed
+     */
+    private void removePlayerWorkers(Player losingPlayer) {
+        List<Worker> workers = losingPlayer.getWorkers();
+        List<WorkerRemovedEvent> removedWorkers = workers.stream().map(x -> new WorkerRemovedEvent(x.getWorkerId(), x.position().getX(), x.position().getY(), true)).collect(Collectors.toList());
+        board.removeWorkers(losingPlayer);
+        removedWorkers.forEach(x -> controller.notifyFromModel(x));
     }
 
     public MoveOutcomeType getMoveOutcome() {
