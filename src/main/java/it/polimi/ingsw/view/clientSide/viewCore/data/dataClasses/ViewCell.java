@@ -1,8 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
 import it.polimi.ingsw.controller.events.BlockBuiltEvent;
-import it.polimi.ingsw.model.MoveOutcomeType;
-import it.polimi.ingsw.model.PlaceableType;
+import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
@@ -16,6 +15,7 @@ import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.EventObject;
 import java.util.List;
 
@@ -197,6 +197,32 @@ public class ViewCell extends ViewObject {
      */
     public boolean notifyEvent( @NotNull EventObject event) throws WrongEventException{
         //todo: implement it
+        return true;
+    }
+
+    public boolean notifyEvent(CellState state){
+        Deque<PlaceableData> x = state.getBuilding();
+
+        this.doomed = false;
+        this.level = 0;
+        this.thereIsWorker = false;
+        this.worker = null;
+
+        for (PlaceableData i: x) {
+            if(i.getPlaceableType().equals(PlaceableType.DOME)){
+                this.doomed = true;
+            }else if(i.getPlaceableType().equals(PlaceableType.BLOCK)){
+                this.level++;
+            }else if(i.getPlaceableType().equals(PlaceableType.WORKER)){
+                this.thereIsWorker = true;
+                try {
+                    this.placeWorker((ViewWorker)ViewWorker.search(i.getWorkerId()));
+                } catch (NotFoundException | WrongViewObjectException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
         return true;
     }
 

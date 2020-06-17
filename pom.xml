@@ -68,7 +68,7 @@
           <artifactId>maven-jar-plugin</artifactId>
           <version>3.0.2</version>
 
-          <configuration>
+         <configuration>
             <archive>
               <manifest>
                 <mainClass>it.polimi.ingsw.view.clientSide.ViewTester</mainClass>
