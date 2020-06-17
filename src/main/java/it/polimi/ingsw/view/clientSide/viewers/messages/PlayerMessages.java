@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewers.messages;
 
 import it.polimi.ingsw.chat.ChatMessageEvent;
+import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 
 import java.util.ArrayList;
 
@@ -9,11 +10,18 @@ public class PlayerMessages {
     private static ArrayList<String[]> messageList = new ArrayList<String[]>();
     private static boolean notify = false;
 
+    public static void setNotify(boolean b){
+        notify = b;
+    }
+
     public static void addMsg(ChatMessageEvent msg){
         String[] payload = new String[2];
         payload[0] = msg.getSender();
         payload[1] = msg.getMessage();
         messageList.add(payload);
+        if(notify){
+            Viewer.setAllRefresh();
+        }
     }
 
     public static int getLen(){
