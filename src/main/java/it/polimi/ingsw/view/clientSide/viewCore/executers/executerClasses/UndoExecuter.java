@@ -15,24 +15,24 @@ public class UndoExecuter extends Executer {
 
     private final static Object lock = new Object();
 
-    public abstract class UndoExecuterListenerUpdate{
+    public interface UndoExecuterListenerUpdate{
 
 
         /**
          * Method to be called when the undo is available. this method must be light and no blocking cause executed on the same thread from which cames the undoReset -so, probably, the connection thread-.
          */
-        public abstract void undoLightAvailable();
+        public void undoLightAvailable();
 
         /**
          * Method to be called when the undo is available. this method is executed on the thread carying for the timeout.
          */
-        public abstract void undoWeightAvailable();
+        public void undoWeightAvailable();
 
 
         /**
          * Method to be called when the undo has expired.
          */
-        public abstract void undoExpired();
+        public void undoExpired();
     }
 
     private List<UndoExecuterListenerUpdate> myListener = new ArrayList<UndoExecuterListenerUpdate>(3);
@@ -43,7 +43,7 @@ public class UndoExecuter extends Executer {
      *
      * @return (UndoExecuter insatnced)
      */
-    public UndoExecuter getInstance(){
+    public static UndoExecuter getInstance(){
         return instance;
     }
 
@@ -170,6 +170,10 @@ public class UndoExecuter extends Executer {
     public void send(EventObject event) throws NullPointerException{
         if(event == null) return;
         getSender().send((UndoActionEvent)event);
+    }
+
+    public static boolean isAvailable(){
+        return thread==null;
     }
 }
 

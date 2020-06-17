@@ -14,6 +14,7 @@ import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.UndoExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
+import it.polimi.ingsw.view.clientSide.viewers.messages.PlayerMessages;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.events.*;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
@@ -625,6 +626,14 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
     @Override
     public void update(GameResumingEvent gameResuming) {
+        if(gameResuming.getGameState() == null){
+            //ASK to resume the game
+            //todo implement it
+        }else{
+            ViewBoard.populate(gameResuming.getGameState().getBoard());
+            //todo implement it
+        }
+
 
     }
 
@@ -684,6 +693,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
     @Override
     public void update(UndoOkEvent undoOk) {
+        ViewBoard.populate(undoOk.getBoardState());
+        Viewer.setAllRefresh();
 
     }
 
@@ -1174,6 +1185,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
             executor.submit(new Runnable() {
                 @Override
                 public void run() {
+                    PlayerMessages.addMsg(chatMessage);
                     System.out.println(chatMessage); // TODO PER GIORGIO: in questo metodo run() dovresti mettere il tuo codice lato front-end per mostrare il messaggio di chat. Io per ora ho messo solo una println(...) per testare che funzionasse correttamente.
                 }
             });

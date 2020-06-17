@@ -1,6 +1,9 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
 import it.polimi.ingsw.controller.events.ServerSendDataEvent;
+import it.polimi.ingsw.controller.events.UndoOkEvent;
+import it.polimi.ingsw.model.BoardState;
+import it.polimi.ingsw.model.CellState;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.CLISymbols;
@@ -169,6 +172,42 @@ public class ViewBoard extends ViewObject {
                 board.realBoard[i][j] = new ViewCell(i, j);
             }
         }
+        return board;
+    }
+
+    public static ViewObject populate(BoardState state){
+        if(board == null){
+            board = new ViewBoard();
+        }
+
+        if(board.xDim!=state.getXSize()){
+            board.realBoard = null;
+            board.xDim = state.getXSize();
+        }
+
+
+        if(board.yDim!=state.getYSize()){
+            board.realBoard = null;
+            board.yDim = state.getYSize();
+        }
+
+        if(board.realBoard==null){
+            board.realBoard = new ViewCell[board.xDim][board.yDim];
+            for(int i=0; i<board.xDim; i++) {
+                for (int j = 0; j < board.yDim; j++){
+                    board.realBoard[i][j] = new ViewCell(i, j);
+                }
+            }
+        }
+
+        CellState[][] cellStates = state.getBoard();
+
+        for(int i=0; i<board.xDim; i++) {
+            for (int j = 0; j < board.yDim; j++) {
+                board.realBoard[i][j].notifyEvent(cellStates[i][j]);
+            }
+        }
+
         return board;
     }
 

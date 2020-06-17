@@ -270,9 +270,9 @@ public class ViewTester implements ViewSender {
 
     private void initialization(){
         //new TerminalViewer().start();
-        //new GUIViewer().start();
+        new GUIViewer().start();
         //new WTerminalViewer().start();
-        new CLIViewer().start();
+        //new CLIViewer().start();
 
         Executer.setSender(this);
         ViewStatus.init();
