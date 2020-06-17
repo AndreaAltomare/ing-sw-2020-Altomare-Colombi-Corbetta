@@ -107,13 +107,6 @@ public class CLIPlaceWorkerPhase extends CLISubTurnViewer {
         while ( placedNumber < maxWorkers) {
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
 
-/*            //todo: valutarlo
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-*/
             ViewBoard.getBoard().toCLI();
 
             if ( this.placeWorkerRequest( maxWorkers - placedNumber) ) {

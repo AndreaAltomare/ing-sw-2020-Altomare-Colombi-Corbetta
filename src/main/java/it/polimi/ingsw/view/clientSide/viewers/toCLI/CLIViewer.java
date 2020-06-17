@@ -13,12 +13,13 @@ import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.*;
 import it.polimi.ingsw.view.exceptions.EmptyQueueException;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
 public class CLIViewer extends Viewer{
 
-    private static Map<ViewPlayer, String> colorMap = new HashMap<>(3);
+    private static Map<Color, String> colorMap = new HashMap<>(3);
     private CLIStatusViewer cliStatusViewer = null;
 
     public CLIViewer(){
@@ -26,49 +27,57 @@ public class CLIViewer extends Viewer{
     }
 
     /**
-     * Adds in workerMap the viewPLayer as key and a string which represents  player's ANSIStyle
+     * Adds in workerMap the worker's Color as key and a string which represents worker's ANSIStyle
      * if it is possible and if there are enough string color, then returns that string color if it is correctly added or null if it isn't
      *
-     * @param viewPlayer ViewPlayer to assign a Symbols for his worker
-     * @return the string color assigned if it is correctly assigned, ANSIStyle.RESET if it isn't
+     * @param workerColor Color's worker
+     * @return the string color assigned if it is correctly assigned, "" if it isn't
      */
-    public String assignPlayerColor(ViewPlayer viewPlayer) {
+    public String assignWorkerCLIColor(Color workerColor) {
         int size;
-        String playerStyle = null;
+        String workerStyle;
 
-        size = colorMap.size();
-        switch (size) {
-            case 0:
-                playerStyle = colorMap.put(viewPlayer, ANSIStyle.RED.getEscape());
-                break;
-            case 1:
-                playerStyle = colorMap.put(viewPlayer, ANSIStyle.YELLOW.getEscape());
-                break;
-            case 2:
-                playerStyle = colorMap.put(viewPlayer, ANSIStyle.PURPLE.getEscape());
-                break;
-            default:
-                playerStyle = colorMap.put(viewPlayer, ANSIStyle.RESET);
-                break;
+        if (workerColor != null) {
+            if (!colorMap.containsKey(workerColor)) {
+                size = colorMap.size();
+                switch (size) {
+                    case 0:
+                        workerStyle = colorMap.put(workerColor, ANSIStyle.RED.getEscape());
+                        break;
+                    case 1:
+                        workerStyle = colorMap.put(workerColor, ANSIStyle.YELLOW.getEscape());
+                        break;
+                    case 2:
+                        workerStyle = colorMap.put(workerColor, ANSIStyle.PURPLE.getEscape());
+                        break;
+                    default:
+                        workerStyle = "";
+                        break;
+                }
+            } else {
+                workerStyle = colorMap.get(workerColor);
+            }
+        } else {
+            workerStyle = "";
         }
 
-        return playerStyle;
+        return workerStyle;
     }
 
     /**
-     * Returns the string color assigned to viewPlayer or ANSIStyle.RESET if there isn't a string color assigned to viewPLayer
+     * Returns the string color assigned to worker's Color or "" if there isn't a string color assigned to worker's Color
      *
-     * @param viewPlayer ViewPlayer with a worker's Symbols assigned
-     * @return string color assigned to viewPlayer if viewPlayer has an assigned color, ANSIStyle.RESET if it haven't
+     * @param workerColor worker's Color in model
+     * @return string color assigned to worker if worker has an assigned CliColor, "" if it haven't
      */
-    public static String getPlayerColor(ViewPlayer viewPlayer) {
-        String playerColor = colorMap.get(viewPlayer);
+    public static String getWorkerCLIColor(Color workerColor) {
+        String workerCLIColor = colorMap.get(workerColor);
 
-        if (playerColor == null) {
-            playerColor = ANSIStyle.RESET;
+        if (workerCLIColor == null) {
+            workerCLIColor = "";
         }
 
-        return playerColor;
+        return workerCLIColor;
     }
 
     //todo: check it in the after simulation test if the refresh message are always after change subStatus message, in it isn't
@@ -187,17 +196,23 @@ public class CLIViewer extends Viewer{
         if (viewMessage != null) {
             switch ( viewMessage.getMessageType() ) {
                 case WIN_MESSAGE:
-//                    if (this.cliStatusViewer.getViewStatus() == ViewStatus.GAME_OVER) { //todo: probably they are in ViewStatus.PLAYNING, ask it
+                    if (this.cliStatusViewer.getViewStatus() == ViewStatus.PLAYING) {
                         this.cliStatusViewer.setMyCLISubTurnViewer( new CLIWinPhase() );
                         this.cliStatusViewer.show();
-//                    }
+                    }
                     break;
                 case LOOSE_MESSAGE:
-//                    if (this.cliStatusViewer.getViewStatus() == ViewStatus.GAME_OVER) {
+                    if (this.cliStatusViewer.getViewStatus() == ViewStatus.PLAYING) {
                         this.cliStatusViewer.setMyCLISubTurnViewer( new CLILoosePhase() );
                         this.cliStatusViewer.show();
-//                    }
+                    }
                     break;
+                case FROM_SERVER_ERROR:
+                case FATAL_ERROR_MESSAGE:
+                case EXECUTER_ERROR_MESSAGE:
+                    if ( this.cliStatusViewer != null ) {
+                        cliStatusViewer.show();
+                    }
                 default:
                     ;
             }
@@ -228,7 +243,7 @@ public class CLIViewer extends Viewer{
                         this.prepareCardsPhase(queuedEvent);
                         break;
                     case REFRESH:
-                        //this.refresh(); //todo: active after connection test
+                        //this.refresh(); //todo: active after connection test if it is necessary
                         break;
                     case MESSAGE:
                         this.prepareMessage(queuedEvent);

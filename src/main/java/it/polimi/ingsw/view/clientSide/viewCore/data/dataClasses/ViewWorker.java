@@ -276,17 +276,17 @@ public class ViewWorker extends ViewObject {
      * @return String of worker's representation chosen with player's color if it is found
      */
     public String toCLI(boolean head){
-        String playerColor;
+        String workerCLIColor;
         String workerString;
 
-        playerColor = CLIViewer.getPlayerColor( this.player );
+        workerCLIColor = CLIViewer.getWorkerCLIColor( this.getColor() );
         if (head) {
             workerString = CLISymbols.WORKER.getUpRepresentation();
         } else {
             workerString = CLISymbols.WORKER.getMiddleRepresentation();
         }
 
-        workerString = playerColor + workerString;
+        workerString = workerCLIColor + workerString;
 
         return workerString;
     }

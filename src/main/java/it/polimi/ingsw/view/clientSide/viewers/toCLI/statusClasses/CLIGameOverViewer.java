@@ -19,7 +19,7 @@ public class CLIGameOverViewer extends CLIStatusViewer {
     }
 
     /**
-     * If MyCLISUbTUrnViewer != null, calls the show method on myCLISubTurnViewer
+     * If MyCLISubTUrnViewer != null, calls the show method on myCLISubTurnViewer
      */
     @Override
     public void show() {

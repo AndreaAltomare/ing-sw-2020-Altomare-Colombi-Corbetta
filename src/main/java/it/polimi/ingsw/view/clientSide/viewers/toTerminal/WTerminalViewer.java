@@ -6,10 +6,15 @@ import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
+import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.CLILoosePhase;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.CLIWinPhase;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.Symbols;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTerminalChooseCardsPhase;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTerminalLoosePhase;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTerminalSelectMyCardPhase;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTerminalWinPhase;
 import it.polimi.ingsw.view.exceptions.EmptyQueueException;
 
 import java.util.HashMap;
@@ -126,6 +131,7 @@ public class WTerminalViewer extends Viewer {
                     case OPPONENT_PLACEWORKER:
                         if ( this.WTerminalStatusViewer.getViewStatus() == ViewStatus.GAME_PREPARATION ) {
                             this.WTerminalStatusViewer.setMyWTerminalSubTurnViewer(WTerminalSubTurnViewer);
+                            this.WTerminalStatusViewer.show();
                         }
                         break;
                     case SELECTWORKER:
@@ -136,6 +142,7 @@ public class WTerminalViewer extends Viewer {
                     case OPPONENT_BUILD:
                         if ( this.WTerminalStatusViewer.getViewStatus() == ViewStatus.PLAYING ) {
                             this.WTerminalStatusViewer.setMyWTerminalSubTurnViewer(WTerminalSubTurnViewer);
+                            this.WTerminalStatusViewer.show();
                         }
                         break;
                     default:
@@ -166,6 +173,35 @@ public class WTerminalViewer extends Viewer {
         }
     }
 
+    /**
+     * Sets and shows the correct representation of the message on the WTerminal using some WTerminalStatusView or WTerminalSubTurnView
+     * if it is necessary
+     *
+     * @param queuedEvent Event to read ( after check that its Type == MESSAGE )
+     */
+    private void prepareMessage(ViewerQueuedEvent queuedEvent) {
+        ViewMessage viewMessage = (ViewMessage) queuedEvent.getPayload();
+
+        if (viewMessage != null) {
+            switch ( viewMessage.getMessageType() ) {
+                case WIN_MESSAGE:
+                    if ( this.WTerminalStatusViewer.getViewStatus() == ViewStatus.PLAYING ) {
+                        this.WTerminalStatusViewer.setMyWTerminalSubTurnViewer(new WTerminalWinPhase());
+                        this.WTerminalStatusViewer.show();
+                    }
+                    break;
+                case LOOSE_MESSAGE:
+                    if ( this.WTerminalStatusViewer.getViewStatus() == ViewStatus.PLAYING ) {
+                        this.WTerminalStatusViewer.setMyWTerminalSubTurnViewer(new WTerminalLoosePhase());
+                        this.WTerminalStatusViewer.show();
+                    }
+                    break;
+                default:
+                    ;
+            }
+        }
+    }
+
     @Override
     public void run() {
         ViewerQueuedEvent queuedEvent;
@@ -190,7 +226,10 @@ public class WTerminalViewer extends Viewer {
                         this.prepareCardsPhase(queuedEvent);
                         break;
                     case REFRESH:
-                        this.refresh();
+                        //this.refresh();
+                        break;
+                    case MESSAGE:
+                        this.prepareMessage(queuedEvent);
                         break;
                     default:
                         ;
