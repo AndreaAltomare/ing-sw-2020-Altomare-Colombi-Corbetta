@@ -1,6 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses;
 
-import it.polimi.ingsw.model.StateType;
+import it.polimi.ingsw.model.player.turn.StateType;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;

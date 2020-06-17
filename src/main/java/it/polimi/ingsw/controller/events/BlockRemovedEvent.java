@@ -1,6 +1,6 @@
 package it.polimi.ingsw.controller.events;
 
-import it.polimi.ingsw.model.PlaceableType;
+import it.polimi.ingsw.model.board.placeables.PlaceableType;
 
 import java.util.EventObject;
 

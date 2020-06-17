@@ -3,7 +3,7 @@ package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 import it.polimi.ingsw.controller.events.WorkerMovedEvent;
 import it.polimi.ingsw.controller.events.WorkerPlacedEvent;
 import it.polimi.ingsw.controller.events.WorkerSelectedEvent;
-import it.polimi.ingsw.model.MoveOutcomeType;
+import it.polimi.ingsw.model.move.MoveOutcomeType;
 import it.polimi.ingsw.view.clientSide.View;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;

@@ -1,10 +1,14 @@
 package it.polimi.ingsw.model;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import it.polimi.ingsw.model.board.placeables.Block;
+import it.polimi.ingsw.model.board.Cell;
+import it.polimi.ingsw.model.board.IslandBoard;
+import it.polimi.ingsw.model.exceptions.OutOfBoardException;
+import it.polimi.ingsw.model.move.FloorDirection;
+import it.polimi.ingsw.model.move.LevelDirection;
+import it.polimi.ingsw.model.move.Move;
+import it.polimi.ingsw.model.player.worker.Worker;
 import org.junit.jupiter.api.Test;
-
-import java.time.Year;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -153,7 +157,7 @@ class MoveTest {
         // workerCell: W               cell2: BBB
         cell2.placeOn( new Block() );
         cell2.placeOn( new Block() );
-        workerCell.placeOn( new Worker (null) );
+        workerCell.placeOn( new Worker(null) );
         move = new Move( workerCell, cell2 );
         assertTrue( move.levelDepth == 3);
         assertTrue( move.levelDirection == LevelDirection.UP );

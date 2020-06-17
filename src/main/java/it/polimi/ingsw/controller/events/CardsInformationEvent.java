@@ -1,6 +1,6 @@
 package it.polimi.ingsw.controller.events;
 
-import it.polimi.ingsw.model.CardInfo;
+import it.polimi.ingsw.model.card.CardInfo;
 
 import java.util.EventObject;
 import java.util.List;

@@ -1,12 +1,21 @@
 package it.polimi.ingsw.model.card;
 
-import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.board.Cell;
+import it.polimi.ingsw.model.board.placeables.PlaceableType;
 import it.polimi.ingsw.model.card.adversaryMove.AdversaryMoveChecker;
 import it.polimi.ingsw.model.card.build.BuildChecker;
 import it.polimi.ingsw.model.card.build.BuildExecutor;
+import it.polimi.ingsw.model.card.build.MyConstruction;
 import it.polimi.ingsw.model.card.move.MoveChecker;
 import it.polimi.ingsw.model.card.move.MoveExecutor;
+import it.polimi.ingsw.model.card.move.MyMove;
 import it.polimi.ingsw.model.card.win.WinChecker;
+import it.polimi.ingsw.model.exceptions.LoseException;
+import it.polimi.ingsw.model.exceptions.OutOfBoardException;
+import it.polimi.ingsw.model.move.FloorDirection;
+import it.polimi.ingsw.model.move.LevelDirection;
+import it.polimi.ingsw.model.move.Move;
+import it.polimi.ingsw.model.player.worker.Worker;
 
 import java.util.ArrayList;
 import java.util.List;

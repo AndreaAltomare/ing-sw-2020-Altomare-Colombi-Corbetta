@@ -1,5 +1,9 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.board.Board;
+import it.polimi.ingsw.model.board.Cell;
+import it.polimi.ingsw.model.board.IslandBoard;
+import it.polimi.ingsw.model.exceptions.OutOfBoardException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class IslandBoardTest {
 
-    private  Board board;
+    private Board board;
 
     /**
      * Initalization before method's Test

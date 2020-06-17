@@ -1,5 +1,10 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.board.Cell;
+import it.polimi.ingsw.model.board.placeables.Dome;
+import it.polimi.ingsw.model.player.worker.ChooseType;
+import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.model.player.worker.Worker;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

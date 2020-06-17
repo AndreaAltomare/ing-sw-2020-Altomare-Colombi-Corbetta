@@ -1,5 +1,21 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.board.Cell;
+import it.polimi.ingsw.model.card.*;
+import it.polimi.ingsw.model.card.adversaryMove.AdversaryMove;
+import it.polimi.ingsw.model.card.build.MyConstruction;
+import it.polimi.ingsw.model.card.move.MyMove;
+import it.polimi.ingsw.model.card.win.MyVictory;
+import it.polimi.ingsw.model.exceptions.*;
+import it.polimi.ingsw.model.move.BuildMove;
+import it.polimi.ingsw.model.move.FloorDirection;
+import it.polimi.ingsw.model.move.LevelDirection;
+import it.polimi.ingsw.model.move.Move;
+import it.polimi.ingsw.model.player.*;
+import it.polimi.ingsw.model.player.turn.MovementManager;
+import it.polimi.ingsw.model.player.turn.observers.TurnObserver;
+import it.polimi.ingsw.model.player.worker.ChooseType;
+import it.polimi.ingsw.model.player.worker.Worker;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -335,7 +351,7 @@ class MovementManagerTest {
         //YEAH, You did it!!
     }
 
-    public static class MyCard extends Card{
+    public static class MyCard extends Card {
 
         private MyMove myMove;
         private MyConstruction myConstruction;

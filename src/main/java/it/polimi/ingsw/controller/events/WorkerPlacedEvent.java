@@ -1,6 +1,6 @@
 package it.polimi.ingsw.controller.events;
 
-import it.polimi.ingsw.model.Color;
+import it.polimi.ingsw.model.player.worker.Color;
 
 import java.util.EventObject;
 

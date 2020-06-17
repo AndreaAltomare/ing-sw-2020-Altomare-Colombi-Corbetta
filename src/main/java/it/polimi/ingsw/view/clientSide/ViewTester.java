@@ -1,7 +1,11 @@
 package it.polimi.ingsw.view.clientSide;
 
 import it.polimi.ingsw.controller.events.*;
-import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.board.placeables.PlaceableType;
+import it.polimi.ingsw.model.card.CardInfo;
+import it.polimi.ingsw.model.move.MoveOutcomeType;
+import it.polimi.ingsw.model.player.worker.Color;
+import it.polimi.ingsw.model.player.turn.StateType;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewWorker;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
@@ -9,9 +13,7 @@ import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ViewSender;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toTerminal.TerminalViewer;
 import it.polimi.ingsw.view.events.*;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;

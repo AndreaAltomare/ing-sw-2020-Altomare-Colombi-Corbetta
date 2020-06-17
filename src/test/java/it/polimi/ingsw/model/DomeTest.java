@@ -1,10 +1,10 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.board.Cell;
+import it.polimi.ingsw.model.board.placeables.Dome;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.concurrent.Callable;
 
 import static org.junit.jupiter.api.Assertions.*;
 

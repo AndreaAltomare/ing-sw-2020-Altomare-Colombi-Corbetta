@@ -2,7 +2,24 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.controller.Controller;
 import it.polimi.ingsw.controller.events.*;
-import it.polimi.ingsw.view.exceptions.WrongEventException;
+import it.polimi.ingsw.model.board.*;
+import it.polimi.ingsw.model.board.placeables.Placeable;
+import it.polimi.ingsw.model.board.placeables.PlaceableType;
+import it.polimi.ingsw.model.card.Card;
+import it.polimi.ingsw.model.card.build.MyConstruction;
+import it.polimi.ingsw.model.card.move.MyMove;
+import it.polimi.ingsw.model.exceptions.*;
+import it.polimi.ingsw.model.gameRoom.GameRoom;
+import it.polimi.ingsw.model.gameRoom.GeneralGameRoom;
+import it.polimi.ingsw.model.move.*;
+import it.polimi.ingsw.model.persistence.*;
+import it.polimi.ingsw.model.persistence.board.BoardState;
+import it.polimi.ingsw.model.persistence.board.CellState;
+import it.polimi.ingsw.model.persistence.board.PlaceableData;
+import it.polimi.ingsw.model.persistence.players.*;
+import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.model.player.turn.StateType;
+import it.polimi.ingsw.model.player.worker.Worker;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -60,7 +77,7 @@ public class Model {
      * Starts a new game.
      */
     public void startGame() throws LoseException {
-        gameRoom.players.get(0).startTurn();
+        gameRoom.getPlayersList().get(0).startTurn();
     }
 
     /**
@@ -139,7 +156,7 @@ public class Model {
     public Map<String, List<String>> getWorkersToPlayers() {
         Map<String, List<String>> map = new HashMap<>();
 
-        for(Player player : gameRoom.players) {
+        for(Player player : gameRoom.getPlayersList()) {
             List<String> workers = player.getWorkers().stream().map(w -> w.getWorkerId()).collect(Collectors.toList());
             map.put(player.getNickname(),workers);
         }

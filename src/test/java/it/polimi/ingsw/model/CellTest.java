@@ -1,6 +1,11 @@
 package it.polimi.ingsw.model;
 
 //import org.graalvm.compiler.asm.aarch64.AArch64MacroAssembler;
+import it.polimi.ingsw.model.board.*;
+import it.polimi.ingsw.model.board.placeables.Block;
+import it.polimi.ingsw.model.board.placeables.Dome;
+import it.polimi.ingsw.model.board.placeables.Placeable;
+import it.polimi.ingsw.model.player.worker.Worker;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

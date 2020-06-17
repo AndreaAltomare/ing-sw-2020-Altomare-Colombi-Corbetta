@@ -1,6 +1,6 @@
 package it.polimi.ingsw.controller.events;
 
-import it.polimi.ingsw.model.BoardState;
+import it.polimi.ingsw.model.persistence.board.BoardState;
 
 import java.util.EventObject;
 

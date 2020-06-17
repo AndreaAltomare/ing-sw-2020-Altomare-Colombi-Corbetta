@@ -1,5 +1,11 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.board.Board;
+import it.polimi.ingsw.model.board.Cell;
+import it.polimi.ingsw.model.board.IslandBoard;
+import it.polimi.ingsw.model.board.placeables.PlaceableType;
+import it.polimi.ingsw.model.exceptions.OutOfBoardException;
+import it.polimi.ingsw.model.move.BuildMove;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

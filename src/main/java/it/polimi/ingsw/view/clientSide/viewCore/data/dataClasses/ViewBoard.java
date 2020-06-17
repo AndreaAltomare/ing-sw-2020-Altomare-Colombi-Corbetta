@@ -1,9 +1,8 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
 import it.polimi.ingsw.controller.events.ServerSendDataEvent;
-import it.polimi.ingsw.controller.events.UndoOkEvent;
-import it.polimi.ingsw.model.BoardState;
-import it.polimi.ingsw.model.CellState;
+import it.polimi.ingsw.model.persistence.board.BoardState;
+import it.polimi.ingsw.model.persistence.board.CellState;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.CLISymbols;

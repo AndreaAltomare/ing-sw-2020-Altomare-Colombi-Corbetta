@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model;
 
 //import com.sun.org.apache.xpath.internal.objects.XBoolean;
+import it.polimi.ingsw.model.board.placeables.Block;
+import it.polimi.ingsw.model.board.Cell;
+import it.polimi.ingsw.model.board.placeables.Dome;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,6 @@
 package it.polimi.ingsw.controller.events;
 
-import it.polimi.ingsw.model.MoveOutcomeType;
+import it.polimi.ingsw.model.move.MoveOutcomeType;
 
 import java.util.EventObject;
 

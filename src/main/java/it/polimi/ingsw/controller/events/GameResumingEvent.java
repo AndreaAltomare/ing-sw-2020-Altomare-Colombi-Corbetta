@@ -1,6 +1,6 @@
 package it.polimi.ingsw.controller.events;
 
-import it.polimi.ingsw.model.GameState;
+import it.polimi.ingsw.model.persistence.GameState;
 
 import java.util.EventObject;
 

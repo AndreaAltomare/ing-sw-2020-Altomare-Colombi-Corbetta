@@ -1,5 +1,12 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.card.*;
+import it.polimi.ingsw.model.card.adversaryMove.AdversaryMove;
+import it.polimi.ingsw.model.card.build.MyConstruction;
+import it.polimi.ingsw.model.card.move.MyMove;
+import it.polimi.ingsw.model.card.win.MyVictory;
+import it.polimi.ingsw.model.move.FloorDirection;
+import it.polimi.ingsw.model.move.LevelDirection;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

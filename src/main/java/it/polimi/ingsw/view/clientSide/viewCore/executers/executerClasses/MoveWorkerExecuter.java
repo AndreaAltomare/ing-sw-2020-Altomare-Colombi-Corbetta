@@ -1,6 +1,5 @@
 package it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses;
 
-import it.polimi.ingsw.model.PlaceableType;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewCell;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewWorker;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;

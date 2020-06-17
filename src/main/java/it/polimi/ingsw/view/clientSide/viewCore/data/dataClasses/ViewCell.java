@@ -1,7 +1,10 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
 import it.polimi.ingsw.controller.events.BlockBuiltEvent;
-import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.board.placeables.PlaceableType;
+import it.polimi.ingsw.model.move.MoveOutcomeType;
+import it.polimi.ingsw.model.persistence.board.CellState;
+import it.polimi.ingsw.model.persistence.board.PlaceableData;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;

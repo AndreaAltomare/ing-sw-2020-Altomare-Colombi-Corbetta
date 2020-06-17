@@ -1,6 +1,6 @@
 package it.polimi.ingsw.controller.events;
 
-import it.polimi.ingsw.model.StateType;
+import it.polimi.ingsw.model.player.turn.StateType;
 
 import java.util.EventObject;
 

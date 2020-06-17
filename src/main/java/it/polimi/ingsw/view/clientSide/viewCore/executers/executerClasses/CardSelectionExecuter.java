@@ -1,10 +1,8 @@
 package it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses;
 
-import it.polimi.ingsw.model.PlaceableType;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewCard;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.CardExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
-import it.polimi.ingsw.view.events.BuildBlockEvent;
 import it.polimi.ingsw.view.events.CardSelectionEvent;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
