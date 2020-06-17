@@ -19,13 +19,13 @@ public interface CLICellPrintFunction {
      * @return string if isSelected == false, string between selection's level iof isSelected == false
      */
     static String tryAddSelectionSymbols(String string, boolean isSelected) {
-        final String DEFAULT_SELECTED_COLOR = ANSIStyle.GREY.getEscape();
+        final String DEFAULT_SELECTED_COLOR = "";
         ViewWorker selectedWorker = ViewWorker.getSelected();
         String SelectionColor;
         String newString = string;
 
         if ( selectedWorker != null ) {
-            SelectionColor = CLIViewer.getPlayerColor(selectedWorker.getPlayer());
+            SelectionColor = CLIViewer.getWorkerCLIColor(selectedWorker.getColor());
         } else {
             SelectionColor = DEFAULT_SELECTED_COLOR;
         }

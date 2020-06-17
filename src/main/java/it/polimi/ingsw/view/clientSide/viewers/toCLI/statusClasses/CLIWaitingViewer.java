@@ -46,7 +46,7 @@ public class CLIWaitingViewer extends CLIStatusViewer {
             System.out.print( ANSIStyle.YELLOW.getEscape() + UnicodeSymbol.HIGH_BLOCK_5.getEscape());
             Thread.sleep(SLEEP_TIME);
             System.out.print( ANSIStyle.GREEN.getEscape() + UnicodeSymbol.HIGH_BLOCK_8.getEscape());
-        } catch (InterruptedException e) {
+            } catch (InterruptedException e) {
             e.printStackTrace(); //todo: eliminate after testing
         }
         System.out.println();

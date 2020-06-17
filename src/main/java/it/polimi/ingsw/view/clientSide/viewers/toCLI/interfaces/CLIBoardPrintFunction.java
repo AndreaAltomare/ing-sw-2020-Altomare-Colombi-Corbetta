@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewCard;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewWorker;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.CLIGodSymbols;
@@ -17,7 +18,7 @@ public interface CLIBoardPrintFunction {
     /**
      * Returns rhe correct String of symbolNumber if cellRow == 2|3|4 ( the middle of the cell ) or an empty String if it isn't
      * @param CLISymbolNumber Symbols which represents the number of Board's row
-     * @param cellRow int Which represents the number of Cell's row (start from up with number 0)
+     * @param cellRow int which represents the number of Cell's row (start from up with number 0)
      * @return a String which represents the part ( up, middle or down ) of symbolNumber if cellRow == 2|3|4,
      *          or empty String if it isn't
      */
@@ -51,6 +52,7 @@ public interface CLIBoardPrintFunction {
         CLIGodSymbols cliGodSymbols;
         String playerColor;
         ViewCard viewCard;
+        ViewWorker[] workers;
 
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", DISTANCE_FROM_BOARD);
 
@@ -60,7 +62,12 @@ public interface CLIBoardPrintFunction {
                     try {
                         viewCard = viewPlayer.getCard();
                         cliGodSymbols = CLIGodSymbols.searchGodSymbol( viewCard.getName() );
-                        playerColor = CLIViewer.getPlayerColor( viewPlayer );
+                        try {
+                            workers = viewPlayer.getWorkers();
+                            playerColor = CLIViewer.getWorkerCLIColor(workers[0].getColor());
+                        } catch ( NotFoundException e) {
+                            playerColor = "";
+                        }
                         switch (cellRow) {
                             case 1:
                                 CLIPrintFunction.printAtTheMiddle(  playerColor, cliGodSymbols.getUpRepresentation(),
@@ -78,7 +85,7 @@ public interface CLIBoardPrintFunction {
                                 ;
                         }
                     } catch (NotFoundException e) {
-                        e.printStackTrace();
+                        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", SPACE_FOR_STRING);
                     }
                     break;
                 default:
@@ -98,26 +105,32 @@ public interface CLIBoardPrintFunction {
     static void printPlayersCaptionAtEdgeCell(int boardRow) {
         String playerColor;
         ViewCard viewCard;
+        ViewWorker[] workers;
 
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", DISTANCE_FROM_BOARD);
 
         for (ViewPlayer viewPlayer : ViewPlayer.getPlayerList()) {
             try {
-                viewCard = viewPlayer.getCard();
-                playerColor = CLIViewer.getPlayerColor( viewPlayer );
-
-               switch (boardRow) {
-                   case 1:
-                       CLIPrintFunction.printAtTheMiddle(playerColor,viewPlayer.getName(), viewPlayer.getName().length(), SPACE_FOR_STRING );
-                       break;
-                   case 2:
-                       CLIPrintFunction.printAtTheMiddle(playerColor, viewCard.getName(), viewCard.getName().length(), SPACE_FOR_STRING);
-                       break;
-                   default:
-                       ;
-                }
+                workers = viewPlayer.getWorkers();
+                playerColor = CLIViewer.getWorkerCLIColor( workers[0].getColor() );
             } catch (NotFoundException e) {
-                e.printStackTrace();
+                playerColor = ANSIStyle.RESET;
+            }
+
+           switch (boardRow) {
+               case 1:
+                   CLIPrintFunction.printAtTheMiddle(playerColor,viewPlayer.getName(), viewPlayer.getName().length(), SPACE_FOR_STRING );
+                   break;
+               case 2:
+                   try {
+                       viewCard = viewPlayer.getCard();
+                       CLIPrintFunction.printAtTheMiddle(playerColor, viewCard.getName(), viewCard.getName().length(), SPACE_FOR_STRING);
+                   } catch ( NotFoundException e ) {
+                       CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", SPACE_FOR_STRING);
+                   }
+                   break;
+               default:
+                    ;
             }
 
         }

@@ -4,11 +4,11 @@ import it.polimi.ingsw.controller.events.CardSelectedEvent;
 import it.polimi.ingsw.controller.events.ServerSendDataEvent;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.exceptions.AlreadySetException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
-import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -246,12 +246,16 @@ public class ViewPlayer extends ViewObject {
     public String toCLI(){
         String playerString = this.getName();
         String playerColor;
+        ViewWorker[] workerArray;
 
-        playerColor = CLIViewer.getPlayerColor(this);
-
-        if( playerColor != null) {
-            playerString = playerColor + playerString;
+        try {
+            workerArray = this.getWorkers();
+            playerColor = CLIViewer.getWorkerCLIColor(workerArray[0].getColor());
+        } catch (NotFoundException e) {
+            playerColor = "";
         }
+
+        playerString = playerColor + playerString + ANSIStyle.RESET;
 
         return playerString;
 
