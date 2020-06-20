@@ -202,7 +202,7 @@ public class ViewWorker extends ViewObject {
      * @throws WrongEventException (if the Event is not supported by this Class)
      */
     public static ViewObject populate( @NotNull WorkerMovedEvent workerMovedEvent) throws WrongEventException{
-        if (workerMovedEvent.getMoveOutcome()== MoveOutcomeType.EXECUTED) {
+        if (ViewObject.outcome(workerMovedEvent.getMoveOutcome())) {
             ViewWorker worker = null;
             try {
                 worker = (ViewWorker) search(workerMovedEvent.getWorker());

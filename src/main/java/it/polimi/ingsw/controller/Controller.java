@@ -799,6 +799,8 @@ public class Controller extends Observable<Object> implements VCEventListener, R
                         saveGame();
                         lastPlayingPlayer = playerNickname;
                     }
+                }else{
+                    System.out.println("- Move NOT executed.");
                 }
             }
         });
