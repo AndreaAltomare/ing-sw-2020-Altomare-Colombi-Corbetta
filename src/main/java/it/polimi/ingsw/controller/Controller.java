@@ -621,6 +621,10 @@ public class Controller extends Observable<Object> implements VCEventListener, R
                 workerSelected = model.selectWorker(selectedWorker.getWorkerId(), playerNickname);
             if (workerSelected != null)
                 notify(workerSelected); // ANSWER FROM THE CONTROLLER (Notify the View)
+            if(workerSelected != null && workerSelected.success())
+                System.out.println("- Worker " + selectedWorker.getWorkerId() + " has been correctly selected.");
+            else
+                System.out.println("- Worker " + selectedWorker.getWorkerId() + " NOT selected.");
         /*else
             notify(new ErrorMessageEvent("This Worker cannot be selected! Please try again."), playerNickname);*/
         }
@@ -739,6 +743,10 @@ public class Controller extends Observable<Object> implements VCEventListener, R
                 notify(turnStatusChanged, playerNickname); // ANSWER FROM THE CONTROLLER (Notify the View)
                 checkForSwitching(playerNickname);
             }
+            if(turnStatusChanged != null && turnStatusChanged.success())
+                System.out.println("- " + playerNickname + "'s Turn has been correctly changed: " + turnStatusChanged.getState());
+            else
+                System.out.println("- " + playerNickname + "'s Turn NOT changed.");
 
             /* ANSWER FROM THE CONTROLLER (Notify the View) */
             /*notify(new TurnStatusChangedEvent(playerNickname, turnStatus.getTurnStatus()), playerNickname);*/
@@ -782,6 +790,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             @Override
             public void run() {
                 if (moveSucceeded(moveOutcome)) {
+                    System.out.println("- Move succeeded.");
                     checkUndo();
                     if (undoRequested)
                         undoHandler();
