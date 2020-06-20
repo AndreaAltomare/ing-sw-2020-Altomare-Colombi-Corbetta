@@ -460,7 +460,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
             }
 
             //Checks if it's a change of status
-            if(!turnStatusChange.getPlayerNickname().equals(ViewSubTurn.getActual().getPlayer())){
+            if((!turnStatusChange.getPlayerNickname().equals(ViewSubTurn.getActual().getPlayer()))&&(turnStatusChange.getState().equals(StateType.MOVEMENT))){
                 ViewSubTurn.setSubTurn(ViewSubTurn.SELECTWORKER, turnStatusChange.getPlayerNickname());
             }else{
                 //Else sets the turnStatus
@@ -645,7 +645,9 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
     @Override
     public void update(GameResumingEvent gameResuming) {
-        GameState gameState = gameResuming.getGameState();
+        send(new GameResumingResponseEvent(false));
+        return;
+        /*GameState gameState = gameResuming.getGameState();
 
 
         if(gameState == null){
@@ -686,7 +688,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
             }
 
             ViewBoard.populate(gameState.getBoard());
-        }
+        }*/
 
 
     }
@@ -744,15 +746,23 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
                 ViewWorker.populate(workerSelected);
             } catch (WrongEventException ignore) {
             }
+            if(workerSelected.getPlayerNickname().equals(ViewNickname.getMyNickname())) {
+                ViewSubTurn.setSubTurn(ViewSubTurn.MOVE, workerSelected.getPlayerNickname());
+            }else{
+                ViewSubTurn.setSubTurn(ViewSubTurn.MOVE, workerSelected.getPlayerNickname());
+            }
+            Viewer.setAllSubTurnViewer(ViewSubTurn.getActual());
+            System.out.println("Worker named '" + workerSelected.getWorker() + "was correctly SELECTED");
         }
-        System.out.println("Worker named '" + workerSelected.getWorker() + "was correctly SELECTED");
     }
 
     @Override
     public void update(UndoOkEvent undoOk) {
         ViewBoard.populate(undoOk.getBoardState());
+        if(ViewSubTurn.getActual().getPlayer().equals(ViewNickname.getMyNickname())&&ViewSubTurn.getActual().equals(ViewSubTurn.MOVE)){
+            ViewSubTurn.setSubTurn(ViewSubTurn.SELECTWORKER);
+        }
         Viewer.setAllRefresh();
-
     }
 
 

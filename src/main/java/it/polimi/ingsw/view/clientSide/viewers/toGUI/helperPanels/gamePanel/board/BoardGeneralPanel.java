@@ -128,7 +128,7 @@ public class BoardGeneralPanel extends ImagePanel {
     private void addComponentToCell(int x, int y, SubPanel panel){
         if(panel == null) return;
         add(panel);
-        panel.setMyRapp(xLen, yLen, x*xLen, y*yLen);
+        panel.setMyRapp(yLen, xLen, y*yLen, x*xLen);
     }
 
     /**
@@ -154,9 +154,9 @@ public class BoardGeneralPanel extends ImagePanel {
         addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent mouseEvent) {
-                int x=mouseEvent.getX();
-                int y=mouseEvent.getY();
-                mySubTurn.onCellSelected((int)(x/(getSize().getWidth()*xLen)), (int)(y/(getSize().getHeight()*yLen )));
+                int y=mouseEvent.getX();
+                int x=mouseEvent.getY();
+                mySubTurn.onCellSelected((int)(x/(getSize().getHeight()*yLen)), (int)(y/(getSize().getWidth()*xLen )));
                 repaint();
             }
 

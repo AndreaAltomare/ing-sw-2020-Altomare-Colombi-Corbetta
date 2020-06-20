@@ -5,6 +5,7 @@ import it.polimi.ingsw.controller.events.*;
 import it.polimi.ingsw.observer.Observer;
 import it.polimi.ingsw.observer.VCEventSubject;
 
+
 /**
  * Virtual View represents the generic View scenario for the MVC pattern.
  * It works with Controller (and Model) and provides a Server-side View.
@@ -116,7 +117,7 @@ public class VirtualView extends VCEventSubject implements Observer<Object> {
      * @return (Object message needs to be sent in a synchronous mode ? true : false)
      */
     private boolean objectNeedsToBeSentInSynchronousMode(Object o) {
-        return (o instanceof NextStatusEvent || o instanceof PlayerLoseEvent || o instanceof PlayerWinEvent || o instanceof ServerSendDataEvent || o instanceof GameResumingEvent || o instanceof GameOverEvent || o instanceof ServerQuitEvent);
+        return (o instanceof NextStatusEvent || o instanceof PlayerLoseEvent || o instanceof PlayerWinEvent || o instanceof ServerSendDataEvent || o instanceof GameResumingEvent || o instanceof GameOverEvent || o instanceof ServerQuitEvent || o instanceof WorkerPlacedEvent || o instanceof CardsInformationEvent || o instanceof CardSelectedEvent || o instanceof RequireStartPlayerEvent || o instanceof  RequirePlaceWorkersEvent || o instanceof TurnStatusChangedEvent || o instanceof UndoOkEvent || o instanceof  WorkerRemovedEvent);
     }
 
 
