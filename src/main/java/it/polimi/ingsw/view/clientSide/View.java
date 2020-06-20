@@ -56,7 +56,9 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     //Per fare debugging
     public static final boolean debugging = true;
 
-    private boolean amITheChallenger = false;
+    private boolean meWinner = false;
+
+    //private boolean amITheChallenger = false;
 
     /* ########## TESTING ########## */
     private int boardXsize, boardYsize;
@@ -564,6 +566,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     @Override
     public void update(PlayerWinEvent playerWin) {
         if (ViewNickname.getMyNickname().equals(playerWin.getPlayerNickname())) {
+            meWinner = true;
             ViewMessage.populateAndSend(playerWin.getWinnerMessage(), ViewMessage.MessageType.WIN_MESSAGE);
         } else {
             ViewMessage.populateAndSend(playerWin.getLosersMessage(), ViewMessage.MessageType.LOOSE_MESSAGE);
@@ -581,6 +584,42 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
             ViewMessage.populateAndSend(playerLose.getMessage(), ViewMessage.MessageType.LOOSE_MESSAGE);
         }
     }
+
+    @Override
+    public void update(WorkerSelectedEvent workerSelected) {
+        if (workerSelected.success()){
+            try {
+                ViewWorker.populate(workerSelected);
+            } catch (WrongEventException ignore) {
+            }
+            if(workerSelected.getPlayerNickname().equals(ViewNickname.getMyNickname())) {
+                ViewSubTurn.setSubTurn(ViewSubTurn.MOVE, workerSelected.getPlayerNickname());
+            }else{
+                ViewSubTurn.setSubTurn(ViewSubTurn.MOVE, workerSelected.getPlayerNickname());
+            }
+            Viewer.setAllSubTurnViewer(ViewSubTurn.getActual());
+            System.out.println("Worker named '" + workerSelected.getWorker() + "was correctly SELECTED");
+        }else{
+            ViewMessage.populateAndSend("Cannot select the worker", ViewMessage.MessageType.FROM_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public void update(UndoOkEvent undoOk) {
+        ViewBoard.populate(undoOk.getBoardState());
+
+        //todo: is it necessary to check the player?
+        if(undoOk.getPlayerNickname().equals(ViewNickname.getMyNickname())){
+            if(undoOk.getStateType() == StateType.MOVEMENT){
+                ViewSubTurn.setSubTurn(ViewSubTurn.SELECTWORKER);
+            }else{
+                ViewSubTurn.setSubTurn(ViewSubTurn.BUILD);
+            }
+            Viewer.setAllSubTurnViewer(ViewSubTurn.getActual());
+        }
+        Viewer.setAllRefresh();
+    }
+
 
 
     //##################SOON TESTED####################
@@ -641,7 +680,13 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
     @Override
     public void update(GameOverEvent gameOver) {
-
+        if(!ViewStatus.getActual().getId().equals("GAME_OVER")){
+            ViewStatus.setStatus("GAME_OVER");
+            Viewer.setAllStatusViewer(ViewStatus.getActual().getViewer());
+            if(meWinner){
+                send(new QuitEvent());
+            }
+        }
     }
 
     @Override
@@ -708,6 +753,13 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         connection.closeConnection(); // todo add code to handle disconnection
     }
 
+    @Override
+    public void update(RequireStartPlayerEvent requireStartPlayer) {
+
+        send(new SetStartPlayerEvent(requireStartPlayer.getPlayers().get(0)));
+
+    }
+
     //#########################END UPDATE###################################
 
     public String getNickname() {
@@ -724,52 +776,6 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
     public void setConnectionActive(boolean connectionActive) {
         this.connectionActive = connectionActive;
-    }
-
-
-
-
-
-
-    @Override
-    public void update(RequireStartPlayerEvent requireStartPlayer) {
-
-        send(new SetStartPlayerEvent(requireStartPlayer.getPlayers().get(0)));
-
-    }
-
-
-
-    @Override
-    public void update(WorkerSelectedEvent workerSelected) {
-        if (workerSelected.success()){
-            try {
-                ViewWorker.populate(workerSelected);
-            } catch (WrongEventException ignore) {
-            }
-            if(workerSelected.getPlayerNickname().equals(ViewNickname.getMyNickname())) {
-                ViewSubTurn.setSubTurn(ViewSubTurn.MOVE, workerSelected.getPlayerNickname());
-            }else{
-                ViewSubTurn.setSubTurn(ViewSubTurn.MOVE, workerSelected.getPlayerNickname());
-            }
-            Viewer.setAllSubTurnViewer(ViewSubTurn.getActual());
-            System.out.println("Worker named '" + workerSelected.getWorker() + "was correctly SELECTED");
-        }//todo: aggiungere messaggio di errore
-    }
-
-    @Override
-    public void update(UndoOkEvent undoOk) {
-        ViewBoard.populate(undoOk.getBoardState());
-
-        if(undoOk.getPlayerNickname().equals(ViewNickname.getMyNickname())){
-            if(undoOk.getStateType() == StateType.MOVEMENT){
-                ViewSubTurn.setSubTurn(ViewSubTurn.SELECTWORKER);
-            }else{
-                ViewSubTurn.setSubTurn(ViewSubTurn.BUILD);
-            }
-            Viewer.setAllSubTurnViewer(ViewSubTurn.getActual());
-        }
-        Viewer.setAllRefresh();
     }
 
 
