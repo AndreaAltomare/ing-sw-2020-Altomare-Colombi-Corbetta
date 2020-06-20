@@ -691,16 +691,15 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
     @Override
     public void update(GameResumingEvent gameResuming) {
-        send(new GameResumingResponseEvent(false));
-        return;
-        /*GameState gameState = gameResuming.getGameState();
+        GameState gameState = gameResuming.getGameState();
 
 
         if(gameState == null){
-            if(amITheChallenger) {
-                ViewMessage.populateAndSend("Threre is an unfinished game", ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
-                ViewStatus.setStatus("REQUEST_RESUMING");
-            }
+            ViewMessage.populateAndSend("Threre is an unfinished game", ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
+            ViewStatus.setStatus("REQUEST_RESUMING");
+
+            //Viewer.setAllStatusViewer(ViewStatus.getActual().getViewer());
+
         }else{
             ViewMessage.populateAndSend("Resuming old game", ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
             ViewStatus.setStatus("RESUMING");
@@ -721,7 +720,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
                 }
                 PlayerData playerData = playersState.getData().get(name);
 
-                myPlayer.setCard(playerData.getCard().getName());
+
+                myPlayer.setCard(((ViewCard) ViewCard.populate(playerData.getCard())).getName());
 
                 for(WorkerData workerId: playerData.getWorkers()){
                     try {
@@ -734,9 +734,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
             }
 
             ViewBoard.populate(gameState.getBoard());
-        }*/
-
-
+        }
     }
 
     /**

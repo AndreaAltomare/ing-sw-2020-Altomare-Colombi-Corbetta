@@ -285,7 +285,9 @@ public enum ViewStatus implements ClientAddressable {
         }
 
         @Override
-        void onLoad() {}
+        void onLoad() {
+
+        }
 
     },
     RESUMING("RESUMING"){
@@ -301,11 +303,13 @@ public enum ViewStatus implements ClientAddressable {
 
         @Override
         public StatusViewer getViewer() {
-            return new ClosingViewer(getExecuters());
+            return new ResumingViewer(getExecuters());
         }
 
         @Override
-        void onLoad() {}
+        void onLoad() {
+            ViewSubTurn.setSubTurn(ViewSubTurn.PLACEWORKER, "");
+        }
     };
 
     private String id;

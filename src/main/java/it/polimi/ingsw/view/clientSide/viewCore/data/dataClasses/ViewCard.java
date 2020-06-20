@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
 //import com.sun.tools.javac.comp.Resolve;
+import it.polimi.ingsw.model.persistence.players.CardData;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.GodSymbols;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.SymbolsLevel;
@@ -110,6 +111,15 @@ public class ViewCard extends ViewObject {
     public static ViewObject populate( @NotNull EventObject event) throws WrongEventException{
         //todo immplement it
         throw new WrongEventException();
+    }
+
+    public static ViewObject populate(CardData data){
+        ViewCard ret;
+        ret = new ViewCard(data.getName());
+
+        //todo: set epiteth and description
+
+        return ret;
     }
 
     /**

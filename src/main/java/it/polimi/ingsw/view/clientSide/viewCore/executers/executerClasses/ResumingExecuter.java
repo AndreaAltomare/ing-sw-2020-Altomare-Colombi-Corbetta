@@ -4,14 +4,19 @@ import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.events.GameResumingResponseEvent;
 import it.polimi.ingsw.view.events.QuitEvent;
 import it.polimi.ingsw.view.events.UndoActionEvent;
+import it.polimi.ingsw.view.exceptions.AlreadySetException;
 
 import java.util.EventObject;
 
 public class ResumingExecuter extends Executer {
     private boolean resume;
+    private boolean done = false;
 
-    public void setResume(boolean _resume){
+    public void setResume(boolean _resume) throws AlreadySetException {
+        if(done)
+            throw new AlreadySetException();
         resume = _resume;
+        done = true;
     }
 
     /**
@@ -48,6 +53,7 @@ public class ResumingExecuter extends Executer {
 
     public void send(EventObject event) throws NullPointerException{
         if(event == null) return;
+        if(!done) throw new NullPointerException();
         getSender().send((GameResumingResponseEvent)event);
     }
 }
