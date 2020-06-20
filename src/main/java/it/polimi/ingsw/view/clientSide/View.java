@@ -754,14 +754,20 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
             }
             Viewer.setAllSubTurnViewer(ViewSubTurn.getActual());
             System.out.println("Worker named '" + workerSelected.getWorker() + "was correctly SELECTED");
-        }
+        }//todo: aggiungere messaggio di errore
     }
 
     @Override
     public void update(UndoOkEvent undoOk) {
         ViewBoard.populate(undoOk.getBoardState());
-        if(ViewSubTurn.getActual().getPlayer().equals(ViewNickname.getMyNickname())&&ViewSubTurn.getActual().equals(ViewSubTurn.MOVE)){
-            ViewSubTurn.setSubTurn(ViewSubTurn.SELECTWORKER);
+
+        if(undoOk.getPlayerNickname().equals(ViewNickname.getMyNickname())){
+            if(undoOk.getStateType() == StateType.MOVEMENT){
+                ViewSubTurn.setSubTurn(ViewSubTurn.SELECTWORKER);
+            }else{
+                ViewSubTurn.setSubTurn(ViewSubTurn.BUILD);
+            }
+            Viewer.setAllSubTurnViewer(ViewSubTurn.getActual());
         }
         Viewer.setAllRefresh();
     }

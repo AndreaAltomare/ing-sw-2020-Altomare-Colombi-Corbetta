@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.board.placeables.PlaceableType;
 import it.polimi.ingsw.model.move.MoveOutcomeType;
 import it.polimi.ingsw.model.persistence.board.CellState;
 import it.polimi.ingsw.model.persistence.board.PlaceableData;
+import it.polimi.ingsw.view.clientSide.View;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
@@ -124,6 +125,15 @@ public class ViewCell extends ViewObject {
     void removeWorker(){
         thereIsWorker = false;
         worker = null;
+    }
+
+    void removeWorker(ViewWorker worker){
+        if(thereIsWorker && worker.equals(this.worker)){
+            removeWorker();
+        }else{
+            if(View.debugging)
+                System.out.println("Non tolgo");
+        }
     }
 
     /**
