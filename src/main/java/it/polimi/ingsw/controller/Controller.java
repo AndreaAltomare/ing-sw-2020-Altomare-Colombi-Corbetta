@@ -1123,6 +1123,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         printControlMessage("\n##### Game Over #####\n");
         List<String> players = model.players();
         players.forEach(this::gameOverMessage);
+        //resetGame();
     }
 
     /**
