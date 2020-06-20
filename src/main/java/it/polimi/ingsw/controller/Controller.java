@@ -981,11 +981,12 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             model.startGame(); // start the game
             model.setGameStarted(true);
             String playingPlayer = model.getPlayingPlayer();
-            notify(new TurnStatusChangedEvent(playingPlayer, StateType.MOVEMENT, true), playingPlayer);
+            //notify(new TurnStatusChangedEvent(playingPlayer, StateType.MOVEMENT, true), playingPlayer);
+            notify(new TurnStatusChangedEvent(playingPlayer, StateType.MOVEMENT, true));
             // Notify other Players too
-            for(String player : players)
-                if (!player.equals(playingPlayer))
-                    notify(new TurnStatusChangedEvent(player, StateType.NONE, true), player);
+//            for(String player : players) // todo forse cancellare questo codice
+//                if (!player.equals(playingPlayer))
+//                    notify(new TurnStatusChangedEvent(player, StateType.NONE, true), player);
         }
         catch (LoseException ex) {
             System.err.println("An error has occurred during the starting of the game!");
