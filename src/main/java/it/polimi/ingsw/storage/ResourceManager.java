@@ -34,7 +34,7 @@ public class ResourceManager {
      * @return GodPower's instance (Card's GodPower properties)
      */
     public static GodPower callGodPower(String cardName) {
-        String cardPath = GAME_RESOURCES_PATH + CARDS_PATH + cardName;
+        String cardPath = GAME_RESOURCES_PATH + CARDS_PATH + cardName.toLowerCase();
         FileManager fileManager = FileManager.getIstance();
         String json = fileManager.getCard(cardPath);
 
