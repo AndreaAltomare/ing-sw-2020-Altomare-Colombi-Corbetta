@@ -74,13 +74,13 @@ public abstract class Executer{
         this.clear();
     }
 
-
+    //todo: rimuovere tutti i send overridati
     /**
      * Method that sends the event to the Server.
      *
      * @param event (EventObject to be submitted to the server)
      */
-    public void send(EventObject event) throws NullPointerException{
+    public void send(Object event) throws NullPointerException{
         if(event == null) throw new NullPointerException();
         sender.send(event);
     }
@@ -111,7 +111,7 @@ public abstract class Executer{
         this.clear();
     }
 
-    public static ViewSender getSender(){
+    protected static ViewSender getSender(){
         return sender;
     }
 

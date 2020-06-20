@@ -82,6 +82,11 @@ public class ViewTester implements ViewSender {
     //####MOSSE####
     private String[][] workers = new String[2][2];
 
+    @Override
+    public void send(Object o) {
+
+    }
+
     private class Mossa{
         int player;
         int worker;
@@ -276,7 +281,7 @@ public class ViewTester implements ViewSender {
         //new WTerminalViewer().start();
         //new CLIViewer().start();
 
-        Executer.setSender(this);
+        Executer.setSender(view);
         ViewStatus.init();
     }
 
@@ -632,7 +637,6 @@ public class ViewTester implements ViewSender {
         myNotify();
     }
 
-    @Override
     public void send(EventObject event) {
         myNotify();
     }

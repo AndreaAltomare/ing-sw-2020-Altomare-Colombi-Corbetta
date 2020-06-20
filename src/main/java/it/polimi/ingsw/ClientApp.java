@@ -5,6 +5,9 @@ import it.polimi.ingsw.connection.client.ClientConnection;
 import it.polimi.ingsw.connection.server.ServerConnection;
 import it.polimi.ingsw.storage.ResourceManager;
 import it.polimi.ingsw.view.clientSide.View;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -58,7 +61,18 @@ public class ClientApp {
         client.addMVEventsListener(view);
         view.addObserver(client);
         //try {
+
+        //new TerminalViewer().start();
+        new GUIViewer().start();
+        //new WTerminalViewer().start();
+        //new CLIViewer().start();
+
+        Executer.setSender(view);
+        ViewStatus.init();
+
             view.run();
+
+
             //client.run();
         //}
         //catch(IOException ex) {

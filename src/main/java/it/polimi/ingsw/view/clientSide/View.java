@@ -17,6 +17,7 @@ import it.polimi.ingsw.observer.MVEventListener;
 import it.polimi.ingsw.observer.Observable;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.UndoExecuter;
+import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ViewSender;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.messages.PlayerMessages;
@@ -36,7 +37,7 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class View extends Observable<Object> implements MVEventListener, Runnable { // todo: maybe this class extends Observable<Object> for proper interaction with Network Handler
+public class View extends Observable<Object> implements MVEventListener, Runnable, ViewSender { // todo: maybe this class extends Observable<Object> for proper interaction with Network Handler
     /* Multi-threading operations */
     private ExecutorService executor = Executors.newFixedThreadPool(128);
     /* General */
@@ -61,7 +62,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     public View(Scanner in, ClientConnection connection) {
         this.in = in;
         this.connection = connection;
-        connection.setChatMessageHandler(new ChatMessageReceiver());
+        //connection.setChatMessageHandler(new ChatMessageReceiver());
     }
 
     // TODO: con questo sistema viene verificato anche che la comunicazione con Pattern Observer funzioni correttamente su thread diversi
@@ -1227,5 +1228,17 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
                 }
             });
         }
+    }
+
+
+    //todo: sistemare javadoc
+    /**
+     * Wrapper method
+     *
+     * @param o (Event)
+     */
+    @Override
+    public void send(Object o){
+        notify(o);
     }
 }
