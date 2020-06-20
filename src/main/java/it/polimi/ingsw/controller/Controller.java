@@ -825,7 +825,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         /* Register Turn Observers */
         registerTurnObservers(); // todo maybe is useless
         /* Notify Players about action undo */
-        notify(new UndoOkEvent(model.getLastBoardState()));
+        notify(new UndoOkEvent(model.getLastBoardState(), model.getPlayingPlayer(), model.getPlayingPlayerState()));
         /* Done */
         System.out.println("--- Action was undone.");
     }

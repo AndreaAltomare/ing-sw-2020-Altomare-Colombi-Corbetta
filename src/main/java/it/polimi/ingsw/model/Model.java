@@ -280,6 +280,18 @@ public class Model {
 
     /**
      *
+     * @return StateType of the playing Player
+     */
+    public StateType getPlayingPlayerState() {
+        for(Player player : gameRoom.getPlayersList())
+            if (player.isPlaying())
+                return player.getTurnType();
+
+        return StateType.NONE;
+    }
+
+    /**
+     *
      * @return The playing Player's reference
      */
     public Player getPlayingPlayerReference() {
