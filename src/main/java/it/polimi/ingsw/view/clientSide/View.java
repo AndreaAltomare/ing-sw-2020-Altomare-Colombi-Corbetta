@@ -731,6 +731,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     @Override
     public void update(RequireStartPlayerEvent requireStartPlayer) {
 
+        send(new SetStartPlayerEvent(requireStartPlayer.getPlayers().get(0)));
+
     }
 
 

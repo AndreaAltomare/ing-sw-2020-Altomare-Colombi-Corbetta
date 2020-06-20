@@ -177,7 +177,11 @@ public enum ViewStatus implements ClientAddressable {
 
         @Override
         void onLoad() {
-            ViewSubTurn.getActual().setPlayer("");
+            try {
+                ViewSubTurn.getActual().setPlayer("");
+            }catch(Exception e){
+                e.printStackTrace();
+            }
         }
     },
 
