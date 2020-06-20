@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.clientSide.viewCore.status;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.DataStorage;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.ResumingExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetNicknameExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetPlayerNumberExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ClientAddressable;
@@ -256,6 +257,47 @@ public enum ViewStatus implements ClientAddressable {
         void onLoad() {
 
         }
+    },
+    REQUEST_RESUMING( "REQUEST_RESUMING"){
+        @Override
+        public ViewStatus getNext() {
+            return NEW_GAME;
+        }
+
+        @Override
+        Map<String, Executer> getExecuters() {
+            Map<String, Executer> ret = new HashMap<String, Executer>(1);
+            ret.put("Resume", new ResumingExecuter());
+            return ret;
+        }
+
+        @Override
+        public StatusViewer getViewer() {
+            return new RequestResumingViewer(getExecuters());
+        }
+
+        @Override
+        void onLoad() {}
+
+    },
+    RESUMING("RESUMING"){
+        @Override
+        public ViewStatus getNext() {
+            return PLAYING;
+        }
+
+        @Override
+        Map<String, Executer> getExecuters() {
+            return null;
+        }
+
+        @Override
+        public StatusViewer getViewer() {
+            return new ClosingViewer(getExecuters());
+        }
+
+        @Override
+        void onLoad() {}
     };
 
     private String id;

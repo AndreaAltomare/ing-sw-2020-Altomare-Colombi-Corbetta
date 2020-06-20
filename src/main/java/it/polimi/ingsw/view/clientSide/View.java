@@ -7,7 +7,12 @@ import it.polimi.ingsw.controller.events.*;
 import it.polimi.ingsw.model.card.CardInfo;
 import it.polimi.ingsw.model.move.MoveOutcomeType;
 import it.polimi.ingsw.model.board.placeables.PlaceableType;
+import it.polimi.ingsw.model.persistence.GameState;
+import it.polimi.ingsw.model.persistence.players.PlayerData;
+import it.polimi.ingsw.model.persistence.players.PlayersState;
+import it.polimi.ingsw.model.persistence.players.WorkerData;
 import it.polimi.ingsw.model.player.turn.StateType;
+import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.observer.MVEventListener;
 import it.polimi.ingsw.observer.Observable;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
@@ -45,6 +50,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
     //Per fare debugging
     public static final boolean debugging = true;
+
+    private boolean amITheChallenger = false;
 
     /* ########## TESTING ########## */
     private int boardXsize, boardYsize;
@@ -626,12 +633,47 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
     @Override
     public void update(GameResumingEvent gameResuming) {
-        if(gameResuming.getGameState() == null){
-            //ASK to resume the game
-            //todo implement it
+        GameState gameState = gameResuming.getGameState();
+
+
+        if(gameState == null){
+            if(amITheChallenger) {
+                ViewMessage.populateAndSend("Threre is an unfinished game", ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
+                ViewStatus.setStatus("REQUEST_RESUMING");
+            }
         }else{
-            ViewBoard.populate(gameResuming.getGameState().getBoard());
-            //todo implement it
+            ViewMessage.populateAndSend("Resuming old game", ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
+            ViewStatus.setStatus("RESUMING");
+
+            PlayersState playersState = gameState.getPlayers();
+            ArrayList<String> playersName = new ArrayList<String>(3);
+
+            for(String name: playersState.getData().keySet()){
+                ViewPlayer myPlayer;
+                playersName.add(name);
+                new ViewPlayer(name);
+
+                try {
+                    myPlayer = ViewPlayer.searchByName(name);
+                } catch (NotFoundException e) {
+                    e.printStackTrace();
+                    continue;
+                }
+                PlayerData playerData = playersState.getData().get(name);
+
+                myPlayer.setCard(playerData.getCard().getName());
+
+                for(WorkerData workerId: playerData.getWorkers()){
+                    try {
+                        new ViewWorker(workerId.getWorkerId(), myPlayer);
+                    } catch (NotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+
+            ViewBoard.populate(gameState.getBoard());
         }
 
 
@@ -1058,11 +1100,6 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 ////        }
 //        if(workerMoved.getMoveOutcome() == MoveOutcomeType.EXECUTED || workerMoved.getMoveOutcome() == MoveOutcomeType.TURN_SWITCHED || workerMoved.getMoveOutcome() == MoveOutcomeType.TURN_OVER || workerMoved.getMoveOutcome() == MoveOutcomeType.LOSS || workerMoved.getMoveOutcome() == MoveOutcomeType.WIN) {
 //            System.out.println("[WorkerMovedEvent] Worker '" + workerMoved.getWorker() + "' was correctly moved:"); // todo [debug]
-//            System.out.println("    Initial position: ( " + workerMoved.getInitialX() + " , " + workerMoved.getInitialY() + " )"); // todo [debug]
-//            System.out.println("    Current position: ( " + workerMoved.getFinalX() + " , " + workerMoved.getFinalY() + " )"); // todo [debug]
-//        }
-//        else if(workerMoved.getMoveOutcome() == MoveOutcomeType.OPPONENT_WORKER_MOVED) {
-//            System.out.println("[WorkerMovedEvent] Opponent's Worker '" + workerMoved.getWorker() + "' was forced to move:"); // todo [debug]
 //            System.out.println("    Initial position: ( " + workerMoved.getInitialX() + " , " + workerMoved.getInitialY() + " )"); // todo [debug]
 //            System.out.println("    Current position: ( " + workerMoved.getFinalX() + " , " + workerMoved.getFinalY() + " )"); // todo [debug]
 //        }
