@@ -249,7 +249,7 @@ public class ViewCell extends ViewObject {
      * @throws WrongEventException (if the Event is not supported by this Class)
      */
     public static ViewObject populate(@NotNull BlockBuiltEvent blockBuiltEvent) throws WrongEventException{
-        if(blockBuiltEvent.getMoveOutcome() == MoveOutcomeType.EXECUTED) {
+        if(ViewObject.outcome(blockBuiltEvent.getMoveOutcome())) {
             ViewCell cell;
             try {
                 cell = ViewBoard.getBoard().getCellAt(blockBuiltEvent.getX(), blockBuiltEvent.getY());

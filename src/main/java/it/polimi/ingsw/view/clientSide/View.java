@@ -15,6 +15,7 @@ import it.polimi.ingsw.model.player.turn.StateType;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.observer.MVEventListener;
 import it.polimi.ingsw.observer.Observable;
+import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.UndoExecuter;
@@ -519,7 +520,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         Viewer.setAllRefresh();
 
         //checks for the undo
-        if(ViewSubTurn.getActual().isMyTurn() && workerMoved.getMoveOutcome()== MoveOutcomeType.EXECUTED)
+        if(ViewSubTurn.getActual().isMyTurn() && ViewObject.outcome(workerMoved.getMoveOutcome()))
             UndoExecuter.startUndo();
         /*try {
             ((ViewWorker)ViewWorker.search(workerMoved.getWorker())).placeOn(workerMoved.getFinalX(), workerMoved.getFinalY());
@@ -538,7 +539,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         Viewer.setAllRefresh();
 
         //check for the undo
-        if(ViewSubTurn.getActual().isMyTurn() && blockBuilt.getMoveOutcome()==MoveOutcomeType.EXECUTED)
+        if(ViewSubTurn.getActual().isMyTurn() && ViewObject.outcome(blockBuilt.getMoveOutcome()))
             UndoExecuter.startUndo();
         /*ViewCell cell;
         try {

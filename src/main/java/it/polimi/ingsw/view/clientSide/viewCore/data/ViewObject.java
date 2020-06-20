@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data;
 
+import it.polimi.ingsw.model.move.MoveOutcomeType;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ClientAddressable;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
@@ -11,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.EventObject;
+
+import static it.polimi.ingsw.model.move.MoveOutcomeType.*;
 
 /**
  * Interface for all the data representations available to the View side.
@@ -185,5 +188,9 @@ public abstract class ViewObject implements ClientAddressable {
      * @return (representation of Object for the GI)
      */
     public JPanel toGUI(){return null;}
+
+    public static boolean outcome(MoveOutcomeType outcomeType){
+        return (outcomeType == MoveOutcomeType.EXECUTED || outcomeType == MoveOutcomeType.TURN_SWITCHED || outcomeType == MoveOutcomeType.TURN_OVER || outcomeType == LOSS || outcomeType == WIN || outcomeType == OPPONENT_WORKER_MOVED);
+    }
 
 }
