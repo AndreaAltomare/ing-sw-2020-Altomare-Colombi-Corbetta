@@ -16,12 +16,14 @@ import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.observer.MVEventListener;
 import it.polimi.ingsw.observer.Observable;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.UndoExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ViewSender;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.messages.PlayerMessages;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
 import it.polimi.ingsw.view.events.*;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
@@ -44,6 +46,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     Thread tConnection;
     private ClientConnection connection;
     private Scanner in; // Scanner unique reference
+    private Viewer viewer; // specific viewer for the Client
     private String input; // unique input
     private String nickname; // Player's nickname
     private boolean nicknameSet;
@@ -59,9 +62,10 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     private List<String> players;
     private Map<String, List<String>> workersToPlayer;
 
-    public View(Scanner in, ClientConnection connection) {
+    public View(Scanner in, ClientConnection connection, Viewer viewer) {
         this.in = in;
         this.connection = connection;
+        this.viewer = viewer;
         //connection.setChatMessageHandler(new ChatMessageReceiver());
     }
 
@@ -81,6 +85,13 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         ViewStatus.nextStatus();
         Viewer.setAllStatusViewer(ViewStatus.getActual().getViewer());*/
 
+        //new TerminalViewer().start();
+        viewer.start();
+        //new WTerminalViewer().start();
+        //new CLIViewer().start();
+        Executer.setSender(this);
+        ViewStatus.init();
+
 
 
         // todo istanziare connessione ecc...
@@ -99,183 +110,183 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
 
         //System.out.println("Welcome! Type something.");
-        input = in.nextLine();
-        while(!input.equals("quit")) {
-            switch (input) {
-                case "alto":
-                case "andrea":
-                case "giorgio":
-                case "marco":
-                    if(!nicknameSet) {
-                        nickname = input;
-                        notify(new SetNicknameEvent(nickname)); // submit nickname
-                        nicknameSet = true;
-                    }
-                    else {
-                        notify(new SetStartPlayerEvent(input)); // submit nickname
-                    }
-                    break;
-
-
-                case "1":
-                case "2":
-                case "3":
-                case "4":
-                case "5":
-                    notify(new SetPlayersNumberEvent(Integer.parseInt(input))); // by this way we ensure auto-boxing from int to Object type works correctly
-                    break;
-
-
-                case "y":
-                    notify(new GameResumingResponseEvent(true));
-                    break;
-                case "n":
-                    notify(new GameResumingResponseEvent(false));
-                    break;
-
-
-                case "start_player":
-                    input = in.nextLine();
-                    notify(new SetStartPlayerEvent(input)); // submit nickname
-                    break;
-
-
-                case "build_block":
-                    System.out.println("Type the Worker's ID (just the number) by which make a build: ");
-                    int id = Integer.parseInt(in.nextLine());
-                    String workerId = "[Worker]\t" + id;
-                    System.out.println("X position: ");
-                    int x = Integer.parseInt(in.nextLine());
-                    System.out.println("Y position: ");
-                    int y = Integer.parseInt(in.nextLine());
-                    System.out.println("Select the type of block you want to build (type its number):\n1 - BLOCK\n2 - DOME");
-                    int block = Integer.parseInt(in.nextLine());
-                    PlaceableType blockType = PlaceableType.DOME;
-                    if(block == 1)
-                        blockType = PlaceableType.BLOCK;
-                    notify(new BuildBlockEvent(workerId, x, y, blockType));
-                    break;
-
-
-                case "challenger_card":
-                    String card;
-                    int n = players.size();
-                    List<String> cards = new ArrayList<>(n);
-                    System.out.println("Choose " + n + " Cards for this game.");
-                    for(int i = 0; i < n; i++) {
-                        System.out.println((n - i) + " remaining Cards to choose. Type a name of a Card:");
-                        card = in.nextLine();
-                        cards.add(card);
-                    }
-                    notify(new CardsChoosingEvent(cards));
-                    break;
-
-
-                case "select_card":
-                    card = in.nextLine();
-                    notify(new CardSelectionEvent(card));
-                    break;
-
-
-                case "move_worker":
-                    System.out.println("Type the Worker's ID (just the number) by which make a movement: ");
-                    id = Integer.parseInt(in.nextLine());
-                    workerId = "[Worker]\t" + id;
-                    System.out.println("X position: ");
-                    x = Integer.parseInt(in.nextLine());
-                    System.out.println("Y position: ");
-                    y = Integer.parseInt(in.nextLine());
-                    notify(new MoveWorkerEvent(workerId, x, y));
-                    break;
-
-
-                case "place_worker":
-                    System.out.println("Place a Worker onto the game board.");
-                    System.out.println("X position: ");
-                    x = Integer.parseInt(in.nextLine());
-                    System.out.println("Y position: ");
-                    y = Integer.parseInt(in.nextLine());
-                    notify(new PlaceWorkerEvent(x, y));
-                    break;
-
-
-                case "remove_block":
-                    System.out.println("Type the Worker's ID (just the number) by which remove a block from the game board: ");
-                    id = Integer.parseInt(in.nextLine());
-                    workerId = "[Worker]\t" + id;
-                    System.out.println("X position of the block to remove: ");
-                    x = Integer.parseInt(in.nextLine());
-                    System.out.println("Y position of the block to remove: ");
-                    y = Integer.parseInt(in.nextLine());
-                    notify(new RemoveBlockEvent(workerId, x, y));
-                    break;
-
-
-                case "remove_worker":
-                    System.out.println("Type the Worker's ID (just the number) of the Worker to remove from the game board: ");
-                    id = Integer.parseInt(in.nextLine());
-                    workerId = "[Worker]\t" + id;
-                    System.out.println("X position of the Worker to remove: ");
-                    x = Integer.parseInt(in.nextLine());
-                    System.out.println("Y position of the Worker to remove: ");
-                    y = Integer.parseInt(in.nextLine());
-                    notify(new RemoveWorkerEvent(workerId, x, y));
-                    break;
-
-
-                case "select_worker":
-                    System.out.println("Type the Worker's ID (just the number) of the Worker you want to select: ");
-                    id = Integer.parseInt(in.nextLine());
-                    workerId = "[Worker]\t" + id;
-                    notify(new SelectWorkerEvent(workerId));
-                    break;
-
-
-                case "turn_change":
-                    System.out.println("Select the turn you want to switch at:\n1 - MOVEMENT\n2 - CONSTRUCTION\n3 - PASS TURN");
-                    int turn = Integer.parseInt(in.nextLine());
-                    StateType turnType = StateType.NONE;
-                    if(turn == 1)
-                        turnType = StateType.MOVEMENT;
-                    else if(turn == 2)
-                        turnType = StateType.CONSTRUCTION;
-                    notify(new TurnStatusChangeEvent(turnType));
-                    break;
-
-
-                case "undo":
-                    notify(new UndoActionEvent());
-                    break;
-
-
-                case "chat":
-                    System.out.println("Write something as a chat message to send everyone: ");
-                    String message = in.nextLine();
-                    notify(new ChatMessageEvent(nickname, message));
-                    break;
-
-
-                case "data_request":
-                    notify(new ViewRequestDataEvent());
-                    break;
-
-
-                /* ########## CONTROL COMMANDS ########## */
-                case "game_info":
-                    printGameInfo();
-                    break;
-
-
-                default:
-                    System.out.println("Invalid request. Try again.");
-                    break;
-            }
-
-            input = in.nextLine();
-        }
-
-        notify(new QuitEvent());
-        // TODO: close connection, and gracefully close the whole application
+//        input = in.nextLine();
+//        while(!input.equals("quit")) {
+//            switch (input) {
+//                case "alto":
+//                case "andrea":
+//                case "giorgio":
+//                case "marco":
+//                    if(!nicknameSet) {
+//                        nickname = input;
+//                        notify(new SetNicknameEvent(nickname)); // submit nickname
+//                        nicknameSet = true;
+//                    }
+//                    else {
+//                        notify(new SetStartPlayerEvent(input)); // submit nickname
+//                    }
+//                    break;
+//
+//
+//                case "1":
+//                case "2":
+//                case "3":
+//                case "4":
+//                case "5":
+//                    notify(new SetPlayersNumberEvent(Integer.parseInt(input))); // by this way we ensure auto-boxing from int to Object type works correctly
+//                    break;
+//
+//
+//                case "y":
+//                    notify(new GameResumingResponseEvent(true));
+//                    break;
+//                case "n":
+//                    notify(new GameResumingResponseEvent(false));
+//                    break;
+//
+//
+//                case "start_player":
+//                    input = in.nextLine();
+//                    notify(new SetStartPlayerEvent(input)); // submit nickname
+//                    break;
+//
+//
+//                case "build_block":
+//                    System.out.println("Type the Worker's ID (just the number) by which make a build: ");
+//                    int id = Integer.parseInt(in.nextLine());
+//                    String workerId = "[Worker]\t" + id;
+//                    System.out.println("X position: ");
+//                    int x = Integer.parseInt(in.nextLine());
+//                    System.out.println("Y position: ");
+//                    int y = Integer.parseInt(in.nextLine());
+//                    System.out.println("Select the type of block you want to build (type its number):\n1 - BLOCK\n2 - DOME");
+//                    int block = Integer.parseInt(in.nextLine());
+//                    PlaceableType blockType = PlaceableType.DOME;
+//                    if(block == 1)
+//                        blockType = PlaceableType.BLOCK;
+//                    notify(new BuildBlockEvent(workerId, x, y, blockType));
+//                    break;
+//
+//
+//                case "challenger_card":
+//                    String card;
+//                    int n = players.size();
+//                    List<String> cards = new ArrayList<>(n);
+//                    System.out.println("Choose " + n + " Cards for this game.");
+//                    for(int i = 0; i < n; i++) {
+//                        System.out.println((n - i) + " remaining Cards to choose. Type a name of a Card:");
+//                        card = in.nextLine();
+//                        cards.add(card);
+//                    }
+//                    notify(new CardsChoosingEvent(cards));
+//                    break;
+//
+//
+//                case "select_card":
+//                    card = in.nextLine();
+//                    notify(new CardSelectionEvent(card));
+//                    break;
+//
+//
+//                case "move_worker":
+//                    System.out.println("Type the Worker's ID (just the number) by which make a movement: ");
+//                    id = Integer.parseInt(in.nextLine());
+//                    workerId = "[Worker]\t" + id;
+//                    System.out.println("X position: ");
+//                    x = Integer.parseInt(in.nextLine());
+//                    System.out.println("Y position: ");
+//                    y = Integer.parseInt(in.nextLine());
+//                    notify(new MoveWorkerEvent(workerId, x, y));
+//                    break;
+//
+//
+//                case "place_worker":
+//                    System.out.println("Place a Worker onto the game board.");
+//                    System.out.println("X position: ");
+//                    x = Integer.parseInt(in.nextLine());
+//                    System.out.println("Y position: ");
+//                    y = Integer.parseInt(in.nextLine());
+//                    notify(new PlaceWorkerEvent(x, y));
+//                    break;
+//
+//
+//                case "remove_block":
+//                    System.out.println("Type the Worker's ID (just the number) by which remove a block from the game board: ");
+//                    id = Integer.parseInt(in.nextLine());
+//                    workerId = "[Worker]\t" + id;
+//                    System.out.println("X position of the block to remove: ");
+//                    x = Integer.parseInt(in.nextLine());
+//                    System.out.println("Y position of the block to remove: ");
+//                    y = Integer.parseInt(in.nextLine());
+//                    notify(new RemoveBlockEvent(workerId, x, y));
+//                    break;
+//
+//
+//                case "remove_worker":
+//                    System.out.println("Type the Worker's ID (just the number) of the Worker to remove from the game board: ");
+//                    id = Integer.parseInt(in.nextLine());
+//                    workerId = "[Worker]\t" + id;
+//                    System.out.println("X position of the Worker to remove: ");
+//                    x = Integer.parseInt(in.nextLine());
+//                    System.out.println("Y position of the Worker to remove: ");
+//                    y = Integer.parseInt(in.nextLine());
+//                    notify(new RemoveWorkerEvent(workerId, x, y));
+//                    break;
+//
+//
+//                case "select_worker":
+//                    System.out.println("Type the Worker's ID (just the number) of the Worker you want to select: ");
+//                    id = Integer.parseInt(in.nextLine());
+//                    workerId = "[Worker]\t" + id;
+//                    notify(new SelectWorkerEvent(workerId));
+//                    break;
+//
+//
+//                case "turn_change":
+//                    System.out.println("Select the turn you want to switch at:\n1 - MOVEMENT\n2 - CONSTRUCTION\n3 - PASS TURN");
+//                    int turn = Integer.parseInt(in.nextLine());
+//                    StateType turnType = StateType.NONE;
+//                    if(turn == 1)
+//                        turnType = StateType.MOVEMENT;
+//                    else if(turn == 2)
+//                        turnType = StateType.CONSTRUCTION;
+//                    notify(new TurnStatusChangeEvent(turnType));
+//                    break;
+//
+//
+//                case "undo":
+//                    notify(new UndoActionEvent());
+//                    break;
+//
+//
+//                case "chat":
+//                    System.out.println("Write something as a chat message to send everyone: ");
+//                    String message = in.nextLine();
+//                    notify(new ChatMessageEvent(nickname, message));
+//                    break;
+//
+//
+//                case "data_request":
+//                    notify(new ViewRequestDataEvent());
+//                    break;
+//
+//
+//                /* ########## CONTROL COMMANDS ########## */
+//                case "game_info":
+//                    printGameInfo();
+//                    break;
+//
+//
+//                default:
+//                    System.out.println("Invalid request. Try again.");
+//                    break;
+//            }
+//
+//            input = in.nextLine();
+//        }
+//
+//        notify(new QuitEvent());
+//        // TODO: close connection, and gracefully close the whole application
     }
 
     //#######################UPDATE##########################
@@ -690,7 +701,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         ViewStatus.setStatus("CLOSING");
         ViewMessage.populateAndSend(serverQuit.getMessage(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
         ViewMessage.populateAndSend(serverQuit.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
-        // todo add code to handle disconnection
+        // disconnection
+        connection.closeConnection(); // todo add code to handle disconnection
     }
 
     //#########################END UPDATE###################################

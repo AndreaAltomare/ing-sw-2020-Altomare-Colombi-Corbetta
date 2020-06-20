@@ -24,6 +24,7 @@ public class ServerApp {
         ConnectionSettings connectionSettings;
         final int DEFAULT_PORT = 9999; // default port
         int port = DEFAULT_PORT;
+        boolean defaultSettings = true;
 
         // todo verificare che funzioni con l'argomento
         // todo verificare che funzioni senza l'argomento
@@ -31,9 +32,16 @@ public class ServerApp {
         // todo verificare che funzioni senza i file di configurazione presenti
         /* Retrieve connection configuration settings */
         if(args.length > 0) {
-            port = Integer.parseInt(args[0]);
+            try {
+                port = Integer.parseInt(args[0]);
+                defaultSettings = false;
+            }
+            catch(Exception ex) {
+                System.out.println("Bad arguments.\nServer is going to be initialized with default connection settings.\n\n");
+            }
         }
-        else {
+
+        if(defaultSettings) {
             connectionSettings = ResourceManager.serverConnectionSettings();
             if (connectionSettings != null)
                 port = connectionSettings.getPort();

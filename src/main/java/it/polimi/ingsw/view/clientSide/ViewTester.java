@@ -77,7 +77,7 @@ public class ViewTester implements ViewSender {
     private Object movedRecalled = new Object();
     private Object moved = new Object();
     private Object built = new Object();
-    private View view = new View(null, null);
+    private View view = new View(null, null, new GUIViewer()); // todo per Giorgio: HO AGGIUNTO new GUIViewer() PER FARLO FUNZIONARE QUANDO HO FATTO I TEST
 
     //####MOSSE####
     private String[][] workers = new String[2][2];

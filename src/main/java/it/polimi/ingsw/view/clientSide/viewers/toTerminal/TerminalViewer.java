@@ -13,7 +13,7 @@ public class TerminalViewer extends Viewer {
     public void refresh() { }
 
     public TerminalViewer(){
-        super();
+        super(); // TODO: Nei costruttori degli altri Viewer, la chiamata a super() non c'è. Perché?
         Viewer.registerViewer(this);
     }
 
