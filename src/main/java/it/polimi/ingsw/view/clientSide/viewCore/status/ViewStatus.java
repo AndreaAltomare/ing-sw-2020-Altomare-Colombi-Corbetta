@@ -10,6 +10,7 @@ import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ClientAddressable;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
+import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.*;
 import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
@@ -208,6 +209,9 @@ public enum ViewStatus implements ClientAddressable {
 
         @Override
         void onLoad() {
+
+            ViewMessage.populateAndSend("Game Over", ViewMessage.MessageType.FROM_SERVER_MESSAGE);
+
             ViewObject.clearAll();
             //TODO: set the onLoad
         }

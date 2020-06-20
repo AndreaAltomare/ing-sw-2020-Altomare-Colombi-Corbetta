@@ -109,6 +109,7 @@ public abstract class Viewer extends Thread{
     public static void exitAll(){
         for (Viewer i: myViewers)
             i.exit();
+        System.exit(0);
     }
 
     //Fuzione che forza un refresh della view
