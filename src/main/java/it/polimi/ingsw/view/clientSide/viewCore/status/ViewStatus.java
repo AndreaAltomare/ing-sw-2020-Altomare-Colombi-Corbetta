@@ -269,7 +269,7 @@ public enum ViewStatus implements ClientAddressable {
     REQUEST_RESUMING( "REQUEST_RESUMING"){
         @Override
         public ViewStatus getNext() {
-            return NEW_GAME;
+            return GAME_PREPARATION;
         }
 
         @Override
