@@ -299,7 +299,11 @@ public enum ViewSubTurn implements ClientAddressable {
         try {
             setSubTurn(search(st));
         } catch (NotFoundException e) {
-            setSubTurn(null);
+            if(st=="NONE"){
+                set("SELECTWORKER");
+            }else {
+                setSubTurn(null);
+            }
         }
     }
 

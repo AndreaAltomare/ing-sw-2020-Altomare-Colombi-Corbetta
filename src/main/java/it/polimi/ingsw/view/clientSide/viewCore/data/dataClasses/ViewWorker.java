@@ -227,7 +227,7 @@ public class ViewWorker extends ViewObject {
             return worker;
         }else{
             if(ViewSubTurn.getActual().getPlayer().equals(ViewNickname.getMyNickname())){
-                ViewMessage.populateAndSend("Built unsuccesful, retry", ViewMessage.MessageType.FROM_SERVER_ERROR);
+                ViewMessage.populateAndSend("Move unsuccesful, retry", ViewMessage.MessageType.FROM_SERVER_ERROR);
             }
             return null;
         }

@@ -36,6 +36,14 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
         SubPanel upperPanel = new SubPanel(0.7, 0.24, 0.15, 0.3);
         upperPanel.setOpaque(false);
 
+        SubPanel lowerLeftPanel = new SubPanel(.5, 1, 0, 0);
+        lowerLeftPanel.setOpaque(false);
+        lowerPanel.add(lowerLeftPanel);
+
+        SubPanel lowerRightPanel = new SubPanel (.5, 1, .5, 0);
+        lowerRightPanel.setOpaque(false);
+        lowerPanel.add(lowerRightPanel);
+
 
 
         //Move Button
@@ -107,9 +115,11 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
             }
         });
         try{
-            lowerPanel.add(new PanelImageButton(0.5, 1, 0, 0, nextTurnButton, "/img/godPodium/" + ViewPlayer.searchByName(playerName).getCard().getName() + ".png", "next turn"));
+            //lowerPanel.add(new PanelImageButton(0.5, 1, 0, 0, nextTurnButton, "/img/godPodium/" + ViewPlayer.searchByName(playerName).getCard().getName() + ".png", "next turn"));
+            lowerLeftPanel.add(new PanelImageButton(1, 1, 0, 0, nextTurnButton, "/img/godPodium/" + ViewPlayer.searchByName(playerName).getCard().getName() + ".png", "next turn"));
         }catch(Exception e){
-            lowerPanel.add(new PanelImageButton(0.5, 1, 0, 0, nextTurnButton, "/img/godPodium/Default.png", "next turn"));
+            //lowerPanel.add(new PanelImageButton(0.5, 1, 0, 0, nextTurnButton, "/img/godPodium/Default.png", "next turn"));
+            lowerLeftPanel.add(new PanelImageButton(1, 1, 0, 0, nextTurnButton, "/img/godPodium/Default.png", "next turn"));
         }
 
 
@@ -176,8 +186,11 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
             });
         }
 
-        lowerPanel.add(new PanelImageButton(0.4, 0.4, 0.55, 0.05, buildBlockButton, "/img/trappings/build_block.png", "build Block" ));
-        lowerPanel.add(new PanelImageButton(0.4, 0.4, 0.55, 0.5, buildDomeButton, "/img/trappings/build_dome.png", "buildDome" ));
+        /*lowerPanel.add(new PanelImageButton(0.4, 0.4, 0.55, 0.05, buildBlockButton, "/img/trappings/build_block.png", "build Block" ));
+        lowerPanel.add(new PanelImageButton(0.4, 0.4, 0.55, 0.5, buildDomeButton, "/img/trappings/build_dome.png", "buildDome" ));*/
+
+        lowerRightPanel.add(new PanelImageButton(0.8, 0.4, 0.1, 0.05, buildBlockButton, "/img/trappings/build_block.png", "build Block" ));
+        lowerRightPanel.add(new PanelImageButton(0.8, 0.4, 0.1, 0.5, buildDomeButton, "/img/trappings/build_dome.png", "buildDome" ));
 
         contentPanel.add(upperPanel);
         contentPanel.add(lowerPanel);
