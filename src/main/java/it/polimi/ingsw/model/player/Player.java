@@ -141,6 +141,10 @@ public class Player {
     public boolean chooseState(StateType state) throws LoseException,TurnOverException {
         boolean changeAdmitted = false;
 
+        /* Do not check whether a Turn change is possible if the Player is already in that state */
+        if(this.turnType == state)
+            return true;
+
         switch(state) {
             case MOVEMENT:
                 changeAdmitted = preliminaryCheck(state);
@@ -330,6 +334,9 @@ public class Player {
 
             if(card.hasExecutedConstruction() && workerObj.isChosen())
                 return true; // no more actions possible within the same SELECTED worker.
+
+            if(card.hasExecutedMovement() && !card.hasExecutedConstruction() && workerObj.isChosen())
+                return false; // worker can still make a construction in this case
         }
 
         return true;
