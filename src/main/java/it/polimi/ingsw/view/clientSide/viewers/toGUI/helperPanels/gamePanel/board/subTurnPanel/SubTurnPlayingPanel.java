@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.boa
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.NextTurnExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.TurnStatusChangeExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
@@ -92,11 +93,31 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
 
 
         //GodImage
-        try {
+        JButton nextTurnButton = new JButton();
+        nextTurnButton.addActionListener(new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    new NextTurnExecuter().doIt();
+                } catch (CannotSendEventException ex) {
+                    //todo: rimuovere
+                    ex.printStackTrace();
+                }
+            }
+        });
+        try{
+            lowerPanel.add(new PanelImageButton(0.5, 1, 0, 0, nextTurnButton, "/img/godPodium/" + ViewPlayer.searchByName(playerName).getCard().getName() + ".png", "next turn"));
+        }catch(Exception e){
+            lowerPanel.add(new PanelImageButton(0.5, 1, 0, 0, nextTurnButton, "/img/godPodium/Default.png", "next turn"));
+        }
+
+
+        /*try {
             lowerPanel.add(new ImagePanel(0.5, 1, 0, 0, "/img/godPodium/" + ViewPlayer.searchByName(playerName).getCard().getName() + ".png"));
         }catch(Exception e){
             lowerPanel.add(new ImagePanel(0.5, 1, 0, 0, "/img/godPodium/Default.png"));
-        }
+        }*/
 
 
 

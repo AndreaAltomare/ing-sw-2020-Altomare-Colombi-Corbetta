@@ -13,6 +13,8 @@ public class UndoExecuter extends Executer {
     private static long timeOut = 5000;
     private static Thread thread;
 
+    private static boolean dontSendEvent = false;
+
     private final static Object lock = new Object();
 
     public interface UndoExecuterListenerUpdate{
@@ -83,6 +85,7 @@ public class UndoExecuter extends Executer {
         for (UndoExecuterListenerUpdate l: myListener) {
             l.undoExpired();
         }
+        UndoExecuter.canSendEvent();
     }
 
     /**
@@ -130,6 +133,7 @@ public class UndoExecuter extends Executer {
         };
 
         thread.start();
+        dontSendEvent = true;
     }
 
     public static void undoIt() throws CannotSendEventException {
@@ -173,7 +177,23 @@ public class UndoExecuter extends Executer {
     }
 
     public static boolean isAvailable(){
-        return thread==null;
+
+        return thread!=null;
+    }
+
+    public static void stop(){
+        if(thread != null){
+            thread.interrupt();
+            instance.notifyOff();
+        }
+    }
+
+    public static boolean getDontSendEvent(){
+        return dontSendEvent;
+    }
+
+    public static void canSendEvent(){
+        dontSendEvent = false;
     }
 }
 

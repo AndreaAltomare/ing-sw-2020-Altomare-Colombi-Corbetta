@@ -109,8 +109,12 @@ public class MoveWorkerExecuter extends Executer {
         return new MoveWorkerEvent(workerId, x, y);
     }
 
-    public void send(EventObject event) throws NullPointerException{
+    /*public void send(EventObject event) throws NullPointerException{
         if(event == null) throw new NullPointerException();
         getSender().send((MoveWorkerEvent)event);
+    }*/
+
+    protected boolean checkUndo(){
+        return true;
     }
 }

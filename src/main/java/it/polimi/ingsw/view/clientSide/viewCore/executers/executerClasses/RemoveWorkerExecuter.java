@@ -102,4 +102,8 @@ public class RemoveWorkerExecuter extends Executer {
         return new RemoveWorkerEvent(workerId, x, y);
     }
 
+    protected boolean checkUndo(){
+        return true;
+    }
+
 }

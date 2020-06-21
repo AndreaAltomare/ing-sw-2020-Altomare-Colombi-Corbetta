@@ -100,4 +100,8 @@ public class RemoveBlockExecuter extends Executer {
         return new RemoveBlockEvent(workerId, x, y);
     }
 
+    protected boolean checkUndo(){
+        return true;
+    }
+
 }

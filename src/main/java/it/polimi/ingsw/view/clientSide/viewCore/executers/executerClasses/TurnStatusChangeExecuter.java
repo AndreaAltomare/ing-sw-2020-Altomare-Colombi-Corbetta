@@ -77,8 +77,12 @@ public class TurnStatusChangeExecuter extends Executer {
         return new TurnStatusChangeEvent(stato.toStateType());
     }
 
-    public void send(EventObject event) throws NullPointerException{
+    /*public void send(EventObject event) throws NullPointerException{
         if(event == null) return;
         getSender().send((TurnStatusChangeEvent)event);
+    }*/
+
+    protected boolean checkUndo(){
+        return true;
     }
 }

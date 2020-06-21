@@ -14,7 +14,7 @@ public class UndoManager implements Runnable {
     /* Timer handling */
     private final int TIMER_INITIAL_DELAY = 0; // time in milliseconds
     private final int TIMER_TIME_PERIOD = 1000; // time in milliseconds
-    private final int MAXIMUM_TIMEOUTS_NUMBER = 6; // todo rimettere a 6 // equivalent to six seconds, so Clients have the time to request an undo without caring (practically) about network-related delays.
+    private final int MAXIMUM_TIMEOUTS_NUMBER = 5; // todo rimettere a 6 // equivalent to six seconds, so Clients have the time to request an undo without caring (practically) about network-related delays.
     private Timer timer;
     private TimeoutCounter task; // It's a TimerTask
     /* Other references */

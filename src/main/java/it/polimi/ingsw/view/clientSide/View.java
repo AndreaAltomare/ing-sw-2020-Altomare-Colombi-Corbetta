@@ -458,6 +458,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
         if (turnStatusChange.success()){
 
+            UndoExecuter.canSendEvent();
+
             ViewSubTurn.setMacroStatus(turnStatusChange.getState());
 
             if(!turnStatusChange.getPlayerNickname().equals(ViewSubTurn.getActual().getPlayer())){
@@ -568,6 +570,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
      */
     @Override
     public void update(PlayerWinEvent playerWin) {
+        UndoExecuter.canSendEvent();
         if (ViewNickname.getMyNickname().equals(playerWin.getPlayerNickname())) {
             meWinner = true;
             ViewMessage.populateAndSend(playerWin.getWinnerMessage(), ViewMessage.MessageType.WIN_MESSAGE);
@@ -583,6 +586,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
      */
     @Override
     public void update(PlayerLoseEvent playerLose) {
+        UndoExecuter.canSendEvent();
         if (ViewNickname.getMyNickname().equals(playerLose.getPlayerNickname())) {
             ViewMessage.populateAndSend(playerLose.getMessage(), ViewMessage.MessageType.LOOSE_MESSAGE);
         }
@@ -614,6 +618,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     @Override
     public void update(UndoOkEvent undoOk) {
         ViewBoard.populate(undoOk.getBoardState());
+
+        UndoExecuter.stop();
 
         //todo: is it necessary to check the player?
         if(undoOk.getPlayerNickname().equals(ViewNickname.getMyNickname())){
@@ -689,6 +695,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     @Override
     public void update(GameOverEvent gameOver) {
         if(!ViewStatus.getActual().getId().equals("GAME_OVER")){
+            UndoExecuter.canSendEvent();
             ViewStatus.setStatus("GAME_OVER");
             Viewer.setAllStatusViewer(ViewStatus.getActual().getViewer());
             if(meWinner){

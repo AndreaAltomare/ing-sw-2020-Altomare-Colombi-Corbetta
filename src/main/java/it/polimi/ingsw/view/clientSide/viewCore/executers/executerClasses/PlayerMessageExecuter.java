@@ -28,9 +28,9 @@ public class PlayerMessageExecuter extends Executer {
         return new ChatMessageEvent(ViewNickname.getMyNickname(), payload);
     }
 
-    public void send(ChatMessageEvent event) throws NullPointerException{
+    /*public void send(ChatMessageEvent event) throws NullPointerException{
         if(event == null) return;
         getSender().send((ChatMessageEvent)event);
-    }
+    }*/
 
 }

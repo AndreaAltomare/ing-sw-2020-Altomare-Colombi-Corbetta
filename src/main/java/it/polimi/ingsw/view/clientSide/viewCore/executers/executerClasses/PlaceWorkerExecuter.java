@@ -71,8 +71,8 @@ public class PlaceWorkerExecuter extends Executer {
     }
 
 
-    public void send(EventObject event) throws NullPointerException{
+    /*public void send(EventObject event) throws NullPointerException{
         if(event == null) throw new NullPointerException();
         getSender().send((PlaceWorkerEvent)event);
-    }
+    }*/
 }
