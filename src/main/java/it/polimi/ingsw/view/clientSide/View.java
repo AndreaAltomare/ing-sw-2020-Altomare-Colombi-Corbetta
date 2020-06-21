@@ -609,7 +609,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
                 ViewSubTurn.setSubTurn(ViewSubTurn.MOVE, workerSelected.getPlayerNickname());
             }*/
             Viewer.setAllSubTurnViewer(ViewSubTurn.getActual());
-            System.out.println("Worker named '" + workerSelected.getWorker() + "was correctly SELECTED");
+            if(View.debugging)
+                System.out.println("Worker named '" + workerSelected.getWorker() + "was correctly SELECTED");
         }else{
             ViewMessage.populateAndSend("Cannot select the worker", ViewMessage.MessageType.FROM_SERVER_ERROR);
         }
