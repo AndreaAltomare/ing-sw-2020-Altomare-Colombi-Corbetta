@@ -41,6 +41,8 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static it.polimi.ingsw.model.player.turn.StateType.*;
+
 public class View extends Observable<Object> implements MVEventListener, Runnable, ViewSender { // todo: maybe this class extends Observable<Object> for proper interaction with Network Handler
     /* Multi-threading operations */
     private ExecutorService executor = Executors.newFixedThreadPool(128);
@@ -597,7 +599,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         if (workerSelected.success()){
             try {
                 ViewWorker.populate(workerSelected);
-            } catch (WrongEventException ignore) {
+            } catch (WrongEventException | NullPointerException ignore) {
             }
 
             if(ViewSubTurn.getActual().getPlayer().equals(ViewNickname.getMyNickname()))
@@ -727,7 +729,20 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
             for(String name: playersState.getData().keySet()){
                 ViewPlayer myPlayer;
                 playersName.add(name);
+
+                StateType turn = playersState.getData().get(name).getTurn();
+
                 new ViewPlayer(name);
+
+                if(turn == CONSTRUCTION || turn == MOVEMENT){
+                    ViewSubTurn.setMacroStatus(turn);
+                    ViewSubTurn.getActual().setPlayer(name);
+                    if(turn == CONSTRUCTION){
+                        ViewSubTurn.setSubTurn(ViewSubTurn.BUILD);
+                    }else{
+                        ViewSubTurn.setSubTurn(ViewSubTurn.SELECTWORKER);
+                    }
+                }
 
                 try {
                     myPlayer = ViewPlayer.searchByName(name);
@@ -755,7 +770,13 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
             ViewBoard.populate(gameState.getBoard());
 
-            ViewWorker.selectWorker(selectedWorker);
+            if(selectedWorker != null) {
+                ViewWorker.selectWorker(selectedWorker);
+            }else{
+                ViewSubTurn.setSubTurn(ViewSubTurn.SELECTWORKER);
+            }
+
+            Viewer.setAllSubTurnViewer(ViewSubTurn.getActual());
         }
     }
 
