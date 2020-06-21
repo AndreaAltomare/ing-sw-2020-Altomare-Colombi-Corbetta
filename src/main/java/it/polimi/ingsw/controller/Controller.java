@@ -639,7 +639,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         if(model.hasGameStarted()) {
             System.out.println("[MoveWorkerEvent] received form Player: '" + playerNickname + "'"); // Server control message
             List<WorkerMovedEvent> workersMoved = null;
-            if(!undoManager.isActive())
+            if(!undoManager.isActive() && model.getPlayingPlayerState() == StateType.MOVEMENT)
                 workersMoved = model.moveWorker(move.getWorkerId(), move.getX(), move.getY(), playerNickname);
             if (workersMoved != null) {
                 notifyWorkersMoved(workersMoved);
@@ -658,7 +658,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         if(model.hasGameStarted()) {
             System.out.println("[BuildBlockEvent] received form Player: '" + playerNickname + "'"); // Server control message
             BlockBuiltEvent blockBuilt = null;
-            if(!undoManager.isActive())
+            if(!undoManager.isActive() && model.getPlayingPlayerState() == StateType.CONSTRUCTION)
                 blockBuilt = model.buildBlock(build.getWorkerId(), build.getX(), build.getY(), build.getBlockType(), playerNickname);
             if (blockBuilt != null) {
                 notify(blockBuilt); // ANSWER FROM THE CONTROLLER (Notify the View)
