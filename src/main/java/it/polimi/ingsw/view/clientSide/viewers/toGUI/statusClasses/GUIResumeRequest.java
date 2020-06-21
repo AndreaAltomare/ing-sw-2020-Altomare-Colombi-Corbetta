@@ -46,7 +46,7 @@ public class GUIResumeRequest extends GUIStatusViewer {
         label.setFont(new Font("Serif", Font.BOLD,15));
         label.setForeground(Color.GREEN);
         label.setText("<html>There is an old game.<br/>Shall we resume?</html>");
-        JPanel textPanel = new PanelComponent(0.39, 0.2344, 0.29, 0.3, label);
+        JPanel textPanel = new PanelComponent(0.39, 0.3, 0.29, 0.3, label);
         textPanel.setOpaque(false);
         //textPanel.add(label);
         backPanel.add(textPanel);
@@ -99,7 +99,7 @@ public class GUIResumeRequest extends GUIStatusViewer {
                 }
             }
         });
-        frame.setSize(400, 200);
+        frame.setSize(320, 440);
         frame.setResizable(false);
         frame.setVisible(true);
         frame.repaint();

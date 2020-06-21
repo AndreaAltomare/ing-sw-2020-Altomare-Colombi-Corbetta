@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewers.toGUI.statusClasses;
 
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton.TitlePanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.BackgroundPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
@@ -25,7 +26,10 @@ public class GUIWaitingtatus extends GUIStatusViewer {
     }
 
     public void onLoad(){
+
         SoundEffect.startLoopMusic("/statusSounds/waiting.wav");
+
+        //myStatusViewer.
     }
 
     public void onClose(){

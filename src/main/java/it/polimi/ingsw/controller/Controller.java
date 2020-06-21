@@ -740,7 +740,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             if(!undoManager.isActive())
                 turnStatusChanged = model.changeTurnStatus(turnStatus.getTurnStatus(), playerNickname);
             if (turnStatusChanged != null) {
-                notify(turnStatusChanged, playerNickname); // ANSWER FROM THE CONTROLLER (Notify the View)
+                notify(turnStatusChanged); // ANSWER FROM THE CONTROLLER (Notify the View) //todo: in caso non funzioni rimettere , playerNickname
                 checkForSwitching(playerNickname);
             }
             if(turnStatusChanged != null && turnStatusChanged.success())
@@ -1088,7 +1088,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
     private void checkForSwitching(String playerNickname) {
         /* After the Player notification, if the player's turn is over (or other triggering conditions), switch the playing Player */
         if (model.getMoveOutcome() == MoveOutcomeType.TURN_SWITCHED)
-            notify(new TurnStatusChangedEvent(playerNickname, StateType.CONSTRUCTION, true), playerNickname);
+            notify(new TurnStatusChangedEvent(playerNickname, StateType.CONSTRUCTION, true));   //todo: se non funziona rimettere , playerNickname
         else if (model.getMoveOutcome() == MoveOutcomeType.TURN_OVER)
             model.switchPlayer();
         else if (model.getMoveOutcome() == MoveOutcomeType.LOSS) {

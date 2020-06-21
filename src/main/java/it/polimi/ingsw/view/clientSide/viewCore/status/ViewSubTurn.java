@@ -235,9 +235,9 @@ public enum ViewSubTurn implements ClientAddressable {
 
     public static void afterSelection(){
         if(macroStatus == StateType.MOVEMENT)
-            setSubTurn(MOVE);
+            setSubTurn(MOVE, player);
         else if(macroStatus == StateType.CONSTRUCTION)
-            setSubTurn(BUILD);
+            setSubTurn(BUILD, player);
         else{
             //TODO: rimuovere controllo
             System.out.println("Unknown status");
@@ -300,6 +300,7 @@ public enum ViewSubTurn implements ClientAddressable {
             setSubTurn(search(st));
         } catch (NotFoundException e) {
             if(st=="NONE"){
+                setStaticPlayer("");
                 set("SELECTWORKER");
             }else {
                 setSubTurn(null);

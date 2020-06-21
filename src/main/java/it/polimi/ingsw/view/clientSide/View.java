@@ -602,8 +602,10 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
             } catch (WrongEventException | NullPointerException ignore) {
             }
 
-            if(ViewSubTurn.getActual().getPlayer().equals(ViewNickname.getMyNickname()))
-                ViewSubTurn.afterSelection();
+            ViewSubTurn.afterSelection();
+
+            //if(ViewSubTurn.getActual().getPlayer().equals(ViewNickname.getMyNickname()))
+
 
            /* if(workerSelected.getPlayerNickname().equals(ViewNickname.getMyNickname())) {
                 ViewSubTurn.setSubTurn(ViewSubTurn.MOVE, workerSelected.getPlayerNickname());
@@ -624,16 +626,13 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
         UndoExecuter.stop();
 
-        //todo: is it necessary to check the player?
-        if(undoOk.getPlayerNickname().equals(ViewNickname.getMyNickname())){
-            ViewSubTurn.setMacroStatus(undoOk.getStateType());
-            if(undoOk.getStateType() == StateType.MOVEMENT){
-                ViewSubTurn.setSubTurn(ViewSubTurn.SELECTWORKER);
-            }else{
-                ViewSubTurn.setSubTurn(ViewSubTurn.BUILD);
-            }
-            Viewer.setAllSubTurnViewer(ViewSubTurn.getActual());
+        ViewSubTurn.setMacroStatus(undoOk.getStateType());
+        if(undoOk.getStateType() == StateType.MOVEMENT){
+            ViewSubTurn.set("SELECTWORKER", ViewSubTurn.getActual().getPlayer());
+        }else{
+            ViewSubTurn.set("CONSTRUCTION", ViewSubTurn.getActual().getPlayer());
         }
+        Viewer.setAllSubTurnViewer(ViewSubTurn.getActual());
         Viewer.setAllRefresh();
     }
 

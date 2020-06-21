@@ -74,7 +74,7 @@ public abstract class Executer{
     public void syncSend() throws CannotSendEventException {
         try {
             send(this.getMyEvent());
-        } catch (WrongEventException e) {
+        } catch (WrongEventException | NullPointerException e) {
             throw new CannotSendEventException("Too fast!");
         }
         this.clear();
@@ -113,7 +113,7 @@ public abstract class Executer{
             public void run() {
                 try {
                     send(myObj);
-                } catch (WrongEventException ignore) {
+                } catch (WrongEventException | NullPointerException ignore) {
                 }
             }
 
