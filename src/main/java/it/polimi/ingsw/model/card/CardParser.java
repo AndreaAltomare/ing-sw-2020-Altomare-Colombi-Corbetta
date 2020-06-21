@@ -89,17 +89,19 @@ public class CardParser {
                     checkers.add((move, worker, startingPosition, movesLeft, parentCard) -> {
                         boolean checkResult = true;
 
-                        // todo: minotaur (just to check, REMOVE THIS COMMENT)
-                        // check if the opponent's Worker can be moved into the right cell (as with Minotaur Card's power)
-                        Cell nextOpponentCell;
-                        try {
-                            nextOpponentCell = MyMove.calculateNextCell(move);
-                        } catch (OutOfBoardException ex) {
-                            return false;
+                        if(MyMove.occupiedCell(move.getSelectedCell())) {
+                            // todo: minotaur (just to check, REMOVE THIS COMMENT)
+                            // check if the opponent's Worker can be moved into the right cell (as with Minotaur Card's power)
+                            Cell nextOpponentCell;
+                            try {
+                                nextOpponentCell = MyMove.calculateNextCell(move);
+                            } catch (OutOfBoardException ex) {
+                                return false;
+                            }
+                            checkResult = MyMove.checkNextCell(nextOpponentCell); // check if opponent's Worker can be forced into the next calculated Cell
+                            if (checkResult == false)
+                                return false;
                         }
-                        checkResult = MyMove.checkNextCell(nextOpponentCell); // check if opponent's Worker can be forced into the next calculated Cell
-                        if (checkResult == false)
-                            return false;
 
                         return true;
                     });
