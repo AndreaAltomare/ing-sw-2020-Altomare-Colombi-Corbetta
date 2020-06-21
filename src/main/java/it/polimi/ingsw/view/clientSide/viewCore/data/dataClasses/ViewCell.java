@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
 import it.polimi.ingsw.controller.events.BlockBuiltEvent;
+import it.polimi.ingsw.controller.events.BlockRemovedEvent;
 import it.polimi.ingsw.model.board.placeables.PlaceableType;
 import it.polimi.ingsw.model.move.MoveOutcomeType;
 import it.polimi.ingsw.model.persistence.board.CellState;
@@ -229,7 +230,9 @@ public class ViewCell extends ViewObject {
             }else if(i.getPlaceableType().equals(PlaceableType.WORKER)){
                 this.thereIsWorker = true;
                 try {
-                    this.placeWorker((ViewWorker)ViewWorker.search(i.getWorkerId()));
+                    ViewWorker worker = (ViewWorker)ViewWorker.search(i.getWorkerId());
+                    //this.placeWorker(worker);
+                    worker.placeOn( getX(), getY());
                 } catch (NotFoundException | WrongViewObjectException e) {
                     e.printStackTrace();
                 }
@@ -249,6 +252,22 @@ public class ViewCell extends ViewObject {
     public static ViewObject populate(@NotNull EventObject event) throws WrongEventException{
         //todo: implement it
         throw new WrongEventException();
+    }
+
+    public static ViewObject populate(@NotNull BlockRemovedEvent event) throws WrongEventException{
+        ViewCell cella;
+        try {
+            cella = ViewBoard.getBoard().getCellAt(event.getX(), event.getY());
+        } catch (NotFoundException e) {
+            throw new WrongEventException();
+        }
+
+        if(event.getBlockType().equals(PlaceableType.DOME)){
+            cella.removeDome();
+        }else if(event.getBlockType().equals(PlaceableType.BLOCK)){
+            cella.removeLevel();
+        }
+        return cella;
     }
 
     /**

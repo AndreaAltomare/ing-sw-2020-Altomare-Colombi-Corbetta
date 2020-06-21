@@ -227,6 +227,25 @@ public enum ViewSubTurn implements ClientAddressable {
     private static String player;
     private String subTurn;
 
+    private static StateType macroStatus;
+
+    public static void setMacroStatus(StateType state){
+        macroStatus = state;
+    }
+
+    public static void afterSelection(){
+        if(macroStatus == StateType.MOVEMENT)
+            setSubTurn(MOVE);
+        else if(macroStatus == StateType.CONSTRUCTION)
+            setSubTurn(BUILD);
+        else{
+            //TODO: rimuovere controllo
+            System.out.println("Unknown status");
+            setSubTurn(MOVE);
+        }
+
+    }
+
     ViewSubTurn(String name){
         subTurn = name;
     }

@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
 import it.polimi.ingsw.controller.events.WorkerMovedEvent;
 import it.polimi.ingsw.controller.events.WorkerPlacedEvent;
+import it.polimi.ingsw.controller.events.WorkerRemovedEvent;
 import it.polimi.ingsw.controller.events.WorkerSelectedEvent;
 import it.polimi.ingsw.model.move.MoveOutcomeType;
 import it.polimi.ingsw.view.clientSide.View;
@@ -140,10 +141,21 @@ public class ViewWorker extends ViewObject {
      * @return (the new object created)
      * @throws WrongEventException (if the Event is not supported by this Class)
      */
-    public static ViewObject populate( @NotNull EventObject event) throws WrongEventException{
-        //TODO: implement it
+    public static ViewObject populate( @NotNull WorkerRemovedEvent event) throws WrongEventException{
+        ViewWorker worker;
+        try {
+            worker = (ViewWorker)ViewWorker.search(event.getWorker());
+            worker.removeWorker();
+        } catch (NotFoundException | WrongViewObjectException e) {
+            throw new WrongEventException();
+        }
+        return worker;
+    }
+
+    public static ViewObject populate(EventObject event) throws WrongEventException{
         throw new WrongEventException();
     }
+
 
     /**
      * Method that will be called on the arrival of an event to build a new Object.

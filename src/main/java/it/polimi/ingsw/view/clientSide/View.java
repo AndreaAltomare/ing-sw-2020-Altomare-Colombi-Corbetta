@@ -13,6 +13,7 @@ import it.polimi.ingsw.model.persistence.players.PlayersState;
 import it.polimi.ingsw.model.persistence.players.WorkerData;
 import it.polimi.ingsw.model.player.turn.StateType;
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.player.worker.ChooseType;
 import it.polimi.ingsw.observer.MVEventListener;
 import it.polimi.ingsw.observer.Observable;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
@@ -457,13 +458,15 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
         if (turnStatusChange.success()){
 
+            ViewSubTurn.setMacroStatus(turnStatusChange.getState());
+
             if(!turnStatusChange.getPlayerNickname().equals(ViewSubTurn.getActual().getPlayer())){
                 ViewBoard.getBoard().setSelectedCell(null);
                 ViewWorker.selectWorker((ViewWorker) null);
             }
 
             //Checks if it's a change of status
-            if((!turnStatusChange.getPlayerNickname().equals(ViewSubTurn.getActual().getPlayer()))&&(turnStatusChange.getState().equals(StateType.MOVEMENT))){
+            if(((!turnStatusChange.getPlayerNickname().equals(ViewSubTurn.getActual().getPlayer()))&&(turnStatusChange.getState().equals(StateType.MOVEMENT)))||(ViewWorker.getSelected()==null)){
                 ViewSubTurn.setSubTurn(ViewSubTurn.SELECTWORKER, turnStatusChange.getPlayerNickname());
             }else{
                 //Else sets the turnStatus
@@ -592,11 +595,15 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
                 ViewWorker.populate(workerSelected);
             } catch (WrongEventException ignore) {
             }
-            if(workerSelected.getPlayerNickname().equals(ViewNickname.getMyNickname())) {
+
+            if(ViewSubTurn.getActual().getPlayer().equals(ViewNickname.getMyNickname()))
+                ViewSubTurn.afterSelection();
+
+           /* if(workerSelected.getPlayerNickname().equals(ViewNickname.getMyNickname())) {
                 ViewSubTurn.setSubTurn(ViewSubTurn.MOVE, workerSelected.getPlayerNickname());
             }else{
                 ViewSubTurn.setSubTurn(ViewSubTurn.MOVE, workerSelected.getPlayerNickname());
-            }
+            }*/
             Viewer.setAllSubTurnViewer(ViewSubTurn.getActual());
             System.out.println("Worker named '" + workerSelected.getWorker() + "was correctly SELECTED");
         }else{
@@ -610,6 +617,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
         //todo: is it necessary to check the player?
         if(undoOk.getPlayerNickname().equals(ViewNickname.getMyNickname())){
+            ViewSubTurn.setMacroStatus(undoOk.getStateType());
             if(undoOk.getStateType() == StateType.MOVEMENT){
                 ViewSubTurn.setSubTurn(ViewSubTurn.SELECTWORKER);
             }else{
@@ -692,6 +700,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     @Override
     public void update(GameResumingEvent gameResuming) {
         GameState gameState = gameResuming.getGameState();
+        String selectedWorker = null;
 
 
         if(gameState == null){
@@ -726,6 +735,9 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
                 for(WorkerData workerId: playerData.getWorkers()){
                     try {
                         new ViewWorker(workerId.getWorkerId(), myPlayer);
+                        if(workerId.getChosen()== ChooseType.CHOSEN){
+                            selectedWorker = workerId.getWorkerId();
+                        }
                     } catch (NotFoundException e) {
                         e.printStackTrace();
                     }
@@ -734,6 +746,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
             }
 
             ViewBoard.populate(gameState.getBoard());
+
+            ViewWorker.selectWorker(selectedWorker);
         }
     }
 

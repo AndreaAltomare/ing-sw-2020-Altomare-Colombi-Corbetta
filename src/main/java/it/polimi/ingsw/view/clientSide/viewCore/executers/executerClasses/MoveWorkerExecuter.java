@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewCell;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewWorker;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.events.MoveWorkerEvent;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
@@ -96,6 +97,10 @@ public class MoveWorkerExecuter extends Executer {
      */
     @Override
     public EventObject getMyEvent()throws CannotSendEventException {
+        if(ViewWorker.getSelected() == null){
+            ViewSubTurn.setSubTurn(ViewSubTurn.SELECTWORKER);
+            throw new CannotSendEventException("You have to choose a worker before");
+        }
         if(x<0||y<0) throw new CannotSendEventException("Cannot try to move without having selected the destination");
         if (workerId == null) {
             workerId = ViewWorker.getSelected().toString();

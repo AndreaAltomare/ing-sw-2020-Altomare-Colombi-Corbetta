@@ -66,7 +66,7 @@ public class GUIResumeRequest extends GUIStatusViewer {
             }
         });
 
-        JPanel yesPanel = new PanelImageButton(.5, 0.15, 0.5, 0.7, yesButton, "/img/trappings/blueButton.png", "yes");
+        JPanel yesPanel = new PanelImageButton(.5, 0.15, 0, 0.7, yesButton, "/img/trappings/blueButton.png", "yes");
 
         JButton noButton = new JButton();
         noButton.addActionListener(new ActionListener() {

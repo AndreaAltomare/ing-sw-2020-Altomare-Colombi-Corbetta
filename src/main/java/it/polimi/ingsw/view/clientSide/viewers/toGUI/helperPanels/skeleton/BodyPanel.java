@@ -55,7 +55,10 @@ public class BodyPanel extends SubPanel {
         }
 
 
-        ViewBoard.getBoard().toGUI();
+        if(ViewBoard.getBoard()!=null)
+            ViewBoard.getBoard().toGUI();
+        else
+            return;
 
         subTurnPanel.setBounds(0, 0, (int)panelW, (int)panelH);
         playerPanel.setBounds((int)(panelW+hypX), 0, (int)panelW, (int)panelH);
