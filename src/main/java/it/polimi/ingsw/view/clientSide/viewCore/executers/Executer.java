@@ -1,7 +1,9 @@
 package it.polimi.ingsw.view.clientSide.viewCore.executers;
 
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.UndoExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ViewSender;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
+import it.polimi.ingsw.view.exceptions.WrongEventException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,7 +72,11 @@ public abstract class Executer{
      * @throws CannotSendEventException (if the Executor doesn't have all the information required by the event)
      */
     public void syncSend() throws CannotSendEventException {
-        send(this.getMyEvent());
+        try {
+            send(this.getMyEvent());
+        } catch (WrongEventException e) {
+            throw new CannotSendEventException("Too fast!");
+        }
         this.clear();
     }
 
@@ -80,8 +86,11 @@ public abstract class Executer{
      *
      * @param event (EventObject to be submitted to the server)
      */
-    public void send(Object event) throws NullPointerException{
+    public void send(Object event) throws NullPointerException, WrongEventException {
         if(event == null) throw new NullPointerException();
+        if(this.checkUndo() && UndoExecuter.getDontSendEvent()){
+            throw new WrongEventException();
+        }
         sender.send(event);
     }
 
@@ -102,13 +111,20 @@ public abstract class Executer{
 
             @Override
             public void run() {
-                send(myObj);
+                try {
+                    send(myObj);
+                } catch (WrongEventException ignore) {
+                }
             }
 
         }
 
         new asyncExecutor(this.getMyEvent()).start();
         this.clear();
+    }
+
+    protected boolean checkUndo(){
+        return false;
     }
 
     protected static ViewSender getSender(){

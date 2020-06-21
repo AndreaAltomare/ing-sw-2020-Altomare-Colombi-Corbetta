@@ -139,9 +139,13 @@ public class BuildBlockExecuter extends Executer {
         return new BuildBlockEvent(workerId, x, y, (placeable.equals("BLOCK")? PlaceableType.BLOCK: PlaceableType.DOME));
     }
 
-    public void send(EventObject event) throws NullPointerException{
+    /*public void send(EventObject event) throws NullPointerException{
         if(event == null) throw new NullPointerException();
         getSender().send((BuildBlockEvent)event);
+    }*/
+
+    protected boolean checkUndo(){
+        return true;
     }
 
 }

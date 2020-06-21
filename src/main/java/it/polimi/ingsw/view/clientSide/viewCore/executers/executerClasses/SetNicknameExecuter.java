@@ -68,8 +68,8 @@ public class SetNicknameExecuter extends Executer {
         return setNicknameEvent;
     }
 
-    public void send(EventObject event) throws NullPointerException{
+    /*public void send(EventObject event) throws NullPointerException{
         if(event == null) throw new NullPointerException();
         getSender().send((SetNicknameEvent)event);
-    }
+    }*/
 }

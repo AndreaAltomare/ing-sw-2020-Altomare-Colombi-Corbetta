@@ -89,9 +89,13 @@ public class SelectWorkerExecuter extends Executer {
         }
     }
 
-    public void send(EventObject event) throws NullPointerException{
+    /*public void send(EventObject event) throws NullPointerException{
         if(event == null) throw new NullPointerException();
         getSender().send((SelectWorkerEvent)event);
+    }*/
+
+    protected boolean checkUndo(){
+        return true;
     }
 
 }

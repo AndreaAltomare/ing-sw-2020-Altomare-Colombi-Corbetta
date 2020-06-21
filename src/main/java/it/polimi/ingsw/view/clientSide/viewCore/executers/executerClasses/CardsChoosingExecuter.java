@@ -86,8 +86,8 @@ public class CardsChoosingExecuter extends Executer implements CardExecuter {
         return new CardsChoosingEvent(cardList);
     }
 
-    public void send(EventObject event) throws NullPointerException{
+   /* public void send(EventObject event) throws NullPointerException{
         if(event == null) throw new NullPointerException();
         getSender().send((CardsChoosingEvent)event);
-    }
+    }*/
 }
