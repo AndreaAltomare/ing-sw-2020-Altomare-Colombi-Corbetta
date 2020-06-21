@@ -16,6 +16,8 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
 
@@ -36,15 +38,11 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
         SubPanel upperPanel = new SubPanel(0.7, 0.24, 0.15, 0.3);
         upperPanel.setOpaque(false);
 
-        SubPanel lowerLeftPanel = new SubPanel(.5, 1, 0, 0);
-        lowerLeftPanel.setOpaque(false);
-        lowerPanel.add(lowerLeftPanel);
+        //SubPanel lowerLeftPanel = new SubPanel(.5, 1, 0, 0);
+        //lowerLeftPanel.setOpaque(false);
 
-        SubPanel lowerRightPanel = new SubPanel (.5, 1, .5, 0);
-        lowerRightPanel.setOpaque(false);
-        lowerPanel.add(lowerRightPanel);
-
-
+        //SubPanel lowerRightPanel = new SubPanel (.5, 1, .5, 0);
+        //lowerRightPanel.setOpaque(false);
 
         //Move Button
         JButton moveButton = new JButton();
@@ -93,41 +91,53 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
             });
         }
 
-
-
         upperPanel.add(new PanelImageButton(0.5, 1, 0, 0, moveButton, "/img/trappings/move_button.png", "move"));
         upperPanel.add(new PanelImageButton(0.5, 1, 0.5, 0, buildButton, "/img/trappings/build_button.png", "build"));
 
-
-
         //GodImage
-        JButton nextTurnButton = new JButton();
-        nextTurnButton.addActionListener(new ActionListener(){
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    new NextTurnExecuter().doIt();
-                } catch (CannotSendEventException ex) {
-                    //todo: rimuovere
-                    ex.printStackTrace();
-                }
-            }
-        });
-        try{
-            //lowerPanel.add(new PanelImageButton(0.5, 1, 0, 0, nextTurnButton, "/img/godPodium/" + ViewPlayer.searchByName(playerName).getCard().getName() + ".png", "next turn"));
-            lowerLeftPanel.add(new PanelImageButton(1, 1, 0, 0, nextTurnButton, "/img/godPodium/" + ViewPlayer.searchByName(playerName).getCard().getName() + ".png", "next turn"));
+        /*try{
+            lowerPanel.add(new PanelImageButton(0.5, 1, 0, 0, nextTurnButton, "/img/godPodium/" + ViewPlayer.searchByName(playerName).getCard().getName() + ".png", "next turn"));
+            //.add(new PanelImageButton(.9, 1, 0.05, 0, nextTurnButton, "/img/godPodium/" + ViewPlayer.searchByName(playerName).getCard().getName() + ".png", "next turn"));
         }catch(Exception e){
-            //lowerPanel.add(new PanelImageButton(0.5, 1, 0, 0, nextTurnButton, "/img/godPodium/Default.png", "next turn"));
-            lowerLeftPanel.add(new PanelImageButton(1, 1, 0, 0, nextTurnButton, "/img/godPodium/Default.png", "next turn"));
-        }
+            lowerPanel.add(new PanelImageButton(0.5, 1, 0, 0, nextTurnButton, "/img/godPodium/Default.png", "next turn"));
+            //lowerLeftPanel.add(new PanelImageButton(.9, 1, 0.05, 0, nextTurnButton, "/img/godPodium/Default.png", "next turn"));
+        }*/
 
 
-        /*try {
-            lowerPanel.add(new ImagePanel(0.5, 1, 0, 0, "/img/godPodium/" + ViewPlayer.searchByName(playerName).getCard().getName() + ".png"));
+        try {
+            ImagePanel miniGod = new ImagePanel(0.5, 1, 0, 0, "/img/godPodium/" + ViewPlayer.searchByName(playerName).getCard().getName() + ".png");
+
+            miniGod.addMouseListener(new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    try {
+                        new NextTurnExecuter().doIt();
+                    } catch (CannotSendEventException ex) {
+                        //todo: rimuovere
+                        ex.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void mousePressed(MouseEvent e) {}
+
+                @Override
+                public void mouseReleased(MouseEvent e) {}
+
+                @Override
+                public void mouseEntered(MouseEvent e) {}
+
+                @Override
+                public void mouseExited(MouseEvent e) {}
+            });
+
+            lowerPanel.add(miniGod);
+
+            //lowerPanel.add(new PanelImageButton(0.45, .9, 0, 0, nextTurnButton, "/img/godPodium/" + ViewPlayer.searchByName(playerName).getCard().getName() + ".png", "next turn"));
         }catch(Exception e){
             lowerPanel.add(new ImagePanel(0.5, 1, 0, 0, "/img/godPodium/Default.png"));
-        }*/
+        }
 
 
 
@@ -138,6 +148,7 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
             System.out.println("BUILD_BLOCK");
             selectPanel.setMyRapp(0.4, 0.4, 0.55, 0.05);
             lowerPanel.add(selectPanel);
+            //lowerRightPanel.add(selectPanel);
         }else if(mine){
             buildBlockButton.addActionListener(new ActionListener() {
                 @Override
@@ -166,6 +177,7 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
             System.out.println("BUILD_DOME");
             selectPanel.setMyRapp(0.4, 0.4, 0.55, 0.5);
             lowerPanel.add(selectPanel);
+            //lowerRightPanel.add(selectPanel);
         }else if(mine){
             buildDomeButton.addActionListener(new ActionListener() {
                 @Override
@@ -186,14 +198,25 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
             });
         }
 
-        /*lowerPanel.add(new PanelImageButton(0.4, 0.4, 0.55, 0.05, buildBlockButton, "/img/trappings/build_block.png", "build Block" ));
-        lowerPanel.add(new PanelImageButton(0.4, 0.4, 0.55, 0.5, buildDomeButton, "/img/trappings/build_dome.png", "buildDome" ));*/
+        lowerPanel.add(new PanelImageButton(0.4, 0.4, 0.55, 0.05, buildBlockButton, "/img/trappings/build_block.png", "build Block" ));
+        lowerPanel.add(new PanelImageButton(0.4, 0.4, 0.55, 0.5, buildDomeButton, "/img/trappings/build_dome.png", "buildDome" ));
 
-        lowerRightPanel.add(new PanelImageButton(0.8, 0.4, 0.1, 0.05, buildBlockButton, "/img/trappings/build_block.png", "build Block" ));
-        lowerRightPanel.add(new PanelImageButton(0.8, 0.4, 0.1, 0.5, buildDomeButton, "/img/trappings/build_dome.png", "buildDome" ));
+        //lowerPanel.add(lowerRightPanel);
+
+        //lowerRightPanel.add(new PanelImageButton(0.6, 0.2, 0.1, 0.5, buildDomeButton, "/img/trappings/build_dome.png", "buildDome" ));
+        //lowerRightPanel.add(new PanelImageButton(0.6, 0.2, 0.1, 0.05, buildBlockButton, "/img/trappings/build_block.png", "build Block" ));
+
+        //lowerPanel.add(lowerRightPanel);
+
+        //lowerRightPanel.add(new PanelImageButton(0.8, 0.3, 0.1, 0.45, buildDomeButton, "/img/trappings/build_block.png", "build Block" ));
+
+
+
+        //lowerPanel.add(lowerLeftPanel);
 
         contentPanel.add(upperPanel);
         contentPanel.add(lowerPanel);
+
 
         add(contentPanel);
 
