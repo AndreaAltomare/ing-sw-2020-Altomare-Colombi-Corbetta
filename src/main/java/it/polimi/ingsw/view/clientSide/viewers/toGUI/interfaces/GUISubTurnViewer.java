@@ -62,4 +62,8 @@ public abstract class GUISubTurnViewer implements SpecificSubTurnViewer {
             return "";
         }
     }
+
+    public void onLoad(){
+        ;
+    }
 }

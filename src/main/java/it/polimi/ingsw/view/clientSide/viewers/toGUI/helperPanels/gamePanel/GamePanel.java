@@ -37,6 +37,9 @@ public class GamePanel extends BackgroundPanel {
 
         ViewBoard.getBoard().toGUI().setMySubTurn(subTurnViewer.getBoardSubTurn());
         ViewBoard.getBoard().toGUI().setVisible(true);
+
+        subTurnViewer.onLoad();
+
         Viewer.setAllRefresh();
 
 

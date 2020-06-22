@@ -117,7 +117,8 @@ public abstract class Viewer extends Thread{
 
     //Funzione che segnala al Viewer di controllare lo stato ASAP
     public void setStatusViewer(StatusViewer statusViewer){
-        enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS, statusViewer));
+        if(statusViewer != null)
+            enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS, statusViewer));
     }
 
     public void setSubTurnViewer(SubTurnViewer subTurnViewer){
