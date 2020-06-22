@@ -752,7 +752,6 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
                 }
                 PlayerData playerData = playersState.getData().get(name);
 
-
                 myPlayer.setCard(((ViewCard) ViewCard.populate(playerData.getCard())).getName());
 
                 for(WorkerData workerId: playerData.getWorkers()){

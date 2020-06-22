@@ -115,7 +115,8 @@ public class ViewCard extends ViewObject {
 
     public static ViewObject populate(CardData data){
         ViewCard ret;
-        ret = new ViewCard(data.getName());
+        ret = new ViewCard(data.getName(), data.getEpithet(), data.getDescription());
+
 
         //todo: set epiteth and description
 
