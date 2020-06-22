@@ -60,4 +60,12 @@ public abstract class GUIStatusViewer implements SpecificStatusViewer {
     public void onClose(){
 
     }
+
+    public boolean setFrameTitle(){
+        return false;
+    }
+
+    public String getTitle(){
+        return "SANTORINI";
+    }
 }

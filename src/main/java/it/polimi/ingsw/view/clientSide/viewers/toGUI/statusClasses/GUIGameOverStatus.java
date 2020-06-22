@@ -29,4 +29,12 @@ public class GUIGameOverStatus extends GUIStatusViewer {
         SoundEffect.stopLoopingMusic();
     }
 
+    public boolean setFrameTitle(){
+        return true;
+    }
+
+    public String getTitle(){
+        return "SANTORINI";
+    }
+
 }

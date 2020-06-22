@@ -119,6 +119,9 @@ public class GUIViewer extends Viewer {
 
         try {
             actualStatus.execute();
+            if(actualStatus.setFrameTitle()){
+                window.setTitle(actualStatus.getTitle());
+            }
         } catch (CheckQueueException ignore) {}
     }
 
