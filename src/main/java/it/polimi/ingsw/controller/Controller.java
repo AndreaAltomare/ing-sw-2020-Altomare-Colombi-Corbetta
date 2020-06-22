@@ -752,6 +752,8 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             if (turnStatusChanged != null) {
                 notify(turnStatusChanged); // ANSWER FROM THE CONTROLLER (Notify the View) //todo: in caso non funzioni rimettere , playerNickname
                 checkForSwitching(playerNickname);
+                if(turnStatusChanged.success() && turnStatusChanged.getState() == StateType.NONE)
+                    saveGame();
             }
             if(turnStatusChanged != null && turnStatusChanged.success())
                 System.out.println("- " + playerNickname + "'s Turn has been correctly changed: " + turnStatusChanged.getState());
