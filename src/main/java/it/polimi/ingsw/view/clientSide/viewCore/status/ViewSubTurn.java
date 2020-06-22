@@ -3,12 +3,10 @@ package it.polimi.ingsw.view.clientSide.viewCore.status;
 import it.polimi.ingsw.model.player.turn.StateType;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
-import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.BuildBlockExecuter;
-import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.MoveWorkerExecuter;
-import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.PlaceWorkerExecuter;
-import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SelectWorkerExecuter;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.*;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ClientAddressable;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
+import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.FirstPlayerViewer;
 import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.*;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
@@ -221,6 +219,25 @@ public enum ViewSubTurn implements ClientAddressable {
         public ViewSubTurn getOpponent() {
             return OPPONENT_BUILD;
         }
+    },
+    CHOOSE_FIRST_PLAYER( "CHOOSE_FIRST_PLAYER"){
+        protected FirstPlayerExecuter executer= new FirstPlayerExecuter();
+
+        @Override
+        public ViewSubTurn getOpponent() {
+            return CHOOSE_FIRST_PLAYER;
+        }
+
+        @Override
+        public SubTurnViewer getSubViewer() {
+            return new FirstPlayerViewer(this);
+        }
+
+        @Override
+        public Executer getExecuter() {
+            return executer;
+        }
+
     };
 
     private static ViewSubTurn actualSubTurn = null;

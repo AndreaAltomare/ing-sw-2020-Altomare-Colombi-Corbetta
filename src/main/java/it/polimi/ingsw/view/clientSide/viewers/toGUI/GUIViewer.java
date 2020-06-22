@@ -84,7 +84,8 @@ public class GUIViewer extends Viewer {
             SwingUtilities.updateComponentTreeUI(window);
         }
         if(queued.getType()== ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN){
-            actualStatus.setSubTurn(((SubTurnViewer)queued.getPayload()).toGUI());
+            if(((SubTurnViewer)queued.getPayload()).toGUI()!=null)
+              actualStatus.setSubTurn(((SubTurnViewer)queued.getPayload()).toGUI());
         }
     }
 

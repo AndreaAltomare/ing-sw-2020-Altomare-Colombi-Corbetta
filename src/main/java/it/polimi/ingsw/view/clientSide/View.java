@@ -19,6 +19,7 @@ import it.polimi.ingsw.observer.Observable;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.FirstPlayerExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.UndoExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ViewSender;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
@@ -796,7 +797,13 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     @Override
     public void update(RequireStartPlayerEvent requireStartPlayer) {
 
-        send(new SetStartPlayerEvent(requireStartPlayer.getPlayers().get(0)));
+        //send(new SetStartPlayerEvent(requireStartPlayer.getPlayers().get(0)));
+
+        if(requireStartPlayer.getChallenger().equals(ViewNickname.getMyNickname())) {
+            ViewSubTurn.setSubTurn(ViewSubTurn.CHOOSE_FIRST_PLAYER, ViewNickname.getMyNickname());
+            ((FirstPlayerExecuter) ViewSubTurn.getActual().getExecuter()).populate(requireStartPlayer);
+            Viewer.setAllSubTurnViewer(ViewSubTurn.getActual());
+        }
 
     }
 

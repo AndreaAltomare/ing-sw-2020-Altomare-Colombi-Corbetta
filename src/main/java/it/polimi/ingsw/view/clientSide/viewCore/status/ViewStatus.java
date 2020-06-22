@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.clientSide.viewCore.status;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.DataStorage;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.FirstPlayerExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.ResumingExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetNicknameExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetPlayerNumberExecuter;
@@ -38,7 +39,7 @@ public enum ViewStatus implements ClientAddressable {
         }
 
         @Override
-        Map<String, Executer> getExecuters() {
+        public Map<String, Executer> getExecuters() {
             return null;
         }
 
@@ -61,7 +62,7 @@ public enum ViewStatus implements ClientAddressable {
         }
 
         @Override
-        Map<String, Executer> getExecuters() {
+        public Map<String, Executer> getExecuters() {
             Map<String, Executer> ret = new HashMap<String, Executer>(1);
             ret.put("NickName", new SetNicknameExecuter());
             return ret;
@@ -88,7 +89,7 @@ public enum ViewStatus implements ClientAddressable {
         }
 
         @Override
-        Map<String, Executer> getExecuters() { return null; }
+        public Map<String, Executer> getExecuters() { return null; }
 
         @Override
         public StatusViewer getViewer() {
@@ -110,7 +111,7 @@ public enum ViewStatus implements ClientAddressable {
         }
 
         @Override
-        Map<String, Executer> getExecuters() {
+        public Map<String, Executer> getExecuters() {
             return null;
         }
 
@@ -135,7 +136,7 @@ public enum ViewStatus implements ClientAddressable {
         }
 
         @Override
-        Map<String, Executer> getExecuters() {
+        public Map<String, Executer> getExecuters() {
             //TODO: set the executers
             return null;
         }
@@ -166,7 +167,7 @@ public enum ViewStatus implements ClientAddressable {
         }
 
         @Override
-        Map<String, Executer> getExecuters() {
+        public Map<String, Executer> getExecuters() {
             //TODO: set the executers
             return null;
         }
@@ -197,7 +198,7 @@ public enum ViewStatus implements ClientAddressable {
         }
 
         @Override
-        Map<String, Executer> getExecuters() {
+        public Map<String, Executer> getExecuters() {
             //TODO: set the executers
             return null;
         }
@@ -226,7 +227,7 @@ public enum ViewStatus implements ClientAddressable {
         }
 
         @Override
-        Map<String, Executer> getExecuters() {
+        public Map<String, Executer> getExecuters() {
             Map<String, Executer> ret = new HashMap<String, Executer>(1);
             ret.put("NumberPlayers", new SetPlayerNumberExecuter());
             return ret;
@@ -252,7 +253,7 @@ public enum ViewStatus implements ClientAddressable {
         }
 
         @Override
-        Map<String, Executer> getExecuters() {
+        public Map<String, Executer> getExecuters() {
             return null;
         }
 
@@ -273,7 +274,7 @@ public enum ViewStatus implements ClientAddressable {
         }
 
         @Override
-        Map<String, Executer> getExecuters() {
+        public Map<String, Executer> getExecuters() {
             Map<String, Executer> ret = new HashMap<String, Executer>(1);
             ret.put("Resume", new ResumingExecuter());
             return ret;
@@ -297,7 +298,7 @@ public enum ViewStatus implements ClientAddressable {
         }
 
         @Override
-        Map<String, Executer> getExecuters() {
+        public Map<String, Executer> getExecuters() {
             return null;
         }
 
@@ -345,7 +346,7 @@ public enum ViewStatus implements ClientAddressable {
      *
      * @return (Array of all Executers used for this status).
      */
-    abstract Map<String, Executer> getExecuters();
+    public abstract Map<String, Executer> getExecuters();
 
 
     /**
