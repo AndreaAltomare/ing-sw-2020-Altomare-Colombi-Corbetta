@@ -99,7 +99,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         System.out.println("##### Game Preparation phase #####"); // Server control message
         setChallenger();
         System.out.println(" - Challenger Player set: '" + model.challenger() + "'"); // Server control message
-        notify(new MessageEvent("The Challenger Player has been chosen. It's: " + model.challenger())); // notify players that the Challenger has been chosen
+        //notify(new MessageEvent("The Challenger Player has been chosen. It's: " + model.challenger())); // notify players that the Challenger has been chosen
 
         /* --- CHECK FOR GAME SAVINGS --- */
         checkForSavings();
@@ -302,7 +302,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         }
         else {
             model.setCardsInGame(cardsInGame);
-            notify(new MessageEvent("Your choice has been registered!"), model.challenger());
+            //notify(new MessageEvent("Your choice has been registered!"), model.challenger());
         }
 
         return chosenCardsAreValid;
@@ -336,7 +336,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
             }
             else {
                 model.setStartPlayer(startPlayer);
-                notify(new MessageEvent(model.startPlayer() + " will be the Start Player for this game!"));
+                //notify(new MessageEvent(model.startPlayer() + " will be the Start Player for this game!"));
                 return true;
             }
         }
@@ -899,7 +899,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
         /* Restore Game State in Model */
         model.restoreGameState();
         /* Notify Players in game */
-        notify(new MessageEvent("A previously saved game was resumed! The game can start.")); // todo maybe it's to change with a NextStatusEvent (parlarne con Giorgio)
+        notify(new MessageEvent("A previously saved game was resumed! The game can start."));
         /* Remove non-playing Players */
         removeNonPlayingPlayers(gameState);
         /* Register Turn Observers */
