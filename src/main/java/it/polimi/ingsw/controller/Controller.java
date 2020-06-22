@@ -132,6 +132,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
 
             /* 6- In "clockwise" order, starting from Start Player, every Player places his/her Workers on the Board */
             playersPlaceWorkers();
+            clearOperations();
 
             /* 7- Send general game info data to all Views so the game can start */
             System.out.println(" - Notifying Players that the game is starting..."); // Server control message
@@ -169,6 +170,15 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      */
     private void registerTurnObservers() {
         model.registerTurnObservers();
+    }
+
+    /**
+     * Clear some Model properties
+     * to remain in a consistent state
+     * if a new game starts.
+     */
+    private void clearOperations() {
+        model.clearOperations();
     }
 
     /**

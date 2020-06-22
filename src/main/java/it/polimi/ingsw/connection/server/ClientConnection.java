@@ -12,6 +12,7 @@ public interface ClientConnection {
     void unregisterAndClose();
     void closeConnection();
     void closeConnection(boolean additionalOperations);
+    void destroySocket();
     void addObserver(Observer<Object> observer);
     void asyncSend(Object message);
     void send(Object message);

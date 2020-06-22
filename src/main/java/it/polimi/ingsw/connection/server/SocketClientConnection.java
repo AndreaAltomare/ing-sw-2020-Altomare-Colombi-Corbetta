@@ -348,6 +348,10 @@ public class SocketClientConnection extends Observable<Object> implements Client
     }
 
 
+    @Override
+    public void destroySocket() {
+        this.socket = null;
+    }
 
 
     public String getNickname() {

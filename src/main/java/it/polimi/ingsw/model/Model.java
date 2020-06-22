@@ -1027,6 +1027,16 @@ public class Model {
     }
 
 
+    /**
+     * Clear some Model properties
+     * to remain in a consistent state
+     * if a new game starts.
+     */
+    public void clearOperations() {
+        Worker.resetIdAndColorIndex();
+    }
+
+
     public WorkerMovedEvent getMainWorkerMoved() {
         return mainWorkerMoved;
     }

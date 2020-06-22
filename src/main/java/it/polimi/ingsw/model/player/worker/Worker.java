@@ -192,4 +192,12 @@ public class Worker extends Placeable {
     public void setColor(Color color) {
         this.color = color;
     }
+
+    /**
+     * Reset Class members once all Workers have been placed.
+     */
+    public static void resetIdAndColorIndex() {
+        lastId = 0;
+        lastColor = 0;
+    }
 }

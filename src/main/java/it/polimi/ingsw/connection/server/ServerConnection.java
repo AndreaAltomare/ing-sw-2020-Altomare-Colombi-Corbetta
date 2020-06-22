@@ -301,12 +301,14 @@ public class ServerConnection {
 
     private void closeConnections() {
         playingConnection.values().forEach(ClientConnection::unregisterAndClose);
+        playingConnection.values().forEach(ClientConnection::destroySocket); // todo test if works
+        playingConnection.values().forEach(c -> c = null); // todo test if works
     }
 
     private void notifyClients() {
         /* Send a quit message from Server */
         playingConnection.values().forEach(c -> {
-            c.send(new MessageEvent("Server closed the connection.")); // todo forse si può far diventare questo messaggio parametrico, nel caso ci siano disconnessioni dovute da altri fattori
+            c.send(new MessageEvent("A Player left the game. Server closed the connection.")); // todo forse si può far diventare questo messaggio parametrico, nel caso ci siano disconnessioni dovute da altri fattori
         }); // todo rimettere ServerQuitEvent (forse)
     }
 }
