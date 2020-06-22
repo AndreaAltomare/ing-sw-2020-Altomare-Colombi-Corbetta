@@ -107,4 +107,12 @@ public class Card {
     public String getName() {
         return name;
     }
+
+    public String getEpithet() {
+        return epithet;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }

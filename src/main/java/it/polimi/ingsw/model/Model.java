@@ -934,6 +934,8 @@ public class Model {
             Card card = player.getCard();
             CardData cardData = new CardData();
             cardData.setName(card.getName());
+            cardData.setEpithet(card.getEpithet());
+            cardData.setDescription(card.getDescription());
             cardData.setMovementExecuted(card.hasExecutedMovement());
             cardData.setConstructionExecuted(card.hasExecutedConstruction());
             cardData.setTurnCompleted(card.isTurnCompleted());

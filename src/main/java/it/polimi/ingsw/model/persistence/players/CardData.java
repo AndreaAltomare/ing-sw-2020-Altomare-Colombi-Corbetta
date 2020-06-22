@@ -5,6 +5,8 @@ import java.io.Serializable;
 public class CardData implements Serializable {
     /* Relevant information for a Player's turn */
     private String name;
+    private String epithet;
+    private String description;
     private MovementData movement;
     private ConstructionData construction;
     private boolean movementExecuted;
@@ -20,6 +22,22 @@ public class CardData implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getEpithet() {
+        return epithet;
+    }
+
+    public void setEpithet(String epithet) {
+        this.epithet = epithet;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public MovementData getMovement() {
