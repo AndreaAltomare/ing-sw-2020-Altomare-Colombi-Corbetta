@@ -31,7 +31,7 @@ public class SelectWorkerBoardSubTurn extends BoardSubTurn {
         try {
             myExecuter.setCell(x, y);
             myExecuter.doIt();
-            SoundEffect.playSound("/actions/Decapitation-SoundBible.com-800292304.wav");
+            SoundEffect.playSound("/actions/selectWorker.wav");
         } catch (WrongParametersException | CannotSendEventException e) {
             ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
         }
