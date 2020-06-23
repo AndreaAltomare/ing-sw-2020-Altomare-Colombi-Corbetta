@@ -1,44 +1,30 @@
 package it.polimi.ingsw.view.clientSide.viewers.messages;
 
 import it.polimi.ingsw.chat.ChatMessageEvent;
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton.ChatPanel;
 
 import java.util.ArrayList;
 
 public class PlayerMessages {
 
-    private static ArrayList<String[]> messageList = new ArrayList<String[]>();
-    private static boolean notify = false;
+    private static ChatPanel chatPanel;
 
-    public static void setNotify(boolean b){
-        notify = b;
+    public static void setChatPanel(ChatPanel chatPanel){
+        PlayerMessages.chatPanel = chatPanel;
+    }
+
+    public static void addMsg(String msg){
+        if(PlayerMessages.chatPanel == null)
+            return;
+        PlayerMessages.chatPanel.addMessage(ViewNickname.getMyNickname() + " : " + msg);
     }
 
     public static void addMsg(ChatMessageEvent msg){
-        String[] payload = new String[2];
-        payload[0] = msg.getSender();
-        payload[1] = msg.getMessage();
-        messageList.add(payload);
-        if(notify){
-            Viewer.setAllRefresh();
-        }
+        if(PlayerMessages.chatPanel == null)
+            return;
+        PlayerMessages.chatPanel.addMessage(msg.getSender() + " : " + msg.getMessage());
     }
 
-    public static int getLen(){
-        return messageList.size();
-    }
-
-    public static String[][] retrive(int n, int offset){
-        String[][] ret = new String[n][2];
-        int m = Math.min(offset+n, getLen());
-        if(offset>getLen())
-            return null;
-
-        for(int i = offset; i<m; i++){
-            ret[i-offset][0] = messageList.get(i)[0];
-            ret[i-offset][1] = messageList.get(i)[1];
-        }
-
-        return ret;
-    }
 }

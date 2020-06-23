@@ -73,7 +73,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         this.in = in;
         this.connection = connection;
         this.viewer = viewer;
-        //connection.setChatMessageHandler(new ChatMessageReceiver());
+        connection.setChatMessageHandler(new ChatMessageReceiver());
     }
 
     // TODO: con questo sistema viene verificato anche che la comunicazione con Pattern Observer funzioni correttamente su thread diversi
@@ -1305,12 +1305,17 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
         @Override
         public synchronized void update(ChatMessageEvent chatMessage) {
+            if(View.debugging){
+                System.out.println("Recived Message");
+            }
             executor.submit(new Runnable() {
                 @Override
                 public void run() {
+                    if(View.debugging){
+                        System.out.println(chatMessage);
+                    }
+
                     PlayerMessages.addMsg(chatMessage);
-                    if(View.debugging)
-                        System.out.println(chatMessage); // TODO PER GIORGIO: in questo metodo run() dovresti mettere il tuo codice lato front-end per mostrare il messaggio di chat. Io per ora ho messo solo una println(...) per testare che funzionasse correttamente.
                 }
             });
         }

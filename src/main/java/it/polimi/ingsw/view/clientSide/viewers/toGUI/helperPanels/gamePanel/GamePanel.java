@@ -4,6 +4,7 @@ import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton.BodyPanel;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton.ChatPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton.PlayerPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton.TitlePanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.BackgroundPanel;
@@ -17,11 +18,19 @@ public class GamePanel extends BackgroundPanel {
 
     private BodyPanel bodyPanel;
 
+    private ChatPanel chatPanel;
+
     public GamePanel(){
         super("/img/background/sized_waiting_background.png");
         new TitlePanel(this);
         bodyPanel = new BodyPanel();
         add(bodyPanel);
+
+        JPanel playerPanel = bodyPanel.getPlayerPanel();
+        chatPanel = new ChatPanel();
+        playerPanel.add(chatPanel);
+
+
         last = this;
     }
 
@@ -32,8 +41,9 @@ public class GamePanel extends BackgroundPanel {
 
         JPanel playerPanel = bodyPanel.getPlayerPanel();
 
-        playerPanel.removeAll();
-        playerPanel.add( PlayerPanel.buildNew(subTurnViewer.getGodName()));
+
+        //playerPanel.removeAll();
+        //playerPanel.add( PlayerPanel.buildNew(subTurnViewer.getGodName()));
 
         ViewBoard.getBoard().toGUI().setMySubTurn(subTurnViewer.getBoardSubTurn());
         ViewBoard.getBoard().toGUI().setVisible(true);
