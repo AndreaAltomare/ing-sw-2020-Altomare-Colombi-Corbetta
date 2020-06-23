@@ -18,6 +18,9 @@ import java.awt.event.MouseListener;
  */
 public class BoardGeneralPanel extends ImagePanel {
 
+    private SubPanel lowerPanel;
+    private SubPanel upperPanel;
+
     private int xDim;
     private int yDim;
 
@@ -98,9 +101,13 @@ public class BoardGeneralPanel extends ImagePanel {
 
         void updateCell(ViewCell cell){
             if (isDifferent(cell)){
-                parent.remove(getPanelAt(cell));
+                try {
+                    parent.remove(getPanelAt(cell));
+                }catch(NullPointerException ignore){}
                 setCell(cell);
-                parent.addComponentToCell(cell, getPanelAt(cell));
+                try {
+                    parent.addComponentToCell(cell, getPanelAt(cell));
+                }catch(NullPointerException ignore){}
             }
         }
 
@@ -126,9 +133,19 @@ public class BoardGeneralPanel extends ImagePanel {
      * @param panel (the SubPanel to add)
      */
     private void addComponentToCell(int x, int y, SubPanel panel){
+        double myXLen = xLen;
         if(panel == null) return;
-        add(panel);
-        panel.setMyRapp(yLen, xLen, y*yLen, x*xLen);
+        if(x<3){
+            upperPanel.add(panel);
+            x = x;
+            myXLen = myXLen * 5 / 3;
+        }else{
+            lowerPanel.add(panel);
+            x -= 3;
+            myXLen = myXLen * 5/2;
+        }
+
+        panel.setMyRapp(yLen, myXLen, y*yLen, x*myXLen);
     }
 
     /**
@@ -176,6 +193,17 @@ public class BoardGeneralPanel extends ImagePanel {
                 setCursor(mySubTurn.getOnExitCursor());
             }
         });
+
+        //lowerPanel = new SubPanel(1, 2*xLen, 0, 3*xLen);
+        lowerPanel = new SubPanel(1, .4, 0, .6);
+        lowerPanel.setOpaque(false);
+        add(lowerPanel);
+
+        //upperPanel = new SubPanel(1, 3*xLen, 0, 0);
+        upperPanel = new SubPanel(1, .6, 0, 0);
+        upperPanel.setOpaque(false);
+        add(upperPanel);
+
     }
 
     /**
@@ -261,16 +289,21 @@ public class BoardGeneralPanel extends ImagePanel {
         mySubTurn = boardSubTurn;
     }
 
-    @Override
+    /*@Override
     public Component add(Component c){
+        System.out.println(c);
         if(c==null) return null;
-        return super.add(c);
-    }
+        Component ret = super.add(c);
+        c.setVisible(true);
+        return ret;
+    }*/
 
     @Override
     public void remove(Component c){
         if(c==null) return;
         super.remove(c);
+        lowerPanel.remove(c);
+        upperPanel.remove(c);
     }
 
 

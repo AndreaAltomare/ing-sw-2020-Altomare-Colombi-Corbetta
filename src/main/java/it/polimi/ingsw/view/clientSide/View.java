@@ -58,7 +58,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     private boolean connectionActive;
 
     //Per fare debugging
-    public static final boolean debugging = true;
+    public static final boolean debugging = false;
 
     private boolean meWinner = false;
 
@@ -1284,6 +1284,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
     /* ########## AUXILIARY TEST METHODS ########## */
     private void printGameInfo() {
+        if(!View.debugging)
+            return;
         System.out.println("Players list and their Workers: ");
         for (String player : players) {
             System.out.println(player);
@@ -1307,7 +1309,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
                 @Override
                 public void run() {
                     PlayerMessages.addMsg(chatMessage);
-                    System.out.println(chatMessage); // TODO PER GIORGIO: in questo metodo run() dovresti mettere il tuo codice lato front-end per mostrare il messaggio di chat. Io per ora ho messo solo una println(...) per testare che funzionasse correttamente.
+                    if(View.debugging)
+                        System.out.println(chatMessage); // TODO PER GIORGIO: in questo metodo run() dovresti mettere il tuo codice lato front-end per mostrare il messaggio di chat. Io per ora ho messo solo una println(...) per testare che funzionasse correttamente.
                 }
             });
         }

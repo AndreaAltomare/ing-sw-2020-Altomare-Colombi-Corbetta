@@ -420,7 +420,8 @@ public class ViewCell extends ViewObject {
             fileName += "triple_block";
 
         if(!fileName.equals("")) {
-            System.out.println(fileName);
+            if(View.debugging)
+                System.out.println(fileName);
             ret = new ImagePanel(1, 1, 0, 0, "/img/board/cells/" + fileName + ".png");
         }
         if (isThereWorker()){

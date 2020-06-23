@@ -64,7 +64,8 @@ public class ClientApp {
                 port = Integer.parseInt(argsList.get(portArgIndex));
             }
             catch(Exception ex) {
-                System.out.println(BAD_ARGS);
+                if(View.debugging)
+                    System.out.println(BAD_ARGS);
                 return;
             }
         }
@@ -81,7 +82,8 @@ public class ClientApp {
         /* GET VIEWER SETTINGS */
         viewer = getViewer(argsList);
         if(viewer == null) {
-            System.out.println(BAD_ARGS);
+            if(View.debugging)
+                System.out.println(BAD_ARGS);
             return;
         }
 

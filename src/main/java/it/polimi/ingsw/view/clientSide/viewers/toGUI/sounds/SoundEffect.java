@@ -1,5 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewers.toGUI.sounds;
 
+import it.polimi.ingsw.view.clientSide.View;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -30,11 +32,11 @@ public abstract class SoundEffect {
                     try {
                         Clip clip = AudioSystem.getClip();
                         AudioInputStream inputStream = AudioSystem.getAudioInputStream(getClass().getResource("/sounds/" + url));
-                        System.out.println("MUSIC: "+"/sounds/" + url);
+                        if(View.debugging)
+                            System.out.println("MUSIC: "+"/sounds/" + url);
                         clip.open(inputStream);
                         clip.start();
-                    } catch (Exception e) {
-                        System.err.println(e.getMessage());
+                    } catch (Exception ignore) {
                     }
                 }
             }).start();
@@ -54,11 +56,11 @@ public abstract class SoundEffect {
                 try {
                     loopingMusic = AudioSystem.getClip();
                     AudioInputStream inputStream = AudioSystem.getAudioInputStream(getClass().getResource("/sounds" + url));
-                    System.out.println("MUSIC: "+"/sounds" + url);
+                    if(View.debugging)
+                        System.out.println("MUSIC: "+"/sounds" + url);
                     loopingMusic.open(inputStream);
                     loopingMusic.loop(Clip.LOOP_CONTINUOUSLY);
-                } catch (Exception e) {
-                    System.err.println(e.getMessage());
+                } catch (Exception ignre) {
                 }
             }
         }).start();
