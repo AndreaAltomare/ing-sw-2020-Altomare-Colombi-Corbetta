@@ -33,7 +33,7 @@ public class ChatPanel extends ImagePanel {
         inputMessage.setOpaque(false);
         inputMessage.setBorder(null);
         inputMessage.setHorizontalAlignment(JTextField.CENTER);
-        JPanel inputMessagePanel = new PanelComponent(0.7, 0.1, 0.05, 0.85, inputMessage);
+        JPanel inputMessagePanel = new PanelComponent(0.7, 0.1, 0.05, 0.89, inputMessage);
         inputMessagePanel.setOpaque(false);
         add(inputMessagePanel);
 
@@ -53,9 +53,7 @@ public class ChatPanel extends ImagePanel {
 
             }
         });
-        add( new PanelImageButton(0.1, 0.1, 0.85, 0.85, sendButton, "/img/trappings/forward_button.png", "next"));
-
-        addMessage("TESTING<br/>new line...");
+        add( new PanelImageButton(0.1, 0.1, 0.85, 0.89, sendButton, "/img/trappings/forward_button.png", "next"));
 
         PlayerMessages.setChatPanel(this);
     }
