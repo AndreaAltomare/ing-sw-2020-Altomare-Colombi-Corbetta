@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewCore.status;
 
 import it.polimi.ingsw.model.player.turn.StateType;
+import it.polimi.ingsw.view.clientSide.View;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.*;
@@ -257,7 +258,8 @@ public enum ViewSubTurn implements ClientAddressable {
             setSubTurn(BUILD, player);
         else{
             //TODO: rimuovere controllo
-            System.out.println("Unknown status");
+            if(View.debugging)
+                System.out.println("Unknown status");
             setSubTurn(MOVE);
         }
 

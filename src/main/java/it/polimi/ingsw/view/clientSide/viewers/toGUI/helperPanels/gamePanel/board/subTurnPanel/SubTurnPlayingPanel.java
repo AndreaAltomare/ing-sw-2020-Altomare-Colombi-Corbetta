@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.subTurnPanel;
 
+import it.polimi.ingsw.view.clientSide.View;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.NextTurnExecuter;
@@ -48,7 +49,8 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
         JButton moveButton = new JButton();
 
         if(move){
-            System.out.println("MOVE");
+            if(View.debugging)
+                System.out.println("MOVE");
             selectPanel.setMyRapp(0.5, 1, 0, 0);
             upperPanel.add(selectPanel);
         }else if (mine) {
@@ -72,7 +74,8 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
         JButton buildButton = new JButton();
 
         if(build) {
-            System.out.println("BUILD");
+            if(View.debugging)
+                System.out.println("BUILD");
             selectPanel.setMyRapp(0.5, 1, 0.5, 0);
             upperPanel.add(new ImagePanel(0.5, 1, 0.5, 0,"/img/trappings/select_button.png" ));
         }else if(mine){
@@ -145,7 +148,8 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
         JButton buildBlockButton = new JButton();
 
         if(buildBlock) {
-            System.out.println("BUILD_BLOCK");
+            if(View.debugging)
+                System.out.println("BUILD_BLOCK");
             selectPanel.setMyRapp(0.4, 0.4, 0.55, 0.05);
             lowerPanel.add(selectPanel);
             //lowerRightPanel.add(selectPanel);
@@ -174,7 +178,8 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
         JButton buildDomeButton = new JButton();
 
         if(buildDome) {
-            System.out.println("BUILD_DOME");
+            if(View.debugging)
+                System.out.println("BUILD_DOME");
             selectPanel.setMyRapp(0.4, 0.4, 0.55, 0.5);
             lowerPanel.add(selectPanel);
             //lowerRightPanel.add(selectPanel);

@@ -8,6 +8,8 @@ import it.polimi.ingsw.connection.utility.PingResponse;
 import it.polimi.ingsw.observer.MVEventSubject;
 import it.polimi.ingsw.observer.Observer;
 import it.polimi.ingsw.view.clientSide.View;
+import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
+import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -90,7 +92,9 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
                     }
                 }
                 catch(SocketTimeoutException ex) {
-                    System.err.println("Socket timed out.\nMESSAGE: " + ex.getMessage());
+                    ViewMessage.populateAndSend("Socket timed out.", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+                    if(View.debugging)
+                        System.err.println("Socket timed out.\nMESSAGE: " + ex.getMessage());
                     setActive(false);
                 }
                 catch (Exception ex) {
@@ -124,11 +128,16 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
                     socketOut.writeObject(objectToWrite);
                     socketOut.flush(); // To ensure data is sent
                 }
-                else
-                    System.err.println("Connection not active.");
+                else{
+                    ViewMessage.populateAndSend("Connection not active.", ViewMessage.MessageType.FROM_SERVER_ERROR);
+                    if(View.debugging)
+                        System.err.println("Connection not active.");
+                }
             }
             catch(SocketTimeoutException ex) {
-                System.err.println("Socket timed out.\nMESSAGE: " + ex.getMessage());
+                ViewMessage.populateAndSend("Socket timed out.", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+                if(View.debugging)
+                    System.err.println("Socket timed out.\nMESSAGE: " + ex.getMessage());
                 setActive(false);
             }
             catch (Exception ex) {
@@ -162,9 +171,11 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
      * @throws IOException (Exception handled by ClientApp)
      */
     public void run() throws IOException {
-        System.out.println("Connecting to the Server...");
+        if(View.debugging)
+            System.out.println("Connecting to the Server...");
         Socket socket = new Socket(ip, port);
-        System.out.println("Connection established.\n");
+        if(View.debugging)
+            System.out.println("Connection established.\n");
         socketOut = new ObjectOutputStream(socket.getOutputStream());
         socketIn = new ObjectInputStream(socket.getInputStream());
         //Scanner stdin = new Scanner(System.in);
@@ -181,8 +192,11 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
             //t1.join();
         }
         catch(InterruptedException | NoSuchElementException ex) {
-            System.err.println("ERROR: " + ex.getMessage());
-            System.out.println("Connection closed from the client side.");
+            ViewMessage.populateAndSend("Connection closed from the client side.", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
+            if(View.debugging) {
+                System.err.println("ERROR: " + ex.getMessage());
+                System.out.println("Connection closed from the client side.");
+            }
         }
         finally {
             // TODO: forse questi metodi danno problemi
@@ -191,7 +205,9 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
             socketIn.close();
             socketOut.close();
             socket.close();
-            System.out.println("Connection closed."); // todo [debug]
+            if(View.debugging)
+                System.out.println("Connection closed."); // todo [debug]
+            ViewMessage.populateAndSend("Connection closed.", ViewMessage.MessageType.FROM_SERVER_ERROR);
         }
     }
 

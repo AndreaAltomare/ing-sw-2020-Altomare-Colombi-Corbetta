@@ -55,7 +55,8 @@ public class GUINumberPlayerStatus extends GUIStatusViewer {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 SetPlayerNumberExecuter executer = (SetPlayerNumberExecuter)myStatusViewer.getMyExecuters().get("NumberPlayers");
-                System.out.println("Numero giocatori impostato a " + 2);
+                if(View.debugging)
+                    System.out.println("Numero giocatori impostato a " + 2);
                 try {
                     executer.setNumberOfPlayers(2);
                     executer.doIt();
@@ -76,7 +77,8 @@ public class GUINumberPlayerStatus extends GUIStatusViewer {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 SetPlayerNumberExecuter executer = (SetPlayerNumberExecuter)myStatusViewer.getMyExecuters().get("NumberPlayers");
-                System.out.println("Numero giocatori impostato a " + 3);
+                if(View.debugging)
+                    System.out.println("Numero giocatori impostato a " + 3);
                 try {
                     executer.setNumberOfPlayers(3);
                     executer.doIt();
