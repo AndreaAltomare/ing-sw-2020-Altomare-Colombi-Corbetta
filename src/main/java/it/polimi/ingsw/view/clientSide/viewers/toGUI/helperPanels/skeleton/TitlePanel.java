@@ -52,16 +52,16 @@ public class TitlePanel extends SubPanel implements UndoExecuter.UndoExecuterLis
             public void actionPerformed(ActionEvent actionEvent) {
                 SoundEffect.setEnabled(!SoundEffect.getEnabled());
                 if(SoundEffect.getEnabled())
-                    soundButton.setBackgroundImg("/img/trappings/speaker.png", "sound on");
+                    soundButton.setButtonImg("/img/trappings/speaker.png", "sound on");
                 else
-                    soundButton.setBackgroundImg("/img/trappings/noSound.png", "mute");
+                    soundButton.setButtonImg("/img/trappings/noSound.png", "mute");
             }
         });
         soundButton = new PanelImageButton(0.1, 0.4, 0.85, 0.1, soundRealButton, "/img/trappings/speaker.png", "sound");
         if(SoundEffect.getEnabled())
-            soundButton.setBackgroundImg("/img/trappings/speaker.png", "sound on");
+            soundButton.setButtonImg("/img/trappings/speaker.png", "sound on");
         else
-            soundButton.setBackgroundImg("/img/trappings/noSound.png", "mute");
+            soundButton.setButtonImg("/img/trappings/noSound.png", "mute");
         add(soundButton);
 
         JButton undoRealButton = new JButton();
@@ -105,7 +105,7 @@ public class TitlePanel extends SubPanel implements UndoExecuter.UndoExecuterLis
 
     @Override
     public void undoLightAvailable() {
-        undoButton.setBackgroundImg("/img/trappings/undo.png", "undo");
+        undoButton.setButtonImg("/img/trappings/undo.png", "undo");
     }
 
     @Override
@@ -115,6 +115,6 @@ public class TitlePanel extends SubPanel implements UndoExecuter.UndoExecuterLis
 
     @Override
     public void undoExpired() {
-        undoButton.setBackgroundImg("/img/trappings/none.png", "");
+        undoButton.setButtonImg("/img/trappings/none.png", "");
     }
 }

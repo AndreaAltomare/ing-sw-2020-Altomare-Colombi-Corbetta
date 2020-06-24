@@ -161,9 +161,9 @@ public class GUISelectCard {
         godPower.setText("<html>"+ god.getDescription() +"</html>");
         //godPower.setText( god.getEpiteth() );
         if(cardSelection.isSelected(god)){
-            selectButton.setBackgroundImg("/img/trappings/redButton.png", "remove");
+            selectButton.setButtonImg("/img/trappings/redButton.png", "remove");
         }else{
-            selectButton.setBackgroundImg("/img/trappings/greenButton.png", "select");
+            selectButton.setButtonImg("/img/trappings/greenButton.png", "select");
         }
         changeGodImage(god.getName());
         changePowerImage(god.getName());
