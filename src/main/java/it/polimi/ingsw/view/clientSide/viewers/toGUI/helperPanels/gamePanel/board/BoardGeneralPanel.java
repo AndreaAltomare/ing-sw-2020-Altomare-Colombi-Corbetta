@@ -12,9 +12,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 /**
- * Class intended to represent the Board and give all the functionalities needed to represent it to the GUI.
- *
- * @author giorgio
+ * Class intended to represent the Board and give all the functionality needed to represent it to the GUI.
  */
 public class BoardGeneralPanel extends ImagePanel {
 
@@ -36,32 +34,72 @@ public class BoardGeneralPanel extends ImagePanel {
     private ImagePanel selectedWorkerPanel = new ImagePanel(1, 1, 0, 0, "/img/board/cells/selectedWorker.png");
 
     /**
-     * Class to represent the status of the buildings on the board
+     * Class to represent the status of the buildings on the board.
      */
     private static class MyBuildingRepresentation{
 
+        /**
+         * Matrix of SubPanel containing all the SubPanels representing the various Cell.
+         */
         private SubPanel[][] cellMatrix;
+
+        /**
+         * Matrix of String containing the String representation of each cell.
+         */
         private String[][] cellStatusMatrix;
+
+
         private BoardGeneralPanel parent;
 
+        /**
+         * constructor.
+         *
+         * @param parent (The BoardGeneralPanel that entails this).
+         */
         MyBuildingRepresentation(BoardGeneralPanel parent){
             this.parent = parent;
             cellMatrix = new SubPanel[parent.xDim][parent.yDim];
             cellStatusMatrix = new String[parent.xDim][parent.yDim];
         }
 
+        /**
+         * Method to retrieve the String representation of the status that is being representing of the Cell in a given position.
+         *
+         * @param x (the x position of the Cell).
+         * @param y (the y position of the Cell).
+         * @return  (The String representation of the status of the Cell that is being actually showing).
+         */
         String getStatusAt(int x, int y){
             return cellStatusMatrix[x][y];
         }
 
+        /**
+         * Method to retrieve the String representation of the status that is being representing of the Cell.
+         *
+         * @param cell  (the <code>ViewCell</code> in the position of the Cell which is looked for).
+         * @return      (The String representation of the status of the Cell that is being actually showing).
+         */
         String getStatusAt(ViewCell cell){
             return getStatusAt(cell.getX(), cell.getY());
         }
 
+        /**
+         * Method that sets the String representation of the status that is being representing of the Cell in a given position.
+         *
+         * @param x (the x position of the Cell).
+         * @param y (the y position of the Cell).
+         * @param status    (The String representation of the status of the Cell that is being actually showing).
+         */
         void setStatusAt(int x, int y, String status){
             cellStatusMatrix[x][y] = status;
         }
 
+        /**
+         * Method to set the String representation of the status that is being representing of the Cell.
+         * It retrieves from the <code>ViewCell</code> either the position and the String representing the actual status.
+         *
+         * @param cell  (The <code>ViewCell</code> that is being going to represent).
+         */
         void setStatusAt(ViewCell cell){
             setStatusAt(
                     cell.getX(),
@@ -70,35 +108,85 @@ public class BoardGeneralPanel extends ImagePanel {
             );
         }
 
+        /**
+         * Method that builds the String representation of a Cell within its status.
+         *
+         * @param cell  (The <code>ViewCell</code> that is being represented.
+         * @return      (String representing the <code>ViewCell</code> and it's status.
+         */
         String getCellStatusEncoded(ViewCell cell){
             return "l"+cell.getLevel()+"D"+(cell.isDoomed()?"t":"f") + (cell.isThereWorker()?("W" + cell.getWorkerString()):"");
         }
 
+        /**
+         * Method to retrieve th Panel representing the Cell in the given position.
+         *
+         * @param x (the x position of the Cell).
+         * @param y (the y position of the Cell).
+         * @return  (the SubPanel representing the searched Cell).
+         */
         SubPanel getPanelAt(int x, int y){
             return cellMatrix[x][y];
         }
 
+        /**
+         * Method to retrieve th Panel representing the <code>ViewCell</code>.
+         *
+         * @param cell  (the searched <code>ViewCell</code>).
+         * @return      (the SubPanel representing it).
+         */
         SubPanel getPanelAt(ViewCell cell){
             return getPanelAt(cell.getX(), cell.getY());
         }
 
+        /**
+         * Method to set the SubPanel representing the Cell in the given position.
+         *
+         * @param x (the x position of the Cell).
+         * @param y (the y position of the Cell).
+         * @param panel (the <code>SubPanel</code> representing the selected Cell).
+         */
         void setPanelAt(int x, int y, SubPanel panel){
             cellMatrix[x][y] = panel;
         }
 
+        /**
+         * Method to set the SubPanel representing the given <code>ViewCell</code>.
+         * It retrieves the SubPanel from the method <code>ViewCell.toGUI</code>.
+         *
+         * @param cell  (the <code>ViewCell</code> to be represented).
+         */
         void setPanelAt(ViewCell cell){
             setPanelAt(cell.getX(), cell.getY(), cell.toGUI());
         }
 
+        /**
+         * Method that sets the representation of the given Cell (either the String and SubPaneel representation).
+         *
+         * @param cell  (the <code>ViewCell</code> to be represented
+         */
         void setCell(ViewCell cell){
             setPanelAt(cell);
             setStatusAt(cell);
         }
 
+        /**
+         * Method that checks weather the actual representation of the gven <code>ViewCell</code> is updated.
+         * It checks the String representation.
+         *
+         * @param cell (the <code>ViewCell</code> that is being checked)
+         * @return     (true iif the representation of the Cell is different from the Cell given).
+         */
         boolean isDifferent(ViewCell cell){
             return !getCellStatusEncoded(cell).equals(getStatusAt(cell));
         }
 
+        /**
+         * Method that grants the representation of the Cell is updated.
+         * It checks weather the representation has to be changed and if so updates the representation.
+         *
+         * @param cell  (<code>ViewCell</code> that has to be updated).
+         */
         void updateCell(ViewCell cell){
             if (isDifferent(cell)){
                 try {
@@ -118,7 +206,7 @@ public class BoardGeneralPanel extends ImagePanel {
     /**
      * Method to update the status of a cell
      *
-     * @param cell (ViewCell to be updated)
+     * @param cell (<code>ViewCell</code> to be updated)
      */
     public void updateCell(ViewCell cell){
         myBuildingRepresentation.updateCell(cell);
@@ -126,18 +214,17 @@ public class BoardGeneralPanel extends ImagePanel {
 
 
     /**
-     * Method to add a component to the selected Cell.
+     * Method to add a <code>SubPanel</code> to the selected Cell.
      *
      * @param x (int the x pos of the cell)
      * @param y (int the y pos of the cell)
-     * @param panel (the SubPanel to add)
+     * @param panel (the <code>SubPanel</code> to be added)
      */
     private void addComponentToCell(int x, int y, SubPanel panel){
         double myXLen = xLen;
         if(panel == null) return;
         if(x<3){
             upperPanel.add(panel);
-            x = x;
             myXLen = myXLen * 5 / 3;
         }else{
             lowerPanel.add(panel);
@@ -145,11 +232,13 @@ public class BoardGeneralPanel extends ImagePanel {
             myXLen = myXLen * 5/2;
         }
 
+        //Parametri invertiti perchè la rappresentazione in Swing differisce dalla rappresentazine nella logica del gioco
+        //Parametrs swithched because Swing's representation is different from the game's logic representation, where x is the row and  y the column
         panel.setMyRapp(yLen, myXLen, y*yLen, x*myXLen);
     }
 
     /**
-     * Method to add a component to the selected Cell.
+     * Method to add a <code>SubPanel</code> to the selected Cell.
      *
      * @param cell (ViewCell to which the component has to be added)
      * @param panel (SubPanel to be added)
@@ -160,7 +249,7 @@ public class BoardGeneralPanel extends ImagePanel {
 
 
     /**
-     * constructor
+     * constructor.
      *
      * @param fileName (String the name of the board image file)
      */
@@ -237,6 +326,11 @@ public class BoardGeneralPanel extends ImagePanel {
         return ret;
     }
 
+    /**
+     * Method that set the Cell that is to be represented like selected.
+     *
+     * @param cell  (<code>ViewCell</code> selected).
+     */
     public void setSelectCell(ViewCell cell){
         if(selectedCell!=null){
             JPanel back = myBuildingRepresentation.getPanelAt(selectedCell);
@@ -261,6 +355,11 @@ public class BoardGeneralPanel extends ImagePanel {
 
     }
 
+    /**
+     * Method that set the Worker that is to be represented like selected.
+     *
+     * @param cell  (<code>ViewCell</code> on which is the selected Worker).
+     */
     public void setSelectedWorker(ViewCell cell){
         if(selectedWorker!=null){
             JPanel back = myBuildingRepresentation.getPanelAt(selectedWorker);
@@ -285,6 +384,11 @@ public class BoardGeneralPanel extends ImagePanel {
 
     }
 
+    /**
+     * Method that set the <code>BoardSubTurn</code> needed in this moment
+     *
+     * @param boardSubTurn  (<code>BoardSubTurn</code> that represents the actual SubTurn).
+     */
     public void setMySubTurn(BoardSubTurn boardSubTurn){
         mySubTurn = boardSubTurn;
     }
@@ -298,6 +402,7 @@ public class BoardGeneralPanel extends ImagePanel {
         return ret;
     }*/
 
+    //Needed for this' internal function, but not differs from the overridden method
     @Override
     public void remove(Component c){
         if(c==null) return;
