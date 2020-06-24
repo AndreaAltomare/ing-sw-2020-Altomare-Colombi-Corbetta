@@ -55,17 +55,17 @@ public class ClientApp {
 
         /* GET CUSTOMS CONNECTION SETTINGS */
         if(argsList.contains(IP_ARG) && argsList.contains(PORT_ARG)) {
-            // GET IP
-            int ipArgIndex = argsList.indexOf(IP_ARG) + 1;
-            ip = argsList.get(ipArgIndex);
-            // GET PORT
-            int portArgIndex = argsList.indexOf(PORT_ARG) + 1;
             try {
+                // GET IP
+                int ipArgIndex = argsList.indexOf(IP_ARG) + 1;
+                ip = argsList.get(ipArgIndex);
+                // GET PORT
+                int portArgIndex = argsList.indexOf(PORT_ARG) + 1;
                 port = Integer.parseInt(argsList.get(portArgIndex));
             }
             catch(Exception ex) {
-                if(View.debugging)
-                    System.out.println(BAD_ARGS);
+                //if(View.debugging)
+                System.out.println(BAD_ARGS);
                 return;
             }
         }
@@ -82,8 +82,8 @@ public class ClientApp {
         /* GET VIEWER SETTINGS */
         viewer = getViewer(argsList);
         if(viewer == null) {
-            if(View.debugging)
-                System.out.println(BAD_ARGS);
+            //if(View.debugging)
+            System.out.println(BAD_ARGS);
             return;
         }
 
