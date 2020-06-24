@@ -1,11 +1,11 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.model.card.win;
 
 import it.polimi.ingsw.model.board.Board;
 import it.polimi.ingsw.model.board.Cell;
 import it.polimi.ingsw.model.board.IslandBoard;
 import it.polimi.ingsw.model.card.Card;
+import it.polimi.ingsw.model.card.CardParser;
 import it.polimi.ingsw.model.card.GodPower;
-import it.polimi.ingsw.model.card.win.MyVictory;
 import it.polimi.ingsw.model.exceptions.OutOfBoardException;
 import it.polimi.ingsw.model.move.FloorDirection;
 import it.polimi.ingsw.model.move.LevelDirection;
@@ -25,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class MyVictoryTest {
 
+    boolean checkWin;
+
     MyVictory myVictory;
     Move move;
     Player player = new Player( "Player1");
@@ -33,12 +35,20 @@ class MyVictoryTest {
     Cell nearCell;
     Worker worker;
 
+    GodPower human;
+    Card humanCard;
+
+    GodPower pan;
+    Card panCard;
+
     /**
      * Initialization before method's test
-     * Methods used:        getCellAt( ini, int)            of  IslandBoard
+     * Methods used:        getCellAt( int, int)            of  IslandBoard
      */
     @BeforeEach
     void setUp() {
+
+        checkWin = false;
 
         boolean checkErrorBefore = false;
         board = new IslandBoard();
@@ -51,6 +61,48 @@ class MyVictoryTest {
         }
         assertTrue( !checkErrorBefore );
         worker = new Worker( player );
+
+        // god and card without power initialization
+        human = new GodPower(); // CardGod without any power
+        human.setName("Default");
+        human.setEpithet("Default");
+        human.setDescription("Default");
+        human.setMovementsLeft(1);
+        human.setConstructionLeft(1);
+        human.setHotLastMoveDirection(LevelDirection.NONE);
+        human.setForceOpponentInto(FloorDirection.NONE);
+        human.setDeniedDirection(LevelDirection.NONE);
+        human.setOpponentDeniedDirection(LevelDirection.NONE);
+        humanCard = new Card(   human,
+                                CardParser.getMoveCheckers(human),
+                                CardParser.getMoveExecutor(human),
+                                CardParser.getBuildCheckers(human),
+                                CardParser.getBuildExecutor(human),
+                                CardParser.getWinCheckers(human),
+                                CardParser.getAdversaryMoveCheckers(human));
+
+        // Pan's GodPower and Card initialization
+        pan = new GodPower();
+        pan.setName("Pan");
+        pan.setEpithet("God of the Wild");
+        pan.setDescription("P");
+        pan.setMovementsLeft(1);
+        pan.setConstructionLeft(1);
+        pan.setMustObey(true);
+        pan.setHotLastMoveDirection(LevelDirection.DOWN);
+        pan.setForceOpponentInto(FloorDirection.NONE);
+        pan.setDeniedDirection(LevelDirection.NONE);
+        pan.setOpponentDeniedDirection(LevelDirection.NONE);
+        pan.setNewVictoryCondition(true);
+        pan.setHotLevelDepth(-2);
+        panCard = new Card( pan,
+                            CardParser.getMoveCheckers(pan),
+                            CardParser.getMoveExecutor(pan),
+                            CardParser.getBuildCheckers(pan),
+                            CardParser.getBuildExecutor(pan),
+                            CardParser.getWinCheckers(pan),
+                            CardParser.getAdversaryMoveCheckers(pan));
+
 
     }
 
@@ -67,11 +119,18 @@ class MyVictoryTest {
         nearCell = null;
         worker = null;
 
+        human = null;
+        humanCard = null;
+
+        pan = null;
+        panCard = null;
+
     }
 
     /**
      * Check if the default victory condition  on board are correctly checked
-     * Methods used:        getHeigth()             of  Cell
+     * Methods used:        getMyVictory()          of  Card
+     *                      getHeigth()             of  Cell
      *                      repOk()                 of  Cell
      *                      getTop()                of  Cell
      *                      getPlaceableAt( int )   of  Cell
@@ -84,19 +143,7 @@ class MyVictoryTest {
      */
     @Test
     void checkMoveDefaultBlack() {
-        GodPower human = new GodPower(); // CardGod without any power
-        human.setName( "Default" );
-        human.setEpithet( "Default" );
-        human.setDescription( "Default" );
-        human.setMovementsLeft( 1 );
-        human.setConstructionLeft( 1 );
-        human.setHotLastMoveDirection( LevelDirection.NONE );
-        human.setForceOpponentInto( FloorDirection.NONE );
-        human.setDeniedDirection( LevelDirection.NONE );
-        human.setOpponentDeniedDirection( LevelDirection.NONE );
-        Card humanCard = new Card( human );
-        myVictory = new MyVictory(humanCard, human);
-        boolean checkWin;
+        myVictory = humanCard.getMyVictory();
 
 
         /* can win when go up from Cell with two Blocks to near Cell with three Blocks*/
@@ -107,19 +154,21 @@ class MyVictoryTest {
         nearCell.buildBlock();
         worker.place(cell);
         move = new Move(worker.position(), nearCell);
+        worker.place(nearCell);
         checkWin = myVictory.checkMove(move, worker);
         assertTrue( checkWin );
-        assertTrue( cell.getHeigth() == 3 );
-        assertTrue( nearCell.getHeigth() == 3 );
-        assertTrue( cell.getTop().equals(worker) );
-        assertTrue( cell.getPlaceableAt(1).isBlock() );
+        assertTrue( cell.getHeigth() == 2 );
+        assertTrue( nearCell.getHeigth() == 4 );
+        assertTrue( cell.getTop().isBlock() );
         assertTrue( cell.getPlaceableAt(0).isBlock() );
+        assertTrue( nearCell.getTop().equals(worker) );
         assertTrue( nearCell.getTop().isBlock() );
+        assertTrue( nearCell.getPlaceableAt(2).isBlock() );
         assertTrue( nearCell.getPlaceableAt(1).isBlock() );
         assertTrue( nearCell.getPlaceableAt(0).isBlock() );
         assertTrue( cell.repOk() );
         assertTrue( nearCell.repOk() );
-        assertTrue( worker.position().equals(cell) );
+        assertTrue( worker.position().equals(nearCell) );
 
         // clear board
         while ( cell.getTop() != null ) {
@@ -136,17 +185,18 @@ class MyVictoryTest {
         nearCell.buildBlock();
         worker.place(cell);
         move = new Move(worker.position(), nearCell);
+        worker.place(nearCell);
         checkWin = myVictory.checkMove(move, worker);
         assertTrue( !checkWin );
-        assertTrue( cell.getHeigth() == 2 );
-        assertTrue( nearCell.getHeigth() == 2 );
-        assertTrue( cell.getTop().equals(worker) );
-        assertTrue( cell.getPlaceableAt(0).isBlock() );
-        assertTrue( nearCell.getTop().isBlock() );
+        assertTrue( cell.getHeigth() == 1 );
+        assertTrue( nearCell.getHeigth() == 3 );
+        assertTrue( cell.getTop().isBlock() );
+        assertTrue( nearCell.getTop().equals(worker) );
+        assertTrue( nearCell.getPlaceableAt(1).isBlock() );
         assertTrue( nearCell.getPlaceableAt(0).isBlock() );
         assertTrue( cell.repOk() );
         assertTrue( nearCell.repOk() );
-        assertTrue( worker.position().equals(cell) );
+        assertTrue( worker.position().equals(nearCell) );
 
         // clear board
         while ( cell.getTop() != null ) {
@@ -166,20 +216,21 @@ class MyVictoryTest {
         nearCell.buildBlock();
         worker.place(cell);
         move = new Move(worker.position(), nearCell);
+        worker.place(nearCell);
         checkWin = myVictory.checkMove(move, worker);
         assertTrue( !checkWin );
-        assertTrue( cell.getHeigth() == 4 );
-        assertTrue( nearCell.getHeigth() == 3 );
-        assertTrue( cell.getTop().equals(worker) );
-        assertTrue( cell.getPlaceableAt(2).isBlock() );
+        assertTrue( cell.getHeigth() == 3 );
+        assertTrue( nearCell.getHeigth() == 4 );
+        assertTrue( cell.getTop().isBlock() );
         assertTrue( cell.getPlaceableAt(1).isBlock() );
         assertTrue( cell.getPlaceableAt(0).isBlock() );
-        assertTrue( nearCell.getTop().isBlock() );
+        assertTrue( nearCell.getTop().equals(worker) );
+        assertTrue( nearCell.getPlaceableAt(2).isBlock() );
         assertTrue( nearCell.getPlaceableAt(1).isBlock() );
         assertTrue( nearCell.getPlaceableAt(0).isBlock() );
         assertTrue( cell.repOk() );
         assertTrue( nearCell.repOk() );
-        assertTrue( worker.position().equals(cell) );
+        assertTrue( worker.position().equals(nearCell) );
 
         // clear board
         while ( cell.getTop() != null ) {
@@ -194,7 +245,8 @@ class MyVictoryTest {
 
     /**
      * Check if the Pan's victory condition  on board are correctly checked
-     * Methods used:        getHeigth()             of  Cell
+     * Methods used:        getMyVictory()          of  Card
+     *                      getHeigth()             of  Cell
      *                      repOk()                 of  Cell
      *                      getTop()                of  Cell
      *                      getPlaceableAt( int )   of  Cell
@@ -207,21 +259,7 @@ class MyVictoryTest {
      */
     @Test
     void checkMovePanBlack() {
-        GodPower pan = new GodPower();
-        pan.setName( "Pan" );
-        pan.setEpithet( "God of the Wild" );
-        pan.setDescription( "P" );
-        pan.setMovementsLeft( 1 );
-        pan.setConstructionLeft( 1 );
-        pan.setMustObey(true);
-        pan.setHotLastMoveDirection( LevelDirection.DOWN );
-        pan.setForceOpponentInto( FloorDirection.NONE );
-        pan.setDeniedDirection( LevelDirection.NONE );
-        pan.setOpponentDeniedDirection( LevelDirection.NONE );
-        pan.setNewVictoryCondition(true);
-        Card panCard = new Card( pan );
-        myVictory = new MyVictory(panCard, pan);
-        boolean checkWin;
+        myVictory = panCard.getMyVictory();
 
 
         /* can win when go up from Cell with two Blocks to near Cell with three Blocks*/
@@ -232,19 +270,21 @@ class MyVictoryTest {
         nearCell.buildBlock();
         worker.place(cell);
         move = new Move(worker.position(), nearCell);
+        worker.place(nearCell);
         checkWin = myVictory.checkMove(move, worker);
         assertTrue( checkWin );
-        assertTrue( cell.getHeigth() == 3 );
-        assertTrue( nearCell.getHeigth() == 3 );
-        assertTrue( cell.getTop().equals(worker) );
-        assertTrue( cell.getPlaceableAt(1).isBlock() );
+        assertTrue( cell.getHeigth() == 2 );
+        assertTrue( nearCell.getHeigth() == 4 );
+        assertTrue( cell.getTop().isBlock() );
         assertTrue( cell.getPlaceableAt(0).isBlock() );
+        assertTrue( nearCell.getTop().equals(worker) );
         assertTrue( nearCell.getTop().isBlock() );
+        assertTrue( nearCell.getPlaceableAt(2).isBlock() );
         assertTrue( nearCell.getPlaceableAt(1).isBlock() );
         assertTrue( nearCell.getPlaceableAt(0).isBlock() );
         assertTrue( cell.repOk() );
         assertTrue( nearCell.repOk() );
-        assertTrue( worker.position().equals(cell) );
+        assertTrue( worker.position().equals(nearCell) );
 
         // clear board
         while ( cell.getTop() != null ) {
@@ -255,23 +295,24 @@ class MyVictoryTest {
         }
 
 
-        /* can't win when go down from Cell with two Blocks to near Cell with one Blocks*/
+        /* can't win when go down from Cell with two Blocks to near Cell with one Block*/
         cell.buildBlock();
         cell.buildBlock();
         nearCell.buildBlock();
         worker.place(cell);
         move = new Move(worker.position(), nearCell);
+        worker.place(nearCell);
         checkWin = myVictory.checkMove(move, worker);
         assertTrue( !checkWin );
-        assertTrue( cell.getHeigth() == 3 );
-        assertTrue( nearCell.getHeigth() == 1 );
-        assertTrue( cell.getTop().equals(worker) );
-        assertTrue( cell.getPlaceableAt(1).isBlock() );
+        assertTrue( cell.getHeigth() == 2 );
+        assertTrue( nearCell.getHeigth() == 2 );
+        assertTrue( cell.getTop().isBlock() );
         assertTrue( cell.getPlaceableAt(0).isBlock() );
-        assertTrue( nearCell.getTop().isBlock() );
+        assertTrue( nearCell.getTop().equals(worker) );
+        assertTrue( nearCell.getPlaceableAt(0).isBlock() );
         assertTrue( cell.repOk() );
         assertTrue( nearCell.repOk() );
-        assertTrue( worker.position().equals(cell) );
+        assertTrue( worker.position().equals(nearCell) );
 
         // clear board
         while ( cell.getTop() != null ) {
@@ -288,18 +329,18 @@ class MyVictoryTest {
         cell.buildBlock();
         worker.place(cell);
         move = new Move(worker.position(), nearCell);
+        worker.place(nearCell);
         checkWin = myVictory.checkMove(move, worker);
         assertTrue( checkWin );
-        assertTrue( cell.getHeigth() == 4 );
-        assertTrue( nearCell.getHeigth() == 0 );
-        assertTrue( cell.getTop().equals(worker) );
-        assertTrue( cell.getPlaceableAt(2).isBlock() );
+        assertTrue( cell.getHeigth() == 3 );
+        assertTrue( nearCell.getHeigth() == 1 );
+        assertTrue( cell.getTop().isBlock() );
         assertTrue( cell.getPlaceableAt(1).isBlock() );
         assertTrue( cell.getPlaceableAt(0).isBlock() );
-        assertTrue( nearCell.getTop() == null );
+        assertTrue( nearCell.getTop().equals(worker) );
         assertTrue( cell.repOk() );
         assertTrue( nearCell.repOk() );
-        assertTrue( worker.position().equals(cell) );
+        assertTrue( worker.position().equals(nearCell) );
 
         // clear board
         while ( cell.getTop() != null ) {
@@ -317,18 +358,19 @@ class MyVictoryTest {
         nearCell.buildBlock();
         worker.place(cell);
         move = new Move(worker.position(), nearCell);
+        worker.place(nearCell);
         checkWin = myVictory.checkMove(move, worker);
         assertTrue( checkWin );
-        assertTrue( cell.getHeigth() == 4 );
-        assertTrue( nearCell.getHeigth() == 1 );
-        assertTrue( cell.getTop().equals(worker) );
-        assertTrue( cell.getPlaceableAt(2).isBlock() );
+        assertTrue( cell.getHeigth() == 3 );
+        assertTrue( nearCell.getHeigth() == 2 );
+        assertTrue( cell.getTop().isBlock() );
         assertTrue( cell.getPlaceableAt(1).isBlock() );
         assertTrue( cell.getPlaceableAt(0).isBlock() );
-        assertTrue( nearCell.getTop().isBlock() );
+        assertTrue( nearCell.getTop().equals(worker) );
+        assertTrue( nearCell.getPlaceableAt(1).isBlock() );
         assertTrue( cell.repOk() );
         assertTrue( nearCell.repOk() );
-        assertTrue( worker.position().equals(cell) );
+        assertTrue( worker.position().equals(nearCell) );
 
         // clear board
         while ( cell.getTop() != null ) {
@@ -342,8 +384,10 @@ class MyVictoryTest {
     }
 
     /**
-     * Check if the DefaultCheckRules ( in CheckMove ) returns the correct value
-     * Methods used:        getHeigth()             of  Cell
+     * Check if with the default configure of checkWinList returned from CardParser checkMyMove() can correctly check
+     * the victory ( white test of first lambda expression of CardParser's getWinCheckers())
+     * Methods used:        getMyVictory()          of  Card
+     *                      getHeigth()             of  Cell
      *                      repOk()                 of  Cell
      *                      getTop()                of  Cell
      *                      getPlaceableAt( int )   of  Cell
@@ -356,36 +400,24 @@ class MyVictoryTest {
      */
     @Test
     void checkDefaultRules() {
-        GodPower human = new GodPower(); // CardGod without any power
-        human.setName( "Default" );
-        human.setEpithet( "Default" );
-        human.setDescription( "Default" );
-        human.setMovementsLeft( 1 );
-        human.setConstructionLeft( 1 );
-        human.setHotLastMoveDirection( LevelDirection.NONE );
-        human.setForceOpponentInto( FloorDirection.NONE );
-        human.setDeniedDirection( LevelDirection.NONE );
-        human.setOpponentDeniedDirection( LevelDirection.NONE );
-        Card humanCard = new Card( human );
-        myVictory = new MyVictory(humanCard, human);
-        boolean check;
+        myVictory = humanCard.getMyVictory();
 
         /* can't win when not go up ( for example go down )*/
         cell.buildBlock();
         cell.buildBlock();
         worker.place(cell);
         move = new Move(worker.position(), nearCell);
-        check = myVictory.checkMove(move, worker);
-        assertTrue( !check );
-        assertTrue( cell.getHeigth() == 3 );
-        assertTrue( nearCell.getHeigth() == 0 );
-        assertTrue( cell.getTop().equals(worker) );
-        assertTrue( cell.getPlaceableAt(1).isBlock() );
+        worker.place(nearCell);
+        checkWin = myVictory.checkMove(move, worker);
+        assertTrue( !checkWin );
+        assertTrue( cell.getHeigth() == 2 );
+        assertTrue( nearCell.getHeigth() == 1 );
+        assertTrue( cell.getTop().isBlock() );
         assertTrue( cell.getPlaceableAt(0).isBlock() );
-        assertTrue( nearCell.getTop() == null );
+        assertTrue( nearCell.getTop().equals(worker) );
         assertTrue( cell.repOk() );
         assertTrue( nearCell.repOk() );
-        assertTrue( worker.position().equals(cell) );
+        assertTrue( worker.position().equals(nearCell) );
 
         // clear board
         while ( cell.getTop() != null ) {
@@ -402,17 +434,18 @@ class MyVictoryTest {
         nearCell.buildBlock();
         worker.place(cell);
         move = new Move(worker.position(), nearCell);
-        check = myVictory.checkMove(move, worker);
-        assertTrue( !check );
-        assertTrue( cell.getHeigth() == 2 );
-        assertTrue( nearCell.getHeigth() == 2 );
-        assertTrue( cell.getTop().equals(worker) );
-        assertTrue( cell.getPlaceableAt(0).isBlock() );
-        assertTrue( nearCell.getTop().isBlock() );
+        worker.place(nearCell);
+        checkWin = myVictory.checkMove(move, worker);
+        assertTrue( !checkWin );
+        assertTrue( cell.getHeigth() == 1 );
+        assertTrue( nearCell.getHeigth() == 3 );
+        assertTrue( cell.getTop().isBlock() );
+        assertTrue( nearCell.getTop().equals(worker) );
+        assertTrue( nearCell.getPlaceableAt(1).isBlock() );
         assertTrue( nearCell.getPlaceableAt(0).isBlock() );
         assertTrue( cell.repOk() );
         assertTrue( nearCell.repOk() );
-        assertTrue( worker.position().equals(cell) );
+        assertTrue( worker.position().equals(nearCell) );
 
         // clear board
         while ( cell.getTop() != null ) {
@@ -431,19 +464,20 @@ class MyVictoryTest {
         nearCell.buildBlock();
         worker.place(cell);
         move = new Move(worker.position(), nearCell);
-        check = myVictory.checkMove(move, worker);
-        assertTrue( check );
-        assertTrue( cell.getHeigth() == 3 );
-        assertTrue( nearCell.getHeigth() == 3 );
-        assertTrue( cell.getTop().equals(worker) );
-        assertTrue( cell.getPlaceableAt(1).isBlock() );
+        worker.place(nearCell);
+        checkWin = myVictory.checkMove(move, worker);
+        assertTrue( checkWin );
+        assertTrue( cell.getHeigth() == 2 );
+        assertTrue( nearCell.getHeigth() == 4 );
+        assertTrue( cell.getTop().isBlock() );
         assertTrue( cell.getPlaceableAt(0).isBlock() );
-        assertTrue( nearCell.getTop().isBlock() );
+        assertTrue( nearCell.getTop().equals(worker) );
+        assertTrue( nearCell.getPlaceableAt(2).isBlock() );
         assertTrue( nearCell.getPlaceableAt(1).isBlock() );
         assertTrue( nearCell.getPlaceableAt(0).isBlock() );
         assertTrue( cell.repOk() );
         assertTrue( nearCell.repOk() );
-        assertTrue( worker.position().equals(cell) );
+        assertTrue( worker.position().equals(nearCell) );
 
         // clear board
         while ( cell.getTop() != null ) {
@@ -454,9 +488,12 @@ class MyVictoryTest {
         }
 
     }
+
     /**
-     * Check if special rules ( in CheckMove() ) are correctly checked
-     * Methods used:        getTop()                            of  Cell
+     * Check if with the "new Victory" configure of checkWinList returned from CardParser checkMove() can correctly
+     * check the opponent's move ( white test of lambda expression of CardParser's getWinCheckers())
+     * Methods used:        getMyVictory()                      of  Card
+     *                      getTop()                            of  Cell
      *                      getHeigth()                         of  Cell
      *                      getPlaceableAt( int )               of  Cell
      *                      repOk()                             of  Cell
@@ -469,40 +506,26 @@ class MyVictoryTest {
      * White Box
      */
     @Test
-    void checkSpecialRules() {
-        GodPower mutantGod = new GodPower();
-        mutantGod.setName("Mutant God");
-        mutantGod.setEpithet("Mutant");
-        mutantGod.setDescription("M");
-        mutantGod.setMovementsLeft(1);
-        mutantGod.setConstructionLeft(1);
-        mutantGod.setHotLastMoveDirection(LevelDirection.NONE);
-        mutantGod.setForceOpponentInto(FloorDirection.NONE);
-        mutantGod.setDeniedDirection(LevelDirection.NONE);
-        mutantGod.setOpponentDeniedDirection(LevelDirection.NONE);
-        mutantGod.setNewVictoryCondition(true);
-        Card mutantCard = new Card(mutantGod);
-        boolean check;
+    void checkNewVictoryRules() {
+        myVictory = panCard.getMyVictory();
 
 
-        /* default win rules when lastMoveLevelDirection of Move is different from HotLastDirection of GodPower*/
-        mutantGod.setHotLastMoveDirection(LevelDirection.SAME);
+        /* can't win with special rules  when lastMoveLevelDirection of Move is different from HotLastDirection of GodPower*/
 
-        cell.buildBlock();
-        cell.buildBlock();
         worker.place(cell);
+        nearCell.buildBlock();
         move = new Move(worker.position(), nearCell);
-        check = myVictory.checkMove(move, worker);
-        assertTrue( !check );
-        assertTrue( cell.getHeigth() == 3 );
-        assertTrue( nearCell.getHeigth() == 0 );
-        assertTrue( cell.getTop().equals(worker) );
-        assertTrue( cell.getPlaceableAt(1).isBlock() );
-        assertTrue( cell.getPlaceableAt(0).isBlock() );
-        assertTrue( nearCell.getTop() == null );
+        worker.place(nearCell);
+        checkWin = myVictory.checkMove(move, worker);
+        assertTrue( !checkWin );
+        assertTrue( cell.getHeigth() == 0 );
+        assertTrue( nearCell.getHeigth() == 2 );
+        assertTrue( cell.getTop() == null );
+        assertTrue( nearCell.getTop().equals(worker) );
+        assertTrue( nearCell.getPlaceableAt(0).isBlock() );
         assertTrue( cell.repOk() );
         assertTrue( nearCell.repOk() );
-        assertTrue( worker.position().equals(cell) );
+        assertTrue( worker.position().equals(nearCell) );
 
         // clear board
         while ( cell.getTop() != null ) {
@@ -512,22 +535,30 @@ class MyVictoryTest {
             nearCell.removePlaceable();
         }
 
-        /* default win rules when lastMoveLevelDirection of Move == HotLastDirection of GodPower the height is too low*/
-        mutantGod.setHotLastMoveDirection(LevelDirection.UP);
+        /* can't win with special rules when lastMoveLevelDirection of Move == HotLastDirection of GodPower
+          but the height is too low*/
 
         cell.buildBlock();
+        cell.buildBlock();
+        cell.buildBlock();
+        nearCell.buildBlock();
+        nearCell.buildBlock();
         worker.place(cell);
         move = new Move(worker.position(), nearCell);
-        check = myVictory.checkMove(move, worker);
-        assertTrue( !check );
-        assertTrue( cell.getHeigth() == 2 );
-        assertTrue( nearCell.getHeigth() == 0 );
-        assertTrue( cell.getTop().equals(worker) );
+        worker.place(nearCell);
+        checkWin = myVictory.checkMove(move, worker);
+        assertTrue( !checkWin );
+        assertTrue( cell.getHeigth() == 3 );
+        assertTrue( nearCell.getHeigth() == 3 );
+        assertTrue( cell.getTop().isBlock() );
+        assertTrue( cell.getPlaceableAt(1).isBlock() );
         assertTrue( cell.getPlaceableAt(0).isBlock() );
-        assertTrue( nearCell.getTop() == null );
+        assertTrue( nearCell.getTop().equals(worker) );
+        assertTrue( nearCell.getPlaceableAt(1).isBlock() );
+        assertTrue( nearCell.getPlaceableAt(0).isBlock() );
         assertTrue( cell.repOk() );
         assertTrue( nearCell.repOk() );
-        assertTrue( worker.position().equals(cell) );
+        assertTrue( worker.position().equals(nearCell) );
 
         // clear board
         while ( cell.getTop() != null ) {
@@ -539,23 +570,22 @@ class MyVictoryTest {
 
 
         /* can win when lastMoveLevelDirection of Move == HotLastDirection of GodPower and the Height is correct*/
-        mutantGod.setHotLastMoveDirection(LevelDirection.SAME);
 
         cell.buildBlock();
         cell.buildBlock();
         worker.place(cell);
         move = new Move(worker.position(), nearCell);
-        check = myVictory.checkMove(move, worker);
-        assertTrue( check );
-        assertTrue( cell.getHeigth() == 3 );
-        assertTrue( nearCell.getHeigth() == 0 );
-        assertTrue( cell.getTop().equals(worker) );
-        assertTrue( cell.getPlaceableAt(1).isBlock() );
+        worker.place(nearCell);
+        checkWin = myVictory.checkMove(move, worker);
+        assertTrue( checkWin );
+        assertTrue( cell.getHeigth() == 2 );
+        assertTrue( nearCell.getHeigth() == 1 );
+        assertTrue( cell.getTop().isBlock() );
         assertTrue( cell.getPlaceableAt(0).isBlock() );
-        assertTrue( nearCell.getTop() == null );
+        assertTrue( nearCell.getTop().equals(worker) );
         assertTrue( cell.repOk() );
         assertTrue( nearCell.repOk() );
-        assertTrue( worker.position().equals(cell) );
+        assertTrue( worker.position().equals(nearCell) );
 
         // clear board
         while ( cell.getTop() != null ) {
@@ -568,16 +598,15 @@ class MyVictoryTest {
 
     /**
      * Check if getGodPower() can return the correct value after initialization
+     * Methods used:        getMyVictory()                      of  Card
      *
      * Black Box and White Box
      */
     @Test
     void getGodPower() {
-        GodPower godPower = new GodPower();
-        Card card = new Card(godPower);
-        myVictory = new MyVictory(card, godPower);
+        myVictory = humanCard.getMyVictory();
 
-        assertTrue(myVictory.getGodPower().equals(godPower));
+        assertTrue(myVictory.getGodPower().equals(human));
 
     }
 

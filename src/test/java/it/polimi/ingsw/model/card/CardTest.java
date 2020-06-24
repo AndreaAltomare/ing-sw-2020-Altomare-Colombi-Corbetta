@@ -1,6 +1,5 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.model.card;
 
-import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.card.adversaryMove.AdversaryMove;
 import it.polimi.ingsw.model.card.build.MyConstruction;
 import it.polimi.ingsw.model.card.move.MyMove;
@@ -13,6 +12,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
+/**
+ * Unit test for Card class, aimed to verify it works properly
+ *
+ * @author Marco
+ */
 class CardTest {
 
     GodPower godPower;
@@ -35,10 +40,19 @@ class CardTest {
         godPower.setForceOpponentInto( FloorDirection.NONE );
         godPower.setDeniedDirection( LevelDirection.NONE );
         godPower.setOpponentDeniedDirection( LevelDirection.NONE );
-        card = new Card(godPower);
+        card = new Card(    godPower,
+                            CardParser.getMoveCheckers(godPower),
+                            CardParser.getMoveExecutor(godPower),
+                            CardParser.getBuildCheckers(godPower),
+                            CardParser.getBuildExecutor(godPower),
+                            CardParser.getWinCheckers(godPower),
+                            CardParser.getAdversaryMoveCheckers(godPower));
 
     }
 
+    /**
+     * Reset after test
+     */
     @AfterEach
     void tearDown() {
 
@@ -63,8 +77,6 @@ class CardTest {
      */
     @Test
     void resetForStart() {
-        MyMove myMove;
-        MyConstruction myConstruction;
 
         card.getMyMove().decreaseMovesLeft();
         card.getMyConstruction().decreaseConstructionLeft();
@@ -181,7 +193,25 @@ class CardTest {
     }
 
     /**
-     * Check if getGodPower() can return the correct value after initialization
+     * Check if isTurnCompleted() and setTurnCompleted() can return and set the correct value
+     *
+     * Black Box and White Box
+     */
+    @Test
+    void isTurnCompletedAndSetTurnCompleted() {
+
+        assertTrue( !card.isTurnCompleted() );
+
+        card.setTurnCompleted(true);
+        assertTrue( card.isTurnCompleted() );
+
+    }
+
+    /**
+     * Check if getGodPower(), getName(), getEpithet(), getDescription() can return the correct value after initialization
+     * Methods used:        getName()           of  GodPower
+     *                      getEpithet()        of  GodPower
+     *                      getDescription()    of  GodPower
      *
      * Black Box and White Box
      */
@@ -189,6 +219,10 @@ class CardTest {
     void getGodPower() {
 
         assertTrue(card.getGodPower().equals(godPower));
+        assertTrue(card.getName().equals(godPower.getName()));
+        assertTrue(card.getEpithet().equals(godPower.getEpithet()));
+        assertTrue(card.getDescription().equals(godPower.getDescription()));
 
     }
+
 }

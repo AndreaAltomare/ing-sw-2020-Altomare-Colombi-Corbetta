@@ -1,7 +1,6 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.model.board.placeables;
 
 import it.polimi.ingsw.model.board.Cell;
-import it.polimi.ingsw.model.board.placeables.Placeable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,38 +44,28 @@ class PlaceableTest {
     }
 
     /**
-     * Check if method setPosition( Cell ) can set the correct cell or null
-     * Methods used:    position()      of  Placeable
+     * Check if method setPosition( Cell ) and position can set and read the correct cell or null.
+     * To valuate the protected method setPosition( Cell ) is used a constructor of Placeable's sub class
+     * Methods used:    Block( Cell )   of  Block
      *                  equals( Cell )  of  Cell
      *
      * Black Box and White Box
      */
     @Test
-    void setPosition() {
+    void setPositionAndPosition() {
 
-        placeable.setPosition(cell);
-        assertTrue( placeable.position() == cell );
+        // check after initialization
+        assertTrue( placeable.position() == null);
 
-        placeable.setPosition(null);
+        // set position with Block( Cell ) and check with position()
+        placeable = new Block( cell );
+        assertTrue( placeable.position().equals(cell) );
+
+        // set null position with Block( Cell ) and check with position()
+        placeable = new Block( null );
         assertTrue(placeable.position() == null);
     }
 
-    /**
-     * Check if position() can read the correct position
-     * Methods used:    setPosition( Cell )     of Placeable
-     *                  equals( Cell )          of Cell
-     *
-     * Black Box and White Box
-     */
-    @Test
-    void position() {
-
-        assertTrue( placeable.position() == null);
-
-        placeable.setPosition(cell);
-        assertTrue(placeable.position() == cell );
-
-    }
 
     /**
      * Check if placeable can be a Block
@@ -100,6 +89,7 @@ class PlaceableTest {
     void isDome() {
 
         assertTrue( (!placeable.isDome()) );
+
     }
 
     /**
@@ -111,5 +101,6 @@ class PlaceableTest {
     void isWorker() {
 
         assertTrue( (!placeable.isWorker()) );
+
     }
 }

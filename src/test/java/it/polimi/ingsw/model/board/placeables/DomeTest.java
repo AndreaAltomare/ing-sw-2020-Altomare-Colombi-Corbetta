@@ -1,9 +1,6 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.model.board.placeables;
 
-//import com.sun.org.apache.xpath.internal.objects.XBoolean;
-import it.polimi.ingsw.model.board.placeables.Block;
 import it.polimi.ingsw.model.board.Cell;
-import it.polimi.ingsw.model.board.placeables.Dome;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,14 +8,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit test for Block class, aimed to verify it works properly
+ * Unit test for Dome class, aimed to verify it works properly
  *
  * @author Marco
  */
 
-class BlockTest {
+class DomeTest {
 
-    private Block block;
+    private Dome dome;
 
     /**
      * Initialization before method's test
@@ -26,7 +23,7 @@ class BlockTest {
     @BeforeEach
     void setUp() {
 
-        block = new Block();
+        dome = new Dome();
 
     }
 
@@ -36,34 +33,32 @@ class BlockTest {
     @AfterEach
     void tearDown() {
 
-        block = null;
+        dome = null;
 
     }
 
     /**
      * Check if the position is correctly set or not when the Cell is free and when is occupied by a Dome
      * Methods used:    position()          of  Placeable
-     *                  place( Cell )       of  Dome
      *                  equals( Cell )      of  Cell
      *
      * Black Box and White Box
      */
     @Test
     void place() {
-        Cell cell = new Cell(0,0,null);
-        Block block1 = new Block();
-        Dome dome = new Dome();
-        boolean check = false;
+        Cell cell = new Cell(0,0, null);
+        Dome dome1 = new Dome();
+        boolean check;
 
-        check = block.place( cell );
+        // place a dome on a free cell
+        check = dome.place( cell );
         assertTrue( check );
-        assertTrue( block.position() == cell  );
+        assertTrue( dome.position() == cell  );
 
-        check = true;
-        dome.place( cell );
-        check = block1.place( cell );
+        // place a dome on a cell with dome
+        check = dome1.place( cell );
         assertTrue( !check );
-        assertTrue( block1.position() == null );
+        assertTrue( dome1.position() == null );
 
     }
 
@@ -73,8 +68,9 @@ class BlockTest {
      * Black Box and White Box
      */
     @Test
-    void isBlock() {
+    void isDome() {
 
-        assertTrue( block.isBlock() );
+        assertTrue(dome.isDome());
+
     }
 }
