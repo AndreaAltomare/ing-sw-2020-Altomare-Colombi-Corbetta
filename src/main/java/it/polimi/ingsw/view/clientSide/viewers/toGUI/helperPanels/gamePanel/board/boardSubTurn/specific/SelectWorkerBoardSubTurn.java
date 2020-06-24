@@ -10,12 +10,27 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import java.awt.*;
 
+/**
+ * Class extending BoardSubTurn and referring to the worker selection sub turn of the current player.
+ *
+ * @see BoardSubTurn
+ */
 public class SelectWorkerBoardSubTurn extends BoardSubTurn {
 
+    /**
+     * Constructor
+     *
+     * @param guiSubTurnViewer (worker selection's GUISubTurnViewer).
+     */
     public SelectWorkerBoardSubTurn(GUISubTurnViewer guiSubTurnViewer)  {
         super(guiSubTurnViewer);
     }
 
+    /**
+     * Method to be set the cursor image when the cursor enters the board.
+     *
+     * @return (the worker selection <code>Cursor</code>).
+     */
     @Override
     public Cursor getOnEnterCursor(){
         Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -24,6 +39,12 @@ public class SelectWorkerBoardSubTurn extends BoardSubTurn {
         return toolkit.createCustomCursor(image, hotspot, "selectWorker");
     }
 
+    /**
+     * Method called when the mouse clicks on one cell of the board on which there is the worker to be chosen, and does the action to choose it.
+     *
+     * @param x (the x position of the board (referring to the <code>ViewBoard</code> representation)).
+     * @param y (the y position of the board (referring to the <code>ViewBoard</code> representation)).
+     */
     @Override
     public void onCellSelected(int x, int y){
         super.onCellSelected(x, y);

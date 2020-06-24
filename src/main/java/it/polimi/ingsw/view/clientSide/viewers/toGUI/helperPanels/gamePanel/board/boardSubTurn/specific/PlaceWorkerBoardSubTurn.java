@@ -10,12 +10,27 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import java.awt.*;
 
+/**
+ * Class extending BoardSubTurn and referring to the worker placing sub turn of the current player.
+ *
+ * @see BoardSubTurn
+ */
 public class PlaceWorkerBoardSubTurn extends BoardSubTurn {
 
+    /**
+     * Constructor
+     *
+     * @param guiSubTurnViewer (worker placement's GUISubTurnViewer).
+     */
     public PlaceWorkerBoardSubTurn(GUISubTurnViewer guiSubTurnViewer)  {
         super(guiSubTurnViewer);
     }
 
+    /**
+     * Method to be set the cursor image when the cursor enters the board.
+     *
+     * @return (the worker placement <code>Cursor</code>).
+     */
     @Override
     public Cursor getOnEnterCursor(){
         Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -24,6 +39,12 @@ public class PlaceWorkerBoardSubTurn extends BoardSubTurn {
         return toolkit.createCustomCursor(image, hotspot, "placeWorker");
     }
 
+    /**
+     * Method called when the mouse clicks on one cell of the board on which it should be placed a worker, and does the action to place it.
+     *
+     * @param x (the x position of the board (referring to the <code>ViewBoard</code> representation)).
+     * @param y (the y position of the board (referring to the <code>ViewBoard</code> representation)).
+     */
     @Override
     public void onCellSelected(int x, int y){
         super.onCellSelected(x, y);
