@@ -17,7 +17,7 @@ public class PlayerPanel extends ImagePanel {
      */
     public PlayerPanel(String godName){
         super(0.9, 0.9, 0.05, 0.05,"/godCards/" + godName + ".png");
-        if (!isSetImg()){
+        if (isNotSetImg()){
             setBackgroundImg("/img/background/subTurnPanel/noActionPanel.png");
         }
         this.setOpaque(false);

@@ -52,7 +52,7 @@ public class GUISelectCard {
     private static void changePowerImage(String godName){
         try {
             powerImage.setBackgroundImg(buildImagePowerString(godName));
-            if(!powerImage.isSetImg()) powerImage.setBackgroundImg(buildImagePowerString("Default"));
+            if(powerImage.isNotSetImg()) powerImage.setBackgroundImg(buildImagePowerString("Default"));
         }catch (Exception e){
             powerImage.setBackgroundImg(buildImagePowerString("Default"));
         }
