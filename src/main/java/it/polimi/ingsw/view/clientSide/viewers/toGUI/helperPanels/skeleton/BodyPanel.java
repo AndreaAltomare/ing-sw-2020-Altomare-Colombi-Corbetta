@@ -1,20 +1,26 @@
 package it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
-import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.BoardGeneralPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.SubPanel;
 
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * <class>SubPanel</class> to represent the middle panel inside the <code>GamePanel</code>.
+ * It contains the Board and 2 side Panels, and ensures the right resize to its content.
+ *
+ * This class is intended to grant the correct resize to its content, and does not populate its Panels by itself a part of the board's panel.
+ */
 public class BodyPanel extends SubPanel {
 
-    private int cont =0;
-
     protected JPanel subTurnPanel = new JPanel();
-    protected JPanel playerPanel = new JPanel();
-    protected JPanel boardPanel = new JPanel();
+    private JPanel playerPanel = new JPanel();
+    private JPanel boardPanel = new JPanel();
 
+    /**
+     * Constructor.
+     */
     public BodyPanel(){
         super(1, 0.7, 0, 0.2);
         this.setOpaque(false);
@@ -27,6 +33,13 @@ public class BodyPanel extends SubPanel {
         playerPanel.setOpaque(false);
     }
 
+    /**
+     * Overrided method from SubPanel.
+     * It's used to correctly represent the component and the panel itself.
+     * It shouldn't be called by the user itself, but it's called by Swing when representing this.
+     *
+     * @param g ( the <code>Graphics</code> object to protect)
+     */
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
@@ -34,7 +47,6 @@ public class BodyPanel extends SubPanel {
         Dimension myDim = getSize();
 
 
-        //double rapp = boardPanel.getWidthOnWeight();
         double rapp = 1.0;
 
         int panelWMin = 10;
@@ -66,14 +78,30 @@ public class BodyPanel extends SubPanel {
 
     }
 
+    /**
+     * getter returning the board's Panel entailed into this.
+     *
+     * @return (the Panel containing the Board)
+     */
     public JPanel getBoardPanel(){
         return boardPanel;
     }
 
+    /**
+     * getter returning the subTurn's Panel -left panel- entailed into this.
+     *
+     * @return (the Panel at the left of the Board)
+     */
     public JPanel getSubTurnPanel(){
         return subTurnPanel;
     }
 
+    /**
+     * getter returning the paler's Panel -right panel- entailed into this.
+     * Now this Panel contains the chat system.
+     *
+     * @return (the Panel at the right of the Board)
+     */
     public JPanel getPlayerPanel() { return playerPanel; }
 
 }

@@ -21,7 +21,7 @@ public class UndoExecuter extends Executer {
 
 
         /**
-         * Method to be called when the undo is available. this method must be light and no blocking cause executed on the same thread from which cames the undoReset -so, probably, the connection thread-.
+         * Method to be called when the undo is available. this method must be light and no blocking cause executed on the same thread from which came the undoReset -so, probably, the connection thread-.
          */
         public void undoLightAvailable();
 
