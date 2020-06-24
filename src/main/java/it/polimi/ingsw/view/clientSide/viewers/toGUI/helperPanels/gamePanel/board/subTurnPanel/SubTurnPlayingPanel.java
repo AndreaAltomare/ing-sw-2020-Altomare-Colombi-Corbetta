@@ -10,21 +10,28 @@ import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.elements.PanelImageButton;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.SubPanel;
-import it.polimi.ingsw.view.clientSide.viewers.toGUI.sounds.SoundEffect;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
+/**
+ * Class to represent the Panel at the side of the board when the sub turn of the current player.
+ */
+class SubTurnPlayingPanel extends PlayerSubTurnPanel {
 
-    ImagePanel selectPanel = new ImagePanel(1, 1, 0, 0, "/img/trappings/select_button.png");
-
-    public SubTurnPlayingPanel(String playerName, boolean move, boolean build, boolean buildBlock, boolean buildDome){
+    /**
+     * constructor with all the parameters needed for the creation of the panel.
+     *
+     * @param playerName  (name of the player of which it's the turn of).
+     * @param move        (true iif the player can switch into MOVE SubTurn).
+     * @param build       (true iif the player can switch into CONSTRUCTION subTurn).
+     * @param buildBlock  (true iif the player can switch into BUILD_BLOCK subTurn).
+     * @param buildDome   (true iif the player can switch into BUILD_DOME subTurn).
+     */
+    SubTurnPlayingPanel(String playerName, boolean move, boolean build, boolean buildBlock, boolean buildDome){
         super((ViewNickname.getMyNickname().equals(playerName)? "/img/background/subTurnPanel/canAction.png" :"/img/background/subTurnPanel/noActionPanel.png"), playerName);
 
         boolean mine = ViewNickname.getMyNickname().equals(playerName);
@@ -39,31 +46,23 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
         SubPanel upperPanel = new SubPanel(0.7, 0.24, 0.15, 0.3);
         upperPanel.setOpaque(false);
 
-        //SubPanel lowerLeftPanel = new SubPanel(.5, 1, 0, 0);
-        //lowerLeftPanel.setOpaque(false);
-
-        //SubPanel lowerRightPanel = new SubPanel (.5, 1, .5, 0);
-        //lowerRightPanel.setOpaque(false);
-
         //Move Button
         JButton moveButton = new JButton();
 
+        ImagePanel selectPanel = new ImagePanel(1, 1, 0, 0, "/img/trappings/select_button.png");
         if(move){
             if(View.debugging)
                 System.out.println("MOVE");
             selectPanel.setMyRapp(0.5, 1, 0, 0);
             upperPanel.add(selectPanel);
         }else if (mine) {
-            moveButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent actionEvent) {
-                    TurnStatusChangeExecuter myExec = new TurnStatusChangeExecuter();
-                    try {
-                        myExec.setStatusId(ViewSubTurn.MOVE);
-                        myExec.doIt();
-                    } catch (WrongParametersException | CannotSendEventException e) {
-                        ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
-                    }
+            moveButton.addActionListener(actionEvent -> {
+                TurnStatusChangeExecuter myExec = new TurnStatusChangeExecuter();
+                try {
+                    myExec.setStatusId(ViewSubTurn.MOVE);
+                    myExec.doIt();
+                } catch (WrongParametersException | CannotSendEventException e) {
+                    ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
                 }
             });
         }
@@ -79,17 +78,14 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
             selectPanel.setMyRapp(0.5, 1, 0.5, 0);
             upperPanel.add(new ImagePanel(0.5, 1, 0.5, 0,"/img/trappings/select_button.png" ));
         }else if(mine){
-            buildButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent actionEvent) {
-                    TurnStatusChangeExecuter myExec = new TurnStatusChangeExecuter();
+            buildButton.addActionListener(actionEvent -> {
+                TurnStatusChangeExecuter myExec = new TurnStatusChangeExecuter();
 
-                    try {
-                        myExec.setStatusId(ViewSubTurn.BUILD);
-                        myExec.doIt();
-                    } catch (WrongParametersException | CannotSendEventException e) {
-                        ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
-                    }
+                try {
+                    myExec.setStatusId(ViewSubTurn.BUILD);
+                    myExec.doIt();
+                } catch (WrongParametersException | CannotSendEventException e) {
+                    ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
                 }
             });
         }
@@ -117,8 +113,8 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
                     try {
                         new NextTurnExecuter().doIt();
                     } catch (CannotSendEventException ex) {
-                        //todo: rimuovere
-                        ex.printStackTrace();
+                        if(View.debugging)
+                            ex.printStackTrace();
                     }
                 }
 
@@ -154,20 +150,17 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
             lowerPanel.add(selectPanel);
             //lowerRightPanel.add(selectPanel);
         }else if(mine){
-            buildBlockButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent actionEvent) {
-                    if(build || buildDome || buildBlock) {
-                        TurnStatusChangeExecuter myExec = new TurnStatusChangeExecuter();
-                        try {
-                            myExec.setStatusId(ViewSubTurn.BUILD_BLOCK);
-                            myExec.doIt();
-                        } catch (WrongParametersException | CannotSendEventException e) {
-                            ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
-                        }
-                    }else{
-                        ViewMessage.populateAndSend("You have to go on building before this", ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
+            buildBlockButton.addActionListener(actionEvent -> {
+                if(build || buildDome) {
+                    TurnStatusChangeExecuter myExec = new TurnStatusChangeExecuter();
+                    try {
+                        myExec.setStatusId(ViewSubTurn.BUILD_BLOCK);
+                        myExec.doIt();
+                    } catch (WrongParametersException | CannotSendEventException e) {
+                        ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
                     }
+                }else{
+                    ViewMessage.populateAndSend("You have to go on building before this", ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
                 }
             });
         }
@@ -184,21 +177,18 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
             lowerPanel.add(selectPanel);
             //lowerRightPanel.add(selectPanel);
         }else if(mine){
-            buildDomeButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent actionEvent) {
-                    if(build || buildDome || buildBlock) {
-                        TurnStatusChangeExecuter myExec = new TurnStatusChangeExecuter();
+            buildDomeButton.addActionListener(actionEvent -> {
+                if(build || buildBlock) {
+                    TurnStatusChangeExecuter myExec = new TurnStatusChangeExecuter();
 
-                        try {
-                            myExec.setStatusId(ViewSubTurn.BUILD_DOME);
-                            myExec.doIt();
-                        } catch (WrongParametersException | CannotSendEventException e) {
-                            ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
-                        }
-                    }else{
-                        ViewMessage.populateAndSend("You have to go on building before this", ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
+                    try {
+                        myExec.setStatusId(ViewSubTurn.BUILD_DOME);
+                        myExec.doIt();
+                    } catch (WrongParametersException | CannotSendEventException e) {
+                        ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
                     }
+                }else{
+                    ViewMessage.populateAndSend("You have to go on building before this", ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
                 }
             });
         }
@@ -224,26 +214,5 @@ public class SubTurnPlayingPanel extends PlayerSubTurnPanel {
 
 
         add(contentPanel);
-
-
-
-
-
-
-
-
-
-        /*JPanel rightDownPanel = new SubPanel(1, 0.6, 0, 0.4);
-        //rightPanel.add(rightDownPanel);
-
-        JButton buildBlockButton = new JButton();
-        //PanelImageButton buildBlockButtonPanel =
-        rightPanel.add(new PanelImageButton(1, 0.5, 0, 0, buildBlockButton, "/img/trappings/move_button.png", "Login" ));
-
-
-        */
-
-
-
     }
 }
