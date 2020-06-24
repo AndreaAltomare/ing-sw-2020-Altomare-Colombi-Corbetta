@@ -126,12 +126,11 @@ public class GUIViewer extends Viewer {
         }
         actualStatus.setMyGUIViewer(this);
 
-        try {
-            actualStatus.execute();
-            if(actualStatus.setFrameTitle()){
-                window.setTitle(actualStatus.getTitle());
-            }
-        } catch (CheckQueueException ignore) {}
+
+        actualStatus.execute();
+        if(actualStatus.setFrameTitle()){
+            window.setTitle(actualStatus.getTitle());
+        }
     }
 
     @Override
