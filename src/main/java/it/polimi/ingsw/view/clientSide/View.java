@@ -334,7 +334,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
             ViewBoard.populate(serverSentData);
             ViewPlayer.populate(serverSentData);
         } catch (WrongEventException e) {
-            e.printStackTrace();
+            if(View.debugging)
+                e.printStackTrace();
         }
     }
 
@@ -747,7 +748,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
                 try {
                     myPlayer = ViewPlayer.searchByName(name);
                 } catch (NotFoundException e) {
-                    e.printStackTrace();
+                    if(View.debugging)
+                        e.printStackTrace();
                     continue;
                 }
                 PlayerData playerData = playersState.getData().get(name);
@@ -761,7 +763,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
                             selectedWorker = workerId.getWorkerId();
                         }
                     } catch (NotFoundException e) {
-                        e.printStackTrace();
+                        if(View.debugging)
+                            e.printStackTrace();
                     }
                 }
 

@@ -1,7 +1,8 @@
 package it.polimi.ingsw.observer;
 
 import it.polimi.ingsw.controller.events.*;
-import it.polimi.ingsw.view.events.*;
+import it.polimi.ingsw.view.clientSide.View;
+import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -156,7 +157,9 @@ public class MVEventSubject {
             }
         else {
             // todo handle evento non valido
-            System.err.println("Invalid MVEvent Object to notify!");
+            if(View.debugging)
+                System.err.println("Invalid MVEvent Object to notify!");
+            ViewMessage.populateAndSend("Invalid MVEvent Object to notify!", ViewMessage.MessageType.FROM_SERVER_ERROR);
             synchronized (listeners) {
                 for(MVEventListener listener : listeners)
                     listener.update(new ErrorMessageEvent("Warning: An invalid MVEvent has been generated!"));

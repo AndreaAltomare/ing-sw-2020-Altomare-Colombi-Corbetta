@@ -55,7 +55,15 @@ public class GUIViewer extends Viewer {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    executeQueuedEvent();
+                    try {
+                        executeQueuedEvent();
+                    }catch (Exception e){
+                        if(View.debugging){
+                            System.err.println("In GUI Viewer Swinng thread");
+                            e.printStackTrace();
+                        }
+
+                    }
                 }
             });
         }
