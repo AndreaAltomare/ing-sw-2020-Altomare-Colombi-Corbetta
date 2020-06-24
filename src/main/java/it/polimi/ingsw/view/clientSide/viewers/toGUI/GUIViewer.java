@@ -8,10 +8,6 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
-import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.elements.PanelImageButton;
-import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.BackgroundPanel;
-import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
-import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.SubPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.specificGUISideClass.GUIMessageDisplayer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.specificGUISideClass.GUISelectCard;
@@ -20,9 +16,6 @@ import it.polimi.ingsw.view.exceptions.EmptyQueueException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -45,7 +38,7 @@ public class GUIViewer extends Viewer {
                 case FROM_SERVER_MESSAGE:
                 case WIN_MESSAGE:
                 case LOOSE_MESSAGE:
-                    GUIMessageDisplayer.displayErrorMessage(((ViewMessage)event.getPayload()).getPayload(), ((ViewMessage)event.getPayload()).getMessageType());
+                    GUIMessageDisplayer.displayMessage(((ViewMessage)event.getPayload()).getPayload(), ((ViewMessage)event.getPayload()).getMessageType());
                     break;
             }
             if(View.debugging)
