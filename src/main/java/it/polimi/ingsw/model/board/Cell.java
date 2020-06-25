@@ -19,7 +19,7 @@ public class Cell {
 
     private final int maxBlockHeighth = 3;
 
-    private Deque<Placeable> building = new ArrayDeque<Placeable>();
+    private Deque<Placeable> building = new ArrayDeque<>();
 
     private final int x;
     private final int y;
@@ -252,9 +252,7 @@ public class Cell {
      * @return (Is there a Dome on this Cell? true:false)
      */
     public boolean isDomed(){
-        if(this.getTopNotNull().isDome())
-            return true;
-        return false;
+        return this.getTopNotNull().isDome();
     }
 
     /**
@@ -347,9 +345,7 @@ public class Cell {
         if(this.isDomed())
             return false;
         //If this.building has reached the max height of Blocks
-        if (this.getLevel() >= maxBlockHeighth)
-            return false;
-        return true;
+        return this.getLevel() < maxBlockHeighth;
     }
 
     /**
@@ -396,7 +392,7 @@ public class Cell {
      * Method to impost the default status
      */
     public void clearStatus(){
-        this.status = this.status.clear();
+        this.status = PossibleStatus.clear();
     }
 
     /**
@@ -472,7 +468,6 @@ public class Cell {
      */
     public void removeThisWorker(Worker arg){
         Worker ret = getWorker();
-        //todo check it
         if(ret == null)
             return;
 

@@ -63,8 +63,6 @@ public class Worker extends Placeable {
      */
     @Override
     public boolean place(Cell destination) {
-
-        //todo check it
         if(position()!=null)
             position().removeThisWorker(this);
 
