@@ -2,10 +2,8 @@ package it.polimi.ingsw.view.clientSide.viewers.toGUI.statusClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.ResumingExecuter;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
-import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.elements.PanelComponent;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.elements.PanelImageButton;
-import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.GamePanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.BackgroundPanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
 import it.polimi.ingsw.view.exceptions.AlreadySetException;
@@ -13,26 +11,41 @@ import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+/**
+ * Class to represent the <code>GUIStatusViewer</code> for the ViewStatus REQUEST_RESUMING .
+ */
 public class GUIResumeRequest extends GUIStatusViewer {
 
-    private StatusViewer statusViewer;
     ResumingExecuter resumingExecuter;
 
+    /**
+     * constructor.
+     *
+     * @param statusViewer (the <code>StatusViewer</code> to which this refers).
+     */
     public GUIResumeRequest(StatusViewer statusViewer){
-        this.statusViewer = statusViewer;
         resumingExecuter = (ResumingExecuter) statusViewer.getMyExecuters().get("Resume");
     }
 
+    /**
+     * Method that says this has a PopUp to be shown.
+     *
+     * @return (true).
+     * @see GUIStatusViewer
+     */
     @Override
     public boolean hasPopup(){
         return true;
     }
 
+    /**
+     * Method that shows the PopUp.
+     *
+     * @see GUIStatusViewer
+     */
     @Override
     public void doPopUp(){
 
@@ -52,35 +65,29 @@ public class GUIResumeRequest extends GUIStatusViewer {
         backPanel.add(textPanel);
 
         JButton yesButton = new JButton();
-        yesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    resumingExecuter.setResume(true);
-                    resumingExecuter.doIt();
-                } catch (CannotSendEventException | AlreadySetException ignore) {
-                }
-
-                frame.dispose();
-
+        yesButton.addActionListener(actionEvent -> {
+            try {
+                resumingExecuter.setResume(true);
+                resumingExecuter.doIt();
+            } catch (CannotSendEventException | AlreadySetException ignore) {
             }
+
+            frame.dispose();
+
         });
 
         JPanel yesPanel = new PanelImageButton(.5, 0.15, 0, 0.7, yesButton, "/img/trappings/blueButton.png", "yes");
 
         JButton noButton = new JButton();
-        noButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    resumingExecuter.setResume(false);
-                    resumingExecuter.doIt();
-                } catch (CannotSendEventException | AlreadySetException ignore) {
-                }
-
-                frame.dispose();
-
+        noButton.addActionListener(actionEvent -> {
+            try {
+                resumingExecuter.setResume(false);
+                resumingExecuter.doIt();
+            } catch (CannotSendEventException | AlreadySetException ignore) {
             }
+
+            frame.dispose();
+
         });
 
         JPanel noPanel = new PanelImageButton(.5, 0.15, 0.5, 0.7, noButton, "/img/trappings/redButton.png", "no");

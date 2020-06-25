@@ -5,7 +5,6 @@ import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetNic
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.elements.PanelComponent;
-import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.elements.PanelComponentFixedScale;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.elements.PanelImageButton;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton.TitlePanel;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.BackgroundPanel;
@@ -15,20 +14,38 @@ import it.polimi.ingsw.view.clientSide.viewers.toGUI.sounds.SoundEffect;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 
+/**
+ * Class to represent the <code>GUIStatusViewer</code> for the ViewStatus LOGIN .
+ */
 public class GUILoginStatus extends GUIStatusViewer {
+
     StatusViewer myStatusViewer;
+    /**
+     * constructor.
+     *
+     * @param statusViewer (the <code>StatusViewer</code> to which this refers).
+     */
     public GUILoginStatus(StatusViewer statusViewer){ myStatusViewer = statusViewer; }
 
+    /**
+     * Method that says this has a <code>JPanel</code> to be shown.
+     *
+     * @return (true).
+     * @see GUIStatusViewer
+     */
+    @Override
     public boolean hasJPanel(){ return true; }
 
+    /**
+     * method that returns the <code>Jpanel</code> referring to this that needs to be shown.
+     *
+     * @return (the <code>JPanel</code> that represents this)
+     * @see GUIStatusViewer
+     */
+    @Override
     public JPanel getJPanel(){
         //Creo la schermata principale
         JPanel ret = new BackgroundPanel("/img/background/Odyssey_UI_Backdrop.png");
@@ -87,10 +104,24 @@ public class GUILoginStatus extends GUIStatusViewer {
         return ret;
     }
 
+    /**
+     * method that is executed on the loading of the Status.
+     * It starts playing the music relative to this status.
+     *
+     * @see GUIStatusViewer
+     */
+    @Override
     public void onLoad(){
         SoundEffect.startLoopMusic("/statusSounds/login.wav");
     }
 
+    /**
+     * method that is executed on the closing of the Status.
+     * It stops playing the music relative to this status.
+     *
+     * @see GUIStatusViewer
+     */
+    @Override
     public void onClose(){
         SoundEffect.stopLoopingMusic();
     }
