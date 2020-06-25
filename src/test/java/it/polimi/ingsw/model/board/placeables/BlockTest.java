@@ -58,7 +58,7 @@ class BlockTest {
         assertTrue( check );
         assertTrue( block.position() == cell  );
 
-        // place a block on a cell with a dome
+        // not place a block on a cell with a dome
         dome.place( cell );
         check = block1.place( cell );
         assertTrue( !check );

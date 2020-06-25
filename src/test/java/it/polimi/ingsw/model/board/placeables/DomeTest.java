@@ -55,7 +55,7 @@ class DomeTest {
         assertTrue( check );
         assertTrue( dome.position() == cell  );
 
-        // place a dome on a cell with dome
+        // not place a dome on a cell with dome
         check = dome1.place( cell );
         assertTrue( !check );
         assertTrue( dome1.position() == null );
