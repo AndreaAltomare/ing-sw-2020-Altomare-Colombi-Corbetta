@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.player.turn;
 
 import it.polimi.ingsw.model.board.Cell;
+import it.polimi.ingsw.model.board.placeables.PlaceableType;
 import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.card.GodPower;
 import it.polimi.ingsw.model.card.adversaryMove.AdversaryMove;
@@ -87,6 +88,41 @@ class ConstructionManagerTest {
         public Cell getSelectedCell() {
             return mySelectedCell;
         }
+    }
+
+    private static class MyBuildMovement extends BuildMove{
+
+        private PlaceableType blockT;
+
+        public MyBuildMovement(FloorDirection floorDirection, LevelDirection levelDirection, int levelDepth, Cell selectedCell, PlaceableType blockType) {
+            super(new Cell(0, 0, null), new Cell(0, 0, null), blockType);
+            this.blockT = blockType;
+            init(floorDirection, levelDirection, selectedCell);
+        }
+
+
+        private FloorDirection myFloorDirection;
+        private LevelDirection myLevelDirection;
+        private Cell mySelectedCell;
+
+        void init(FloorDirection direction, LevelDirection level, Cell cell) {
+            myFloorDirection = direction;
+            myLevelDirection = level;
+            mySelectedCell = cell;
+        }
+
+        public FloorDirection getFloorDirection() {
+            return myFloorDirection;
+        }
+
+        public LevelDirection getLevelDirection() {
+            return myLevelDirection;
+        }
+
+        public Cell getSelectedCell() {
+            return mySelectedCell;
+        }
+
     }
 
     private MyObserver obs1 = new MyObserver();
@@ -493,12 +529,9 @@ class ConstructionManagerTest {
                 cworker = null;
             }
 
-            public boolean executeMove(Move move, Worker worker) throws OutOfBoardException, WinException {
+            public boolean executeMove(BuildMove move, Worker worker) throws OutOfBoardException {
                 if(outOfBound)
                     throw new OutOfBoardException("test exception");
-
-                if(winExc)
-                    throw new WinException(new Player("test winner"));
 
                 if(executable) {
                     movment = move;
@@ -508,7 +541,7 @@ class ConstructionManagerTest {
                 return false;
             }
 
-            public boolean checkMove(Move move, Worker worker) {
+            public boolean checkMove(BuildMove move, Worker worker) {
                 if(checkable){
                     cmovment = move;
                     cworker = worker;
@@ -732,12 +765,16 @@ class ConstructionManagerTest {
 
         ConstructionManager tested = new ConstructionManager(myCard);
 
+        movment = new MyBuildMovement(FloorDirection.ANY, LevelDirection.ANY, 0, new Cell(0, 0, null), PlaceableType.ANY);
+
         //Verifying that it'll make a rigth move
         try {
             tested.handle(movment, myWorker);
         }catch(Exception e){
+            e.printStackTrace();
             fail();
         }
+
         assertTrue((myConstr.popMovment().equals(movment))&&(myConstr.getWorker().equals(myWorker)));
 
         //Verifying that if worker is not selected it'll throw WrongWorkerException
@@ -815,9 +852,10 @@ class ConstructionManagerTest {
         notExcepted = true;
         try {
             tested.handle(movment, myWorker);
-        } catch (LoseException e) {
+        } catch (BuildBeforeMoveException e) {
             notExcepted = false;
         } catch (Exception e) {
+            e.printStackTrace();
             fail();
         }
         if (notExcepted)
@@ -828,6 +866,8 @@ class ConstructionManagerTest {
         myConstr.setConstructionLeft(1);
 
         tested.unregisterObservers(obs1);
+
+        gp.setBuildBeforeMovement(!gp.isBuildBeforeMovement());
 
         notExcepted = true;
         try {
