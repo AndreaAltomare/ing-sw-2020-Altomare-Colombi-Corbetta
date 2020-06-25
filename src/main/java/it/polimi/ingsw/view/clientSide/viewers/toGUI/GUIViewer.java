@@ -11,7 +11,6 @@ import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.specificGUISideClass.GUIMessageDisplayer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.specificGUISideClass.GUISelectCard;
-import it.polimi.ingsw.view.exceptions.CheckQueueException;
 import it.polimi.ingsw.view.exceptions.EmptyQueueException;
 
 import javax.imageio.ImageIO;
