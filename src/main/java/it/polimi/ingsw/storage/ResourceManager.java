@@ -30,7 +30,7 @@ public class ResourceManager {
     /**
      * Get a Card's information and return its GodPower properties.
      *
-     * @param cardName (Card's name)
+     * @param cardName Card's name
      * @return GodPower's instance (Card's GodPower properties)
      */
     public static GodPower callGodPower(String cardName) {
@@ -65,7 +65,6 @@ public class ResourceManager {
 
         /* 2- Get all Card's information*/
         for(String cardName : cardNames) {
-            // todo code (maybe write a lambda ex)
             god = callGodPower(cardName);
             cards.add(new CardInfo(god.getName(), god.getEpithet(), god.getDescription()));
         }

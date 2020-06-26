@@ -15,6 +15,16 @@ public class WorkerMovedEvent extends EventObject {
     private int initialX, initialY;
     private int finalX, finalY;
 
+    /**
+     * Constructs a WorkerMovedEvent to inform the View about the event occurred.
+     *
+     * @param worker Moved Worker
+     * @param initialX Worker's initial X position on the Board
+     * @param initialY Worker's initial Y position on the Board
+     * @param finalX Worker's arrival X position on the Board
+     * @param finalY Worker's arrival Y position on the Board
+     * @param moveOutcome Move's outcome
+     */
     public WorkerMovedEvent(String worker, int initialX, int initialY, int finalX, int finalY, MoveOutcomeType moveOutcome) {
         super(new Object());
         this.worker = worker;

@@ -1,15 +1,19 @@
 package it.polimi.ingsw.connection.server;
 
 import it.polimi.ingsw.controller.Controller;
-import it.polimi.ingsw.controller.events.*;
+import it.polimi.ingsw.controller.events.LobbyFullEvent;
+import it.polimi.ingsw.controller.events.MessageEvent;
+import it.polimi.ingsw.controller.events.NextStatusEvent;
 import it.polimi.ingsw.model.Model;
 import it.polimi.ingsw.view.serverSide.VirtualView;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -24,8 +28,7 @@ import java.util.concurrent.Executors;
  * @author AndreaAltomare
  */
 public class ServerConnection {
-    // TODO: maybe to remove (pass already EventObjects from VirtualView) or to implement Listener interfaces
-    private final int PORT;
+    private final int PORT; // can be useful
     private ServerSocket serverSocket;
     private ExecutorService executor = Executors.newFixedThreadPool(128);
 
@@ -35,7 +38,6 @@ public class ServerConnection {
 
     public final int MINIMUM_CLIENTS_REQUIRED = 2; // public because it can never change (by definition of Game match)
     public final int MAXIMUM_CLIENTS_REQUIRED = 3; // public because it can never change (by definition of Game match)
-    //public final Object serverLock = new Object(); // public lock to synchronize some ServerConnection operation // TODO: maybe it's useless: to remove.
     private int numberOfPlayers;
     private volatile boolean lobbyCreated;
 
@@ -92,37 +94,13 @@ public class ServerConnection {
      * @param c (Server-Client communication Socket)
      */
     public synchronized void unregisterConnection(ClientConnection c) {
-        // TODO: handle the case in which the client disconnects before the lobby is created
-        // todo: maybe it's useless (basta chiamare la clear() su tutte le collezioni di questo tipo)
         /* 1- Unregister Observer(s) */
         if(!lobbyCreated || (lobbyCreated && !playingConnection.containsValue(c))) {
-//            for (VirtualView vw : virtualViews) // TODO: USELESS: REMOVE
-//                if (vw.getConnection().equals(c)) {
-//                    vw.removeVCEventsListener(controller);
-//                    controller.removeObserver(vw);
-//                    vw = null;
-//                }
-
-
             /* 2- Remove connection entries (and items) */
             connections.remove(c);
-            //ClientConnection playerConnection = playingConnection.get(c);
-            // TODO: maybe remove all this "if" part, which is useless
-            //if(playerConnection != null) {
-            //playerConnection.closeConnection(); // todo remove (redundant)
-            //playingConnection.remove(c);
-            //playingConnection.remove(playerConnection); // TODO: non e' ridondante questo metodo? c e playerConnection dovrebbero essere lo stesso oggetto di classe ClientConnection...
-            //}
-
-            waitingConnection.keySet().removeIf(s -> waitingConnection.get(s) == c); // todo check if it works
-            playingConnection.keySet().removeIf(s -> playingConnection.get(s) == c); // todo check if it works
+            waitingConnection.keySet().removeIf(s -> waitingConnection.get(s) == c);
+            playingConnection.keySet().removeIf(s -> playingConnection.get(s) == c);
         }
-        /*Iterator<String> iterator = waitingConnection.keySet().iterator();
-        while(iterator.hasNext()) {
-            if(waitingConnection.get(iterator.next()) == c) {
-                iterator.remove();
-            }
-        }*/
     }
 
 
@@ -152,7 +130,7 @@ public class ServerConnection {
         if(!lobbyCreated && waitingConnection.size() == numberOfPlayers) {
             List<String> keys = new ArrayList<>(waitingConnection.keySet());
             List<ClientConnection> clients = new ArrayList<>(MAXIMUM_CLIENTS_REQUIRED);
-            virtualViews = new ArrayList<>(MAXIMUM_CLIENTS_REQUIRED); // TODO: NOT SURE if this is the right (semantic) way to instantiate the VirtualView
+            virtualViews = new ArrayList<>(MAXIMUM_CLIENTS_REQUIRED);
 
             /* 1- Get ClientConnection(s) */
             for (String key : keys) {
@@ -191,12 +169,11 @@ public class ServerConnection {
             /* 9- Alert all clients they joined the lobby successfully */
             for(ClientConnection client : clients) {
                 client.send(new NextStatusEvent("Joined lobby.\nWaiting for for the game to start...\n"));
-                //client.send(new MessageEvent("Joined lobby.\nWaiting for for the game to start...\n")); // todo [for debug]
+                //client.send(new MessageEvent("Joined lobby.\nWaiting for for the game to start...\n"));
             }
 
             /* 10- Start a new game match */
-            executor.submit(controller); // TODO: check if this is non-blocking and works correctly
-            //controller.run(); // todo (maybe this can be removed)
+            executor.submit(controller);
         }
     }
 
@@ -279,6 +256,10 @@ public class ServerConnection {
         return false;
     }
 
+    /**
+     * Reset the Server in order to be ready to start
+     * a new game with new Players (Clients).
+     */
     private void reset() {
         /* Reset connections */
         connections.clear();
@@ -291,24 +272,33 @@ public class ServerConnection {
         model = null;
         controller = null;
         virtualViews.clear();
-        // todo resettare il sistema dei ping
     }
 
+    /**
+     * Notify Clients that the connection is being closed,
+     * then close the connections.
+     */
     private void quit() {
         notifyClients();
         closeConnections();
     }
 
+    /**
+     * Close the connection with every playing Player's Client.
+     */
     private void closeConnections() {
         playingConnection.values().forEach(ClientConnection::unregisterAndClose);
-        playingConnection.values().forEach(ClientConnection::destroySocket); // todo test if works
-        playingConnection.values().forEach(c -> c = null); // todo test if works
+        playingConnection.values().forEach(ClientConnection::destroySocket);
+        playingConnection.values().forEach(c -> c = null);
     }
 
+    /**
+     * Notify every playing Client about the imminent connection closing.
+     */
     private void notifyClients() {
         /* Send a quit message from Server */
         playingConnection.values().forEach(c -> {
-            c.send(new MessageEvent("A Player left the game. Server closed the connection.")); // todo forse si può far diventare questo messaggio parametrico, nel caso ci siano disconnessioni dovute da altri fattori
-        }); // todo rimettere ServerQuitEvent (forse)
+            c.send(new MessageEvent("A Player left the game. Server closed the connection.")); // can be parameterized
+        });
     }
 }

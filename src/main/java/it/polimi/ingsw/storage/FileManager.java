@@ -5,15 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class's aim is to provide a unique entry point
+ * <p>This class's aim is to provide a unique entry point
  * by which the software is able to properly communicate
  * with the File System and the persistent data themselves
  *
- * A Singleton Pattern is applied to enable access control to
+ * <p>A <i>Singleton</i> Pattern is applied to enable access control to
  * resources which could be shared among different parts of
  * the application
  *
- * The use of this class is to be intended when enabling
+ * <p>The use of this class is to be intended when enabling
  * multi-user games: access to persistent resources
  * needs to be carefully controlled.
  *
@@ -21,7 +21,6 @@ import java.util.List;
  */
 public class FileManager {
     private static FileManager fileManagerIstance; // may this class be synchronized upon this static attribute
-    //private String filePath; // todo maybe to remove
 
     private FileManager() {}
 

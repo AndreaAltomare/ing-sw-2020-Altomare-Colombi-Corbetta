@@ -12,6 +12,13 @@ import it.polimi.ingsw.model.board.placeables.PlaceableType;
 public class BuildMove extends Move {
     private PlaceableType blockType;
 
+    /**
+     * Constructs a new Construction move ({@code BuildMove}).
+     *
+     * @param currentPosition Current position of the Worker which made the move
+     * @param selectedCell Selected position to build to
+     * @param blockType Type of the block to build
+     */
     public BuildMove(Cell currentPosition, Cell selectedCell, PlaceableType blockType) {
         super(currentPosition, selectedCell);
         this.blockType = blockType;

@@ -2,6 +2,12 @@ package it.polimi.ingsw.model.persistence.board;
 
 import java.io.Serializable;
 
+/**
+ * Bean class to enable serialization/deserialization of a board state
+ * by JSON files, and to encapsulate the actual state of the board at a certain point.
+ *
+ * @author AndreaAltomare
+ */
 public class BoardState implements Serializable {
     private CellState[][] board;
     private int xSize; // board x dimension

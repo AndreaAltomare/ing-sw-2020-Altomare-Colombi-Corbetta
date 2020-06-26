@@ -2,6 +2,7 @@ package it.polimi.ingsw;
 
 /**
  * Hello world!
+ * [USELESS DEFAULT CLASS]
  *
  */
 public class App 

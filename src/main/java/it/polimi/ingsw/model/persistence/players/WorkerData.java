@@ -5,6 +5,12 @@ import it.polimi.ingsw.model.player.worker.Color;
 
 import java.io.Serializable;
 
+/**
+ * Bean class to enable serialization/deserialization of a Worker's information
+ * by JSON files, and to encapsulate the actual state of it at a certain point.
+ *
+ * @author AndreaAltomare
+ */
 public class WorkerData implements Serializable {
     private String workerId;
     private ChooseType chosen;

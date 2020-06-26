@@ -14,6 +14,15 @@ public class WorkerPlacedEvent extends EventObject {
     private int x, y;
     private Color color;
 
+    /**
+     * Constructs a WorkerPlacedEvent to inform the View about the event occurred.
+     *
+     * @param worker Placed Worker
+     * @param x Worker's X position on the Board
+     * @param y Worker's Y position on the Board
+     * @param color Worker's color
+     * @param success True if Worker was actually placed on the Board
+     */
     public WorkerPlacedEvent(String worker, int x, int y, Color color, boolean success) {
         super(new Object());
         this.worker = worker;

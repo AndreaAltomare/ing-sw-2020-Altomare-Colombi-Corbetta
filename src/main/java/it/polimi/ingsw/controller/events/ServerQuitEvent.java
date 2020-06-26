@@ -10,7 +10,7 @@ public class ServerQuitEvent extends EventObject {
     private final String message;
 
     /**
-     * Constructor.
+     * Constructs a ServerQuitEvent.
      * By providing a message, it lets the Client know
      * if the connection was either closed on Client's request
      * or by the Server itself.

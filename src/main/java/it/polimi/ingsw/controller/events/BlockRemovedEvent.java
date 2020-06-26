@@ -14,6 +14,14 @@ public class BlockRemovedEvent extends EventObject {
     private int y;
     private PlaceableType blockType;
 
+    /**
+     * Constructs a BlockRemovedEvent to inform the View about the event occurred.
+     *
+     * @param x X position
+     * @param y Y position
+     * @param blockType Type of block removed
+     * @param success True if the block was actually removed
+     */
     public BlockRemovedEvent(int x, int y, PlaceableType blockType, boolean success) {
         super(new Object());
         this.x = x;

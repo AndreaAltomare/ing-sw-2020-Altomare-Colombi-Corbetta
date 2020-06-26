@@ -6,6 +6,12 @@ import it.polimi.ingsw.model.player.worker.Worker;
 
 import java.io.Serializable;
 
+/**
+ * Bean class to enable serialization/deserialization of a placeable's information
+ * by JSON files, and to encapsulate the actual state of a placeable at a certain point.
+ *
+ * @author AndreaAltomare
+ */
 public class PlaceableData implements Serializable {
     private PlaceableType placeableType;
     private String workerId;
@@ -29,7 +35,12 @@ public class PlaceableData implements Serializable {
         this.workerId = workerId;
     }
 
-    public void setPlaceable(Placeable placeable) { // todo vedere se funziona con la serializzazione/deserializzazione GSON
+    /**
+     * Sets the Placeable type by taking the Placeable as input.
+     *
+     * @param placeable Placeable object
+     */
+    public void setPlaceable(Placeable placeable) {
         if (placeable.isBlock())
             placeableType = PlaceableType.BLOCK;
         else if (placeable.isDome())

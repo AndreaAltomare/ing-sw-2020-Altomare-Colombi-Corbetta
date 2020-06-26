@@ -9,6 +9,11 @@ import java.util.EventObject;
 public class GameOverEvent extends EventObject {
     private final String message;
 
+    /**
+     * Constructs a GameOverEvent to inform the View about the event occurred.
+     *
+     * @param message Custom message
+     */
     public GameOverEvent(String message) {
         super(new Object());
         this.message = message;

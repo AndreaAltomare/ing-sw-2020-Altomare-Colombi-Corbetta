@@ -10,9 +10,14 @@ public class RequirePlaceWorkersEvent extends EventObject {
     private String player; // Player who is asked to place his/her own Workers to.
     private final String message;
 
+    /**
+     * Constructs a RequirePlaceWorkersEvent to inform the View about the event occurred.
+     *
+     * @param player Player who is asked to place his/her own Workers to
+     */
     public RequirePlaceWorkersEvent(String player) {
         super(new Object());
-        this.message = "Place your two workers on the board."; // TODO: maybe it's to remove (useless)
+        this.message = "Place your two workers on the board.";
         this.player = player;
     }
 
