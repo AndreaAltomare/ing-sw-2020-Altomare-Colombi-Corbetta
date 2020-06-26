@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.controller.Controller;
-import it.polimi.ingsw.model.board.placeables.Placeable;
 import it.polimi.ingsw.model.board.placeables.PlaceableType;
 import it.polimi.ingsw.model.exceptions.LoseException;
 import it.polimi.ingsw.model.move.MoveOutcomeType;
@@ -18,11 +17,19 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Class for the testing of the Model.
+ *
+ * @author giorgio
+ */
 class ModelTest {
 
+    /**
+     * Auxiliary method to clea the state -in particular the Worker's state will create some troubles if left unclean
+     */
     void cleanAll(){
 
-        Worker.resetIdAndColorIndex();
+        new Model().clearOperations();
     }
 
     /**
@@ -30,6 +37,7 @@ class ModelTest {
      */
     @Test
     void getBoardXSize() {
+        cleanAll();
         Model model = new Model();
 
         assertEquals(5, model.getBoardXSize());
@@ -40,6 +48,7 @@ class ModelTest {
      */
     @Test
     void getBoardYSize() {
+        cleanAll();
         Model model = new Model();
 
         assertEquals(5, model.getBoardYSize());
@@ -47,10 +56,11 @@ class ModelTest {
 
 
     /**
-     * Check if the game starts in the coorrect way
+     * Check if the game starts in the correct way
      */
     @Test
     void startGame() {
+        cleanAll();
         Model model = new Model();
 
         ArrayList<String> workerList = new ArrayList<>(6);
@@ -97,8 +107,12 @@ class ModelTest {
         cleanAll();
     }
 
+    /**
+     * checks if the hasGameStarted retrieves the correct value set with setGameStarted.
+     */
     @Test
     void setGameStarted(){
+        cleanAll();
         Model model = new Model();
 
         model.setGameStarted(true);
@@ -112,8 +126,12 @@ class ModelTest {
         cleanAll();
     }
 
+    /**
+     * Check that it sets the observers either if no card is set and doesn't throw exceptions.
+     */
     @Test
     void registerTurnObservers() {
+        cleanAll();
         boolean excepted = false;
 
         Model model = new Model();
@@ -159,8 +177,12 @@ class ModelTest {
         cleanAll();
     }
 
+    /**
+     * Checks the right flow of the turns.
+     */
     @Test
     void sortPlayers() {
+        cleanAll();
         Model model = new Model();
 
         ArrayList<String> workerList = new ArrayList<>(6);
@@ -267,8 +289,12 @@ class ModelTest {
         cleanAll();
     }
 
+    /**
+     * checks it entails correctly the workers to the players.
+     */
     @Test
     void getWorkersToPlayers() {
+        cleanAll();
         Model model = new Model();
 
         ArrayList<String> workerList = new ArrayList<>(6);
@@ -318,8 +344,12 @@ class ModelTest {
         cleanAll();
     }
 
+    /**
+     * Checks if it set properly the challenger.
+     */
     @Test
     void setChallenger() {
+        cleanAll();
 
         Model model = new Model();
 
@@ -342,8 +372,12 @@ class ModelTest {
         cleanAll();
     }
 
+    /**
+     * Checks that it'll set all and only the cards to be set.
+     */
     @Test
     void setCardsInGame() {
+        cleanAll();
         Model model = new Model();
 
         ArrayList<String> cardsList = new ArrayList<>();
@@ -444,8 +478,12 @@ class ModelTest {
         cleanAll();
     }
 
+    /**
+     * Check if it sets properly the starting player.
+     */
     @Test
     void setStartPlayer() {
+        cleanAll();
         Model model = new Model();
 
         model.setStartPlayer("pippo");
@@ -469,8 +507,12 @@ class ModelTest {
         cleanAll();
     }
 
+    /**
+     * Method to check the reliability of placeWorker.
+     */
     @Test
     void placeWorker() {
+        cleanAll();
         boolean excepted = false;
 
         Model model = new Model();
@@ -490,12 +532,12 @@ class ModelTest {
         model.setPlayerCard("Apollo", playerListString.get(2));
 
         assertNull(model.placeWorker(6, 1, playerListString.get(0)));
-        /*try {
+        try {
             assertNull(model.placeWorker(0, 0, "notExistingPlayer"));
         }catch(NullPointerException e){
             excepted = true;
         }
-        assertTrue(excepted);*/
+        assertTrue(excepted);
         assertNotNull(model.placeWorker(0, 1, playerListString.get(0)));
         assertNull(model.placeWorker(0, 1, playerListString.get(0)));
         assertNotNull(model.placeWorker(0, 2, playerListString.get(0)));
@@ -507,8 +549,12 @@ class ModelTest {
         cleanAll();
     }
 
+    /**
+     * method that checks the right flow of the turn.
+     */
     @Test
     void getPlayingPlayerState() {
+        cleanAll();
         Model model = new Model();
 
         ArrayList<String> workerList = new ArrayList<>(6);
@@ -563,6 +609,8 @@ class ModelTest {
 
         assertTrue(model.hasGameStarted());
 
+        model.registerTurnObservers();
+
         //GAME NOW IS STARTED
 
         assertEquals(model.getPlayingPlayerState(), StateType.MOVEMENT);
@@ -595,33 +643,17 @@ class ModelTest {
         tmpOutcome = model.moveWorker(workerList.get(0), 2, 0, playerListString.get(0)).get(0).getMoveOutcome();
         assertTrue(tmpOutcome != MoveOutcomeType.EXECUTED && tmpOutcome != MoveOutcomeType.LOSS && tmpOutcome != MoveOutcomeType.WIN && tmpOutcome != MoveOutcomeType.TURN_SWITCHED && tmpOutcome != MoveOutcomeType.TURN_OVER);
 
+        tmpOutcome = model.moveWorker(workerList.get(1), 1, 1, playerListString.get(0)).get(0).getMoveOutcome();
+        assertTrue(tmpOutcome != MoveOutcomeType.EXECUTED && tmpOutcome != MoveOutcomeType.LOSS && tmpOutcome != MoveOutcomeType.WIN && tmpOutcome != MoveOutcomeType.TURN_SWITCHED && tmpOutcome != MoveOutcomeType.TURN_OVER);
+
+
+
         tmpOutcome = model.moveWorker(workerList.get(0), 1, 0, playerListString.get(0)).get(0).getMoveOutcome();
         assertFalse(tmpOutcome != MoveOutcomeType.EXECUTED && tmpOutcome != MoveOutcomeType.LOSS && tmpOutcome != MoveOutcomeType.WIN && tmpOutcome != MoveOutcomeType.TURN_SWITCHED && tmpOutcome != MoveOutcomeType.TURN_OVER);
 
         assertEquals(model.getPlayingPlayerState(), StateType.CONSTRUCTION);
-/*
 
-        tmpOutcome = model.moveWorker("mu", 1, 0, playerListString.get(0)).get(0).getMoveOutcome();
-        assertTrue(tmpOutcome != MoveOutcomeType.EXECUTED && tmpOutcome != MoveOutcomeType.LOSS && tmpOutcome != MoveOutcomeType.WIN && tmpOutcome != MoveOutcomeType.TURN_SWITCHED);
-        assertNull(model.moveWorker(workerList.get(0), 1, 0, playerListString.get(1)));
 
-        tmpOutcome = model.moveWorker(workerList.get(0), 0, 0, playerListString.get(0)).get(0).getMoveOutcome();
-        assertTrue(tmpOutcome != MoveOutcomeType.EXECUTED && tmpOutcome != MoveOutcomeType.LOSS && tmpOutcome != MoveOutcomeType.WIN && tmpOutcome != MoveOutcomeType.TURN_SWITCHED);
-
-        tmpOutcome = model.moveWorker(workerList.get(0), -1, 0, playerListString.get(0)).get(0).getMoveOutcome();
-        assertTrue(tmpOutcome != MoveOutcomeType.EXECUTED && tmpOutcome != MoveOutcomeType.LOSS && tmpOutcome != MoveOutcomeType.WIN && tmpOutcome != MoveOutcomeType.TURN_SWITCHED);
-
-        tmpOutcome = model.moveWorker(workerList.get(0), 0, 1, playerListString.get(0)).get(0).getMoveOutcome();
-        assertTrue(tmpOutcome != MoveOutcomeType.EXECUTED && tmpOutcome != MoveOutcomeType.LOSS && tmpOutcome != MoveOutcomeType.WIN && tmpOutcome != MoveOutcomeType.TURN_SWITCHED);
-
-        tmpOutcome = model.moveWorker(workerList.get(0), 2, 0, playerListString.get(0)).get(0).getMoveOutcome();
-        assertTrue(tmpOutcome != MoveOutcomeType.EXECUTED && tmpOutcome != MoveOutcomeType.LOSS && tmpOutcome != MoveOutcomeType.WIN && tmpOutcome != MoveOutcomeType.TURN_SWITCHED);
-
-        tmpOutcome = model.moveWorker(workerList.get(0), 1, 0, playerListString.get(0)).get(0).getMoveOutcome();
-        assertTrue(tmpOutcome != MoveOutcomeType.EXECUTED && tmpOutcome != MoveOutcomeType.LOSS && tmpOutcome != MoveOutcomeType.WIN && tmpOutcome != MoveOutcomeType.TURN_SWITCHED);
-
-        assertEquals(model.getPlayingPlayerState(), StateType.CONSTRUCTION);
-*/
 
         tmpOutcome = model.buildBlock("mu", 0, 0, PlaceableType.BLOCK, playerListString.get(0)).getMoveOutcome();
         assertTrue(tmpOutcome != MoveOutcomeType.EXECUTED && tmpOutcome != MoveOutcomeType.LOSS && tmpOutcome != MoveOutcomeType.WIN && tmpOutcome != MoveOutcomeType.TURN_SWITCHED && tmpOutcome != MoveOutcomeType.TURN_OVER);
@@ -686,8 +718,13 @@ class ModelTest {
 
     }
 
+    /**
+     * Method that executes a small game and verify that all works fine.
+     * It checks the game restoring, the undo, the victory and the loss conditions.
+     */
     @Test
     void restoreGameState() {
+        cleanAll();
         Model model = new Model();
 
         ArrayList<String> workerList = new ArrayList<>(6);
@@ -706,14 +743,14 @@ class ModelTest {
         model.setPlayerCard("Artemis", playerListString.get(1));
         model.setPlayerCard("Apollo", playerListString.get(2));
 
-        workerList.add(model.placeWorker(0, 0, playerListString.get(0)).getWorker());
-        workerList.add(model.placeWorker(0, 1, playerListString.get(0)).getWorker());
+        workerList.add(model.placeWorker(3, 2, playerListString.get(0)).getWorker());
+        workerList.add(model.placeWorker(2, 2, playerListString.get(0)).getWorker());
 
-        workerList.add(model.placeWorker(0, 2, playerListString.get(1)).getWorker());
-        workerList.add(model.placeWorker(0, 3, playerListString.get(1)).getWorker());
+        workerList.add(model.placeWorker(4, 4, playerListString.get(1)).getWorker());
+        workerList.add(model.placeWorker(4, 0, playerListString.get(1)).getWorker());
 
-        workerList.add(model.placeWorker(4, 4, playerListString.get(2)).getWorker());
-        workerList.add(model.placeWorker(4, 3, playerListString.get(2)).getWorker());
+        workerList.add(model.placeWorker(1, 1, playerListString.get(2)).getWorker());
+        workerList.add(model.placeWorker(1, 0, playerListString.get(2)).getWorker());
 
         assertEquals(model.getPlayingPlayerState(), StateType.NONE);
 
@@ -730,8 +767,33 @@ class ModelTest {
 
         assertEquals(model.getPlayingPlayer(), playerListString.get(0));
 
-        MoveOutcomeType tmpOutcome = model.moveWorker(workerList.get(0), 1, 0, playerListString.get(0)).get(0).getMoveOutcome();
+        Player player = model.getPlayingPlayerReference();
+        assertEquals(player.getNickname(), playerListString.get(0));
+        assertEquals(player.getCard().getName(), "Atlas");
+        for (Worker w: player.getWorkers()){
+            workerList.contains(w.getWorkerId());
+            if(!workerList.get(0).equals(w.getWorkerId()))
+                if(!workerList.get(1).equals(w.getWorkerId()))
+                    fail();
+        }
+
+        model.setChallenger(playerListString.get(0));
+
+        assertTrue(model.hasGameStarted());
+
+        assertNull(model.getLastBoardState());
+        assertNull(model.getLastPlayersState());
+
+        //GAME NOW IS STARTED
+
+        assertEquals(model.getPlayingPlayerState(), StateType.MOVEMENT);
+
+        assertNotNull(model.selectWorker(workerList.get(0), playerListString.get(0)));
+
+        MoveOutcomeType tmpOutcome = model.moveWorker(workerList.get(0), 4, 2, playerListString.get(0)).get(0).getMoveOutcome();
         assertFalse(tmpOutcome != MoveOutcomeType.EXECUTED && tmpOutcome != MoveOutcomeType.LOSS && tmpOutcome != MoveOutcomeType.WIN && tmpOutcome != MoveOutcomeType.TURN_SWITCHED && tmpOutcome != MoveOutcomeType.TURN_OVER);
+
+        assertEquals(model.getPlayingPlayerState(), StateType.CONSTRUCTION);
 
         model.changeTurnStatus(StateType.CONSTRUCTION, playerListString.get(0));
 
@@ -739,7 +801,7 @@ class ModelTest {
 
         GameState gameState = model.createGameState();
 
-        BoardState boardState = new BoardState();
+        BoardState boardState = gameState.getBoard();
         boardState.setXSize(5);
         boardState.setYSize(5);
 
@@ -804,7 +866,7 @@ class ModelTest {
                 placeableData.setWorkerId("łWorker]\t" + 1);
 
                 building.add(placeableData);
-                cellStates[3][2].setBuilding(building);
+                cellStates[2][2].setBuilding(building);
             }
             {
                 Deque<PlaceableData> building = new ArrayDeque<>();
@@ -895,72 +957,108 @@ class ModelTest {
 
             boardState.setBoard(cellStates);
         }
-        gameState.setBoard(new BoardState());
-
-        gameState.getPlayers();
+        gameState.setBoard(boardState);
 
         model.setGameState(gameState);
 
         tmpOutcome = model.buildBlock(workerList.get(0), 4, 3, PlaceableType.DOME, playerListString.get(0)).getMoveOutcome();
         assertFalse(tmpOutcome != MoveOutcomeType.EXECUTED && tmpOutcome != MoveOutcomeType.LOSS && tmpOutcome != MoveOutcomeType.WIN && tmpOutcome != MoveOutcomeType.TURN_SWITCHED && tmpOutcome != MoveOutcomeType.TURN_OVER);
 
+        assertEquals(3, model.getLastPlayersState().getData().size());
 
-    }
+        assertTrue(model.players().contains(playerListString.get(1)));
 
-    @Test
-    void handlePlayerLoss() {
-    }
+        model.handlePlayerLoss(playerListString.get(1));
 
-    @Test
-    void handlePlayerWin() {
-    }
+        model.removePlayer(playerListString.get(1));
+        assertFalse(model.players().contains(playerListString.get(1)));
 
-    @Test
-    void removePlayer() {
-    }
+        model.getLastGameState();
 
 
-    @Test
-    void getLastGameState() {
-    }
 
-    @Test
-    void setGameState() {
-    }
+        model.switchPlayer();
 
-    @Test
-    void createGameState() {
-    }
+        assertEquals(model.getPlayingPlayer(), playerListString.get(2));
 
-    @Test
-    void getLastBoardState() {
-    }
+        assertEquals(model.getPlayingPlayerState(), StateType.MOVEMENT);
 
-    @Test
-    void setBoardState() {
-    }
+        assertNotNull(model.selectWorker(workerList.get(5), playerListString.get(2)));
 
-    @Test
-    void createBoardState() {
-    }
+        model.createGameState();
 
-    @Test
-    void getLastPlayersState() {
-    }
+        tmpOutcome = model.moveWorker(workerList.get(5), 2, 0, playerListString.get(2)).get(0).getMoveOutcome();
+        assertFalse(tmpOutcome != MoveOutcomeType.EXECUTED && tmpOutcome != MoveOutcomeType.LOSS && tmpOutcome != MoveOutcomeType.WIN && tmpOutcome != MoveOutcomeType.TURN_SWITCHED && tmpOutcome != MoveOutcomeType.TURN_OVER);
 
-    @Test
-    void createPlayersState() {
-    }
+        model.restoreGameState();
 
-    @Test
-    void clearOperations() {
-    }
+        gameState = model.getLastGameState();
 
-    @Test
-    void getMainWorkerMoved() {
+        assertNotNull(model.selectWorker(workerList.get(5), playerListString.get(2)));
+
+        model.moveWorker(workerList.get(5), 0, 0, playerListString.get(2));
+        tmpOutcome = model.getMainWorkerMoved().getMoveOutcome();
+        assertFalse(tmpOutcome != MoveOutcomeType.EXECUTED && tmpOutcome != MoveOutcomeType.LOSS && tmpOutcome != MoveOutcomeType.WIN && tmpOutcome != MoveOutcomeType.TURN_SWITCHED && tmpOutcome != MoveOutcomeType.TURN_OVER);
+
+        assertEquals(model.getPlayingPlayerState(), StateType.CONSTRUCTION);
+
+        model.handlePlayerWin(playerListString.get(2));
+
+        assertNotNull(model.getLastBoardState());
+        assertNotNull(model.getLastPlayersState());
+
+        assertFalse(model.hasGameStarted());
+
+        cleanAll();
+
+        model = new Model();
+
+        assertNull(model.getPlayingPlayerReference());
+
+        ArrayList<String> pl2 = new ArrayList<>(2);
+
+        pl2.add("Player1");
+        pl2.add("Player3");
+
+        model.initialize(new Controller(model, playerListString), pl2);
+
+        assertNull(model.getLastBoardState());
+        assertNull(model.getLastPlayersState());
+
+        model.setGameState(gameState);
+        model.restoreGameState();
+
+        assertNotNull(model.getLastBoardState());
+        assertNotNull(model.getLastPlayersState());
+
+        //model.registerTurnObservers();
+
+        assertEquals(2, model.getLastPlayersState().getData().size());
+
+        model.setGameStarted(true);
+
+        assertNotNull(model.selectWorker(workerList.get(5), playerListString.get(2)));
+
+        model.moveWorker(workerList.get(5), 0, 0, playerListString.get(2));
+        tmpOutcome = model.getMainWorkerMoved().getMoveOutcome();
+        assertFalse(tmpOutcome != MoveOutcomeType.EXECUTED && tmpOutcome != MoveOutcomeType.LOSS && tmpOutcome != MoveOutcomeType.WIN && tmpOutcome != MoveOutcomeType.TURN_SWITCHED && tmpOutcome != MoveOutcomeType.TURN_OVER);
+
+        assertEquals(model.getPlayingPlayerState(), StateType.CONSTRUCTION);
+
+        model.handlePlayerLoss(playerListString.get(0));
+
+        //assertFalse(model.hasGameStarted());
+
+        cleanAll();
+
     }
 
     @Test
     void setMainWorkerMoved() {
+        cleanAll();
+        Model model = new Model();
+
+        model.setMainWorkerMoved(null);
+        assertNull(model.getMainWorkerMoved());
     }
 }
