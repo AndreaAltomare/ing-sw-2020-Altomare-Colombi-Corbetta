@@ -9,6 +9,19 @@ package it.polimi.ingsw.observer;
  * @author AndreaAltomare
  */
 public interface Observer<T> {
+
+    /**
+     * Updates listener with a message.
+     *
+     * @param message Message
+     */
     void update(T message);
+
+    /**
+     * Updates a specific listener with a message.
+     *
+     * @param message Message
+     * @param nickname Specific Player's nickname
+     */
     void update(T message, String nickname); // method used to update just a certain Player [for Unicast communications]
 }

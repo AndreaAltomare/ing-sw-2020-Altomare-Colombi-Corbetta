@@ -23,7 +23,29 @@ public abstract class TurnManager {
     protected boolean moveAllowed;
     protected StateType state;
 
+    /**
+     * Handles a move made within the actual Turn
+     * (represented by a {@code TurnManager} subclass).
+     *
+     * @param move Move to handle
+     * @param worker Worker which made the move
+     * @return True if the move was actually executed and thus correctly handled
+     * @throws WinException Exception thrown when a Player wins after executing the move
+     * @throws LoseException Exception thrown when a Player loses after executing the move
+     * @throws RunOutMovesException Exception thrown when the move is not executed because the Player run out of moves
+     * @throws BuildBeforeMoveException Exception thrown when the move is not executed because the Player tried to illegally make a Construction before a Movement
+     * @throws WrongWorkerException Exception thrown when the move is not executed because the Player made the move with a different Worker than the last one chosen
+     * @throws TurnOverException Exception thrown when a Player's Turn is over after the move is executed
+     * @throws TurnSwitchedException Exception thrown when a Player's Sub-Turn (Movement / Construction) is over after the move is executed
+     */
     public abstract boolean handle(Move move, Worker worker) throws WinException, LoseException, RunOutMovesException, BuildBeforeMoveException,WrongWorkerException, TurnOverException,TurnSwitchedException;
+
+    /**
+     * Gets the number of moves left for the actual Turn
+     * (represented by a {@code TurnManager} subclass).
+     *
+     * @return Actual Turn moves left
+     */
     public abstract int getMovesLeft();
 
     /**

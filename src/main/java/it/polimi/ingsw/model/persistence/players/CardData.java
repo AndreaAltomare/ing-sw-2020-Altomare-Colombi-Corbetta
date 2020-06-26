@@ -2,6 +2,12 @@ package it.polimi.ingsw.model.persistence.players;
 
 import java.io.Serializable;
 
+/**
+ * Bean class to enable serialization/deserialization of a Card's information
+ * by JSON files, and to encapsulate the actual state of a Card at a certain point.
+ *
+ * @author AndreaAltomare
+ */
 public class CardData implements Serializable {
     /* Relevant information for a Player's turn */
     private String name;

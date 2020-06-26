@@ -11,6 +11,13 @@ public class WorkerSelectedEvent extends EventObject {
     private String playerNickname;
     private String worker;
 
+    /**
+     * Constructs a WorkerSelectedEvent to inform the View about the event occurred.
+     *
+     * @param playerNickname Player who selected the Worker
+     * @param worker Selected Worker
+     * @param success True if Worker was actually selected
+     */
     public WorkerSelectedEvent(String playerNickname, String worker, boolean success) {
         super(new Object());
         this.playerNickname = playerNickname;

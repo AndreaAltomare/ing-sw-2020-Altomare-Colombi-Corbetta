@@ -16,11 +16,12 @@ import java.util.stream.Collectors;
  */
 public class GameRoom extends GeneralGameRoom {
 
+    /**
+     * Constructors.
+     */
     public GameRoom() {
         players = new ArrayList<Player>();
     }
-
-    // TODO: add abstract game box methods
 
     /* Player list manipulation */
 
@@ -83,12 +84,16 @@ public class GameRoom extends GeneralGameRoom {
     /* Game settings */
 
     /**
-     * This method setup the Game scenario to let a new
+     * This method setups the Game scenario to let a new
      * match begin.
+     *
+     * [This method is never actually called with the
+     * implemented rules, but it can be useful with
+     * future rule expansion.]
      */
     @Override
     public void setupGame() {
-        // TODO: add game setup operations
+        // no action needs to be done
     }
 
     /**
@@ -190,7 +195,7 @@ public class GameRoom extends GeneralGameRoom {
      */
     @Override
     public void registerObservers() {
-        /* 1- Take all the AdversaryMove objects */ // TODO: Check if Lambda expression works fine
+        /* 1- Take all the AdversaryMove objects */
         List<Player> selectedPlayers = players.stream().filter(x -> x.getCard().getGodPower().isActiveOnOpponentMovement()).collect(Collectors.toList());
 
         /* 2- Get all the AdversaryMove object */

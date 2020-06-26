@@ -11,6 +11,9 @@ import java.util.EventObject;
 public class GameResumingEvent extends EventObject {
     private GameState gameState;
 
+    /**
+     * Constructs a GameResumingEvent to inform the View about the event occurred.
+     */
     public GameResumingEvent() {
         super(new Object());
         this.gameState = null;

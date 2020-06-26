@@ -3,7 +3,7 @@ package it.polimi.ingsw.model.card;
 import java.io.Serializable;
 
 /**
- * This class encapsulate the Card's information which a Player
+ * This class encapsulates the Card's information which a Player
  * needs in order to make his/her choice.
  *
  * @author AndreaAltomare
@@ -13,6 +13,14 @@ public class CardInfo implements Serializable {
     private String epithet;
     private String description;
 
+    /**
+     * Constructs a CardInfo objects which holds
+     * descriptive information about a Card.
+     *
+     * @param name Card's name
+     * @param epithet Card's epithet
+     * @param description Card's description
+     */
     public CardInfo(String name, String epithet, String description) {
         this.name = name;
         this.epithet = epithet;

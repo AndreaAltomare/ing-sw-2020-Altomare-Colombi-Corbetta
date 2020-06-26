@@ -8,18 +8,14 @@ import it.polimi.ingsw.connection.utility.PingResponse;
 import it.polimi.ingsw.observer.MVEventSubject;
 import it.polimi.ingsw.observer.Observer;
 import it.polimi.ingsw.view.clientSide.View;
-import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.NoSuchElementException;
-import java.util.Scanner;
-import java.util.EventObject;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -34,7 +30,6 @@ import java.util.concurrent.Executors;
  * @author AndreaAltomare
  */
 public class ClientConnection extends MVEventSubject implements Observer<Object> {
-    // TODO: re-implement Listener interfaces [...done?]
     /* General */
     private ExecutorService executor = Executors.newFixedThreadPool(128);
     /* Client-Server communication */
@@ -61,18 +56,7 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
         //this.view = view;
     }
 
-    // TODO: check if it works correctly
-    // TODO: Maybe this method is useless
-    /*
-     * Start the View for user interaction.
-     *
-     * @return The thread in which the View is running
-     */
-    /*public Thread startView() {
-        Thread t = new Thread(view);
-        t.start();
-        return t;
-    }*/
+
 
     /**
      * Asynchronous data reading from Server.
@@ -116,6 +100,12 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
         private Object objectToWrite; // object to write to the socket
         private ObjectOutputStream socketOut; // output socket
 
+        /**
+         * Constructs a class for asynchronous writing on socket.
+         *
+         * @param objectToWrite Object-to-write's reference
+         * @param socketOut Output stream which to write on
+         */
         public AsyncSocketWriter(final Object objectToWrite, final ObjectOutputStream socketOut) {
             this.objectToWrite = objectToWrite;
             this.socketOut = socketOut;
@@ -178,16 +168,10 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
             System.out.println("Connection established.\n");
         socketOut = new ObjectOutputStream(socket.getOutputStream());
         socketIn = new ObjectInputStream(socket.getInputStream());
-        //Scanner stdin = new Scanner(System.in);
-
-        /* Add observers */ // todo check if this system works (since reading and writing from/to socket is done by threads)
-        //this.addMVEventsListener(view);
-        //view.addObserver(this);
 
         try {
             Thread t0 = asyncReadFromSocket(socketIn);
-            //Thread t1 = startView();
-            //Thread t1 = asyncWriteToSocket(stdin, socketOut); // todo: maybe this is useless, to remove
+            //Thread t1 = asyncWriteToSocket(stdin, socketOut);
             t0.join();
             //t1.join();
         }
@@ -199,14 +183,13 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
             }
         }
         finally {
-            // TODO: forse questi metodi danno problemi
             //stdin.close();
             connectionManager.stop();
             socketIn.close();
             socketOut.close();
             socket.close();
             if(View.debugging)
-                System.out.println("Connection closed."); // todo [debug]
+                System.out.println("Connection closed.");
             ViewMessage.populateAndSend("Connection closed.", ViewMessage.MessageType.FROM_SERVER_ERROR);
         }
     }
@@ -269,7 +252,6 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
     @Override
     public void update(Object o) {
         /* Asynchronously write to the Socket */
-        // todo usare gli executor (check se funziona: se non funziona, anche per problemi di caduta di connessione, istanziare un nuovo Thread alla maniera "tradizionale"
         executor.submit(new AsyncSocketWriter(o,socketOut));
     }
 
@@ -285,37 +267,11 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
     }
 
 
-
-
-
-    // TODO: MAYBE it's a useless method. Needs to be removed.
-    /*
-     * Asynchronous data forwarding to Server.
+    /**
+     * Set the handler for chat messages.
      *
-     * @param stdin (STDIN Scanner for User input)
-     * @param socketOut (PrintWriter for writing on Output stream, to send data)
-     * @return A thread to manage asynchronous writing
+     * @param chatMessageHandler Chat message handler
      */
-    /*public Thread asyncWriteToSocket(final Scanner stdin, final PrintWriter socketOut) {
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    while(isActive()) { // TODO: add code to actually send to socket the Event Object generated from the View
-                        String inputLine = stdin.nextLine();
-                        socketOut.println(inputLine);
-                        socketOut.flush(); // To ensure data is sent
-                    }
-                }
-                catch(Exception ex) {
-                    setActive(false);
-                }
-            }
-        });
-        t.start();
-        return t;
-    }*/
-
     public void setChatMessageHandler(ChatMessageListener chatMessageHandler) {
         this.chatMessageHandler = chatMessageHandler;
     }

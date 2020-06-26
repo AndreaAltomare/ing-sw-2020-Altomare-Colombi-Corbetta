@@ -15,6 +15,14 @@ public class BlockBuiltEvent extends EventObject {
     private int y;
     private PlaceableType blockType;
 
+    /**
+     * Constructs a BlockBuiltEvent to inform the View about the event occurred.
+     *
+     * @param x X position
+     * @param y Y position
+     * @param blockType Type of block built
+     * @param moveOutcome Move's outcome
+     */
     public BlockBuiltEvent(int x, int y, PlaceableType blockType, MoveOutcomeType moveOutcome) {
         super(new Object());
         this.x = x;

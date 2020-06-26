@@ -9,6 +9,11 @@ import java.util.EventObject;
 public class NextStatusEvent extends EventObject {
     private String message; // Message accompanying the event
 
+    /**
+     * Constructs a NextStatusEvent to inform the View about the event occurred.
+     *
+     * @param message Custom message
+     */
     public NextStatusEvent(String message) {
         super(new Object());
         this.message = message;

@@ -9,11 +9,49 @@ import it.polimi.ingsw.observer.Observer;
  * @author AndreaAltomare
  */
 public interface ClientConnection {
+
+    /**
+     * Unregister and close the connection.
+     */
     void unregisterAndClose();
+
+    /**
+     * Close the connection.
+     */
     void closeConnection();
+
+    /**
+     * Close the connection.
+     * Boolean parameter tells if additional operations
+     * needs to be made.
+     *
+     * @param additionalOperations Additional operations are required
+     */
     void closeConnection(boolean additionalOperations);
+
+    /**
+     * Destroy connection socket.
+     */
     void destroySocket();
+
+    /**
+     * Add an observer.
+     *
+     * @param observer Observer
+     */
     void addObserver(Observer<Object> observer);
+
+    /**
+     * Send a message asynchronously.
+     *
+     * @param message Message to send
+     */
     void asyncSend(Object message);
+
+    /**
+     * Send a message synchronously.
+     *
+     * @param message Message to send
+     */
     void send(Object message);
 }

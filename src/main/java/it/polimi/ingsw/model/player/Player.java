@@ -43,6 +43,11 @@ public class Player {
     private List<Worker> workers;
     private boolean playing; // tells if the player is playing or not
 
+    /**
+     * Constructs a new {@code Player} object.
+     *
+     * @param nickname Player's nickname
+     */
     public Player(String nickname) {
         this.nickname = nickname;
         this.challenger = false;
@@ -57,7 +62,7 @@ public class Player {
     }
 
     /**
-     * Execute a move within a specific Turn
+     * Executes a move within a specific Turn
      * (HEART OF MOVE EXECUTION)
      *
      * @param move (Move to execute)
@@ -69,6 +74,7 @@ public class Player {
      * @throws BuildBeforeMoveException (Exception handled by Controller)
      * @throws WrongWorkerException (Exception handled by Controller)
      * @throws TurnOverException (Exception handled by Controller)
+     * @throws TurnSwitchedException (Exception handled by Controller)
      */
     public boolean executeMove(Move move, Worker worker) throws WinException,LoseException,RunOutMovesException,BuildBeforeMoveException,WrongWorkerException,TurnOverException, TurnSwitchedException {
         boolean executionResult = false;
@@ -79,10 +85,6 @@ public class Player {
         catch(TurnSwitchedException ex) {
             // Movement has been done. Now it's turn for the Construction move
             chooseState(StateType.CONSTRUCTION);
-            throw ex;
-        }
-        catch (LoseException ex) {
-            //this.playing = false; // todo: maybe it's to remove (cause of problems with Undo)
             throw ex;
         }
 
@@ -100,12 +102,12 @@ public class Player {
         /* 0- Reset Player's Move Manager values */
         card.resetForStart();
 
-        /* 1- Check if there is a Lose Condition */
+        /* 1- Reset Workers Turn values */
+        workers.forEach(x -> x.setChosen(ChooseType.CAN_BE_CHOSEN));
+
+        /* 2- Check if there is a Lose Condition */
         if(checkForLostByMovement())
             throw new LoseException(this, "Player " + nickname + "has lost! (Cannot perform any Movement)");
-
-        /* 2- Reset Workers Turn values */
-        workers.forEach(x -> x.setChosen(ChooseType.CAN_BE_CHOSEN));
 
         /* 3- Get to the initial State */
         try {
@@ -168,14 +170,11 @@ public class Player {
         return changeAdmitted;
     }
 
+    /**
+     *
+     * @return True iff the Player's Turn is completed and it can be passed
+     */
     private boolean checkIfTurnCompleted() {
-        // todo maybe to remove
-//        boolean canPassTurn = false;
-//
-//        if(card.getGodPower().isBuildBeforeMovement())
-//            return (card.hasExecutedMovement() && (card.getMyConstruction().getConstructionLeft() <= card.getGodPower().getConstructionLeft() - 2));
-//        else
-//            return (card.hasExecutedMovement() && card.hasExecutedConstruction());
         return card.isTurnCompleted();
     }
 
@@ -215,7 +214,6 @@ public class Player {
      * @throws LoseException (Exception handled by Controller)
      */
     public boolean switchState(TurnManager nextState) throws LoseException {
-        // TODO: maybe REFACTOR this check into a method in MovementManager class
         /* Check if a Lose Condition (by denied movements) occurs */
         if(nextState.state() == StateType.MOVEMENT) {
             if (checkForLostByMovement())
@@ -224,7 +222,7 @@ public class Player {
                 this.turnType = StateType.MOVEMENT;
         }
 
-        // TODO: fare in modo che se il worker con cui si ha appena  mosso non può costruire, allora la mossa costruzione "passa" all'altro Worker
+        /* Check if a Lose Condition (by denied constructions) occurs */
         if(nextState.state() == StateType.CONSTRUCTION) {
             if (checkForLostByConstruction())
                 throw new LoseException(this, "Player " + nickname + "has lost! (Cannot perform any Construction)");
@@ -323,7 +321,6 @@ public class Player {
      * @return (Player cannot perform any Movement ? true : false)
      */
     private boolean checkForLostByMovement() {
-        List<Cell> adjacentCells;
         boolean workerHasLost = false;
 
         /* For each worker check if a Move can be performed */
@@ -349,7 +346,6 @@ public class Player {
      * @return (Player cannot perform any Construction ? true : false)
      */
     private boolean checkForLostByConstruction() {
-        List<Cell> adjacentCells;
 
         /* For each worker check if a BuildMove can be performed */
         for(Worker workerObj : workers) {
@@ -372,6 +368,10 @@ public class Player {
      */
     private boolean checkForWorkerLostByMovement(Worker worker) {
         List<Cell> adjacentCells;
+
+        /* 0- If the Worker is not the one already chosen, do not check */
+        if(worker.getChosenStatus() == ChooseType.NOT_CHOSEN)
+            return true;
 
         /* 1- Get adjacent Cells from the one the Worker is placed on */
         adjacentCells = worker.position().getBoard().getAdjacentCells(worker.position());
@@ -397,6 +397,10 @@ public class Player {
      */
     private boolean checkForWorkerLostByConstruction(Worker worker) {
         List<Cell> adjacentCells;
+
+        /* 0- If the Worker is not the one already chosen, do not check */
+        if(worker.getChosenStatus() == ChooseType.NOT_CHOSEN)
+            return true;
 
         /* 1- Get adjacent Cells from the one the Worker is placed on */
         adjacentCells = worker.position().getBoard().getAdjacentCells(worker.position());
@@ -464,6 +468,10 @@ public class Player {
         return null;
     }
 
+    /**
+     *
+     * @return True if the Player is playing
+     */
     public boolean isPlaying() {
         return playing;
     }
@@ -496,6 +504,13 @@ public class Player {
         return turnType;
     }
 
+    /**
+     * Gets information about the (eventual) movement
+     * forced upon an opponent's Worker during
+     * Player's last executed move.
+     *
+     * @return A WorkerMoved object
+     */
     public MyMove.WorkerMoved forcedOpponentMove() {
         return card.getMyMove().getOpponentForcedMove();
     }

@@ -25,7 +25,7 @@ public class ClientConnectionManager implements Runnable {
     /* Timer handling */
     private final int TIMER_INITIAL_DELAY = 20000; // time in milliseconds (20 secs)
     private final int TIMER_TIME_PERIOD = 1000; // time in milliseconds
-    private final int MAXIMUM_TIMEOUTS_NUMBER = 20; // todo rimettere a 20
+    private final int MAXIMUM_TIMEOUTS_NUMBER = 20;
     private TimeoutCounter timeoutCounter;
     private Timer timer;
     /* Socket references */
@@ -43,7 +43,7 @@ public class ClientConnectionManager implements Runnable {
     }
 
     /**
-     * Run() method for ClientConnectionManager class.
+     * {@code Run()} method for ClientConnectionManager class.
      *
      * An instance of ClientConnectionManager starts running.
      */
@@ -58,7 +58,7 @@ public class ClientConnectionManager implements Runnable {
         /* 2- Create Lambda expression */
         TimeExpiredInterface timeExpiredHandler = (responseReceived) -> {
             if(!responseReceived) {
-                System.err.println("Server unreachable!"); // todo vedere che succede con questi messaggi quando è attiva la GUI
+                System.err.println("Server unreachable!");
                 clientConnection.update(new QuitEvent()); // if no Ping message is received, notify the Server the willing to quit...
                 clientConnection.closeConnection(); // ...and close the connection.
             }
@@ -80,10 +80,19 @@ public class ClientConnectionManager implements Runnable {
         timeoutCounter.setResponseReceived(true);
     }
 
+    /**
+     *
+     * @return True if the Ping-system for the Client is running
+     */
     public boolean isRunning() {
         return running;
     }
 
+    /**
+     * Stops the Ping-system for the Client
+     * by terminating the timer
+     * (calls {@code cancel()} method).
+     */
     public void stop() {
         if(timer != null)
             timer.cancel();

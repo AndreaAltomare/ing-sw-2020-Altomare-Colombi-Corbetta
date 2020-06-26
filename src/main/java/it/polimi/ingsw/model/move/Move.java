@@ -14,6 +14,12 @@ public class Move {
     protected int levelDepth; // depth of level UP/DOWN
     protected Cell selectedCell; // Cell where the Player wants to move
 
+    /**
+     * Constructs a new Movement move ({@code Move}).
+     *
+     * @param currentPosition Current position of the Worker which made the move
+     * @param selectedCell Selected position to move to
+     */
     public Move(Cell currentPosition, Cell selectedCell) {
         this.floorDirection = Move.calculateFloorDirection(currentPosition, selectedCell);
         this.levelDirection = Move.calculateLevelDirection(currentPosition, selectedCell);
@@ -76,7 +82,7 @@ public class Move {
      * @return Level direction (calculated direction)
      */
     private static LevelDirection calculateLevelDirection(Cell currentCell, Cell nextCell) {
-        LevelDirection direction = LevelDirection.NONE;
+        LevelDirection direction;
         int levelDepth;
 
         levelDepth = calculateLevelDepth(currentCell, nextCell);
