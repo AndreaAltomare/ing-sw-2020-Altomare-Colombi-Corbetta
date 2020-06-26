@@ -1,10 +1,8 @@
 package it.polimi.ingsw.connection.utility;
 
 import it.polimi.ingsw.connection.server.SocketClientConnection;
-import it.polimi.ingsw.observer.Observer;
 import it.polimi.ingsw.view.events.QuitEvent;
 
-import java.io.ObjectOutputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -26,7 +24,7 @@ public class ConnectionManager extends PingObservable implements Runnable {
     /* Timer handling */
     private final int TIMER_INITIAL_DELAY = 1000; // time in milliseconds
     private final int TIMER_TIME_PERIOD = 1000; // time in milliseconds
-    private final int MAXIMUM_TIMEOUTS_NUMBER = 10; // todo rimettere a 10
+    private final int MAXIMUM_TIMEOUTS_NUMBER = 10; // equals to 10 seconds
     private Timer timer;
     /* Socket references */
     private final SocketClientConnection socketClient;
@@ -42,7 +40,7 @@ public class ConnectionManager extends PingObservable implements Runnable {
     }
 
     /**
-     * Run() method for ConnectionManager class.
+     * {@code Run()} method for ConnectionManager class.
      *
      * An instance of ConnectionManager starts running.
      */
@@ -80,6 +78,11 @@ public class ConnectionManager extends PingObservable implements Runnable {
         notifyPingObservers(o); // notify TimerCount
     }
 
+    /**
+     * Stops the Ping-system for the Server
+     * by terminating the timer
+     * (calls {@code cancel()} method).
+     */
     public void stop() {
         if(timer != null)
             timer.cancel();

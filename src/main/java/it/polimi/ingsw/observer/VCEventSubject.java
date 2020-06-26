@@ -28,7 +28,7 @@ public class VCEventSubject {
     }
 
     /**
-     * Call proper update method on Listener.
+     * Calls proper update method on Listener.
      *
      * @param e (VCEvent EventObject)
      * @param playerNickname (Player who has generated e)
@@ -125,7 +125,7 @@ public class VCEventSubject {
     }
 
     /**
-     * Add a new Listener for VCEvents.
+     * Adds a new Listener for VCEvents.
      *
      * @param listener (VCEvent Listener)
      */
@@ -136,7 +136,7 @@ public class VCEventSubject {
     }
 
     /**
-     * Remove a Listener for VCEvents.
+     * Removes a Listener for VCEvents.
      *
      * @param listener (VCEvent Listener)
      */

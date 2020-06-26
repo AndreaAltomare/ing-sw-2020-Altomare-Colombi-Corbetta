@@ -6,8 +6,6 @@ import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.card.GodPower;
 import it.polimi.ingsw.model.exceptions.OutOfBoardException;
 import it.polimi.ingsw.model.exceptions.WinException;
-import it.polimi.ingsw.model.move.FloorDirection;
-import it.polimi.ingsw.model.move.LevelDirection;
 import it.polimi.ingsw.model.move.Move;
 import it.polimi.ingsw.model.player.worker.Worker;
 
@@ -29,9 +27,17 @@ public class MyMove {
     private List<MoveChecker> checkers;
     private MoveExecutor executor;
 
+    /**
+     * Constructs a MyMove manager.
+     *
+     * @param parentCard Associated Card
+     * @param godPower Associated God's power
+     * @param checkers Checkers for moves
+     * @param executor Executor for moves
+     */
     public MyMove(Card parentCard, GodPower godPower, List<MoveChecker> checkers, MoveExecutor executor) {
         this.parentCard = parentCard;
-        this.godPower = godPower; // TODO: maybe refactor this to be only on Card class, so to remove duplicated code
+        this.godPower = godPower;
         this.checkers = checkers;
         this.executor = executor;
         this.startingPosition = null;
@@ -50,49 +56,22 @@ public class MyMove {
      * @throws WinException (Exception handled by Controller)
      */
     public boolean executeMove(Move move, Worker worker) throws OutOfBoardException, WinException {
-        boolean moveAllowed = true;
-
-        //moveAllowed = checkMove(move, worker); // todo forse è inutile [debug]
+        //moveAllowed = checkMove(move, worker);
 
         /* perform the movement just if it's allowed */
-        if(moveAllowed) {
-            executor.executeMove(move, worker, parentCard); // todo debug
-//            if(!godPower.isActiveOnMyMovement()) {
-//                /* default movement execution */
-//                worker.place(move.getSelectedCell());
-//            }
-//            else {
-//                /* special rules when performing a Movement */
-//                // if the Cell is occupied, force the opponent's Worker into another Cell otherwise perform the Movement
-//                if(occupiedCell(move.getSelectedCell())) {
-//                    // todo: apollo (just to check, REMOVE THIS COMMENT)
-//                    if (godPower.getForceOpponentInto() == FloorDirection.ANY) {
-//                        Worker opponentWorker = move.getSelectedCell().removeWorker(); // get opponent's Worker from its Cell
-//                        Cell myWorkerCurrentPosition = worker.position();
-//                        worker.place(move.getSelectedCell()); // place my Worker into the selected Cell
-//                        forceMove(opponentWorker,myWorkerCurrentPosition); // force movement for opponent's worker
-//                    }
-//                    else if(godPower.getForceOpponentInto() == FloorDirection.SAME) { // todo: minotaur (just to check, REMOVE THIS COMMENT)
-//                        Worker opponentWorker = move.getSelectedCell().getWorker(); // get opponent's Worker
-//                        forceMove(opponentWorker,calculateNextCell(move)); // force movement for opponent's worker
-//                        worker.place(move.getSelectedCell()); // place my Worker into the selected Cell
-//                    }
-//                }
-//                else {
-//                    // todo: artemis (just to check, REMOVE THIS COMMENT)
-//                    worker.place(move.getSelectedCell());
-//                }
-//            }
+        executor.executeMove(move, worker, parentCard);
 
-            /* Register the executed move */
-            registerLastMove(move);
+        /* Register the executed move */
+        registerLastMove(move);
 
-            // check if there is a win condition
-            if(parentCard.getMyVictory().checkMove(move, worker))
-                throw new WinException(worker.getOwner());
-        }
+        // check if there is a win condition
+        if(parentCard.getMyVictory().checkMove(move, worker))
+            throw new WinException(worker.getOwner());
 
-        return moveAllowed; // true if the move was executed
+        /* returns true if the move was executed
+         * (since the move was previously checked, this method always returns true).
+         */
+        return true;
     }
 
     /**
@@ -108,135 +87,6 @@ public class MyMove {
                 return false;
         }
         return true;
-//        boolean moveAllowed = false;
-//
-//        if(!godPower.isActiveOnMyMovement())
-//            moveAllowed = checkDefaultRules(move, worker);
-//        else
-//            moveAllowed = checkSpecialRules(move, worker);
-//
-//        return moveAllowed;
-    }
-
-    /**
-     * This method is called when a Card's power modifies basic game rules.
-     *
-     * @param move (Move to check)
-     * @param worker (Worker who has executed the move)
-     * @return (Move is allowed ? true : false)
-     */
-    private boolean checkSpecialRules(Move move, Worker worker) {
-        boolean checkResult = true;
-
-        /* check if the Player can make a move in the first place */
-        if(this.movesLeft <= 0)
-            return false;
-
-        /* cannot move into the same position */
-        if(isSameCell(move.getSelectedCell(), worker.position()))
-            return false;
-
-        /* cannot move beyond adjoining cells */
-        if(beyondAdjacentCells(move.getSelectedCell(), worker.position()))
-            return false;
-
-        /* cannot go more than one level up*/
-        if(tooHighCell(move.getSelectedCell(), worker.position()))
-            return false;
-
-        /* cannot go if there is another Worker */
-        // todo: apollo and minotaur (just to check, REMOVE THIS COMMENT)
-        if(!godPower.isMoveIntoOpponentSpace()) {
-            if (occupiedCell(move.getSelectedCell()))
-                return false;
-        }
-        else {
-            // perform additional controls only in cas the selectedCell is already occupied
-            // todo: add a control to check that the worker is opponent's worker
-            if(occupiedCell(move.getSelectedCell())) {
-                // check that the worker is opponent's worker
-                if(move.getSelectedCell().getWorker().getOwner().equals(worker.getOwner()))
-                    return false;
-
-                // just apollo can have ANY as a FloorDirection (it means to move the worker into the vacant Cell)
-                // todo: apollo (just to check, REMOVE THIS COMMENT)
-                if (godPower.getForceOpponentInto() != FloorDirection.ANY) {
-                    // todo: minotaur (just to check, REMOVE THIS COMMENT)
-                    // check if the opponent's Worker can be moved into the right cell (as with Minotaur Card's power)
-                    Cell nextOpponentCell;
-                    try {
-                        nextOpponentCell = calculateNextCell(move);
-                    }
-                    catch(OutOfBoardException ex) {
-                        return false;
-                    }
-                    checkResult = checkNextCell(nextOpponentCell); // check if opponent's Worker can be forced into the next calculated Cell
-                    if (checkResult == false)
-                        return false;
-                }
-            }
-        }
-
-        /* cannot go if there is a Dome */
-        if(domedCell(move.getSelectedCell()))
-            return false;
-
-        /* cannot move back into the initial space */
-        // todo: artemis (just to check, REMOVE THIS COMMENT)
-        if(godPower.isStartingSpaceDenied()) {
-            /* Check if a movement has already occurred with the selected Worker */
-            if(parentCard.hasExecutedMovement()) {
-                if (isSameCell(move.getSelectedCell(), startingPosition))
-                    return false;
-            }
-            else { /* Otherwise, just register the starting position */
-                this.startingPosition = worker.position(); // TODO: Maybe make a new method to encapsulate this operation
-            }
-        }
-
-        /* check for denied move Direction when performing Construction before Movement */
-        // todo: prometheus (just to check, REMOVE THIS COMMENT)
-        if(godPower.getHotLastMoveDirection() != LevelDirection.NONE)
-            if(parentCard.getMyConstruction().getConstructionLeft() <= 1)
-                if(move.getLevelDirection() == godPower.getHotLastMoveDirection())
-                    return false;
-
-        return true; // everything ok
-    }
-
-    /**
-     * This method is called when only basic rules apply.
-     *
-     * @param move (Move to check)
-     * @param worker (Worker who has executed the move)
-     * @return (Move is allowed ? true : false)
-     */
-    private boolean checkDefaultRules(Move move, Worker worker) {
-        /* check if the Player can make a move in the first place */
-        if(this.movesLeft <= 0)
-            return false;
-
-        /* cannot move into the same position */
-        if(isSameCell(move.getSelectedCell(), worker.position()))
-            return false;
-
-        /* cannot move beyond adjoining cells */
-        if(beyondAdjacentCells(move.getSelectedCell(), worker.position()))
-            return false;
-
-        /* cannot go more than one level up*/
-        if(tooHighCell(move.getSelectedCell(), worker.position()))
-            return false;
-
-        /* cannot go if there is another Worker */
-        if(occupiedCell(move.getSelectedCell()))
-            return false;
-
-        /* cannot go if there is a Dome */
-        if(domedCell(move.getSelectedCell()))
-            return false;
-
-        return true; // everything ok
     }
 
     /**
@@ -382,13 +232,8 @@ public class MyMove {
      * @param destinationCell (Cell into which force the Opponent's Worker)
      */
     public static void forceMove(Worker opponentWorker, Cell destinationCell) {
-        String oppWorkerId = opponentWorker.getWorkerId(); // todo: cancellare questi attributi (sono già nella lambda expression)
-        int initialX = opponentWorker.position().getX(); // todo: check if this works correctly
-        int initialY = opponentWorker.position().getY(); // todo: check if this works correctly
         opponentWorker.place(destinationCell);
-        int finalX = opponentWorker.position().getX();
-        int finalY = opponentWorker.position().getY();
-        //opponentForcedMove = new WorkerMoved(oppWorkerId, initialX, initialY, finalX, finalY); // todo modifica carte
+        //opponentForcedMove = new WorkerMoved(oppWorkerId, initialX, initialY, finalX, finalY);
     }
 
     /**
@@ -434,6 +279,11 @@ public class MyMove {
         this.lastMove = move;
     }
 
+    /**
+     * Registers the movement forced upon an opponent's Worker.
+     *
+     * @param opponentForcedMove Move to register
+     */
     public void setOpponentForcedMove(WorkerMoved opponentForcedMove) {
         this.opponentForcedMove = opponentForcedMove;
     }
@@ -459,6 +309,13 @@ public class MyMove {
         this.movesLeft = movesLeft;
     }
 
+    /**
+     * This class let to create objects which
+     * encapsulate the information about
+     * a movement forced upon an opponent's Worker.
+     *
+     * @author AndreaAltomare
+     */
     public static class WorkerMoved {
         private String workerId;
         private int initialX;
@@ -466,6 +323,15 @@ public class MyMove {
         private int finalX;
         private int finalY;
 
+        /**
+         * Constructs a WorkerMoved object.
+         *
+         * @param workerId Worker forced to move
+         * @param initialX Worker's initial X position
+         * @param initialY Worker's initial Y position
+         * @param finalX Worker's arrival X position
+         * @param finalY Worker's arrival Y position
+         */
         public WorkerMoved(String workerId, int initialX, int initialY, int finalX, int finalY) {
             this.workerId = workerId;
             this.initialX = initialX;

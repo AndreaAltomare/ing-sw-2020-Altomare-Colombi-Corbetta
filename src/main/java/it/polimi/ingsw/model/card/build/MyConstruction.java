@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model.card.build;
 
 import it.polimi.ingsw.model.board.Cell;
-import it.polimi.ingsw.model.board.placeables.PlaceableType;
 import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.card.GodPower;
 import it.polimi.ingsw.model.exceptions.OutOfBoardException;
@@ -17,8 +16,7 @@ import java.util.List;
  * @author AndreaAltomare
  */
 public class MyConstruction {
-    // TODO: Delete unused methods
-    //private Cell startingPosition; // once the turn starts, Worker's starting position is saved TODO: maybe it's useful for Advanced Gods. Let's wait...
+    //private Cell startingPosition; // once the turn starts, Worker's starting position is saved
     private BuildMove lastMove;
     private GodPower godPower; // state of chosen God's power
     private Card parentCard;
@@ -26,6 +24,14 @@ public class MyConstruction {
     private List<BuildChecker> checkers;
     private BuildExecutor executor;
 
+    /**
+     * Constructs a MyConstruction manager.
+     *
+     * @param parentCard Associated Card
+     * @param godPower Associated God's power
+     * @param checkers Checkers for moves
+     * @param executor Executor for moves
+     */
     public MyConstruction(Card parentCard, GodPower godPower, List<BuildChecker> checkers, BuildExecutor executor) {
         this.parentCard = parentCard;
         this.godPower = godPower;
@@ -47,35 +53,14 @@ public class MyConstruction {
     public boolean executeMove(BuildMove move, Worker worker) throws OutOfBoardException {
         boolean moveAllowed = true;
 
-        //moveAllowed = checkMove(move, worker); // todo forse è inutile [debug]
+        //moveAllowed = checkMove(move, worker);
 
         /* perform the construction just if it's allowed */
-        if(moveAllowed) {
-            moveAllowed = executor.executeBuild(move, worker); // todo debug
-//            if(!godPower.isActiveOnMyConstruction()) {
-//                /* default construction execution */
-//                if(move.getBlockType() == PlaceableType.BLOCK)
-//                    moveAllowed = move.getSelectedCell().buildBlock();
-//                else if(move.getBlockType() == PlaceableType.DOME)
-//                    moveAllowed = move.getSelectedCell().buildDome();
-//                else
-//                    moveAllowed = false;
-//            }
-//            else {
-//                /* special rules when performing a Movement */
-//                // todo: all construction-based Gods (atlas, demeter, hephaestus, and prometheus) just need to check if the move is possible, before executing it (just to check, REMOVE THIS COMMENT)
-//                if(move.getBlockType() == PlaceableType.BLOCK)
-//                    moveAllowed = move.getSelectedCell().buildBlock();
-//                else if(move.getBlockType() == PlaceableType.DOME)
-//                    moveAllowed = move.getSelectedCell().buildDome();
-//                else
-//                    moveAllowed = false;
-//            }
+        moveAllowed = executor.executeBuild(move, worker);
 
-            /* Register the executed move */
-            if(moveAllowed)
-                registerLastMove(move);
-        }
+        /* Register the executed move */
+        if(moveAllowed)
+            registerLastMove(move);
 
         return moveAllowed; // true if the move was executed
     }
@@ -93,106 +78,8 @@ public class MyConstruction {
                 return false;
         }
         return true;
-//        boolean moveAllowed = false;
-//
-//        if(!godPower.isActiveOnMyConstruction())
-//            moveAllowed = checkDefaultRules(move, worker);
-//        else
-//            moveAllowed = checkSpecialRules(move, worker);
-//
-//        return moveAllowed;
     }
 
-    /**
-     * This method is called when a Card's power modifies basic game rules.
-     *
-     * @param move (Move to check)
-     * @param worker (Worker who has executed the move)
-     * @return (Move is allowed ? true : false)
-     */
-    private boolean checkSpecialRules(BuildMove move, Worker worker) {
-        boolean checkResult = true;
-
-        /* check if the Player can make a construction in the first place */
-        if(this.constructionLeft <= 0)
-            return false;
-
-        /* cannot build into the same position */
-        if(isSameCell(move.getSelectedCell(), worker.position()))
-            return false;
-
-        /* cannot build beyond adjoining cells */
-        if(beyondAdjacentCells(move.getSelectedCell(), worker.position()))
-            return false;
-
-        /* cannot build if there is another Worker */
-        if(occupiedCell(move.getSelectedCell()))
-            return false;
-
-        /* cannot build if there is a Dome */
-        if(domedCell(move.getSelectedCell()))
-            return false;
-
-        /* cannot build a Dome at any level */
-        // todo: atlas (just to check, REMOVE THIS COMMENT)
-        if(!godPower.isDomeAtAnyLevel())
-            if(move.getBlockType() == PlaceableType.DOME && move.getSelectedCell().getLevel() < 3)
-                return false;
-
-        /* cannot build on the same space (for additional-time constructions) */
-        // todo: demeter (just to check, REMOVE THIS COMMENT)
-        if(godPower.isSameSpaceDenied())
-            if(parentCard.hasExecutedConstruction() && move.getSelectedCell().equals(lastMove.getSelectedCell())) // if(lastMove != null && constructionLeft == 1 && move.getSelectedCell().equals(lastMove.getSelectedCell()))
-                return false;
-
-        /* force build on the same space (for additional-time constructions) */
-        // todo: hephaestus (just to check, REMOVE THIS COMMENT)
-        if(godPower.isForceConstructionOnSameSpace())
-            if(parentCard.hasExecutedConstruction() && (!move.getSelectedCell().equals(lastMove.getSelectedCell()) || move.getBlockType() == PlaceableType.DOME))
-                return false;
-
-        return true; // everything ok
-    }
-
-    /**
-     * This method is called when only basic rules apply.
-     *
-     * @param move (Move to check)
-     * @param worker (Worker who has executed the move)
-     * @return (Move is allowed ? true : false)
-     */
-    private boolean checkDefaultRules(BuildMove move, Worker worker) {
-        /* check if the Player can make a construction in the first place */
-        if(this.constructionLeft <= 0)
-            return false;
-
-        /* cannot build into the same position */
-        if(isSameCell(move.getSelectedCell(), worker.position()))
-            return false;
-
-        /* cannot build beyond adjoining cells */
-        if(beyondAdjacentCells(move.getSelectedCell(), worker.position()))
-            return false;
-
-        /* Workers can build at any level height, by default rules */
-
-        /* cannot build if there is another Worker */
-        if(occupiedCell(move.getSelectedCell()))
-            return false;
-
-        /* cannot build if there is a Dome */
-        if(domedCell(move.getSelectedCell()))
-            return false;
-
-        /* cannot build a Dome at any level */
-        if(move.getBlockType() == PlaceableType.DOME && move.getSelectedCell().getLevel() < 3)
-            return false;
-
-        return true; // everything ok
-    }
-
-
-    // TODO: duplicated code from this point, can be implemented either as a Class which encapsulates Default Game rules set, or with a Parent Class by which extends functionalities (for both MyMove and MyConstruction classes)
 
     /**
      * Given two Cells, tells if they are the same
@@ -264,14 +151,14 @@ public class MyConstruction {
     }
 
     /**
-     * Decrease the Moves Left for this kind.
+     * Decreases the Moves Left for this kind.
      */
     public void decreaseConstructionLeft() {
         constructionLeft -= 1;
     }
 
     /**
-     * Reset the Constructions Left with the Player's
+     * Resets the Constructions Left with the Player's
      * Card provided value.
      */
     public void resetConstructionLeft() {
@@ -279,7 +166,7 @@ public class MyConstruction {
     }
 
     /**
-     * Register last (Build)Move executed
+     * Registers last (Build)Move executed
      *
      * @param move (Executed (Build)Move, to be registered)
      */

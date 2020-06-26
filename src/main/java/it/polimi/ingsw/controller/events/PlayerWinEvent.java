@@ -8,10 +8,17 @@ import java.util.EventObject;
  */
 public class PlayerWinEvent extends EventObject {
     private String playerNickname;
-    private String winnerMessage; // TODO: maybe this message (form Server) is useless: the View has the responsibility to render a proper message to show to the end-user
-    private String losersMessage; // TODO: maybe this message (form Server) is useless: the View has the responsibility to render a proper message to show to the end-user
+    private String winnerMessage;
+    private String losersMessage;
     // this Event will be sent in broadcast
 
+    /**
+     * Constructs a PlayerWinEvent to inform the View about the event occurred.
+     *
+     * @param playerNickname Player who won
+     * @param winnerMessage Custom message for the winner Player
+     * @param losersMessage Custom message for the loser Players
+     */
     public PlayerWinEvent(String playerNickname, String winnerMessage, String losersMessage) {
         super(new Object());
         this.playerNickname = playerNickname;

@@ -20,8 +20,34 @@ import it.polimi.ingsw.model.player.worker.Worker;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Parser for GodPower objects.
+ *
+ * <p>Main responsibility of {@code CardParser} is
+ * to compose Lists of Lambda expressions out of
+ * GodPower objects given in input to its methods.
+ *
+ * <p>Since GodPower objects are extracted from
+ * Cards' configuration files, {@code CardParser}
+ * can be meant as an <i>high level</i> parser for
+ * those configuration files.
+ *
+ * <p>GodPower objects are extracted by {@link
+ * it.polimi.ingsw.storage.ResourceManager#callGodPower(String)
+ * ResourceManager.callGodPower(cardName)} method
+ * when a Player chooses his/her Card.
+ *
+ * @author AndreaAltomare
+ */
 public class CardParser {
 
+    /**
+     * Composes and gets Lambda checkers for Movement moves
+     * out of a {@code GodPower} object.
+     *
+     * @param godPower GodPower object
+     * @return A list of Lambda checkers
+     */
     public static List<MoveChecker> getMoveCheckers(GodPower godPower) {
         List<MoveChecker> checkers = new ArrayList<>();
 
@@ -51,6 +77,7 @@ public class CardParser {
         };
         checkers.add(defaultEffect);
 
+        /* ############################# SPECIAL RULES ############################### */
         if(!godPower.isActiveOnMyMovement()) {
             MoveChecker effect = (move, worker, startingPosition, movesLeft, parentCard) -> {
                 /* cannot go if there is another Worker */
@@ -71,9 +98,7 @@ public class CardParser {
             }
             else{
                 checkers.add((move, worker, startingPosition, movesLeft, parentCard) -> {
-                    boolean checkResult = true;
                     // perform additional controls only in cas the selectedCell is already occupied
-                    // todo: add a control to check that the worker is opponent's worker
                     if(MyMove.occupiedCell(move.getSelectedCell())) {
                         // check that the worker is opponent's worker
                         if (move.getSelectedCell().getWorker().getOwner().equals(worker.getOwner()))
@@ -83,14 +108,12 @@ public class CardParser {
                     return true; // everything ok
                 });
 
-                // just apollo can have ANY as a FloorDirection (it means to move the worker into the vacant Cell)
-                // todo: apollo (just to check, REMOVE THIS COMMENT)
-                if (godPower.getForceOpponentInto() != FloorDirection.ANY) { // todo anche per questo va fatto un lambda a parte...
+                // ANY as a FloorDirection means to move the worker into the vacant Cell
+                if (godPower.getForceOpponentInto() != FloorDirection.ANY) {
                     checkers.add((move, worker, startingPosition, movesLeft, parentCard) -> {
                         boolean checkResult = true;
 
                         if(MyMove.occupiedCell(move.getSelectedCell())) {
-                            // todo: minotaur (just to check, REMOVE THIS COMMENT)
                             // check if the opponent's Worker can be moved into the right cell (as with Minotaur Card's power)
                             Cell nextOpponentCell;
                             try {
@@ -111,7 +134,6 @@ public class CardParser {
 
             /* ###################### STARTING SPACE DENIED ####################### */
             /* cannot move back into the initial space */
-            // todo: artemis (just to check, REMOVE THIS COMMENT)
             if(godPower.isStartingSpaceDenied()) {
                 checkers.add((move, worker, startingPosition, movesLeft, parentCard) -> {
                     /* Check if a movement has already occurred with the selected Worker */
@@ -129,7 +151,6 @@ public class CardParser {
 
             /* ########################## OTHER #################################*/
             /* check for denied move Direction when performing Construction before Movement */
-            // todo: prometheus (just to check, REMOVE THIS COMMENT)
             if(godPower.getHotLastMoveDirection() != LevelDirection.NONE) {
                 checkers.add((move, worker, startingPosition, movesLeft, parentCard) -> {
                     if(parentCard.getMyConstruction().getConstructionLeft() <= 1)
@@ -144,8 +165,17 @@ public class CardParser {
         return checkers;
     }
 
+    /**
+     * Gets a Lambda executor for Movement moves
+     * out of a {@code GodPower} object.
+     *
+     * @param godPower GodPower object
+     * @return A Lambda executor
+     */
     public static MoveExecutor getMoveExecutor(GodPower godPower) {
         MoveExecutor executor;
+
+        /* ################################# DEFAULT RULES ################################ */
         if(!godPower.isActiveOnMyMovement()) {
             executor = (move, worker, parentCard) -> {
                 /* default movement execution */
@@ -153,7 +183,7 @@ public class CardParser {
             };
         }
         else {
-            // todo: apollo (just to check, REMOVE THIS COMMENT)
+            /* ############################ SPECIAL RULES ################################# */
             if (godPower.getForceOpponentInto() == FloorDirection.ANY) {
                 executor = (move, worker, parentCard) -> {
                     boolean placed = true;
@@ -165,8 +195,8 @@ public class CardParser {
                         Cell myWorkerCurrentPosition = worker.position();
                         placed = worker.place(move.getSelectedCell()); // place my Worker into the selected Cell
                         String oppWorkerId = opponentWorker.getWorkerId();
-                        int initialX = opponentWorker.position().getX(); // todo: check if this works correctly
-                        int initialY = opponentWorker.position().getY(); // todo: check if this works correctly
+                        int initialX = opponentWorker.position().getX();
+                        int initialY = opponentWorker.position().getY();
                         MyMove.forceMove(opponentWorker, myWorkerCurrentPosition); // force movement for opponent's worker
                         int finalX = opponentWorker.position().getX();
                         int finalY = opponentWorker.position().getY();
@@ -178,7 +208,7 @@ public class CardParser {
                     return placed;
                 };
             }
-            else if(godPower.getForceOpponentInto() == FloorDirection.SAME) { // todo: minotaur (just to check, REMOVE THIS COMMENT)
+            else if(godPower.getForceOpponentInto() == FloorDirection.SAME) {
                 executor = (move, worker, parentCard) -> {
                     boolean placed = true;
 
@@ -187,8 +217,8 @@ public class CardParser {
                     if(MyMove.occupiedCell(move.getSelectedCell())) {
                         Worker opponentWorker = move.getSelectedCell().getWorker(); // get opponent's Worker
                         String oppWorkerId = opponentWorker.getWorkerId();
-                        int initialX = opponentWorker.position().getX(); // todo: check if this works correctly
-                        int initialY = opponentWorker.position().getY(); // todo: check if this works correctly
+                        int initialX = opponentWorker.position().getX();
+                        int initialY = opponentWorker.position().getY();
                         MyMove.forceMove(opponentWorker, MyMove.calculateNextCell(move)); // force movement for opponent's worker
                         int finalX = opponentWorker.position().getX();
                         int finalY = opponentWorker.position().getY();
@@ -202,7 +232,7 @@ public class CardParser {
                 };
             }
             else {
-                executor = (move, worker, parentCard) -> { // todo: artemis (just to check, REMOVE THIS COMMENT)
+                executor = (move, worker, parentCard) -> {
                     if(MyMove.occupiedCell(move.getSelectedCell()))
                         return false;
                     else
@@ -221,6 +251,13 @@ public class CardParser {
 
 
 
+    /**
+     * Composes and gets Lambda checkers for Construction moves
+     * out of a {@code GodPower} object.
+     *
+     * @param godPower GodPower object
+     * @return A list of Lambda checkers
+     */
     public static List<BuildChecker> getBuildCheckers(GodPower godPower) {
         List<BuildChecker> checkers = new ArrayList<>();
 
@@ -264,7 +301,6 @@ public class CardParser {
         }
         else {
             /* cannot build a Dome at any level */
-            // todo: atlas (just to check, REMOVE THIS COMMENT)
             if(!godPower.isDomeAtAnyLevel())
                 checkers.add((move, worker, lastMove, constructionLeft, parentCard) -> {
                     if(move.getBlockType() == PlaceableType.DOME && move.getSelectedCell().getLevel() < 3)
@@ -274,7 +310,6 @@ public class CardParser {
 
 
             /* cannot build on the same space (for additional-time constructions) */
-            // todo: demeter (just to check, REMOVE THIS COMMENT)
             if(godPower.isSameSpaceDenied())
                 checkers.add((move, worker, lastMove, constructionLeft, parentCard) -> {
                     if(parentCard.hasExecutedConstruction() && move.getSelectedCell().equals(lastMove.getSelectedCell())) // if(lastMove != null && constructionLeft == 1 && move.getSelectedCell().equals(lastMove.getSelectedCell()))
@@ -284,7 +319,6 @@ public class CardParser {
 
 
             /* force build on the same space (for additional-time constructions) */
-            // todo: hephaestus (just to check, REMOVE THIS COMMENT)
             if(godPower.isForceConstructionOnSameSpace())
                 checkers.add((move, worker, lastMove, constructionLeft, parentCard) -> {
                     if(parentCard.hasExecutedConstruction() && (!move.getSelectedCell().equals(lastMove.getSelectedCell()) || move.getBlockType() == PlaceableType.DOME))
@@ -300,7 +334,15 @@ public class CardParser {
 
 
 
+    /**
+     * Gets a Lambda executor for Construction moves
+     * out of a {@code GodPower} object.
+     *
+     * @param godPower GodPower object
+     * @return A Lambda executor
+     */
     public static BuildExecutor getBuildExecutor(GodPower godPower) {
+        /* ######################### BOTH DEFAULT AND SPECIAL RULES ####################### */
         BuildExecutor executor = (move, worker) -> {
             /* default construction execution */
             if(move.getBlockType() == PlaceableType.BLOCK)
@@ -319,6 +361,13 @@ public class CardParser {
 
 
 
+    /**
+     * Composes and gets Lambda checkers for Win conditions
+     * out of a {@code GodPower} object.
+     *
+     * @param godPower GodPower object
+     * @return A list of Lambda checkers
+     */
     public static List<WinChecker> getWinCheckers(GodPower godPower) {
         List<WinChecker> checkers = new ArrayList<>();
 
@@ -344,7 +393,6 @@ public class CardParser {
             checkers.add((move, worker) -> {
                 /* check for new Victory condition first */
                 if(move.getLevelDirection() == godPower.getHotLastMoveDirection())
-                    // todo: pan (just to check, REMOVE THIS COMMENT)
                     if(move.getLevelDepth() <= godPower.getHotLevelDepth())
                         return true;
 
@@ -360,9 +408,17 @@ public class CardParser {
 
 
 
+    /**
+     * Composes and gets Lambda checkers for Adversary's
+     * Movement moves out of a {@code GodPower} object.
+     *
+     * @param godPower GodPower object
+     * @return A list of Lambda checkers
+     */
     public static List<AdversaryMoveChecker> getAdversaryMoveCheckers(GodPower godPower) {
         List<AdversaryMoveChecker> checkers = new ArrayList<>();
 
+        /* ################################ SPECIAL RULES ################################# */
         /* move can be denied only if the God's power has to be applied to opponent's move */
         if(godPower.isActiveOnOpponentMovement()) {
             AdversaryMoveChecker specialEffect = (move, worker, parentCard) -> {
@@ -371,7 +427,6 @@ public class CardParser {
                 /* check if my last move was one of the Hot Last Moves checked by my God's power:
                  * in this case, check the opponent's move
                  */
-                // todo: athena (just to check, REMOVE THIS COMMENT)
                 if(myLastMove != null && myLastMove.getLevelDirection() == godPower.getHotLastMoveDirection())
                     if(move.getLevelDirection() == godPower.getOpponentDeniedDirection()) {
                         if(godPower.isMustObey()) {
@@ -388,6 +443,7 @@ public class CardParser {
             checkers.add(specialEffect);
         }
         else {
+            /* ######################### DEFAULT RULES ########################## */
             AdversaryMoveChecker defaultEffect = (move, worker, parentCard) -> true;
             checkers.add(defaultEffect);
         }

@@ -11,6 +11,13 @@ public class CardSelectedEvent extends EventObject {
     private String cardName;
     private String playerNickname; // Player who is now associated with this card
 
+    /**
+     * Constructs a CardSelectedEvent to inform the View about the event occurred.
+     *
+     * @param cardName Name of the selected Card
+     * @param playerNickname Nickname of the Player who chose the Card
+     * @param success True if the chosen Card was actually assigned to the Player
+     */
     public CardSelectedEvent(String cardName, String playerNickname, boolean success) {
         super(new Object());
         this.cardName = cardName;

@@ -17,5 +17,13 @@ import it.polimi.ingsw.model.player.worker.Worker;
  */
 public abstract class TurnObserver {
 
+    /**
+     * Checks an Opponent's Worker move
+     *
+     * @param move Move to check
+     * @param worker Worker which made the move
+     * @throws DeniedMoveException Exception thrown when the move is denied
+     * @throws LoseException Exception thrown when a Player loses after executing the move
+     */
     public abstract void check(Move move, Worker worker) throws DeniedMoveException, LoseException;
 }

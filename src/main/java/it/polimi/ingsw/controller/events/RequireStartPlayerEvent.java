@@ -12,9 +12,15 @@ public class RequireStartPlayerEvent extends EventObject {
     private final String message;
     private List<String> players;
 
+    /**
+     * Constructs a RequireStartPlayerEvent to inform the View about the event occurred.
+     *
+     * @param players List of Players which the Start Player can be chosen among
+     * @param challenger Challenger Player
+     */
     public RequireStartPlayerEvent(List<String> players, String challenger) {
         super(new Object());
-        this.message = "Choose the Start Player for this game"; // TODO: maybe it's to remove (useless)
+        this.message = "Choose the Start Player for this game";
         this.players = players;
         this.challenger = challenger;
     }

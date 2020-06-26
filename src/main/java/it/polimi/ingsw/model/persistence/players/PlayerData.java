@@ -5,6 +5,12 @@ import it.polimi.ingsw.model.player.turn.StateType;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Bean class to enable serialization/deserialization of a Player's information
+ * by JSON files, and to encapsulate the actual state of it at a certain point.
+ *
+ * @author AndreaAltomare
+ */
 public class PlayerData implements Serializable {
     private String nickname;
     private boolean challenger;

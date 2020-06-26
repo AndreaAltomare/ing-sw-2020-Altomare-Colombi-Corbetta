@@ -11,6 +11,14 @@ public class WorkerRemovedEvent extends EventObject {
     private String worker;
     private int x, y;
 
+    /**
+     * Constructs a WorkerRemovedEvent to inform the View about the event occurred.
+     *
+     * @param worker Removed Worker
+     * @param x Worker's X position on the Board
+     * @param y Worker's Y position on the Board
+     * @param success True if Worker was actually removed from the Board
+     */
     public WorkerRemovedEvent(String worker, int x, int y, boolean success) {
         super(new Object());
         this.worker = worker;

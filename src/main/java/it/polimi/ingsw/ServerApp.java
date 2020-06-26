@@ -26,10 +26,7 @@ public class ServerApp {
         int port = DEFAULT_PORT;
         boolean defaultSettings = true;
 
-        // todo verificare che funzioni con l'argomento
-        // todo verificare che funzioni senza l'argomento
-        // todo verificare che funzioni con i file di configurazione presenti
-        // todo verificare che funzioni senza i file di configurazione presenti
+
         /* Retrieve connection configuration settings */
         if(args.length > 0) {
             try {

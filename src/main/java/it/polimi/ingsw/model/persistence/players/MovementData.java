@@ -5,6 +5,12 @@ import it.polimi.ingsw.model.move.LevelDirection;
 
 import java.io.Serializable;
 
+/**
+ * Bean class to enable serialization/deserialization of the last Movement move's information
+ * by JSON files, and to encapsulate the actual state of it at a certain point.
+ *
+ * @author AndreaAltomare
+ */
 public class MovementData implements Serializable {
     private int startingPositionX; // starting position Cell
     private int startingPositionY; // starting position Cell

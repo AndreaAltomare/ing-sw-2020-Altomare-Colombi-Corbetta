@@ -31,7 +31,7 @@ public class TimeoutCounter extends TimerTask implements PingObserver {
     }
 
     /**
-     * Run() method for TimeoutCounter class.
+     * {@code Run()} method for TimeoutCounter class.
      *
      * It defines the task executed when a time period
      * of a Timer elapses.

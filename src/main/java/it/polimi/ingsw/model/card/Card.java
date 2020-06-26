@@ -31,6 +31,18 @@ public class Card {
     private boolean constructionExecuted; // tells if at least one construction was executed
     private boolean turnCompleted; // tells if at least a regular turn cycle is completed
 
+    /**
+     * Constructs a Card object containing all the fundamental information
+     * about a chosen Card and its associated God's power.
+     *
+     * @param godPower Associated God's power
+     * @param moveCheckers Checkers for Movement moves
+     * @param moveExecutor Executor for Movement moves
+     * @param buildCheckers Checkers for Construction moves
+     * @param buildExecutor Executor for Construction moves
+     * @param winCheckers Win-condition checkers for moves
+     * @param adversaryMoveCheckers Checkers for Adversaries' Movement moves
+     */
     public Card(GodPower godPower, List<MoveChecker> moveCheckers, MoveExecutor moveExecutor, List<BuildChecker> buildCheckers, BuildExecutor buildExecutor, List<WinChecker> winCheckers, List<AdversaryMoveChecker> adversaryMoveCheckers) {
         this.godPower = godPower;
         this.name = godPower.getName();
@@ -76,6 +88,10 @@ public class Card {
         return adversaryMove;
     }
 
+    /**
+     *
+     * @return True iff Player has executed at least one Movement during the new Turn
+     */
     public boolean hasExecutedMovement() {
         return movementExecuted;
     }
@@ -84,6 +100,10 @@ public class Card {
         this.movementExecuted = movementExecuted;
     }
 
+    /**
+     *
+     * @return True iff Player has executed at least one Construction during the new Turn
+     */
     public boolean hasExecutedConstruction() {
         return constructionExecuted;
     }
@@ -92,6 +112,10 @@ public class Card {
         this.constructionExecuted = constructionExecuted;
     }
 
+    /**
+     *
+     * @return True iff Player has executed at least one Movement and one Construction in succession during the new Turn (so that the Turn is completed)
+     */
     public boolean isTurnCompleted() {
         return turnCompleted;
     }

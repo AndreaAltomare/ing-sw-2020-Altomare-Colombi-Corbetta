@@ -2,7 +2,6 @@ package it.polimi.ingsw.connection.server;
 
 import it.polimi.ingsw.chat.ChatMessageEvent;
 import it.polimi.ingsw.connection.utility.ConnectionManager;
-import it.polimi.ingsw.connection.utility.PingObserver;
 import it.polimi.ingsw.connection.utility.PingResponse;
 import it.polimi.ingsw.controller.events.*;
 import it.polimi.ingsw.observer.Observable;
@@ -15,7 +14,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.*;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -63,7 +62,7 @@ public class SocketClientConnection extends Observable<Object> implements Client
      */
     @Override
     public synchronized void send(Object message) {
-        try { // TODO: vedere se l'aggiunta di un if(isActive()) mette fine agli errori di invio messaggi su socket chiusi.
+        try {
             out.reset();
             out.writeObject(message);
             out.flush(); // To ensure data is sent
@@ -151,14 +150,11 @@ public class SocketClientConnection extends Observable<Object> implements Client
         if(o instanceof QuitEvent) {
             if(!server.quitAndReset(this)) {
                 if(isActive()) {
-                    System.out.println("\n" + nickname + " is being disconnected..."); // todo maybe useless
+                    System.out.println("\n" + nickname + " is being disconnected...");
                     send(new MessageEvent("Server closed the connection."));
                     close();
                 }
             }
-//            System.out.println("\n" + nickname + " is being disconnected...");
-//            send(new ServerQuitEvent("Connection with Server is closed!"));
-//            close(); // close the connection with the Client
             return true;
         }
         else
@@ -235,7 +231,7 @@ public class SocketClientConnection extends Observable<Object> implements Client
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
 
-            /* 1- Ask for the Player's nickname */ // todo: check if player send a quit event at this point
+            /* 1- Ask for the Player's nickname */
             send(new NextStatusEvent("Welcome!\nType your nickname"));
             read = in.readObject();
             // check if a QuitEvent arrives
@@ -259,15 +255,13 @@ public class SocketClientConnection extends Observable<Object> implements Client
             nickname = nicknameRead.getNickname();
             //server.addClient(this, nickname);
 
-            // todo: check if player send a quit event at this point [MAYBE THIS CASE IS ALREADY HANDLED]
-            /* 2- If this is the first Client, crate a lobby */ // TODO: maybe refactor this into a more readable method
+            /* 2- If this is the first Client, crate a lobby */
             send(new MessageEvent("Searching for a free lobby to join in...\n"));
             /* Synchronize to ServerConnection */
             synchronized (server) { // synchronized (server.serverLock)
                 int requiredNumberOfPlayers = -1; // initialized to error condition
                 SetPlayersNumberEvent setNumberEvent = null; // null initialization
 
-                // TODO: check here what happen if Client suddenly disconnects...
                 /* If this is the first Client to connect, make it choose for the number of player */
                 if (server.getNumberOfPlayers() < server.MINIMUM_CLIENTS_REQUIRED) {
                     send(new RequirePlayersNumberEvent());
@@ -284,7 +278,7 @@ public class SocketClientConnection extends Observable<Object> implements Client
                     while(!(read instanceof  SetPlayersNumberEvent) || (requiredNumberOfPlayers != server.MINIMUM_CLIENTS_REQUIRED && requiredNumberOfPlayers != server.MAXIMUM_CLIENTS_REQUIRED)) {
                         send(new ErrorMessageEvent("Wrong choice! Your answer must either be 2 or 3.\n")); // warn the Client about the wrong choice
 
-                        send(new RequirePlayersNumberEvent()); // TODO: check if this system works or we need to handle this kind of error by providing an 'InvalidSubmissionEvent' (like InvalidNickname...) and provide an error message within it...
+                        send(new RequirePlayersNumberEvent());
                         read = in.readObject();
                         // check if a QuitEvent arrives
                         if (quitHandler(read))
@@ -298,11 +292,11 @@ public class SocketClientConnection extends Observable<Object> implements Client
 
                     server.setNumberOfPlayers(requiredNumberOfPlayers);
                     send(new NextStatusEvent("Your choice has been registered!\n\nWaiting for other players...\n"));
-                    //send(new MessageEvent("Your choice has been registered!\n\nWaiting for other players...\n")); // todo [for debug]
+                    //send(new MessageEvent("Your choice has been registered!\n\nWaiting for other players...\n"));
                 }
                 else {
                     send(new NextStatusEvent("Waiting for other players...\n"));
-                    //send(new MessageEvent("Waiting for other players...\n")); // todo [for debug]
+                    //send(new MessageEvent("Waiting for other players...\n"));
                 }
             }
 
@@ -339,8 +333,8 @@ public class SocketClientConnection extends Observable<Object> implements Client
             connectionManager.stop();
             /* Close connection with an error message just if it is still active (so the error is Server-side) */
             if(isActive()) {
-                send(new ErrorMessageEvent("An error on Server occurred. You are being disconnected...")); // Inform the Client that connection is being closed since an error occurred. // TODO: check if this works correctly
-                //close(); // close the connection with the Client // todo: maybe useless: remove
+                send(new ErrorMessageEvent("An error on Server occurred. You are being disconnected...")); // Inform the Client that connection is being closed since an error occurred.
+                //close(); // close the connection with the Client
             }
             if(!lobbyFull)
                 quitHandler(new QuitEvent()); // close the connection
@@ -348,6 +342,10 @@ public class SocketClientConnection extends Observable<Object> implements Client
     }
 
 
+    /**
+     * Sets Server-Client socket to null
+     * (i.e. destroys it).
+     */
     @Override
     public void destroySocket() {
         this.socket = null;

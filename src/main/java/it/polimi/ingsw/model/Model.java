@@ -24,20 +24,18 @@ import it.polimi.ingsw.model.player.worker.Worker;
 import java.util.*;
 import java.util.stream.Collectors;
 
-// TODO: DO SOME REFACTORING IN THIS CLASS
 /**
- * This class provides and implements a unified and simplified
+ * <p>This class provides and implements a unified and simplified
  * public interface by which Controller can query Model's
  * data and modify them.
  * By using this class, Controller can handle a Game match flow.
  *
- * A Facade Design Pattern is applied to let the Controller interact
+ * <p>A <i>Facade</i> Design Pattern is applied to let the Controller interact
  * with the Model subsystem with ease.
  *
  * @author AndreaAltomare
  */
 public class Model {
-    // TODO: All "volatile" variables needs to be changed to "Atomic" type-of variables [FORSE]
     private GameState gameState;
     private Controller controller; // associated controller
     public final int WORKERS_PER_PLAYER;
@@ -65,6 +63,9 @@ public class Model {
 
     /**
      * By this method, the game Model is initialized for the new Game.
+     *
+     * @param controller Game Controller
+     * @param players List of players
      */
     public void initialize(Controller controller, List<String> players) {
         this.controller = controller;
@@ -75,6 +76,8 @@ public class Model {
 
     /**
      * Starts a new game.
+     *
+     * @throws LoseException When a Player starts his/her Turn, he/she can immediately lose
      */
     public void startGame() throws LoseException {
         gameRoom.getPlayersList().get(0).startTurn();
@@ -205,18 +208,21 @@ public class Model {
     }
 
     /**
-     * Place a new Worker onto the Game Board.
+     * Places a new Worker onto the Game Board.
      *
      * @param x (X axis position)
      * @param y (Y axis position)
      * @param playerNickname (Player who wants to place a new Worker)
-     * @return The new placed Worker's ID
+     * @return An event with Worker placement info
      */
     public WorkerPlacedEvent placeWorker(int x, int y, String playerNickname) {
         boolean placed = true;
 
         /* 1- Get the Player and instantiate a new Worker */
         Player player = gameRoom.getPlayer(playerNickname);
+        if(player == null)
+            return null;
+
         Worker worker = new Worker(player);
 
         /* 2- Try to place the Worker */
@@ -311,7 +317,7 @@ public class Model {
 
 
     /**
-     * Select a Worker to play with this turn.
+     * Selects a Worker to play with this turn.
      *
      * @param workerId (Worker's unique identifier)
      * @param playerNickname (Player's nickname)
@@ -340,7 +346,15 @@ public class Model {
     }
 
 
-
+    /**
+     * Performs a Movement move.
+     *
+     * @param workerId Worker moved
+     * @param x Board's X position
+     * @param y Board's Y position
+     * @param playerNickname Player who made the move
+     * @return A list of events with performed move(s) info
+     */
     public List<WorkerMovedEvent> moveWorker(String workerId, int x, int y, String playerNickname) {
         List<WorkerMovedEvent> workersMoved = new ArrayList<>();
         boolean moveSuccess = false;
@@ -374,37 +388,29 @@ public class Model {
                         finalY = w.position().getY();
                     }
                 } catch (TurnSwitchedException ex) {
-                    moveSuccess = true;
                     moveOutcome = MoveOutcomeType.TURN_SWITCHED;
-                    //controller.notifyFromModel(new TurnStatusChangedEvent(playerNickname, StateType.CONSTRUCTION, true), playerNickname); // todo: useless, to remove.
                 } catch (TurnOverException ex) {
-                    moveSuccess = true;
                     moveOutcome = MoveOutcomeType.TURN_OVER;
                     //switchPlayer();
                 } catch (LoseException ex) { // when a Player perform a Move which he/she could not execute
-                    moveSuccess = true; // move was executed, but in this case, a Lose Condition is thereby triggered
+                    // move was executed, but in this case, a Lose Condition is thereby triggered
                     moveOutcome = MoveOutcomeType.LOSS;
                     lastPlayingIndex = gameRoom.getPlayersList().indexOf(player);
                 } catch (WinException ex) {
-                    moveSuccess = true;
                     moveOutcome = MoveOutcomeType.WIN;
                 } catch (OutOfBoardException ex) {
-                    moveSuccess = false;
                     finalX = w.position().getX();
                     finalY = w.position().getY();
                     moveOutcome = MoveOutcomeType.OUT_OF_BOARD;
                 } catch (RunOutMovesException ex) {
-                    moveSuccess = false;
                     finalX = w.position().getX();
                     finalY = w.position().getY();
                     moveOutcome = MoveOutcomeType.RUN_OUT_OF_MOVES;
                 } catch (BuildBeforeMoveException ex) {
-                    moveSuccess = false;
                     finalX = w.position().getX();
                     finalY = w.position().getY();
                     moveOutcome = MoveOutcomeType.BUILD_BEFORE_MOVE;
                 } catch (WrongWorkerException ex) {
-                    moveSuccess = false;
                     finalX = w.position().getX();
                     finalY = w.position().getY();
                     moveOutcome = MoveOutcomeType.WRONG_WORKER;
@@ -427,6 +433,16 @@ public class Model {
         return null;
     }
 
+    /**
+     * Performs a Construction move.
+     *
+     * @param workerId Worker by which build with
+     * @param x Board's X position
+     * @param y Board's Y position
+     * @param blockType Type of block to build
+     * @param playerNickname Player who made the move
+     * @return An event with the performed move info
+     */
     public BlockBuiltEvent buildBlock(String workerId, int x, int y, PlaceableType blockType, String playerNickname) {
         boolean moveSuccess = false;
         Player player;
@@ -443,7 +459,7 @@ public class Model {
 
             if(w != null) {
                 currentPosition = w.position();
-                moveOutcome = MoveOutcomeType.NOT_EXECUTED; // TODO: dire a Giorgio di questo tipo enumerativo che specifica l'esito della mossa eseguita (in maniera più specifica rispetto a un semplice booleano)
+                moveOutcome = MoveOutcomeType.NOT_EXECUTED;
 
                 /* 2- Execute move */
                 try {
@@ -453,31 +469,23 @@ public class Model {
                     if (moveSuccess)
                         moveOutcome = MoveOutcomeType.EXECUTED;
                 } catch (TurnSwitchedException ex) {
-                    moveSuccess = true;
                     moveOutcome = MoveOutcomeType.TURN_SWITCHED;
-                    //controller.notifyFromModel(new TurnStatusChangedEvent(playerNickname, StateType.MOVEMENT, true), playerNickname); // todo: useless, to remove.
                 } catch (TurnOverException ex) {
-                    moveSuccess = true;
                     moveOutcome = MoveOutcomeType.TURN_OVER;
                     //switchPlayer();
                 } catch (LoseException ex) { // when a Player perform a Move which he/she could not execute
-                    moveSuccess = true; // move was executed, but in this case, a Lose Condition is thereby triggered
+                    // move was executed, but in this case, a Lose Condition is thereby triggered
                     moveOutcome = MoveOutcomeType.LOSS;
                     lastPlayingIndex = gameRoom.getPlayersList().indexOf(player);
                 } catch (WinException ex) {
-                    moveSuccess = true;
                     moveOutcome = MoveOutcomeType.WIN;
                 } catch (OutOfBoardException ex) {
-                    moveSuccess = false;
                     moveOutcome = MoveOutcomeType.OUT_OF_BOARD;
                 } catch (RunOutMovesException ex) {
-                    moveSuccess = false;
                     moveOutcome = MoveOutcomeType.RUN_OUT_OF_MOVES;
                 } catch (BuildBeforeMoveException ex) {
-                    moveSuccess = false;
                     moveOutcome = MoveOutcomeType.BUILD_BEFORE_MOVE;
                 } catch (WrongWorkerException ex) {
-                    moveSuccess = false;
                     moveOutcome = MoveOutcomeType.WRONG_WORKER;
                 }
 
@@ -491,17 +499,44 @@ public class Model {
         return null;
     }
 
+
+    /**
+     * Performs a Worker removal move.
+     *
+     * @param workerId Worker to remove
+     * @param x Board's X position
+     * @param y Board's Y position
+     * @param playerNickname Player who made the move
+     * @return An event with the performed move info
+     */
     public WorkerRemovedEvent removeWorker(String workerId, int x, int y, String playerNickname) {
         /* !!! This functionality is left for future changes in game rules implementation !!! */
         return new WorkerRemovedEvent(workerId, x, y, false); // ...therefore, no action is actually taken.
     }
 
+    /**
+     * Performs a block removal move.
+     *
+     * @param workerId Worker by which remove the block
+     * @param x Board's X position
+     * @param y Board's Y position
+     * @param playerNickname Player who made the move
+     * @return An event with the performed move info
+     */
     public BlockRemovedEvent removeBlock(String workerId, int x, int y, String playerNickname) {
         /* !!! This functionality is left for future changes in game rules implementation !!! */
         PlaceableType blockType = PlaceableType.NONE;
         return new BlockRemovedEvent(x, y, blockType, false); // ...therefore, no action is actually taken.
     }
 
+
+    /**
+     * Changes the Turn status for a Player.
+     *
+     * @param turnStatus New Turn status
+     * @param playerNickname Player who wants to change his/her Turn status
+     * @return An event with the performed change info
+     */
     public TurnStatusChangedEvent changeTurnStatus(StateType turnStatus, String playerNickname) {
         boolean changeSuccess = false;
         Player player;
@@ -522,7 +557,7 @@ public class Model {
             }
             catch (LoseException ex) {
                 changeSuccess = true;
-                moveOutcome = MoveOutcomeType.LOSS; // todo gestire nel controller
+                moveOutcome = MoveOutcomeType.LOSS;
                 lastPlayingIndex = gameRoom.getPlayersList().indexOf(player);
             }
 
@@ -539,11 +574,11 @@ public class Model {
     /* ########################### AUXILIARY AND SUPPORT METHODS ############################ */
 
 
-
-
+    /**
+     * Switches the playing Player.
+     */
     public void switchPlayer() {
-        String playingPlayer;
-        Player player;
+        Player nextPlayer;
         int playerIndex; // index of a Player who is already removed from the gameRoom's players' list (decremented so to maintain the playing order)
         boolean playerSwitched = false; // tells when a switching among Players has been executed
 
@@ -551,7 +586,7 @@ public class Model {
             /* 1- End the current playing Player's turn */
             playerIndex = endCurrentPlayerTurn();
             /* 2- Select the next Player */
-            Player nextPlayer = selectNextPlayer(playerIndex);
+            nextPlayer = selectNextPlayer(playerIndex);
             /* 3- Next Player starts to play */
             try {
                 nextPlayer.startTurn();
@@ -561,8 +596,6 @@ public class Model {
                 controller.notifyFromModel(new TurnStatusChangedEvent(nextPlayer.getNickname(), StateType.MOVEMENT, true));
             } catch (LoseException ex) {
                 /* 4- Handle the loss of the Player */
-                //controller.notifyFromModel(new PlayerLoseEvent(nextPlayer.getNickname(), "Player " + nextPlayer.getNickname() + " has lost the game!")); // todo: to remove
-                // todo if the message doesn't arrive, think about setting-up a timer (thread-related problems...)
                 lastPlayingIndex = gameRoom.getPlayersList().indexOf(nextPlayer);
                 handlePlayerLoss(nextPlayer);
             }
@@ -591,7 +624,7 @@ public class Model {
 
     /**
      * Overloaded method to call from Controller.
-     * Handle the Player's loss.
+     * Handles the Player's loss.
      *
      * @param playerNickname (Player's nickname)
      */
@@ -599,6 +632,11 @@ public class Model {
         this.handlePlayerLoss(gameRoom.getPlayer(playerNickname));
     }
 
+    /**
+     * Handles a Player loss.
+     *
+     * @param losingPlayer Losing Player
+     */
     private void handlePlayerLoss(Player losingPlayer) {
         /* 0- End Player's Turn */
         losingPlayer.endTurn();
@@ -609,7 +647,7 @@ public class Model {
         controller.printControlMessage("### Player '" + losingPlayer.getNickname() + "' has lost the game.");
         /* 3- Check if there is just one Player left in the game */
         if(onlyOnePlayerLeft()) {
-            /* 3- Get the last Player left in the game */
+            /* 4- Get the last Player left in the game */
             Player lastPlayer = getLastPlayerInGame();
             handlePlayerWin(lastPlayer);
         }
@@ -617,7 +655,7 @@ public class Model {
 
     /**
      * Overloaded method to call from Controller.
-     * Handle the Player's Win.
+     * Handles the Player's Win.
      *
      * @param playerNickname (Player's nickname)
      */
@@ -625,6 +663,11 @@ public class Model {
         this.handlePlayerWin(gameRoom.getPlayer(playerNickname));
     }
 
+    /**
+     * Handles a Player win.
+     *
+     * @param winningPlayer Winning Player
+     */
     private void handlePlayerWin(Player winningPlayer) {
         /* 1- Stop the game */
         stopGame();
@@ -635,41 +678,56 @@ public class Model {
     }
 
     /**
+     * Selects the next Player to play.
      *
      * @param index (Last playing Player's index)
      * @return Next playing Player
      */
     private Player selectNextPlayer(int index) {
-//        Player player = gameRoom.getPlayer(playingPlayer); // todo: maybe to remove (useless)
-//        int index = gameRoom.getPlayersList().indexOf(player); // todo: maybe to remove (useless)
         index++;
         Player nextPlayer = gameRoom.getPlayer((index % gameRoom.getPlayersList().size()));
         return nextPlayer;
     }
 
+    /**
+     * Ends a Player's playing Turn.
+     *
+     * @param playerNickname Player's nickname
+     */
     private void endPlayerTurn(String playerNickname) {
         gameRoom.getPlayer(playerNickname).endTurn();
     }
 
+    /**
+     *
+     * @return A reference of the last Player left in game
+     */
     private Player getLastPlayerInGame() {
         return gameRoom.getPlayer(0);
     }
 
+    /**
+     *
+     * @return True iff only one Player is left in game
+     */
     private boolean onlyOnePlayerLeft() {
         return gameRoom.getPlayersList().size() == 1;
     }
 
+    /**
+     * Unregisters a Player (and his/her Workers) from the game.
+     *
+     * @param losingPlayer Losing Player (to be unregistered)
+     */
     private void unregisterPlayer(Player losingPlayer) {
         /* 1- Take Player's Workers, remove them and notify views */
         removePlayerWorkers(losingPlayer);
         /* 2- Remove the Player from the Players list */
         gameRoom.removePlayer(losingPlayer.getNickname());
-        /* 3- Remove the Player-associated Virtual View */ // todo: to remove (creates problems...)
-        //controller.removeView(losingPlayer.getNickname()); // todo: to remove (creates problems...)
     }
 
     /**
-     * Take Player's Workers, remove them and notify Views.
+     * Takes Player's Workers, removes them and notifies Views.
      *
      * @param losingPlayer Player whose Workers are to be removed
      */
@@ -680,6 +738,10 @@ public class Model {
         removedWorkers.forEach(x -> controller.notifyFromModel(x));
     }
 
+    /**
+     *
+     * @return Last performed move's outcome
+     */
     public MoveOutcomeType getMoveOutcome() {
         return moveOutcome;
     }
@@ -688,6 +750,10 @@ public class Model {
         this.moveOutcome = moveOutcome;
     }
 
+    /**
+     *
+     * @return A list of Players in game (their nicknames)
+     */
     public List<String> players() {
         return gameRoom.getPlayersList().stream().map(p -> p.getNickname()).collect(Collectors.toList());
     }
@@ -708,12 +774,13 @@ public class Model {
 
 
 
-    // TODO: refactor all these methods
+
     /* ############################# GAME STATE HANDLING LOGIC ############################## */
 
 
-
-
+    /**
+     * Restores the last saved (and consistent) Game state.
+     */
     public void restoreGameState() {
         setPlayersState(gameState.getPlayers());
         setBoardState(gameState.getBoard());
@@ -724,14 +791,31 @@ public class Model {
 
 
     /* ##### GAME PERSISTENCE ##### */
+
+    /**
+     *
+     * @return Last consistent Game state
+     */
     public GameState getLastGameState() {
         return gameState;
     }
 
+    /**
+     * Sets a Game state as the valid one.
+     *
+     * @param gameState Game state
+     */
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
     }
 
+    /**
+     * Creates a consistent snapshot of the
+     * current Game state and registers its
+     * reference.
+     *
+     * @return The newly created Game state
+     */
     public GameState createGameState() {
         GameState gameState = new GameState();
 
@@ -747,14 +831,23 @@ public class Model {
     /* ##### ACTION UNDO ##### */
     /* ### BOARD ### */
 
+    /**
+     *
+     * @return Last consistent Board state
+     */
     public BoardState getLastBoardState() {
         return gameState.getBoard();
     }
 
+    /**
+     * Sets a Board state as the valid one
+     * and restores the game Board accordingly.
+     *
+     * @param boardState Board state
+     */
     public void setBoardState(BoardState boardState) {
         gameState.setBoard(boardState);
 
-        // todo modify actual game scenario accordingly (when restoring old scenario)
         /* Modify actual game scenario accordingly (when restoring old scenario) */
         /* 1- Clear board */
         board.clear();
@@ -787,6 +880,13 @@ public class Model {
     }
 
 
+    /**
+     * Creates a consistent snapshot of the
+     * current Board state and registers its
+     * reference.
+     *
+     * @return The newly created Board state
+     */
     public BoardState createBoardState() {
         BoardState boardState = new BoardState();
         CellState[][] cellStates = new CellState[board.getXDim()][board.getYDim()];
@@ -815,7 +915,7 @@ public class Model {
                     PlaceableData placeableDataObj = new PlaceableData();
                     placeableDataObj.setPlaceable(placeableObj);
 
-                    building.add(placeableDataObj); // save Placeable info // todo verificare che la push funziona e che il deque rispecchia il deque della Board
+                    building.add(placeableDataObj); // save Placeable info
                 }
 
                 cellStates[x][y].setBuilding(building); // save Cell info
@@ -830,14 +930,25 @@ public class Model {
     }
 
     /* ### PLAYERS ### */
+
+    /**
+     *
+     * @return Last consistent Players state
+     */
     public PlayersState getLastPlayersState() {
         return gameState.getPlayers();
     }
 
+    /**
+     * Sets Players state as the valid one
+     * and restores the in-game Players info
+     * accordingly.
+     *
+     * @param playersState Players state
+     */
     private void setPlayersState(PlayersState playersState) {
         gameState.setPlayers(playersState);
 
-        // todo modify actual game scenario accordingly (when restoring old scenario)
         /* Modify actual game scenario accordingly (when restoring old scenario) */
         /* 0- Get Players' nicknames */
         Map<String, PlayerData> playersData = new HashMap<>(playersState.getData());
@@ -850,7 +961,7 @@ public class Model {
             Player player = gameRoom.getPlayer(playerNickname);
             /* 1.2- Restore basic info/flags (Challenger) */
             player.setChallenger(playerData.isChallenger());
-            /* 1.3- Restore Card info/flags */ // todo aggiungere una classe CardData per salvare lo stato dell'esecuzione del turno
+            /* 1.3- Restore Card info/flags */
             player.chooseCard(playerData.getCard().getName());
                 // Card info
             CardData cardData = playerData.getCard();
@@ -896,7 +1007,7 @@ public class Model {
                 worker.setId(wd.getWorkerId());
                 worker.setColor(wd.getColor());
                 worker.setChosen(wd.getChosen());
-                /* 2.3- [The Worker will be placed later] */ // todo vedere se il posizionamento posticipato funziona bene
+                /* 2.3- [The Worker will be placed later] */
                 /* 2.4- Register the Worker among those owned by the Player */
                 player.registerWorker(worker);
             }
@@ -905,6 +1016,13 @@ public class Model {
         /* Turn Observers will be registered by the Controller */
     }
 
+    /**
+     * Creates a consistent snapshot of the
+     * current in-game Players state and
+     * registers its reference.
+     *
+     * @return The newly created state of Players
+     */
     public PlayersState createPlayersState() {
         PlayersState playersState = new PlayersState();
         Map<String, PlayerData> playersData = new HashMap<>();
@@ -1037,6 +1155,12 @@ public class Model {
     }
 
 
+    /**
+     * Gets the event related to the movement of the
+     * main Worker moved in the last Movement move.
+     *
+     * @return A WorkerMovedEvent
+     */
     public WorkerMovedEvent getMainWorkerMoved() {
         return mainWorkerMoved;
     }

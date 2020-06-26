@@ -14,18 +14,33 @@ import java.util.List;
 public class Observable<T> {
     private final List<Observer<T>> observers = new ArrayList<>();
 
+    /**
+     * Adds an observer.
+     *
+     * @param observer Observer to add
+     */
     public void addObserver(Observer<T> observer){
         synchronized (observers) {
             observers.add(observer);
         }
     }
 
+    /**
+     * Removes an observer.
+     *
+     * @param observer Observer to remove
+     */
     public void removeObserver(Observer<T> observer){
         synchronized (observers) {
             observers.remove(observer);
         }
     }
 
+    /**
+     * Notifies all the listeners with a message.
+     *
+     * @param message Message
+     */
     protected void notify(T message){
         synchronized (observers) {
             for(Observer<T> observer : observers){

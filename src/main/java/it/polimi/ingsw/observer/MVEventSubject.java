@@ -30,7 +30,7 @@ public class MVEventSubject {
     }
 
     /**
-     * Call proper update method on Listener.
+     * Calls proper update method on Listener.
      *
      * @param e (MVEvent EventObject)
      */
@@ -168,7 +168,7 @@ public class MVEventSubject {
     }
 
     /**
-     * Add a new Listener for MVEvents.
+     * Adds a new Listener for MVEvents.
      *
      * @param listener (MVEvent Listener)
      */
@@ -179,7 +179,7 @@ public class MVEventSubject {
     }
 
     /**
-     * Remove a Listener for MVEvents.
+     * Removes a Listener for MVEvents.
      *
      * @param listener (MVEvent Listener)
      */

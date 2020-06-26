@@ -75,8 +75,6 @@ public class VirtualView extends VCEventSubject implements Observer<Object> {
             connection.send(o);
         else
             connection.asyncSend(o); // sent the [MVEvent] Object to the network via Socket
-        //c.asyncSend("Write something... [ASYNCHRONOUS send method]");
-        //c.send("Write something... [SYNCHRONOUS send method]");
     }
 
     /**
@@ -95,17 +93,6 @@ public class VirtualView extends VCEventSubject implements Observer<Object> {
                 connection.send(o);
             else
                 connection.asyncSend(o);
-
-            // todo: maybe this block of code needs to be removed
-            /* Check if connection has to be closed */
-//            if (o instanceof GameOverEvent)
-//                connection.send(o);
-//            else if (o instanceof ServerQuitEvent) { // todo forse PlayerLoseEvent è da togliere
-//                connection.send(o); // todo vedere se funziona (senza l'attesa di sleep(...))
-//                connection.unregisterAndClose(); // todo probabilmente qeusto va tolto (problemi di sincronizzazione sui lock)
-//            }
-//            else
-//                connection.asyncSend(o);
         }
     }
 
@@ -121,7 +108,11 @@ public class VirtualView extends VCEventSubject implements Observer<Object> {
     }
 
 
-
+    /**
+     * Gets the nickname of the Player associated with this VirtualView.
+     *
+     * @return Player's nickname
+     */
     public String getPlayerNickname() {
         return playerNickname;
     }

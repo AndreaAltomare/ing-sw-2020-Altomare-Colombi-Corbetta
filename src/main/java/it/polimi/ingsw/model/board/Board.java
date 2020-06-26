@@ -71,7 +71,7 @@ public abstract class Board {
         return ret;
     }
 
-    // TODO: 18/05/20 test
+
     public void removeWorkers(Player player){
         int xDim = getXDim();
         int yDim = getYDim();
@@ -104,7 +104,7 @@ public abstract class Board {
     }
 
 
-    //TODO dunno if it works
+
     public void clear(){
         int xDim = getXDim();
         int yDim = getYDim();

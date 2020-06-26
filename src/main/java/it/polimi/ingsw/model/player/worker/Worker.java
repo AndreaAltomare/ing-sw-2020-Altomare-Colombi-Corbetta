@@ -97,7 +97,7 @@ public class Worker extends Placeable {
 
 
     /**
-     * Tell if the Worker is the Chosen one
+     * Tells if the Worker is the Chosen one
      * for the Turn that is being played
      *
      * @return (chosen == ChooseType.CHOSEN)
@@ -108,7 +108,7 @@ public class Worker extends Placeable {
     }
 
     /**
-     * Get the choose status for the Worker
+     * Gets the choose status for the Worker
      *
      * @return chosen (ChooseType status)
      * @author AndreaAltomare
@@ -118,7 +118,7 @@ public class Worker extends Placeable {
     }
 
     /**
-     * Set the Choose status for the Worker
+     * Sets the Choose status for the Worker
      *
      * @param chosen (ChooseType status to set)
      * @author AndreaAltomare
@@ -142,7 +142,7 @@ public class Worker extends Placeable {
      * An alternative method to get a Worker's identifier.
      *
      * @return The unique Worker's identifier.
-     * @author AndreaAltomare // todo [per Giorgio]: mi serviva per rendermi più veloce il lavoro, senza ricordarmi che ha il toString()
+     * @author AndreaAltomare
      */
     public String getWorkerId() {
         return this.toString();
@@ -153,22 +153,23 @@ public class Worker extends Placeable {
      * @return Worker's color
      * @author AndreaAltomare
      */
-    public Color getColor() { // todo testare che funzioni
+    public Color getColor() {
         return color;
     }
 
     /**
+     * Registers the color for a Worker just placed.
      *
      * @author AndreaAltomare
      */
-    public void registerColor() { // todo testare che funzioni
+    public void registerColor() {
         this.color = colors[lastColor];
         lastColor++;
     }
 
     /**
-     * Given an ID as a String, it retrieve
-     * its int ID and set it.
+     * Given an ID as a String, it retrieves
+     * its numeric ({@code int}) ID and sets it.
      *
      * @param workerId Worker's ID
      * @author AndreaAltomare
@@ -178,7 +179,7 @@ public class Worker extends Placeable {
 
         String[] splittedId = workerId.split("\t");
         //String stringPart = splittedId[0];
-        String numericPart = splittedId[1]; // todo: vedere se lo split funziona effettivamente
+        String numericPart = splittedId[1];
         id = Integer.parseInt(numericPart);
 
         this.id = id;
@@ -194,7 +195,9 @@ public class Worker extends Placeable {
     }
 
     /**
-     * Reset Class members once all Workers have been placed.
+     * Resets Class members once all Workers have been placed.
+     *
+     * @author AndreaAltomare
      */
     public static void resetIdAndColorIndex() {
         lastId = 0;

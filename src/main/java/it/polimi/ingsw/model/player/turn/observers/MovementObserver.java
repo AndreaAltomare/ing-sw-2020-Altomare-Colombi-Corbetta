@@ -14,6 +14,11 @@ import it.polimi.ingsw.model.player.worker.Worker;
 public class MovementObserver extends TurnObserver {
     private AdversaryMove adversaryMoveObserver; // adversary move observer
 
+    /**
+     * Constructs a new Observer for Movement moves.
+     *
+     * @param adversaryMoveObserver AdversaryMove manager
+     */
     public MovementObserver(AdversaryMove adversaryMoveObserver) {
         this.adversaryMoveObserver = adversaryMoveObserver;
     }

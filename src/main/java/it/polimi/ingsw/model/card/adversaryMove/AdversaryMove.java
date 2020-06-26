@@ -1,11 +1,10 @@
 package it.polimi.ingsw.model.card.adversaryMove;
 
-import it.polimi.ingsw.model.board.Cell;
+import it.polimi.ingsw.model.card.Card;
+import it.polimi.ingsw.model.card.GodPower;
 import it.polimi.ingsw.model.exceptions.LoseException;
 import it.polimi.ingsw.model.move.Move;
 import it.polimi.ingsw.model.player.worker.Worker;
-import it.polimi.ingsw.model.card.Card;
-import it.polimi.ingsw.model.card.GodPower;
 
 import java.util.List;
 
@@ -16,17 +15,24 @@ import java.util.List;
  * @author AndreaAltomare
  */
 public class AdversaryMove {
-    private Cell startingPosition; // once the turn starts, Worker's starting position is saved
-    //private Move lastMove; // opponent's last move
     private GodPower godPower; // state of chosen God's power
     private Card parentCard;
     private List<AdversaryMoveChecker> checkers;
+    //private Cell startingPosition; // once the turn starts, Worker's starting position is saved
+    //private Move lastMove; // opponent's last move
 
+    /**
+     * Constructs an AdversaryMove manager.
+     *
+     * @param parentCard Associated Card
+     * @param godPower Associated God's power
+     * @param checkers Checkers for moves
+     */
     public AdversaryMove(Card parentCard, GodPower godPower, List<AdversaryMoveChecker> checkers) {
         this.parentCard = parentCard;
-        this.godPower = godPower; // TODO: maybe refactor this to be only on Card class, so to remove duplicated code
-        this.startingPosition = null;
         this.checkers = checkers;
+        this.godPower = godPower;
+        //this.startingPosition = null;
         //this.lastMove = null;
     }
 
@@ -38,6 +44,7 @@ public class AdversaryMove {
      * @param move (Opponent's move to check)
      * @param worker (Opponent's Worker who has executed the move)
      * @return (Opponent move is allowed ? true : false)
+     * @throws LoseException Exception thrown when a Player loses
      */
     public boolean checkMove(Move move, Worker worker) throws LoseException {
         for(AdversaryMoveChecker checker : checkers) {
@@ -45,43 +52,6 @@ public class AdversaryMove {
                 return false;
         }
         return true;
-
-//        boolean moveAllowed = true;
-//
-//        /* move can be denied only if the God's power has to be applied to opponent's move */
-//        if(godPower.isActiveOnOpponentMovement())
-//            moveAllowed = checkSpecialRules(move, worker);
-//
-//        return moveAllowed;
-    }
-
-    /**
-     * This method is called when a Card's power modifies basic game rules.
-     *
-     * @param move (Opponent's move to check)
-     * @param worker (Opponent's Worker who has executed the move)
-     * @return (Opponent move is allowed ? true : false)
-     * @throws LoseException (Exception handled by Controller)
-     */
-    private boolean checkSpecialRules(Move move, Worker worker) throws LoseException {
-        Move myLastMove = parentCard.getMyMove().getLastMove();
-
-        /* check if my last move was one of the Hot Last Moves checked by my God's power:
-        * in this case, check the opponent's move
-        */
-        // todo: athena (just to check, REMOVE THIS COMMENT)
-        if(myLastMove != null && myLastMove.getLevelDirection() == godPower.getHotLastMoveDirection())
-            if(move.getLevelDirection() == godPower.getOpponentDeniedDirection()) {
-                if(godPower.isMustObey()) {
-                    // if the God's power must be obeyed, and it's not, trigger a Lose Condition
-                    throw new LoseException(worker.getOwner(),"Player " + worker.getOwner().getNickname() + "has lost! (By not respecting Opponent Card's power)");
-                }
-                else {
-                    return false;
-                }
-            }
-
-        return true; // everything ok
     }
 
     public Card getParentCard() {

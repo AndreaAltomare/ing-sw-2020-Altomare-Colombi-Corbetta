@@ -15,6 +15,11 @@ import java.util.ArrayList;
  */
 public class MovementManager extends TurnManager {
 
+    /**
+     * Constructs a Movement Turn manager.
+     *
+     * @param card Associated Card
+     */
     public MovementManager(Card card) {
         this.card = card;
         observers = new ArrayList<>();
@@ -32,6 +37,7 @@ public class MovementManager extends TurnManager {
      * @throws LoseException (Exception handled by Controller)
      * @throws RunOutMovesException (Exception handled by Controller)
      * @throws WrongWorkerException (Exception handled by Controller)
+     * @throws TurnSwitchedException (Exception handled by Controller)
      */
     @Override
     public boolean handle(Move move, Worker worker) throws WinException,LoseException,RunOutMovesException,WrongWorkerException, TurnSwitchedException {
@@ -60,6 +66,7 @@ public class MovementManager extends TurnManager {
      * @throws WinException (Exception handled by Controller)
      * @throws LoseException (Exception handled by Controller)
      * @throws RunOutMovesException (Exception handled by Controller)
+     * @throws TurnSwitchedException (Exception handled by Controller)
      */
     private boolean moveWorker(Move move, Worker worker) throws WinException,LoseException,RunOutMovesException,TurnSwitchedException {
         moveAllowed = true;
@@ -93,7 +100,7 @@ public class MovementManager extends TurnManager {
 
         /* If Movement Moves are over, switch the Turn */
         if(card.getMyMove().getMovesLeft() < 1)
-            throw new TurnSwitchedException(); // TODO: check if the Exception to switch the Player's Turn works fine (just to check, REMOVE THIS COMMENT)
+            throw new TurnSwitchedException();
 
         return moveAllowed;
     }
