@@ -17,7 +17,7 @@ import java.util.EventObject;
 import java.util.List;
 
 /**
- * Class intended to represent the player in the view package.
+ * Class intended to represent the players in the view package.
  *
  * @author giorgio
  */
@@ -61,7 +61,7 @@ public class ViewPlayer extends ViewObject {
     }
 
     /**
-     * Method to set the ard for this player.
+     * Method to set the card for this player.
      *
      * @param card (card to be set for this worker)
      * @throws AlreadySetException (if the card of this worker was already set)
@@ -94,38 +94,40 @@ public class ViewPlayer extends ViewObject {
         throw new AlreadySetException();
     }
 
-    @Override
     /**
      * Method returning a unique string for each object inside the Class.
+     * returns the name of the player.
      *
-     * @return (unique String identifying the object)
+     * @return (getName())
      */
+    @Override
     public String getId() {
         return getName();
     }
 
-    @Override
     /**
      * Method returning a unique String for each class.
+     * ViewPlayer returns "[Player]"
      *
-     * @return (unique string for each class)
+     * @return ("[Player]")
      */
+    @Override
     public String getMyClassId() {
         return getClassId();
     }
 
     /**
-     * function that returns for each Class the Base of its objects identificators as "[ClassId]".
+     * function that returns a unique class identifier: "[Player]".
      *
-     * @return (String the base of Class identificators)
+     * @return ("[Player]")
      */
     public static String getClassId(){ return "[Player]"; }
 
     /**
-     * Method that will search the object with the passed id.
+     * Method that will search the ViewPlayer with the passed id.
      *
-     * @param id (String, the toString result of the searched Object)
-     * @return (The searched Object)
+     * @param id (String, the toString result of the searched ViewPlayer)
+     * @return (The searched ViewPlayer)
      * @throws NotFoundException (If it doesn't find the object)
      * @throws WrongViewObjectException (If the object is not of this Class).
      */
@@ -136,10 +138,10 @@ public class ViewPlayer extends ViewObject {
     }
 
     /**
-     * Method that will search the object with the passed id; if it doesn't exists then try to create it.
+     * Method that will search the ViewPlayer with the passed id; if it doesn't exists then try to create it.
      *
-     * @param id (String, the toString result of the searched Object)
-     * @return (The searched Object)
+     * @param id (String, the toString result of the searched ViewPlayer)
+     * @return (The searched ViewPlayer)
      * @throws NotFoundException (If it doesn't find the object and cannot build it)
      * @throws WrongViewObjectException (If the object is not of this Class).
      */
@@ -159,18 +161,20 @@ public class ViewPlayer extends ViewObject {
 
     /**
      * Method that will be called on the arrival of an event on this object.
+     * It'll do nothing.
      *
      * @param event (The Event to be notified)
      * @return (true iif the event is notified in the right way)
      * @throws WrongEventException (if the Event is not used for this object)
      */
     public boolean notifyEvent( @NotNull EventObject event) throws WrongEventException{
-        //todo: implement it
         return true;
     }
 
     /**
-     * Method that will be called on the arrival of an event to build a new Object.
+     * Method that will be called on the arrival of an event to build the new ViewPlayers.
+     * When called it'll create a new ViewPlayer for each player into the <code>ServerSendDataEvent</code>
+     * and adds the relative Workers to them.
      *
      * @param data (the Event arrived)
      * @return (the new object created)
@@ -196,6 +200,13 @@ public class ViewPlayer extends ViewObject {
         //throw new WrongEventException();
     }
 
+    /**
+     * This method is called with <code>CardSelectedEvent</code> assigning at a Player its Card.
+     *
+     * @param event (the <code>CardSelectedEvent</code> to be notified).
+     * @return  (the ViewPlayer to which has been set the Card).
+     * @throws WrongEventException (iif the Player doesn't exists).
+     */
     public static ViewObject populate(CardSelectedEvent event) throws WrongEventException{
         ViewPlayer ret;
         try {
@@ -225,6 +236,7 @@ public class ViewPlayer extends ViewObject {
      *
      * @return (String representing the object and its status)
      */
+    @Override
     public String toTerminal(){ return this.toString() + "\n\t" + card.toString() + "\n\t" + (workers[0]!=null?workers[0].toString():"null") + "\n\t" + (workers[1]!=null?workers[1].toString():"null") + "\n"; }
 
 
@@ -266,10 +278,11 @@ public class ViewPlayer extends ViewObject {
      *
      * @return (representation of Object for the GI)
      */
+    @Override
     public JPanel toGUI(){ return null; }
 
     /**
-     * Method that will search the object with the passed id.
+     * Method that will search the ViewPlayer with the passed id.
      *
      * @param id (String, the toString result of the searched Object)
      * @return (The searched Object)
@@ -283,7 +296,7 @@ public class ViewPlayer extends ViewObject {
     }
 
     /**
-     * Methodd to search for the player witha certain name.
+     * Method to search for the player with a certain name.
      *
      * @param name (the name of the searched player)
      * @return (the player with the searched name)
@@ -297,6 +310,11 @@ public class ViewPlayer extends ViewObject {
         throw new NotFoundException();
     }
 
+    /**
+     * Method to set the Player's card.
+     *
+     * @param cardName (the Card's name).
+     */
     public void setCard(String cardName){
         try {
             setCard((ViewCard) ViewCard.search(cardName));
@@ -304,6 +322,11 @@ public class ViewPlayer extends ViewObject {
         }
     }
 
+    /**
+     * constructor.
+     *
+     * @param name (player's name).
+     */
     public ViewPlayer(String name){
         this.name = name;
         this.card = null;
@@ -313,10 +336,20 @@ public class ViewPlayer extends ViewObject {
         myList.add(this);
     }
 
+    /**
+     * Method returning the number of Players.
+     *
+     * @return (the number of Players).
+     */
     public static int getNumberOfPlayers(){
         return myList.size();
     }
 
+    /**
+     * Method returning a list of all Players.
+     *
+     * @return (list of all Players).
+     */
     public static List<ViewPlayer> getPlayerList() {
         return new ArrayList<ViewPlayer>(myList);
     }

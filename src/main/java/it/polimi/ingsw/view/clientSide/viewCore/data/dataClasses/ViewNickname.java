@@ -2,7 +2,6 @@ package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.exceptions.*;
-import it.polimi.ingsw.view.interfaces.Addressable;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -21,36 +20,39 @@ public class ViewNickname extends ViewObject {
     public ViewCard getCard(){ return this.card; }
 
     /**
-     * Method returning a unique string for each object inside the Class.
+     * Method returning the nickname of the player.
      *
-     * @return (unique String identifying the object)
+     * @return (the nickname of the player).
      */
+    @Override
     public String getId() {
         return name;
     }
 
-    @Override
     /**
      * Method returning a unique String for each class.
+     * For ViewNickname it's: "[Nickname]"
      *
-     * @return (unique string for each class)
+     * @return ("[Nickname]")
      */
+    @Override
     public String getMyClassId() {
         return getClassId();
     }
 
 
     /**
-     * function that returns for each Class the Base of its objects identificators as "[ClassId]".
+     * function that returns a string identifying the Class: "[Nickname]".
      *
-     * @return (String the base of Class identificators)
+     * @return ("[Nickname]")
      */
     public static String getClassId(){
         return "[Nickname]";
     }
 
     /**
-     * Method that will search the object with the passed id.
+     * Method that will search the ViewBoard with the passed id.
+     * If it is searched any instance of the <code>ViewNickname</code>, it returns the only one that is available.
      *
      * @param id (String, the toString result of the searched Object)
      * @return (The searched Object)
@@ -64,11 +66,13 @@ public class ViewNickname extends ViewObject {
     }
 
     /**
-     * Method that will search the object with the passed id; if it doesn't exists then try to create it.
+     * Method that will search the ViewBoard with the passed id.
+     * If it is searched any instance of the <code>ViewNickname</code>, it returns the only one that is available.
+     * If the ViewNickname doesn't exist, than it'll throw WrongViewObjectException
      *
      * @param id (String, the toString result of the searched Object)
      * @return (The searched Object)
-     * @throws NotFoundException (If it doesn't find the object and cannot build it)
+     * @throws NotFoundException (If it doesn't find the object)
      * @throws WrongViewObjectException (If the object is not of this Class).
      */
     public static ViewObject find( @NotNull String id) throws NotFoundException, WrongViewObjectException{
@@ -79,25 +83,25 @@ public class ViewNickname extends ViewObject {
 
     /**
      * Method that will be called on the arrival of an event on this object.
+     * It'll do nothing.
      *
      * @param event (The Event to be notified)
      * @return (true iif the event is notified in the right way)
      * @throws WrongEventException (if the Event is not used for this object)
      */
     public boolean notifyEvent( @NotNull EventObject event) throws WrongEventException{
-        //todo: implement it
         return true;
     }
 
     /**
      * Method that will be called on the arrival of an event to build a new Object.
+     * It'll do nothing
      *
      * @param event (the Event arrived)
      * @return (the new object created)
      * @throws WrongEventException (if the Event is not supported by this Class)
      */
     public static ViewObject populate( @NotNull EventObject event) throws WrongEventException{
-        //todo immplement it
         throw new WrongEventException();
     }
 
@@ -113,6 +117,7 @@ public class ViewNickname extends ViewObject {
      *
      * @return (String representing the object and its status)
      */
+    @Override
     public String toTerminal(){
         return this.toString();
     }
@@ -142,6 +147,7 @@ public class ViewNickname extends ViewObject {
      *
      * @return (representation of Object for the GI)
      */
+    @Override
     public JPanel toGUI(){
         return null;
     }
@@ -168,6 +174,13 @@ public class ViewNickname extends ViewObject {
         el = this;
     }
 
+    /**
+     * Method that sets the nickname of the player.
+     *
+     * @param nickname  (the nickname of the player).
+     * @throws AlreadySetException  (iif there has been already a nickname set).
+     * @throws WrongParametersException (if the nickname is invalid).
+     */
     public static void setNickname(String nickname) throws AlreadySetException, WrongParametersException {
         if(el != null) throw new AlreadySetException();
         if(false) throw new WrongParametersException();
@@ -194,16 +207,39 @@ public class ViewNickname extends ViewObject {
         return null;
     }
 
+    /**
+     * Method to set the card choosen by the player.
+     *
+     * @param card (the <code>ViewCard</code> choosen by the player).
+     */
     public void setCard(ViewCard card){ this.card = card; }
 
+    /**
+     * Method to set the card choosen by the player.
+     *
+     * @param card (the name of the choosen by the player).
+     */
     public void setCard(String card){
         try {
             this.setCard((ViewCard)ViewCard.search(card));
-        } catch (NotFoundException | WrongViewObjectException e) {
+        } catch (NotFoundException | WrongViewObjectException ignore) {
         }
     }
 
+
+    /**
+     * static setter of player's card.
+     * It'll set the card iif the player nickname has already been set.
+     *
+     * @param card (the <code>ViewCard</code> choosen by the player).
+     */
     public static void setMyCard(ViewCard card){ if(el!= null) el.setCard(card); }
 
+    /**
+     * static setter of player's card.
+     * It'll set the card iif the player nickname has already been set.
+     *
+     * @param card (the name of the choosen by the player).
+     */
     public static void setMyCard(String card){ if(el!= null) el.setCard(card); }
 }

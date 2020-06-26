@@ -1,6 +1,5 @@
 package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 
-//import com.sun.tools.javac.comp.Resolve;
 import it.polimi.ingsw.model.persistence.players.CardData;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.GodSymbols;
@@ -17,7 +16,9 @@ import java.util.List;
 
 /**
  * Class intended to represent the Card.
+ * It extends the <code>ViewObject</code>
  *
+ * @see ViewObject
  * @author giorgio
  */
 public class ViewCard extends ViewObject {
@@ -26,46 +27,49 @@ public class ViewCard extends ViewObject {
     private String epiteth;
     private String description;
 
-    private static List<ViewCard> myList = new ArrayList<ViewCard>();
+    private static List<ViewCard> myList = new ArrayList<>();
 
     public String getName(){ return name; }
     public String getEpiteth() { return epiteth; }
     public String getDescription() { return description; }
 
-    @Override
+
     /**
      * Method returning a unique string for each object inside the Class.
      *
-     * @return (unique String identifying the object)
+     * @return (the name of the Card)
      */
+    @Override
     public String getId() {
         return name;
     }
 
-    @Override
+
     /**
      * Method returning a unique String for each class.
+     * For ViewCard it's "[Card]"
      *
-     * @return (unique string for each class)
+     * @return ("[Card]")
      */
+    @Override
     public String getMyClassId() {
         return getClassId();
     }
 
     /**
-     * function that returns for each Class the Base of its objects identificators as "[ClassId]".
+     * function that returns a string identifying the Class: "[Card]".
      *
-     * @return (String the base of Class identificators)
+     * @return ("[Card]")
      */
     public static String getClassId(){
         return "[Card]";
     }
 
     /**
-     * Method that will search the object with the passed id.
+     * Method that will search the ViewCard with the passed id or name.
      *
-     * @param id (String, the toString result of the searched Object)
-     * @return (The searched Object)
+     * @param id (String, the toString or the name of the searched ViewCard)
+     * @return (The searched ViewCCard)
      * @throws NotFoundException (If it doesn't find the object)
      * @throws WrongViewObjectException (If the object is not of this Class).
      */
@@ -76,7 +80,10 @@ public class ViewCard extends ViewObject {
     }
 
     /**
-     * Method that will search the object with the passed id; if it doesn't exists then try to create it.
+     * Method that will search the ViewCard with the passed id or name.
+     * If the Card searched doesn't exists, it'll throw a NotFoundException.
+     *
+     * IT WILL NOT INSTANTIATE A NEW CARD!
      *
      * @param id (String, the toString result of the searched Object)
      * @return (The searched Object)
@@ -90,35 +97,39 @@ public class ViewCard extends ViewObject {
     }
 
     /**
-     * Method that will be called on the arrival of an event on this object.
+     * Method that will be called on the arrival of an event on this ViewCard.
+     * It'll do nothing.
      *
      * @param event (The Event to be notified)
      * @return (true iif the event is notified in the right way)
      * @throws WrongEventException (if the Event is not used for this object)
      */
+    @Override
     public boolean notifyEvent( @NotNull EventObject event) throws WrongEventException{
-        //todo: implement it
         return true;
     }
 
     /**
-     * Method that will be called on the arrival of an event to build a new Object.
+     * Method that will be called on the arrival of an event to build a new ViewCard.
+     * It'll do nothing.
      *
      * @param event (the Event arrived)
      * @return (the new object created)
      * @throws WrongEventException (if the Event is not supported by this Class)
      */
     public static ViewObject populate( @NotNull EventObject event) throws WrongEventException{
-        //todo immplement it
         throw new WrongEventException();
     }
 
+    /**
+     * Method that will be called on the arrival of a <code>CardData</code> to build a new ViewCard.
+     *
+     * @param data (the CardData relative to the ViewCard to be instantiated).
+     * @return     (the new <code>ViewCard</code>).
+     */
     public static ViewObject populate(CardData data){
         ViewCard ret;
         ret = new ViewCard(data.getName(), data.getEpithet(), data.getDescription());
-
-
-        //todo: set epiteth and description
 
         return ret;
     }
@@ -135,6 +146,7 @@ public class ViewCard extends ViewObject {
      *
      * @return (String representing the object and its status)
      */
+    @Override
     public String toTerminal(){
         return this.toString() + "\n" + epiteth + "\n" + description + "\n";
     }
@@ -163,7 +175,6 @@ public class ViewCard extends ViewObject {
                     representation = godSymbols.getDownRepresentation();
                     break;
                 default:
-                    ;
             }
         } catch (NotFoundException e) {
             e.printStackTrace();
@@ -179,15 +190,16 @@ public class ViewCard extends ViewObject {
      *
      * @return (representation of Object for the GI)
      */
+    @Override
     public JPanel toGUI(){
         return null;
     }
 
     /**
-     * Method that will search the object with the passed id.
+     * Method that will search the ViewCard with the passed name or id.
      *
-     * @param id (String, the toString result of the searched Object)
-     * @return (The searched Object)
+     * @param id (String, the toString or name of the searched ViewCard)
+     * @return (The searched ViewCard)
      * @throws NotFoundException (If it doesn't find the object)
      */
     private static ViewCard cSearch( @NotNull String id) throws NotFoundException {

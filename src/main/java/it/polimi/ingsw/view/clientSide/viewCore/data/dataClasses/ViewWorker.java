@@ -47,6 +47,7 @@ public class ViewWorker extends ViewObject {
      *
      * @return (int id of the worker)
      */
+    @Override
     public String getId(){ return Integer.toString(id); }
 
     /**
@@ -75,27 +76,28 @@ public class ViewWorker extends ViewObject {
      */
     public void moveOn(ViewCell position){ this.position = position; }
 
-    @Override
     /**
      * Method returning a unique String for each class.
+     * For ViewWorker it's "[Worker]"
      *
-     * @return (unique string for each class)
+     * @return ("[Worker]")
      */
+    @Override
     public String getMyClassId() {
         return getClassId();
     }
 
     /**
-     * function that returns for each Class the Base of its objects identificators as "[ClassId]".
+     * function that returns a string identifying the Class: "[Worker]".
      *
-     * @return (String the base of Class identificators)
+     * @return ("[Worker]")
      */
     public static String getClassId(){
         return "[Worker]";
     }
 
     /**
-     * Method that will search the object with the passed id.
+     * Method that will search the ViewWorker with the passed id.
      *
      * @param id (String, the toString result of the searched Object)
      * @return (The searched Object)
@@ -109,7 +111,7 @@ public class ViewWorker extends ViewObject {
     }
 
     /**
-     * Method that will search the object with the passed id; if it doesn't exists then try to create it.
+     * Method that will search the ViewWorker with the passed id; if it doesn't exists then throws NotFoundException.
      *
      * @param id (String, the toString result of the searched Object)
      * @return (The searched Object)
@@ -124,22 +126,24 @@ public class ViewWorker extends ViewObject {
 
     /**
      * Method that will be called on the arrival of an event on this object.
+     * It does nothing.
      *
      * @param event (The Event to be notified)
      * @return (true iif the event is notified in the right way)
      * @throws WrongEventException (if the Event is not used for this object)
      */
+    @Override
     public boolean notifyEvent( @NotNull EventObject event) throws WrongEventException{
-        //TODO: implement it
         return true;
     }
 
     /**
-     * Method that will be called on the arrival of an event to build a new Object.
+     * Method that will be called on the arrival of a <code>WorkerRemovedEvent</code> event to build a new ViewWorker.
+     * It'll create a ViewWorker and associate it to the relative ViewPlayer.
      *
      * @param event (the Event arrived)
-     * @return (the new object created)
-     * @throws WrongEventException (if the Event is not supported by this Class)
+     * @return (the new ViewWorker created)
+     * @throws WrongEventException (if there are problems creating the ViewWorker)
      */
     public static ViewObject populate( @NotNull WorkerRemovedEvent event) throws WrongEventException{
         ViewWorker worker;
@@ -152,17 +156,26 @@ public class ViewWorker extends ViewObject {
         return worker;
     }
 
+    /**
+     * Method called with <codde>EventObject</codde> event.
+     * It'll only throw a WrongEventException (because it shouldn't be called).
+     *
+     * @param event (the <code>EventObject</code> event).
+     * @return (nothinng)
+     * @throws WrongEventException (always thrown).
+     */
     public static ViewObject populate(EventObject event) throws WrongEventException{
         throw new WrongEventException();
     }
 
 
     /**
-     * Method that will be called on the arrival of an event to build a new Object.
+     * Method that will be called on the arrival of a <code>WorkerPlacedEvent</code> event to place a Worker.
+     * It'll create a new ViewWorker, associate it to the player and place it on the Board.
      *
      * @param workerPlaced (the Event arrived)
-     * @return (the new object created)
-     * @throws WrongEventException (if the Event is not supported by this Class)
+     * @return (the ViewWorker placed)
+     * @throws WrongEventException (if there has been some errors)
      */
     public static ViewObject populate( @NotNull WorkerPlacedEvent workerPlaced) throws WrongEventException{
         ViewWorker myWorker;
@@ -189,11 +202,12 @@ public class ViewWorker extends ViewObject {
     }
 
     /**
-     * Method that will be called on the arrival of an event to build a new Object.
+     * Method that will be called on the arrival of a <code>WorkerSelectedEvent</code> event .
+     * It'll search the Worker, select it and return it.
      *
      * @param selectedEvent (the Event arrived)
-     * @return (the new object created)
-     * @throws WrongEventException (if the Event is not supported by this Class)
+     * @return (the ViewWorker selected)
+     * @throws WrongEventException (if there has been some errors)
      */
     public static ViewObject populate( @NotNull WorkerSelectedEvent selectedEvent) throws WrongEventException{
         ViewWorker worker;
@@ -207,11 +221,12 @@ public class ViewWorker extends ViewObject {
     }
 
     /**
-     * Method that will be called on the arrival of an event to build a new Object.
+     * Method that will be called on the arrival of a <code>WorkerMovedEvent</code> event.
+     * It'll search the Worker, move it and return it.
      *
      * @param workerMovedEvent (the Event arrived)
-     * @return (the new object created)
-     * @throws WrongEventException (if the Event is not supported by this Class)
+     * @return (the ViewWorker moved)
+     * @throws WrongEventException (if there has been some errors)
      */
     public static ViewObject populate( @NotNull WorkerMovedEvent workerMovedEvent) throws WrongEventException{
         if (ViewObject.outcome(workerMovedEvent.getMoveOutcome())) {
@@ -245,6 +260,7 @@ public class ViewWorker extends ViewObject {
      *
      * @return (String representing the object and its status)
      */
+    @Override
     public String toTerminal(){ return this.toString(); }
 
 
@@ -308,6 +324,7 @@ public class ViewWorker extends ViewObject {
      *
      * @return (representation of Object for the GI)
      */
+    @Override
     public ImagePanel toGUI(){
         ImagePanel background = new ImagePanel(1, 1, 0, 0, "/img/board/cells/void_space.png");
         try {
@@ -325,10 +342,10 @@ public class ViewWorker extends ViewObject {
     }
 
     /**
-     * Method that will search the object with the passed id.
+     * Method that will search the ViewWorker with the passed id.
      *
      * @param id (String, the toString result of the searched Object)
-     * @return (The searched Object)
+     * @return (The searched ViewWorker)
      * @throws NotFoundException (If it doesn't find the object)
      */
     private static ViewWorker cSearch( @NotNull String id) throws NotFoundException {
@@ -393,6 +410,12 @@ public class ViewWorker extends ViewObject {
         myList.add(this);
     }
 
+    /**
+     * Method checking weather the given id will correspond to an id of an other ViewwWorker.
+     *
+     * @param id (String to be analysed)
+     * @return   (true iif there should be a ViewWorker with such an id).
+     */
     public static boolean isOfThisClass(String id){
         return id.startsWith(getClassId());
     }
@@ -408,6 +431,12 @@ public class ViewWorker extends ViewObject {
         this(id, findOrSearch(player));
     }
 
+    /**
+     * Method to place the ViewWorker on to the cell located at the given position.
+     *
+     * @param x (cell's x-position).
+     * @param y (cell's y-position).
+     */
     public void placeOn(int x, int y){
         if(position != null) position.removeWorker(this);
         try {
@@ -419,10 +448,20 @@ public class ViewWorker extends ViewObject {
         position.placeWorker(this);
     }
 
+    /**
+     * Method to remove the ViewWorker from the Cell on which it actually is.
+     */
     public void removeWorker(){
         if(position!=null) position.removeWorker();
     }
 
+    /**
+     * Mehod that search a ViewEorker firstly by its toString, and then with its id.
+     *
+     * @param name (toString() or id of the searched ViewWorker).
+     * @return     (the searched ViewWorker).
+     * @throws NotFoundException (iif the searched ViewWorker doesn't exists).
+     */
     protected static ViewPlayer findOrSearch(String name) throws NotFoundException{
         try {
             return (ViewPlayer)ViewPlayer.find(name);
@@ -431,10 +470,20 @@ public class ViewWorker extends ViewObject {
         }
     }
 
+    /**
+     * Method to set the selected Worker.
+     *
+     * @param worker (the selected ViewWorker).
+     */
     public static void selectWorker(ViewWorker worker){
         selected = worker;
     }
 
+    /**
+     * Method to set the selected Worker.
+     *
+     * @param worker (the toString() or id of the selected ViewWorker).
+     */
     public static void selectWorker(String worker){
         try {
             selectWorker((ViewWorker) search(worker));
@@ -443,10 +492,20 @@ public class ViewWorker extends ViewObject {
         }
     }
 
+    /**
+     * getter for the selected ViewWorker.
+     *
+     * @return (the ViewWorker selected).
+     */
     public static ViewWorker getSelected(){
         return selected;
     }
 
+    /**
+     * getter for the color associated to the View Worker.
+     *
+     * @return (the color associated to the View Worker).
+     */
     public Color getColor(){
         return workerColor;
     }

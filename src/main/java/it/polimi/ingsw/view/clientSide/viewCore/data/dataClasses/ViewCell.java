@@ -3,7 +3,6 @@ package it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses;
 import it.polimi.ingsw.controller.events.BlockBuiltEvent;
 import it.polimi.ingsw.controller.events.BlockRemovedEvent;
 import it.polimi.ingsw.model.board.placeables.PlaceableType;
-import it.polimi.ingsw.model.move.MoveOutcomeType;
 import it.polimi.ingsw.model.persistence.board.CellState;
 import it.polimi.ingsw.model.persistence.board.PlaceableData;
 import it.polimi.ingsw.view.clientSide.View;
@@ -100,6 +99,7 @@ public class ViewCell extends ViewObject {
      * Method to build a dome on this cell
      */
     public void buildDome(){ doomed = true; }
+
     /**
      * Method to remove a dome on this cell
      */
@@ -109,10 +109,12 @@ public class ViewCell extends ViewObject {
      * Method to build a level on this cell
      */
     public void buildLevel(){ level++; }
+
     /**
      * Method to remove a dome on this cell
      */
     public void removeLevel(){ level=(level>0?level-1: 0); }
+
     /**
      * Method to set the level of this cell.
      *
@@ -128,6 +130,12 @@ public class ViewCell extends ViewObject {
         worker = null;
     }
 
+    /**
+     * Method that removes the passed WiewWorker from the cell.
+     * Not to remove wrong Workers.
+     *
+     * @param worker (the ViewWorker to be removed).
+     */
     void removeWorker(ViewWorker worker){
         if(thereIsWorker && worker.equals(this.worker)){
             removeWorker();
@@ -147,38 +155,41 @@ public class ViewCell extends ViewObject {
         this.worker = worker;
     }
 
-    @Override
     /**
      * Method returning a unique string for each object inside the Class.
+     * It returns a string formatted as:
+     * "(" + x-pos + ", " + y-pos + ")"
      *
-     * @return (unique String identifying the object)
+     * @return ( "(" + x-pos + ", " + y-pos + ")" )
      */
+    @Override
     public String getId() {
         return "(" + getX() + ", " + getY() + ")";
     }
 
-    @Override
     /**
      * Method returning a unique String for each class.
+     * For VieCell it's: "[Cell]"
      *
-     * @return (unique string for each class)
+     * @return ("[Cell]")
      */
+    @Override
     public String getMyClassId() {
         return getClassId();
     }
 
     /**
-     * function that returns for each Class the Base of its objects identificators as "[ClassId]".
+     * function that returns a string identifying the Class: "[Cell]".
      *
-     * @return (String the base of Class identificators)
+     * @return ("[Cell]")
      */
     public static String getClassId(){ return "[Cell]"; }
 
     /**
-     * Method that will search the object with the passed id.
+     * Method that will search the ViewCell with the passed toString.
      *
-     * @param id (String, the toString result of the searched Object)
-     * @return (The searched Object)
+     * @param id (String, the toString result of the searched ViewCell)
+     * @return (The searched ViewCell)
      * @throws NotFoundException (If it doesn't find the object)
      * @throws WrongViewObjectException (If the object is not of this Class).
      */
@@ -189,7 +200,8 @@ public class ViewCell extends ViewObject {
     }
 
     /**
-     * Method that will search the object with the passed id; if it doesn't exists then try to create it.
+     ** Method that will search the ViewCell with the passed toString.
+     * If the searched ViewCell doesn't exists, it'll not instanciate a new one but will throw a NotFoundException.
      *
      * @param id (String, the toString result of the searched Object)
      * @return (The searched Object)
@@ -203,17 +215,25 @@ public class ViewCell extends ViewObject {
     }
 
     /**
-     * Method that will be called on the arrival of an event on this object.
+     * Method that will be called on the arrival of an event on this.
+     * It'll do nothing.
      *
      * @param event (The Event to be notified)
      * @return (true iif the event is notified in the right way)
      * @throws WrongEventException (if the Event is not used for this object)
      */
+    @Override
     public boolean notifyEvent( @NotNull EventObject event) throws WrongEventException{
-        //todo: implement it
         return true;
     }
 
+    /**
+     * Method that will be called on the arrival of a <code>CellState</code> that sets the representation of this.
+     *
+     * @param state (The <code>CellState</code> representing the state to be updated)
+     * @return (true iif the event is notified in the right way)
+     * @throws WrongEventException (if the Event is not used for this object)
+     */
     public boolean notifyEvent(CellState state){
         Deque<PlaceableData> x = state.getBuilding();
 
@@ -243,17 +263,24 @@ public class ViewCell extends ViewObject {
     }
 
     /**
-     * Method that will be called on the arrival of an event to build a new Object.
+     * Method that will be called on the arrival of an event to build a new ViewCell.
+     * It'll throw WrongEventException.
      *
      * @param event (the Event arrived)
      * @return (the new object created)
      * @throws WrongEventException (if the Event is not supported by this Class)
      */
     public static ViewObject populate(@NotNull EventObject event) throws WrongEventException{
-        //todo: implement it
         throw new WrongEventException();
     }
 
+    /**
+     * * Method that will be called on the arrival of an event to update a ViewCell to remove from it a Block or Dome.
+     *
+     * @param event (the <code>BlockRemovedEvent</code> that has to be executed).
+     * @return  (the ViewCell referring to the Cell on which there has been removed the Block).
+     * @throws WrongEventException (if the Cell selected doesn't exists).
+     */
     public static ViewObject populate(@NotNull BlockRemovedEvent event) throws WrongEventException{
         ViewCell cella;
         try {
@@ -271,11 +298,11 @@ public class ViewCell extends ViewObject {
     }
 
     /**
-     * Method that will be called on the arrival of an event to build a new Object.
+     * Method that will be called on the arrival of an event to build a new Block on a Cell.
      *
-     * @param blockBuiltEvent (the Event arrived)
-     * @return (the new object created)
-     * @throws WrongEventException (if the Event is not supported by this Class)
+     * @param blockBuiltEvent (the <code>BlockBuiltEvent</code> arrived)
+     * @return (the Cell on which has been built the Block or null)
+     * @throws WrongEventException (in no case)
      */
     public static ViewObject populate(@NotNull BlockBuiltEvent blockBuiltEvent) throws WrongEventException{
         if(ViewObject.outcome(blockBuiltEvent.getMoveOutcome())) {
@@ -312,6 +339,7 @@ public class ViewCell extends ViewObject {
      *
      * @return (String representing the object and its status)
      */
+    @Override
     public String toTerminal(){
         return this.toString() + " " + this.getLevel() + " D: " + (this.isDoomed()?'t': 'f') + " W: " + (this.isThereWorker()?worker.getId():"no") + "| ";
 
@@ -406,6 +434,7 @@ public class ViewCell extends ViewObject {
      *
      * @return (representation of Object for the GI)
      */
+    @Override
     public ImagePanel toGUI(){
         ImagePanel ret = null;
         String fileName = "";
@@ -436,10 +465,10 @@ public class ViewCell extends ViewObject {
     }
 
     /**
-     * Method that will search the object with the passed id.
+     * Method that will search the ViewCell with the passed id.
      *
      * @param id (String, the toString result of the searched Object)
-     * @return (The searched Object)
+     * @return (The searched ViewCell)
      * @throws NotFoundException (If it doesn't find the object)
      */
     private static ViewCell cSearch( @NotNull String id) throws NotFoundException {
@@ -464,6 +493,11 @@ public class ViewCell extends ViewObject {
         this.worker = null;
     }
 
+    /**
+     * Method to return the maximum height of the building of the ViewCell.
+     *
+     * @return (the maximum height of the building of the ViewCell).
+     */
     public static int getMaxLevel(){
         return 3;
     }

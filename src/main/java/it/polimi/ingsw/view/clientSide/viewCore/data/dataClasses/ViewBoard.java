@@ -21,9 +21,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.EventObject;
 
 /**
- * Class to rapresent the board.
- * !! there will be no more than one instance in each client!!
+ * Class to represent the board.
+ * There will be no more than one instance in each client.
+ * It extends <code>ViewObject</code>>.
  *
+ * This class contains the Board with all its <code>ViewCell</code> and gives also the possibility to mark a Cell as "selected".
+ * No more than one Cell should be selected at the same time.
+ *
+ * @see ViewCell
+ * @see ViewObject
  * @author giorgio
  */
 public class ViewBoard extends ViewObject {
@@ -39,6 +45,13 @@ public class ViewBoard extends ViewObject {
 
     private ViewCell selectedCell;
 
+    /**
+     * Method to set the selected Cell to be the Cell in the given position.
+     * If there is no Cell in the given position it'll set no Cell as selected.
+     *
+     * @param x (x position of the Cell to be selected).
+     * @param y (y position of the Cell to be selected).
+     */
     public void setSelectedCell(int x, int y){
         try {
             selectedCell = getCellAt(x, y);
@@ -47,10 +60,26 @@ public class ViewBoard extends ViewObject {
         }
     }
 
+    /**
+     * Method to set the selected Cell to be the given Cell.
+     * If called with <code>null</code> than it'll set no Cell selected.
+     *
+     * @param cell (Cell to be set as selected. It must belong to this Board).
+     */
     public void setSelectedCell(ViewCell cell){ selectedCell = cell; }
 
+    /**
+     * Method to retrieve the Cell selected or null if there is no Cell selected.
+     *
+     * @return (the <code>ViewCell</code> selected. <code>null</code> if no Cell is selected).
+     */
     public ViewCell getSelectedCell(){ return selectedCell; }
 
+    /**
+     * Static method to retrieve the last instantiated <code>ViewBoard</code>, null if no <code>ViewBoard</code> has been instantiated.
+     *
+     * @return (the last <code>ViewBoard</code> instantiated).
+     */
     public static ViewBoard getBoard(){ return board; }
 
     /**
@@ -59,6 +88,7 @@ public class ViewBoard extends ViewObject {
      * @return (the x-dimension of the board)
      */
     public int getXDim(){ return xDim; }
+
     /**
      * Getter of the y-dimension of the board.
      *
@@ -67,11 +97,11 @@ public class ViewBoard extends ViewObject {
     public int getYDim(){ return yDim; }
 
     /**
-     * Method that returns the Cell at the selected position.
+     * Method that returns the Cell at the given position.
      *
      * @param x (x-position)
      * @param y (y-position)
-     * @return (the cell on the selected position)
+     * @return (the cell relative to the selected position)
      * @throws NotFoundException (iif it's accessing outside the borders)
      */
     public ViewCell getCellAt(int x, int y) throws NotFoundException {
@@ -80,35 +110,40 @@ public class ViewBoard extends ViewObject {
         return realBoard[x][y];
     }
 
-    @Override
     /**
-     * Method returning a unique string for each object inside the Class.
+     * Method that returns the id of the instance inside the class.
+     * It'll always return "" because there should be only one instantiated <code>ViewBoard</code>
+     * (and so there is no needed to set a unique id to identify the different instances).
      *
-     * @return (unique String identifying the object)
+     * @see ViewObject
+     * @return (String the id of the object or "" if no id is needed).
      */
+    @Override
     public String getId() {
         return "";
     }
 
-    @Override
+
     /**
-     * Method returning a unique String for each class.
+     * Method returning the unique String for this class: "[Board]".
      *
-     * @return (unique string for each class)
+     * @return ("[Board]").
      */
+    @Override
     public String getMyClassId() {
         return getClassId();
     }
 
     /**
-     * function that returns for each Class the Base of its objects identificators as "[ClassId]".
+     * function that returns "[Board]".
      *
-     * @return (String the base of Class identificators)
+     * @return ("[Board]").
      */
     public static String getClassId(){ return "[Board]"; }
 
     /**
-     * Method that will search the object with the passed id.
+     * Method that will search the ViewBoard with the passed id.
+     * If it is searched any instance of the <code>ViewBoard</code>, it returns the only one that is available.
      *
      * @param id (String, the toString result of the searched Object)
      * @return (The searched Object)
@@ -125,6 +160,9 @@ public class ViewBoard extends ViewObject {
 
     /**
      * Method that will search the object with the passed id; if it doesn't exists then try to create it.
+     * If the searched id is referring to a <code>ViewBoard</code> then:
+     * if exists an instance of the Board, then it'll return it;
+     * else it'll instantiate a new <code>ViewBoard</code> and will return it.
      *
      * @param id (String, the toString result of the searched Object)
      * @return (The searched Object)
@@ -141,24 +179,26 @@ public class ViewBoard extends ViewObject {
 
     /**
      * Method that will be called on the arrival of an event on this object.
+     * It does nothing on the Board.
      *
      * @param event (The Event to be notified)
      * @return (true iif the event is notified in the right way)
      * @throws WrongEventException (if the Event is not used for this object)
      */
+    @Override
     public boolean notifyEvent( @NotNull EventObject event) throws WrongEventException{
-        //todo: implement it
         return false;
     }
 
     /**
-     * Method that will be called on the arrival of an event to build a new Object.
+     * Method called when arriving a ServerSendDataEvent containing the information to build a new ViewBoard.
+     * If there already is an instance of the ViewBoard, it'll do nothing but returning it,
+     * else it'll construct a new ViewBoard -with the given information- and returns it.
      *
      * @param data (the Event arrived)
      * @return (the new object created)
-     * @throws WrongEventException (if the Event is not supported by this Class)
      */
-    public static ViewObject populate( @NotNull ServerSendDataEvent data) throws WrongEventException{
+    public static ViewObject populate( @NotNull ServerSendDataEvent data){
         if(board!=null)
             return board;
 
@@ -174,6 +214,15 @@ public class ViewBoard extends ViewObject {
         return board;
     }
 
+    /**
+     * Method called when arriving a BoardState containing the information to build a new ViewBoard
+     * or containing a representation of the state of the Board.
+     * If doesn't already exist an instance of the ViewBoard, it'll construct it.
+     * It set the instance of the ViewBoard to represent the same state given by the state parameter.
+     *
+     * @param state (the <code>BoardStatus</code> to be represented)
+     * @return (the ViewBoard correctly updated)
+     */
     public static ViewObject populate(BoardState state){
         if(board == null){
             board = new ViewBoard();
@@ -222,6 +271,7 @@ public class ViewBoard extends ViewObject {
      *
      * @return (String representing the object and its status)
      */
+    @Override
     public String toTerminal(){
         String ret = this.toString() + "\n";
         for(int x = 0; x< this.getXDim(); x++) {
@@ -241,6 +291,7 @@ public class ViewBoard extends ViewObject {
      *
      * @return a String == null
      */
+    @Override
     public String toWTerminal(){
         final int CELL_LENGTH = 17; // must be odd
         final int CELL_HIGH = 7;
@@ -327,6 +378,7 @@ public class ViewBoard extends ViewObject {
      *
      * @return a String == null
      */
+    @Override
     public String toCLI() {
         final int PLACEABLE_LENGTH = 9; // must be odd
         final int MIN_DISTANCE_FROM_EDGE = 1;
@@ -448,6 +500,7 @@ public class ViewBoard extends ViewObject {
      *
      * @return (representation of Board for the GUI)
      */
+    @Override
     public BoardGeneralPanel toGUI(){
         if(guiPanel == null){
             try {
@@ -472,7 +525,12 @@ public class ViewBoard extends ViewObject {
         return guiPanel;
     }
 
-    public static ViewCell getSelectedWorkerCell(){
+    /**
+     * Method returning the currently selected Cell.
+     *
+     * @return (the currently selected Cell).
+     */
+    private static ViewCell getSelectedWorkerCell(){
         try {
             return ViewWorker.getSelected().getPosition();
         } catch (NotFoundException | NullPointerException e) {
