@@ -13,31 +13,57 @@ import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
+/**
+ * Class to represent the <code>GUIStatusViewer</code> for the ViewStatus NUMBER_PLAYER .
+ */
 public class GUINumberPlayerStatus extends GUIStatusViewer {
 
-    private Object myWaiting = new Object();
-
     StatusViewer myStatusViewer;
+
+    /**
+     * constructor.
+     *
+     * @param statusViewer (the <code>StatusViewer</code> to which this refers).
+     */
     public GUINumberPlayerStatus(StatusViewer statusViewer){ myStatusViewer = statusViewer; }
 
+    /**
+     * Method that says this has a <code>JPanel</code> to be shown.
+     *
+     * @return (true).
+     * @see GUIStatusViewer
+     */
+    @Override
     public boolean hasJPanel(){ return true; }
 
+    /**
+     * method that returns the <code>Jpanel</code> referring to this that needs to be shown.
+     *
+     * @return (the <code>JPanel</code> that represents this)
+     * @see GUIStatusViewer
+     */
+    @Override
     public JPanel getJPanel(){
         JPanel panel = new BackgroundPanel("/img/background/blocked_background.png");
         new TitlePanel(panel);
         return panel;
     }
 
+    /**
+     * Method that says this has a PopUp to be shown.
+     *
+     * @return (true).
+     * @see GUIStatusViewer
+     */
     @Override
     public boolean hasPopup(){ return true;}
 
-    private static final Integer defaultNumber = 2;
-
-
-
+    /**
+     * Method that shows the PopUp.
+     *
+     * @see GUIStatusViewer
+     */
     @Override
     public void doPopUp(){
         JFrame frame = new JFrame("Number of Players");
@@ -51,47 +77,41 @@ public class GUINumberPlayerStatus extends GUIStatusViewer {
         JButton button3 = new JButton();
         PanelImageButton buttonPanel3 = new PanelImageButton(0.45, 0.87, 0.525, 0.05, button3, "/img/trappings/3playersbutton.png", "3Players" );
 
-        button2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                SetPlayerNumberExecuter executer = (SetPlayerNumberExecuter)myStatusViewer.getMyExecuters().get("NumberPlayers");
-                if(View.debugging)
-                    System.out.println("Numero giocatori impostato a " + 2);
-                try {
-                    executer.setNumberOfPlayers(2);
-                    executer.doIt();
-                    frame.dispose();
-                } catch (CannotSendEventException e) {
-                    ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
-                    if (View.debugging)
-                        e.printStackTrace();
-                } catch (WrongParametersException e) {
-                    ViewMessage.populateAndSend("Wrong parameter!!", ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
-                    if (View.debugging)
-                        e.printStackTrace();
-                }
+        button2.addActionListener(actionEvent -> {
+            SetPlayerNumberExecuter executer = (SetPlayerNumberExecuter)myStatusViewer.getMyExecuters().get("NumberPlayers");
+            if(View.debugging)
+                System.out.println("Numero giocatori impostato a " + 2);
+            try {
+                executer.setNumberOfPlayers(2);
+                executer.doIt();
+                frame.dispose();
+            } catch (CannotSendEventException e) {
+                ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
+                if (View.debugging)
+                    e.printStackTrace();
+            } catch (WrongParametersException e) {
+                ViewMessage.populateAndSend("Wrong parameter!!", ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
+                if (View.debugging)
+                    e.printStackTrace();
             }
         });
 
-        button3.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                SetPlayerNumberExecuter executer = (SetPlayerNumberExecuter)myStatusViewer.getMyExecuters().get("NumberPlayers");
-                if(View.debugging)
-                    System.out.println("Numero giocatori impostato a " + 3);
-                try {
-                    executer.setNumberOfPlayers(3);
-                    executer.doIt();
-                    frame.setVisible(false);
-                } catch (CannotSendEventException e) {
-                    ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
-                    if (View.debugging)
-                        e.printStackTrace();
-                } catch (WrongParametersException e) {
-                    ViewMessage.populateAndSend("Wrong parameter!!", ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
-                    if (View.debugging)
-                        e.printStackTrace();
-                }
+        button3.addActionListener(actionEvent -> {
+            SetPlayerNumberExecuter executer = (SetPlayerNumberExecuter)myStatusViewer.getMyExecuters().get("NumberPlayers");
+            if(View.debugging)
+                System.out.println("Numero giocatori impostato a " + 3);
+            try {
+                executer.setNumberOfPlayers(3);
+                executer.doIt();
+                frame.setVisible(false);
+            } catch (CannotSendEventException e) {
+                ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
+                if (View.debugging)
+                    e.printStackTrace();
+            } catch (WrongParametersException e) {
+                ViewMessage.populateAndSend("Wrong parameter!!", ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
+                if (View.debugging)
+                    e.printStackTrace();
             }
         });
 
@@ -108,10 +128,24 @@ public class GUINumberPlayerStatus extends GUIStatusViewer {
 
     }
 
+    /**
+     * method that is executed on the loading of the Status.
+     * It starts playing the music relative to this status.
+     *
+     * @see GUIStatusViewer
+     */
+    @Override
     public void onLoad(){
         SoundEffect.startLoopMusic("/statusSounds/login.wav");
     }
 
+    /**
+     * method that is executed on the closing of the Status.
+     * It stops playing the music relative to this status.
+     *
+     * @see GUIStatusViewer
+     */
+    @Override
     public void onClose(){
         SoundEffect.stopLoopingMusic();
     }

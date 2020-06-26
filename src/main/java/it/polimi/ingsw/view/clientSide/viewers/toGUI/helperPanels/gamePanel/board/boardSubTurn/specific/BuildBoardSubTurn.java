@@ -10,12 +10,27 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import java.awt.*;
 
+/**
+ * Class extending BoardSubTurn and referring to the building sub turn of the current player.
+ *
+ * @see BoardSubTurn
+ */
 public class BuildBoardSubTurn extends BoardSubTurn {
 
+    /**
+     * Constructor
+     *
+     * @param guiSubTurnViewer (building's GUISubTurnViewer).
+     */
     public BuildBoardSubTurn(GUISubTurnViewer guiSubTurnViewer)  {
         super(guiSubTurnViewer);
     }
 
+    /**
+     * Method to be set the cursor image when the cursor enters the board.
+     *
+     * @return (the building <code>Cursor</code>).
+     */
     @Override
     public Cursor getOnEnterCursor(){
         Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -24,6 +39,12 @@ public class BuildBoardSubTurn extends BoardSubTurn {
         return toolkit.createCustomCursor(image, hotspot, "build");
     }
 
+    /**
+     * Method called when the mouse clicks on one cell of the board on which it should build, and does the action to build it.
+     *
+     * @param x (the x position of the board (referring to the <code>ViewBoard</code> representation)).
+     * @param y (the y position of the board (referring to the <code>ViewBoard</code> representation)).
+     */
     @Override
     public void onCellSelected(int x, int y){
         super.onCellSelected(x, y);

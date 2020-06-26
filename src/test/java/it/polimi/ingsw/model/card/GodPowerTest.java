@@ -1,6 +1,5 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.model.card;
 
-import it.polimi.ingsw.model.card.GodPower;
 import it.polimi.ingsw.model.move.FloorDirection;
 import it.polimi.ingsw.model.move.LevelDirection;
 import org.junit.jupiter.api.AfterEach;
@@ -17,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class GodPowerTest {
 
     GodPower godPower;
-
     /**
      * Initialization before method's test
      */
@@ -96,7 +94,6 @@ class GodPowerTest {
         Integer zeroInteger = 0;
         Integer posInteger = 10;
         Integer negInteger = -10;
-        int falseInteger = 7;
 
         assertTrue(godPower.getMovementsLeft() == null);
 
@@ -110,9 +107,6 @@ class GodPowerTest {
         godPower.setMovementsLeft(negInteger);
         assertTrue(godPower.getMovementsLeft().equals(negInteger));
 
-        godPower.setMovementsLeft(falseInteger);
-        assertTrue(godPower.getMovementsLeft().equals(falseInteger));
-
     }
 
     /**
@@ -125,7 +119,6 @@ class GodPowerTest {
         Integer zeroInteger = 0;
         Integer posInteger = 10;
         Integer negInteger = -10;
-        int falseInteger = 7;
 
         assertTrue(godPower.getConstructionLeft() == null);
 
@@ -138,9 +131,6 @@ class GodPowerTest {
         //TODO: wait the help to understand how manage negative values and then change
         godPower.setConstructionLeft(negInteger);
         assertTrue(godPower.getConstructionLeft().equals(negInteger));
-
-        godPower.setConstructionLeft(falseInteger);
-        assertTrue(godPower.getConstructionLeft().equals(falseInteger));
 
     }
 
@@ -307,8 +297,8 @@ class GodPowerTest {
         assertTrue(godPower.getOpponentDeniedDirection() == null);
 
         godPower.setOpponentDeniedDirection(LevelDirection.ANY);
-        //TODO: Originally was LevelDirection.
-        assertTrue(godPower.getOpponentDeniedDirection() == LevelDirection.DOWN);
+        //TODO: Originally was LevelDirection. (I don't know to understand, now assert if correct, there is something I do?)
+        assertTrue(godPower.getOpponentDeniedDirection() == LevelDirection.ANY);
 
     }
 
@@ -372,4 +362,24 @@ class GodPowerTest {
 
     }
 
+    /**
+     * Check if LevelDepth is correctly get and set
+     *
+     * Black Box and White Box
+     */
+    @Test
+    void getHotLevelDepthAndSetHotLevelDepth() {
+        int positiveInt = 10;
+        int negativeInt = -10;
+
+        assertTrue( godPower.getHotLevelDepth() == 0);
+
+        godPower.setHotLevelDepth( positiveInt );
+        assertTrue( godPower.getHotLevelDepth() == positiveInt );
+
+        //TODO: wait the help to understand how manage negative values and then change
+        godPower.setHotLevelDepth( negativeInt );
+        assertTrue( godPower.getHotLevelDepth() == negativeInt );
+
+    }
 }

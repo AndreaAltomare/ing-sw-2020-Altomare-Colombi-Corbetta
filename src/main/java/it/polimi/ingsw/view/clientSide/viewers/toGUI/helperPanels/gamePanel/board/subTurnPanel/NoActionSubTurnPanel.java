@@ -2,6 +2,9 @@ package it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.boa
 
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.ImagePanel;
 
+/**
+ * Class to represent the Panel at the side of the board when the sub turn does not allow the player to do anything.
+ */
 public class NoActionSubTurnPanel extends ImagePanel {
 
     public NoActionSubTurnPanel(){

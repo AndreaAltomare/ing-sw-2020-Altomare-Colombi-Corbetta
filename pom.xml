@@ -35,6 +35,8 @@
       <dependency>
         <groupId>org.jetbrains</groupId>
         <artifactId>annotations</artifactId>
+        <!-- <version>RELEASE</version> -->
+        <!-- solution found on https://mvnrepository.com/artifact/org.jetbrains/annotations/16.0.1-->
         <version>16.0.1</version>
         <scope>compile</scope>
       </dependency>

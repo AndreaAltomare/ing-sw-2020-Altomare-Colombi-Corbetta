@@ -1,8 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.boardSubTurn.specific;
 
-import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewWorker;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.MoveWorkerExecuter;
-import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.PlaceWorkerExecuter;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.board.boardSubTurn.BoardSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
@@ -12,12 +10,27 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import java.awt.*;
 
+/**
+ * Class extending BoardSubTurn and referring to the moving sub turn of the current player.
+ *
+ * @see BoardSubTurn
+ */
 public class MoveBoardSubTurn extends BoardSubTurn {
 
+    /**
+     * Constructor
+     *
+     * @param guiSubTurnViewer (movement's GUISubTurnViewer).
+     */
     public MoveBoardSubTurn(GUISubTurnViewer guiSubTurnViewer)  {
         super(guiSubTurnViewer);
     }
 
+    /**
+     * Method to be set the cursor image when the cursor enters the board.
+     *
+     * @return (the movement <code>Cursor</code>).
+     */
     @Override
     public Cursor getOnEnterCursor(){
         Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -26,6 +39,12 @@ public class MoveBoardSubTurn extends BoardSubTurn {
         return toolkit.createCustomCursor(image, hotspot, "moveWorker");
     }
 
+    /**
+     * Method called when the mouse clicks on one cell of the board on which it the worker should move, and does the action to move it.
+     *
+     * @param x (the x position of the board (referring to the <code>ViewBoard</code> representation)).
+     * @param y (the y position of the board (referring to the <code>ViewBoard</code> representation)).
+     */
     @Override
     public void onCellSelected(int x, int y){
         super.onCellSelected(x, y);

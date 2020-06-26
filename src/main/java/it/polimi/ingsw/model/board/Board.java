@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * Class to abstractly model the Board
+ *
  * @author giorgio
  */
 public abstract class Board {
@@ -40,7 +41,7 @@ public abstract class Board {
     public abstract int getYDim();
 
     /**
-     * Method that returns the adjacents Cell to the one given.
+     * Method that returns the adjacent Cell to the one given.
      *
      * @param cell (Cell to check the adjacent)
      * @return (list of all the adjacent Cells)
@@ -58,7 +59,7 @@ public abstract class Board {
             throw new InvalidParameterException("getAdjacentCell has been called with a Cell out of Board");
         }*/
 
-        List<Cell> ret = new ArrayList<Cell>();
+        List<Cell> ret = new ArrayList<>();
         for(int i=-1; i<2; i++)
             for(int j=-1; j<2; j++){
                 if(i==j&& i==0) continue;
@@ -71,7 +72,11 @@ public abstract class Board {
         return ret;
     }
 
-
+    /**
+     * Method that removes all the workers relative to the given player from the Board.
+     *
+     * @param player (the Player which Workers have to be removed).
+     */
     public void removeWorkers(Player player){
         int xDim = getXDim();
         int yDim = getYDim();
@@ -90,21 +95,26 @@ public abstract class Board {
         }
     }
 
-    public void clearCells(){
+    /**
+     * method that clears the status of all the Cell of the Board.
+     * @see Cell
+     */
+    void clearCells(){
         int xDim = getXDim();
         int yDim = getYDim();
         for(int x=0; x<xDim; x++)
             for(int y=0; y<yDim; y++) {
                 try {
                     getCellAt(x, y).clearStatus();
-                } catch (OutOfBoardException e) {
-                    ; //DO NOTHING
+                } catch (OutOfBoardException ignore) {
                 }
             }
     }
 
 
-
+    /**
+     * method that removes all the Workers and the Placeables from the Board.
+     */
     public void clear(){
         int xDim = getXDim();
         int yDim = getYDim();
@@ -119,8 +129,7 @@ public abstract class Board {
                     while(cell.getHeigth()>0){
                         cell.removePlaceable();
                     }
-                } catch (OutOfBoardException e) {
-                    ;//DO NOTHING
+                } catch (OutOfBoardException ignore) {
                 }
             }
         }

@@ -6,8 +6,18 @@ import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.utilities.Imag
 import javax.swing.*;
 import java.awt.*;
 
-public class PlayerSubTurnPanel extends ImagePanel {
-    public PlayerSubTurnPanel(String fileName, String playerName)  {
+/**
+ * Class to represent the Panel at the side of the board showing the name of the player and the image relative to the sturn phase.
+ */
+class PlayerSubTurnPanel extends ImagePanel {
+
+    /**
+     * constructor.
+     *
+     * @param fileName  (the name of the file with the image to represent the status)
+     * @param playerName (the name of the player of the turn)
+     */
+    PlayerSubTurnPanel(String fileName, String playerName)  {
         super(0.9, 0.9, 0.05, 0.05, fileName);
 
         JLabel playerNameLabel = new JLabel(playerName);

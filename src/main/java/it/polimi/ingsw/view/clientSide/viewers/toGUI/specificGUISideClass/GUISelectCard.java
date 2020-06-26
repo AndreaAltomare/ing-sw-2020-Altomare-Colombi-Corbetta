@@ -15,15 +15,21 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
+/**
+ * Class that manage the GUI's card selection Frame.
+ */
 public class GUISelectCard {
 
+
+    /**
+     * parameter that entails the <code>ViewCard</code> that can be cchoosen.
+     */
     private static CardSelection cardSelection;
+
+
     private static BackgroundPanel godImage;
     private static ImagePanel powerImage;
-    private static JPanel background;
     private static JLabel godName;
     private static JLabel godEpitheth;
     private static JLabel godPower;
@@ -32,14 +38,31 @@ public class GUISelectCard {
     private static JFrame window;
 
 
+    /**
+     * Method that receives the name of a god and returns the filename of the godBigImage referred to the god.
+     *
+     * @param godName (name of the god which image is searched).
+     * @return        (the name of the godBigImage referred to the given god).
+     */
     private static String buildImageBigGodString(String godName){
         return "/img/godBigImage/big" + godName + ".png";
     }
 
+    /**
+     * Method that receives the name of a god and returns the filename of the godPowers referred to the god.
+     *
+     * @param godName (name of the god which image is searched).
+     * @return (the name of the godPowers referred to the given god).
+     */
     private static String buildImagePowerString(String godName){
         return "/img/godPowers/" + godName + ".png";
     }
 
+    /**
+     * Method to change the current god represented by the godBigImage.
+     *
+     * @param godName (name of the god to be represented by the godBigImage).
+     */
     private static void changeGodImage(String godName){
         try {
             godImage.setBackgroundImg(buildImageBigGodString(godName));
@@ -49,68 +72,59 @@ public class GUISelectCard {
         }
     }
 
+    /**
+     * Method to change the current god represented by the godPowers.
+     *
+     * @param godName (name of the god to be represented by the godPowers).
+     */
     private static void changePowerImage(String godName){
         try {
             powerImage.setBackgroundImg(buildImagePowerString(godName));
-            if(!powerImage.isSetImg()) powerImage.setBackgroundImg(buildImagePowerString("Default"));
+            if(powerImage.isNotSetImg()) powerImage.setBackgroundImg(buildImagePowerString("Default"));
         }catch (Exception e){
             powerImage.setBackgroundImg(buildImagePowerString("Default"));
         }
     }
 
+    /**
+     * method to call to make the Frame visible and so allow the layer to choose the cards.
+     * It make it possible to choose each card set into the cardSelection.
+     */
     private static void init(){
         godImage = new BackgroundPanel(buildImageBigGodString("Default"));
-        background = new ImagePanel(1, 1, 0, 0, "/img/background/background_select_card.png");
+        JPanel background = new ImagePanel(1, 1, 0, 0, "/img/background/background_select_card.png");
         godImage.add(background);
-
-
-
-
-
 
         JButton forwardButton = new JButton();
         JButton backButton = new JButton();
 
         JPanel forwardButtonPanel = new PanelImageButton(0.0833, 0.057, 0.9166, 0.4375, forwardButton, "/img/trappings/forward_button.png", "next");
-        forwardButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                setGod(cardSelection.next());
-            }
-        });
+        forwardButton.addActionListener(actionEvent -> setGod(cardSelection.next()));
         background.add(forwardButtonPanel);
 
         JPanel backButtonPanel = new PanelImageButton(0.0833, 0.057, 0, 0.4375, backButton, "/img/trappings/back_button.png", "next");
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                setGod(cardSelection.prev());
-            }
-        });
+        backButton.addActionListener(actionEvent -> setGod(cardSelection.prev()));
         background.add(backButtonPanel);
 
         JButton selButton = new JButton();
         selectButton = new PanelImageButton(1, 0.097, 0, 0.903, selButton, "/img/trappings/blueButton.png", "Seleziona");
-        selButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                ViewCard tmp = cardSelection.getCurrent();
-                if(cardSelection.isSelected(tmp)){
-                    cardSelection.remove(tmp);
-                }else{
-                    try {
-                        cardSelection.add(tmp);
-                    } catch (WrongParametersException | CannotSendEventException e) {
-                        if(View.debugging)
-                            e.printStackTrace();
-                        ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
-                    } catch (EndCardSelectionException e) {
-                        window.dispose();
-                        return;
-                    }
+        selButton.addActionListener(actionEvent -> {
+            ViewCard tmp = cardSelection.getCurrent();
+            if(cardSelection.isSelected(tmp)){
+                cardSelection.remove(tmp);
+            }else{
+                try {
+                    cardSelection.add(tmp);
+                } catch (WrongParametersException | CannotSendEventException e) {
+                    if(View.debugging)
+                        e.printStackTrace();
+                    ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
+                } catch (EndCardSelectionException e) {
+                    window.dispose();
+                    return;
                 }
-                setGod(tmp);
             }
+            setGod(tmp);
         });
         background.add(selectButton);
 
@@ -154,6 +168,11 @@ public class GUISelectCard {
 
     }
 
+    /**
+     * method to set the god to be represented now.
+     *
+     * @param god (<code>ViewCard</code> of the god to be represented).
+     */
     private static void setGod(ViewCard god){
         godName.setText(god.getName());
         godEpitheth.setText(god.getEpiteth());
@@ -169,6 +188,11 @@ public class GUISelectCard {
         changePowerImage(god.getName());
     }
 
+    /**
+     * Method to call to set the cardSelection, makes the JFrame visible and set it up to be ready.
+     *
+     * @param _cardSelection (<code>CardSelection</code> with all the <code>ViewCard</code> that can be choose by the player).
+     */
     public static void attivate(CardSelection _cardSelection) {
         cardSelection = _cardSelection;
 
