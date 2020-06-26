@@ -1,3 +1,4 @@
+/*
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.model.gameRoom.GameRoom;
@@ -12,34 +13,42 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+*/
 /**
  * Unit test for GameRoom class, aimed to verify it works properly
- */
+ *//*
+
 class GameRoomTest {
     private GameRoom gameRoom;
     private String playerName = "cpu1";
 
-    /**
+    */
+/**
      * Class test methods initialization
-     */
+     *//*
+
     @BeforeEach
     void setUp() {
         gameRoom = new GameRoom();
     }
 
-    /**
+    */
+/**
      * Executed after every test method
-     */
+     *//*
+
     @AfterEach
     void tearDown() {
         gameRoom = null;
     }
 
-    /**
+    */
+/**
      * Check if players are correctly added
      *
      * Black Box and White Box
-     */
+     *//*
+
     @Test
     void addPlayerTest() {
         boolean playerFound = false;
@@ -48,11 +57,13 @@ class GameRoomTest {
         assertTrue(playerFound);
     }
 
-    /**
+    */
+/**
      * Check if a player previously added is now removed correctly
      *
      * Black Box and White Box
-     */
+     *//*
+
     @Test
     void removePlayerTest() {
         boolean playerFound = false;
@@ -71,11 +82,13 @@ class GameRoomTest {
         assertFalse(playerFound);
     }
 
-    /**
+    */
+/**
      * Check if every player added can be found by using the Iterator returned by the tested method
      *
      * Black Box and White Box
-     */
+     *//*
+
     @Test
     void getPlayersTest() {
         boolean playerFound = false;
@@ -112,11 +125,13 @@ class GameRoomTest {
     void setupGameTest() {
     }
 
-    /**
+    */
+/**
      * Check if the chosen Challenger Player is set correctly
      *
      * Black Box and White Box
-     */
+     *//*
+
     @Test
     void chooseChallengerTest() {
         gameRoom.addPlayer(playerName);
@@ -125,11 +140,13 @@ class GameRoomTest {
         assertEquals(gameRoom.getChallenger().getNickname(), playerName);
     }
 
-    /**
+    */
+/**
      * Check if the chosen Starting Player is set correctly
      *
      * Black Box and White Box
-     */
+     *//*
+
     @Test
     void chooseStartingPlayerTest() {
         gameRoom.addPlayer(playerName);
@@ -138,11 +155,13 @@ class GameRoomTest {
         assertEquals(gameRoom.getStartingPlayer().getNickname(), playerName);
     }
 
-    /**
+    */
+/**
      * Check if, given an index, the method returns a certain Player
      *
      * Black Box and White Box
-     */
+     *//*
+
     @Test
     void getPlayerTest() {
         Integer index;
@@ -154,4 +173,4 @@ class GameRoomTest {
         index = 1;
         assertEquals(gameRoom.getPlayer(index).getNickname(),"cpu" + index.toString());
     }
-}
+}*/
