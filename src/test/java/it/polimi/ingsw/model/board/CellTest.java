@@ -619,27 +619,27 @@ class CellTest {
         cellWorker.placeOn( workerBlock );
         height = cellWorker.getHeigth();
         check = cellWorker.placeOn( worker );
-        assertTrue( !check );
-        assertTrue( cellWorker.getHeigth() == ( + 1) );
+        assertTrue( check );
+        assertTrue( cellWorker.getHeigth() == 2 );
         assertTrue( cellWorker.getPlaceableAt(0).equals( workerBlock ) );
         assertTrue( cellWorker.getPlaceableAt(1).equals( worker ) );
         assertTrue( cellWorker.getPlaceableAt(2) == null );
 
         // free cell, place a dome
-        height = cellWorker.getHeigth();
-        check = cellWorker.placeOn( dome4 );
+        height = cellDome.getHeigth();
+        check = cellDome.placeOn( dome4 );
         assertTrue( check );
-        assertTrue( cellWorker.getHeigth() == (height + 1) );
-        assertTrue( cellWorker.getPlaceableAt(0).equals( dome4 ) );
-        assertTrue( cellWorker.getPlaceableAt(1) == null );
+        assertTrue( cellDome.getHeigth() == (height + 1) );
+        assertTrue( cellDome.getPlaceableAt(0).equals( dome4 ) );
+        assertTrue( cellDome.getPlaceableAt(1) == null );
 
-        // free cell, place a dome
-        height = cellWorker.getHeigth();
-        check = cellWorker.placeOn( block );
-        assertTrue( check );
-        assertTrue( cellWorker.getHeigth() == height );
-        assertTrue( cellWorker.getPlaceableAt(0).equals( dome4 ) );
-        assertTrue( cellWorker.getPlaceableAt(1) == null );
+        // cell with dome, not place a block
+        height = cellDome.getHeigth();
+        check = cellDome.placeOn( block );
+        assertTrue( !check );
+        assertTrue( cellDome.getHeigth() == height );
+        assertTrue( cellDome.getPlaceableAt(0).equals( dome4 ) );
+        assertTrue( cellDome.getPlaceableAt(1) == null );
 
     }
 
@@ -706,13 +706,13 @@ class CellTest {
         blockCell.placeOn(new Block());
         blockCell.placeOn(new Block());
         height = blockCell.getHeigth();
-        check = cell.buildBlock();
+        check = blockCell.buildBlock();
         assertTrue( !check );
-        assertTrue( cell.getHeigth() == height );
-        assertTrue( cell.getPlaceableAt(0).isBlock() );
-        assertTrue( cell.getPlaceableAt(1).isBlock() );
-        assertTrue( cell.getPlaceableAt(2).isBlock() );
-        assertTrue( cell.getPlaceableAt(3) == null );
+        assertTrue( blockCell.getHeigth() == height );
+        assertTrue( blockCell.getPlaceableAt(0).isBlock() );
+        assertTrue( blockCell.getPlaceableAt(1).isBlock() );
+        assertTrue( blockCell.getPlaceableAt(2).isBlock() );
+        assertTrue( blockCell.getPlaceableAt(3) == null );
 
 
     }

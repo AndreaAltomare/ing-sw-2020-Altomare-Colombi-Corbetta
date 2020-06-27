@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.model.player;
 
 import it.polimi.ingsw.model.board.Board;
 import it.polimi.ingsw.model.board.Cell;
@@ -21,11 +21,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-//TODO: Notes
-//      > Maybe add the test for forcedOpponentMove()
-//      > See switchTurn() (black and white) and remake white
-//      > use start turn to check checkForLostByMovement()
-//      > wait Andrea to complite whiteTest
 /**
  * Unit test for Player class, aimed to verify it works properly
  *
@@ -185,6 +180,15 @@ class PlayerTest {
             assertTrue(!checkTurnOver);
             assertTrue(!checkTurnSwitch);
 
+            // clear error
+            checkWin = false;
+            checkLose = false;
+            checkRunOut = false;
+            checkBuildBefore = false;
+            checkWrongWorker = false;
+            checkTurnOver = false;
+            checkTurnSwitch = false;
+
             //check board
             assertTrue(cornerCell.getHeigth() == 1 );
             assertTrue(nearCornerCell1.getHeigth() == 0 );
@@ -252,6 +256,15 @@ class PlayerTest {
             assertTrue(!checkWrongWorker);
             assertTrue(!checkTurnOver);
             assertTrue(!checkTurnSwitch);
+
+            // clear error
+            checkWin = false;
+            checkLose = false;
+            checkRunOut = false;
+            checkBuildBefore = false;
+            checkWrongWorker = false;
+            checkTurnOver = false;
+            checkTurnSwitch = false;
 
             //check board
             assertTrue(cornerCell.getHeigth() == 1 );
@@ -323,6 +336,15 @@ class PlayerTest {
             assertTrue(!checkTurnOver);
             assertTrue(!checkTurnSwitch);
 
+            // clear error
+            checkWin = false;
+            checkLose = false;
+            checkRunOut = false;
+            checkBuildBefore = false;
+            checkWrongWorker = false;
+            checkTurnOver = false;
+            checkTurnSwitch = false;
+
             //check board
             assertTrue(cornerCell.getHeigth() == 1 );
             assertTrue(nearCornerCell1.getHeigth() == 2 );
@@ -391,6 +413,15 @@ class PlayerTest {
             assertTrue(!checkWrongWorker);
             assertTrue(!checkTurnOver);
             assertTrue(checkTurnSwitch);
+
+            // clear error
+            checkWin = false;
+            checkLose = false;
+            checkRunOut = false;
+            checkBuildBefore = false;
+            checkWrongWorker = false;
+            checkTurnOver = false;
+            checkTurnSwitch = false;
 
             //check board
             assertTrue(cornerCell.getHeigth() == 0 );
@@ -467,6 +498,15 @@ class PlayerTest {
             assertTrue(!checkTurnOver);
             assertTrue(!checkTurnSwitch);
 
+            // clear error
+            checkWin = false;
+            checkLose = false;
+            checkRunOut = false;
+            checkBuildBefore = false;
+            checkWrongWorker = false;
+            checkTurnOver = false;
+            checkTurnSwitch = false;
+
             //check board
             assertTrue(cornerCell.getHeigth() == 2 );
             assertTrue(nearCornerCell1.getHeigth() == 4 );
@@ -488,10 +528,10 @@ class PlayerTest {
             // check movement and construction parameter
             assertTrue(player.isPlaying());
             assertTrue(player.getTurnType() == StateType.MOVEMENT);
-            assertTrue(player.getCard().hasExecutedMovement());
+            assertTrue(!player.getCard().hasExecutedMovement());
             assertTrue(!player.getCard().hasExecutedConstruction());
             assertTrue(!player.getCard().isTurnCompleted());
-            assertTrue(player.getCard().getMyMove().getMovesLeft() == 0 );
+            assertTrue(player.getCard().getMyMove().getMovesLeft() == 1 );
             assertTrue(player.getCard().getMyConstruction().getConstructionLeft() == 1 );
 
 
@@ -506,7 +546,7 @@ class PlayerTest {
         player.setPlaying(true);
         player.setTurn(StateType.MOVEMENT);
 
-        /* LoseException when worker can't move */
+        /* no LoseException with executeMove when worker can't move but return false */
         worker1.setChosen(ChooseType.CHOSEN);
         // cornerCell:   W      nearCornerCell1: BBB     nearCornerCell2: D     nearCornerCell3: D
         worker1.place(cornerCell);
@@ -520,7 +560,7 @@ class PlayerTest {
 
         try {
             checkExecute = player.executeMove(move, worker1);
-            assertTrue(!checkExecute);      // ignored
+            assertTrue(!checkExecute);
         } catch (WinException e) {
             checkWin = true;
         } catch (LoseException e) {
@@ -539,12 +579,21 @@ class PlayerTest {
 
             // check error
             assertTrue(!checkWin);
-            assertTrue(checkLose);
+            assertTrue(!checkLose); // Lose Exception for impossibility to move is (and must) checked before execute move
             assertTrue(!checkRunOut);
             assertTrue(!checkBuildBefore);
             assertTrue(!checkWrongWorker);
             assertTrue(!checkTurnOver);
             assertTrue(!checkTurnSwitch);
+
+            // clear error
+            checkWin = false;
+            checkLose = false;
+            checkRunOut = false;
+            checkBuildBefore = false;
+            checkWrongWorker = false;
+            checkTurnOver = false;
+            checkTurnSwitch = false;
 
             //check board
             assertTrue(cornerCell.getHeigth() == 1 );
@@ -619,6 +668,15 @@ class PlayerTest {
             assertTrue(!checkTurnOver);
             assertTrue(!checkTurnSwitch);
 
+            // clear error
+            checkWin = false;
+            checkLose = false;
+            checkRunOut = false;
+            checkBuildBefore = false;
+            checkWrongWorker = false;
+            checkTurnOver = false;
+            checkTurnSwitch = false;
+
             //check board
             assertTrue(cornerCell.getHeigth() == 1 );
             assertTrue(nearCornerCell1.getHeigth() == 0 );
@@ -652,6 +710,7 @@ class PlayerTest {
 
         // set player turn
         player.setPlaying(true);
+        player.getCard().setMovementExecuted(true);
         player.setTurn(StateType.CONSTRUCTION);
 
         /* TurnOverException when worker finishes buildLeft after build */
@@ -689,6 +748,15 @@ class PlayerTest {
             assertTrue(checkTurnOver);
             assertTrue(!checkTurnSwitch);
 
+            // clear error
+            checkWin = false;
+            checkLose = false;
+            checkRunOut = false;
+            checkBuildBefore = false;
+            checkWrongWorker = false;
+            checkTurnOver = false;
+            checkTurnSwitch = false;
+
             //check board
             assertTrue(cornerCell.getHeigth() == 1 );
             assertTrue(nearCornerCell1.getHeigth() == 1 );
@@ -706,9 +774,9 @@ class PlayerTest {
             // check movement and construction parameter
             assertTrue(player.isPlaying());
             assertTrue(player.getTurnType() == StateType.CONSTRUCTION);
-            assertTrue(!player.getCard().hasExecutedMovement());
+            assertTrue(player.getCard().hasExecutedMovement());
             assertTrue(player.getCard().hasExecutedConstruction());
-            assertTrue(!player.getCard().isTurnCompleted());
+            assertTrue(player.getCard().isTurnCompleted());
             assertTrue(player.getCard().getMyMove().getMovesLeft() == 1 );
             assertTrue(player.getCard().getMyConstruction().getConstructionLeft() == 0 );
 
@@ -761,6 +829,15 @@ class PlayerTest {
             assertTrue(!checkWrongWorker);
             assertTrue(!checkTurnOver);
             assertTrue(!checkTurnSwitch);
+
+            // clear error
+            checkWin = false;
+            checkLose = false;
+            checkRunOut = false;
+            checkBuildBefore = false;
+            checkWrongWorker = false;
+            checkTurnOver = false;
+            checkTurnSwitch = false;
 
             //check board
             assertTrue(cornerCell.getHeigth() == 0 );
@@ -856,9 +933,8 @@ class PlayerTest {
         assertTrue( !checkLose );
 
 
-        // todo use this class to check checkForLostByMovement()
-
     }
+
 
     /**
      * Check if endTurn() can correctly set the playing status
@@ -1095,7 +1171,7 @@ class PlayerTest {
             checkLose = false;
             checkTurnOver = false;
         }
-        assertTrue( player.getTurnType() == StateType.NONE );
+        assertTrue( player.getTurnType() != StateType.NONE );
 
         // reset card status
         player.getCard().resetForStart();
@@ -1118,7 +1194,6 @@ class PlayerTest {
             checkLose = false;
             checkTurnOver = false;
         }
-        assertTrue( player.getTurnType() == StateType.NONE );
 
         // reset card status
         player.getCard().resetForStart();
@@ -1232,7 +1307,7 @@ class PlayerTest {
             checkTurnOver = true;
         } finally {
             assertTrue(!checkLose);
-            assertTrue(checkTurnOver);
+            assertTrue(!checkTurnOver);
             checkLose = false;
             checkTurnOver = false;
         }
@@ -1254,7 +1329,7 @@ class PlayerTest {
             checkTurnOver = true;
         } finally {
             assertTrue(!checkLose);
-            assertTrue(checkTurnOver);
+            assertTrue(!checkTurnOver);
             checkLose = false;
             checkTurnOver = false;
         }
@@ -1297,6 +1372,8 @@ class PlayerTest {
 
         //*** default's Card ***//
         player.chooseCard("default");
+        worker1.setChosen(ChooseType.CHOSEN);
+        player.registerWorker(worker1);
 
         // cornerCell: W        nearCornerCell1: B    nearCornerCell2:        nearCornerCell3:
         worker1.place(cornerCell);
@@ -1447,7 +1524,6 @@ class PlayerTest {
             checkLose = false;
             checkTurnOver = false;
         }
-        assertTrue( player.getTurnType() == StateType.NONE );
 
         // reset card status
         player.getCard().resetForStart();
@@ -1466,7 +1542,7 @@ class PlayerTest {
             checkTurnOver = true;
         } finally {
             assertTrue(!checkLose);
-            assertTrue(checkTurnOver);
+            assertTrue(!checkTurnOver);
             checkLose = false;
             checkTurnOver = false;
         }
@@ -1624,12 +1700,11 @@ class PlayerTest {
         worker2.place(edgeCell);
         try {
             checkChangeStatus = player.switchState( player.getConstructionManager() );
-            assertTrue( checkChangeStatus );
-            assertTrue( player.getTurnType() == StateType.CONSTRUCTION );
+            assertTrue( !checkChangeStatus ); // ignored
         } catch (LoseException e) {
             checkLose = true;
         } finally {
-            assertTrue(!checkLose);
+            assertTrue(checkLose);
             checkLose = false;
         }
 
@@ -1749,7 +1824,7 @@ class PlayerTest {
 
         //>> to constructionTurn | already move | selected worker | can't build
         // cornerCell: W        nearCornerCell1: D      nearCornerCell2: D       nearCornerCell3: D
-        // edgeCell: W          nearEdgeCell1: B         nearEdgeCell2: BB         nearEdgeCell3: BBB
+        // edgeCell: W          nearEdgeCell1: B         nearEdgeCell2: B        nearEdgeCell3: BBB
         worker1.setChosen(ChooseType.CHOSEN);
         worker2.setChosen(ChooseType.NOT_CHOSEN);
         worker1.place(cornerCell);
@@ -1775,9 +1850,9 @@ class PlayerTest {
         // clear board
         board.clear();
 
-        //>> to constructionTurn | already move | not selected worker | can't build
+        //>> to constructionTurn | already move | selected worker | can build
         // cornerCell: W        nearCornerCell1: D      nearCornerCell2: D       nearCornerCell3: D
-        // edgeCell: W          nearEdgeCell1: B         nearEdgeCell2: BB         nearEdgeCell3: BBB
+        // edgeCell: W          nearEdgeCell1: B         nearEdgeCell2: B        nearEdgeCell3: BBB
         worker1.setChosen(ChooseType.NOT_CHOSEN);
         worker2.setChosen(ChooseType.CHOSEN);
         worker1.place(cornerCell);
@@ -1792,7 +1867,7 @@ class PlayerTest {
         worker2.place(edgeCell);
         try {
             checkChangeStatus = player.switchState( player.getConstructionManager() );
-            assertTrue( !checkChangeStatus );
+            assertTrue( checkChangeStatus );
             assertTrue( player.getTurnType() == StateType.CONSTRUCTION );
         } catch (LoseException e) {
             checkLose = true;
@@ -1808,7 +1883,7 @@ class PlayerTest {
         player.getCard().setConstructionExecuted(true);
         player.getCard().getMyConstruction().decreaseConstructionLeft();
 
-        //>> to constructionTurn | already move and build | selected worker | can build
+        //>> to constructionTurn | already move and build | selected worker | can't build
         // cornerCell: W        nearCornerCell1: B      nearCornerCell2:         nearCornerCell3:
         // edgeCell: W          nearEdgeCell1:          nearEdgeCell2:           nearEdgeCell3:
         worker1.setChosen(ChooseType.CHOSEN);
@@ -1818,12 +1893,11 @@ class PlayerTest {
         worker2.place(edgeCell);
         try {
             checkChangeStatus = player.switchState( player.getConstructionManager() );
-            assertTrue( checkChangeStatus );
-            assertTrue( player.getTurnType() == StateType.CONSTRUCTION );
+            assertTrue( !checkChangeStatus );
         } catch (LoseException e) {
             checkLose = true;
         } finally {
-            assertTrue(!checkLose);
+            assertTrue(checkLose);
             checkLose = false;
         }
 
@@ -1854,11 +1928,11 @@ class PlayerTest {
         worker2.place(edgeCell);
         try {
             checkChangeStatus = player.switchState( player.getMovementManager() );
-            assertTrue( !checkChangeStatus );   // ignored
+            assertTrue( checkChangeStatus );   // player doesn't move so he/she changes or stays on MovementTurn
         } catch (LoseException e) {
             checkLose = true;
         } finally {
-            assertTrue(checkLose);
+            assertTrue(!checkLose);
             checkLose = false;
         }
 
@@ -2000,12 +2074,11 @@ class PlayerTest {
         worker2.place(edgeCell);
         try {
             checkChangeStatus = player.switchState( player.getMovementManager() );
-            assertTrue( checkChangeStatus );
-            assertTrue( player.getTurnType() == StateType.MOVEMENT );
+            assertTrue( !checkChangeStatus );       // ignored
         } catch (LoseException e) {
             checkLose = true;
         } finally {
-            assertTrue(!checkLose);
+            assertTrue(checkLose); // if a player build and move, he/she can return to movementTurn
             checkLose = false;
         }
 
@@ -2015,7 +2088,6 @@ class PlayerTest {
     }
 
 
-    // todo: restart from switchStateWhite(), see again switchTestBlack() and then go up
     /**
      * Check if switchState( TurnManager ) can correctly evaluate the lose condition
      * of movement (checkForLostByMovement()/checkForWorkerLostByMovement())
@@ -2025,11 +2097,12 @@ class PlayerTest {
      *                      getMovementManager()                of  Player
      *                      getConstructionManager()            of  Player
      *                      getTurnType()                       of  Player
-     *                      getCard()                           of  Card
+     *                      getCard()                           of  Player
      *                      setExecutedMovement( boolean )      of  Card
      *                      setExecutedConstruction( boolean )  of  Card
      *                      getMyMove()                         of  Card
      *                      getMyConstruction()                 of  Card
+     *                      resetForStart()                     of  Card
      *                      clear()                             of  Board
      *                      decreaseMovesLeft()                 of  MyMove
      *                      setStartingPosition( cell )         of  MyMove
@@ -2044,7 +2117,8 @@ class PlayerTest {
      * White Box
      */
     @Test
-    void switchState() {
+    void switchStateWhite() {
+        boolean checkChangeStatus = false;
         boolean checkLose = false;
 
         player.chooseCard("default" );
@@ -2053,87 +2127,253 @@ class PlayerTest {
 
 
 
-        //* checkForLostByMovement *//
+        //*** checkForLostByMovement ***//
 
-        /* no LoseException when a Worker can move*/
-        // cornerCell: W        nearCornerCell1: D      nearCornerCell2: BB     nearCornerCell3: BBB
-        // edgeCell: W          nearEdgeCell1:          nearEdgeCell2:          nearEdgeCell3:
+
+        //>> to MovementTurn | not already move or build | all workers | can't move
+
+        // cornerCell: W        nearCornerCell1: D      nearCornerCell2: D       nearCornerCell3: D
+        // edgeCell: W          nearEdgeCell1: BB       nearEdgeCell2: BB         nearEdgeCell3: BBB
         worker1.place(cornerCell);
         nearCornerCell1.buildDome();
-        nearCornerCell2.buildBlock();
-        nearCornerCell2.buildBlock();
-        nearCornerCell3.buildBlock();
-        nearCornerCell3.buildBlock();
-        nearCornerCell3.buildBlock();
-        worker2.place(edgeCell);
-        try {
-            player.switchState( player.getMovementManager() );
-        } catch (LoseException e) {
-            checkLose = true;
-        }
-        assertTrue( !checkLose );
-
-
-        /* LoseException when all Workers can't move*/
-        // cornerCell: W        nearCornerCell1: D      nearCornerCell2: BB     nearCornerCell3: BBB
-        // edgeCell: W          nearEdgeCell1: D        nearEdgeCell2: BB       nearEdgeCell3: BBB
-        nearEdgeCell1.buildDome();
-        nearEdgeCell2.buildBlock();
-        nearEdgeCell2.buildBlock();
-        nearEdgeCell3.buildBlock();
-        nearEdgeCell3.buildBlock();
-        nearEdgeCell3.buildBlock();
-        try {
-            player.switchState( player.getMovementManager() );
-        } catch (LoseException e) {
-            checkLose = true;
-        }
-        assertTrue( checkLose );
-
-        // reset checkLose
-        checkLose = false;
-
-
-
-        //* checkForLostByConstruction *//
-
-        /* no LoseException when a Worker can build a Block build but not move*/
-        // cornerCell: W        nearCornerCell1: D      nearCornerCell2: BBBD   nearCornerCell3: BBBD
-        // edgeCell: W          nearEdgeCell1: D        nearEdgeCell2: BB       nearEdgeCell3: BBBD
-        nearCornerCell2.buildBlock();
         nearCornerCell2.buildDome();
         nearCornerCell3.buildDome();
-        nearEdgeCell3.buildDome();
-        try {
-            player.switchState( player.getConstructionManager() );
-        } catch (LoseException e) {
-            checkLose = true;
-        }
-        assertTrue( !checkLose );
-
-
-        /* no LoseException when a Worker can build a Dome build but not move*/
-        // cornerCell: W        nearCornerCell1: D      nearCornerCell2: BBBD   nearCornerCell3: BBBD
-        // edgeCell: W          nearEdgeCell1: D        nearEdgeCell2: BBB      nearEdgeCell3: BBBD
+        nearEdgeCell1.buildBlock();
+        nearEdgeCell1.buildBlock();
         nearEdgeCell2.buildBlock();
+        nearEdgeCell2.buildBlock();
+        nearEdgeCell3.buildBlock();
+        nearEdgeCell3.buildBlock();
+        nearEdgeCell3.buildBlock();
+        worker2.place(edgeCell);
+
+        // chosen worker
+        worker1.setChosen(ChooseType.CAN_BE_CHOSEN);
+        worker2.setChosen(ChooseType.CAN_BE_CHOSEN);
+
         try {
-            player.switchState( player.getConstructionManager() );
+            checkChangeStatus = player.switchState( player.getMovementManager() );
+            assertTrue( !checkChangeStatus ); // ignored
         } catch (LoseException e) {
             checkLose = true;
+        } finally {
+            assertTrue(checkLose);
+            checkLose = false;
         }
-        assertTrue( !checkLose );
+
+        // clear board and card
+        board.clear();
+        player.getCard().resetForStart();
 
 
-        /* LoseException when all Worker can't build */
-        // cornerCell: W        nearCornerCell1: D      nearCornerCell2: BBBD   nearCornerCell3: BBBD
-        // edgeCell: W          nearEdgeCell1: D        nearEdgeCell2: BBBD     nearEdgeCell3: BBBD
+        //>> to MovementTurn | already build | only select workers | can move
+
+        // cornerCell: W        nearCornerCell1:         nearCornerCell2:          nearCornerCell3:
+        // edgeCell: W          nearEdgeCell1: D         nearEdgeCell2: D          nearEdgeCell3: D
+        worker1.place(cornerCell);
+        worker2.place(edgeCell);
+        nearEdgeCell1.buildDome();
         nearEdgeCell2.buildDome();
+        nearEdgeCell3.buildDome();
+
+        // already build
+        player.getCard().setConstructionExecuted(true);
+
+        // chosen worker
+        worker1.setChosen(ChooseType.CHOSEN);
+        worker2.setChosen(ChooseType.NOT_CHOSEN);
+
         try {
-            player.switchState( player.getConstructionManager() );
+            checkChangeStatus = player.switchState( player.getMovementManager() );
+            assertTrue( checkChangeStatus );
+            assertTrue( player.getTurnType() == StateType.MOVEMENT);
         } catch (LoseException e) {
             checkLose = true;
+        } finally {
+            assertTrue(!checkLose);
+            checkLose = false;
         }
-        assertTrue( checkLose );
+
+
+        // clear board and card
+        board.clear();
+        player.getCard().resetForStart();
+
+
+        //>> to MovementTurn | already move and build | only select workers | can't move
+
+        // cornerCell: W        nearCornerCell1:         nearCornerCell2:          nearCornerCell3:
+        // edgeCell: W          nearEdgeCell1: D         nearEdgeCell2: D          nearEdgeCell3: D
+        worker1.place(cornerCell);
+        worker2.place(edgeCell);
+        nearEdgeCell1.buildDome();
+        nearEdgeCell2.buildDome();
+        nearEdgeCell3.buildDome();
+
+        // already move and build
+        player.getCard().setConstructionExecuted(true);
+        player.getCard().setConstructionExecuted(true);
+
+        // chosen worker
+        worker1.setChosen(ChooseType.NOT_CHOSEN);
+        worker2.setChosen(ChooseType.CHOSEN);
+
+        try {
+            checkChangeStatus = player.switchState( player.getMovementManager() );
+            assertTrue( !checkChangeStatus );       // ignored
+        } catch (LoseException e) {
+            checkLose = true;
+        } finally {
+            assertTrue(checkLose);
+            checkLose = false;
+        }
+
+
+        // clear board and card
+        board.clear();
+        player.getCard().resetForStart();
+
+        //>> to MovementTurn | already move | only select workers | can't move
+
+        // cornerCell: W        nearCornerCell1:         nearCornerCell2:          nearCornerCell3:
+        // edgeCell: W          nearEdgeCell1: D         nearEdgeCell2: D          nearEdgeCell3: D
+        worker1.place(cornerCell);
+        worker2.place(edgeCell);
+        nearEdgeCell1.buildDome();
+        nearEdgeCell2.buildDome();
+        nearEdgeCell3.buildDome();
+
+        // already move
+        player.getCard().setMovementExecuted(true);
+
+        // chosen worker
+        worker1.setChosen(ChooseType.NOT_CHOSEN);
+        worker2.setChosen(ChooseType.CHOSEN);
+
+        try {
+            checkChangeStatus = player.switchState( player.getMovementManager() );
+            assertTrue( checkChangeStatus );
+            assertTrue( player.getTurnType() == StateType.MOVEMENT);
+        } catch (LoseException e) {
+            checkLose = true;
+        } finally {
+            assertTrue(!checkLose);
+            checkLose = false;
+        }
+
+        // clear board and card
+        board.clear();
+        player.getCard().resetForStart();
+
+
+
+        //*** checkForLostByConstruction ***//
+
+        //>> to ConstructionTurn | not move | all workers | can't build
+
+        // cornerCell: W        nearCornerCell1: D       nearCornerCell2: D        nearCornerCell3: BBBD
+        // edgeCell: W          nearEdgeCell1: D         nearEdgeCell2: D          nearEdgeCell3: D
+        worker1.place(cornerCell);
+        nearCornerCell1.buildDome();
+        nearCornerCell2.buildDome();
+        nearCornerCell3.buildBlock();
+        nearCornerCell3.buildBlock();
+        nearCornerCell3.buildBlock();
+        nearCornerCell3.buildDome();
+        worker2.place(edgeCell);
+        nearEdgeCell1.buildDome();
+        nearEdgeCell2.buildDome();
+        nearEdgeCell3.buildDome();
+
+        // not move
+
+        // chosen worker
+        worker1.setChosen(ChooseType.CAN_BE_CHOSEN);
+        worker2.setChosen(ChooseType.CAN_BE_CHOSEN);
+
+        try {
+            checkChangeStatus = player.switchState( player.getConstructionManager() );
+            assertTrue( !checkChangeStatus );       // ignored
+        } catch (LoseException e) {
+            checkLose = true;
+        } finally {
+            assertTrue(checkLose);
+            checkLose = false;
+        }
+
+
+        // clear board and card
+        board.clear();
+        player.getCard().resetForStart();
+
+
+        //>> to ConstructionTurn | already move | selected workers | can build
+
+        // cornerCell: W        nearCornerCell1:         nearCornerCell2:          nearCornerCell3:
+        // edgeCell: W          nearEdgeCell1: D         nearEdgeCell2: D          nearEdgeCell3: D
+        worker1.place(cornerCell);
+        worker2.place(edgeCell);
+        nearEdgeCell1.buildDome();
+        nearEdgeCell2.buildDome();
+        nearEdgeCell3.buildDome();
+
+        // already move
+        player.getCard().setMovementExecuted(true);
+
+        // chosen worker
+        worker1.setChosen(ChooseType.CHOSEN);
+        worker2.setChosen(ChooseType.NOT_CHOSEN);
+
+        try {
+            checkChangeStatus = player.switchState( player.getConstructionManager() );
+            assertTrue( checkChangeStatus );
+            assertTrue( player.getTurnType() == StateType.CONSTRUCTION);
+        } catch (LoseException e) {
+            checkLose = true;
+        } finally {
+            assertTrue(!checkLose);
+            checkLose = false;
+        }
+
+        // clear board and card
+        board.clear();
+        player.getCard().resetForStart();
+
+
+        //>> to ConstructionTurn | already move | select workers | can't build
+
+        // cornerCell: W        nearCornerCell1: D       nearCornerCell2: D        nearCornerCell3: BBBD
+        // edgeCell: W          nearEdgeCell1:          nearEdgeCell2:           nearEdgeCell3:
+        worker1.place(cornerCell);
+        nearCornerCell1.buildDome();
+        nearCornerCell2.buildDome();
+        nearCornerCell3.buildBlock();
+        nearCornerCell3.buildBlock();
+        nearCornerCell3.buildBlock();
+        nearCornerCell3.buildDome();
+        worker2.place(edgeCell);
+
+        // already move
+        player.getCard().setMovementExecuted(true);
+
+        // chosen worker
+        worker1.setChosen(ChooseType.CHOSEN);
+        worker2.setChosen(ChooseType.NOT_CHOSEN);
+
+        try {
+            checkChangeStatus = player.switchState( player.getConstructionManager() );
+            assertTrue( !checkChangeStatus );       // ignored
+        } catch (LoseException e) {
+            checkLose = true;
+        } finally {
+            assertTrue(checkLose);
+            checkLose = false;
+        }
+
+        // clear board and card
+        board.clear();
+        player.getCard().resetForStart();
+
 
     }
 
@@ -2385,7 +2625,7 @@ class PlayerTest {
         player.registerWorker(worker2);
 
 
-        /* Player can choose a Worker if it can't move */
+        /* Player can't choose a Worker if it can't move */
         worker1.place(cornerCell);
         otherWorker.place(nearCornerCell1);
         nearCornerCell2.buildDome();
@@ -2507,7 +2747,7 @@ class PlayerTest {
         assertTrue( check );
         assertTrue( worker1.position().equals(cornerCell) );
         assertTrue( worker1.getChosenStatus() == ChooseType.CHOSEN );
-        assertTrue( worker2.getChosenStatus() == ChooseType.NOT_CHOSEN );
+        assertTrue( worker2.getChosenStatus() != ChooseType.NOT_CHOSEN );
 
         // reset board and Workers' status
         while ( cornerCell.getTop() != null) {
@@ -2593,7 +2833,6 @@ class PlayerTest {
      */
     @Test
     void setTurnAndGetTurnType() {
-        StateType oldStateType;
 
         // after initialization
         assertTrue(player.getTurnType() == StateType.NONE );
@@ -2609,10 +2848,9 @@ class PlayerTest {
         player.setTurn(StateType.CONSTRUCTION);
         assertTrue( player.getTurnType() == StateType.CONSTRUCTION );
 
-        // ANY ( player's TurnType doesn't change )
-        oldStateType = player.getTurnType();
+        // ANY (default is NONE)
         player.setTurn(StateType.ANY);
-        assertTrue( player.getTurnType() == oldStateType );
+        assertTrue( player.getTurnType() == StateType.NONE );
 
         // NONE
         player.setTurn(StateType.NONE);

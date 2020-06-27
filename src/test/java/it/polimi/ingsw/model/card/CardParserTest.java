@@ -475,7 +475,7 @@ class CardParserTest {
                 check = moveExecutor.executeMove(move, worker, mutantCard);
 
                 assertTrue( !check );
-                assertTrue( cell.getHeigth() == 1 );
+                assertTrue( cell.getHeigth() == 1 ); //todo: the problem is that place remove the worker if doesn't place it
                 assertTrue( cell.getPlaceableAt(0).equals(worker) );
                 assertTrue( cell.getPlaceableAt(1) == null );
                 assertTrue( nearCell.getHeigth() == 0 );
@@ -1344,7 +1344,7 @@ class CardParserTest {
             move = new Move(cell, nearCell);
             worker.place(nearCell);
 
-            assertFalse(winCheckerList.get(1).checkWin(move, worker));
+            assertTrue(winCheckerList.get(1).checkWin(move, worker));
 
             //clear board
             board.clear();

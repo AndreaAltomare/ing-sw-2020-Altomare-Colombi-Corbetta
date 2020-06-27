@@ -86,7 +86,7 @@ class WorkerTest {
         check = worker.place( domeCell );
         assertTrue( !check );
         assertTrue( worker.position().equals(cell) );
-        assertTrue( cell.getHeigth() == 1 );
+        assertTrue( cell.getHeigth() == 1 );  //todo: stesso problema di place che rimuove il worker anche se non lo posiziona
         assertTrue( cell.getPlaceableAt(0).equals(worker) );
         assertTrue( cell.repOk() );
         assertTrue( domeCell.getHeigth() == 1 );

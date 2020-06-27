@@ -500,7 +500,7 @@ class IslandBoardTest {
             assertTrue( workerPLayerCell2.getPlaceableAt(0) == null );
             // check workerOpponentCell1
             assertTrue( workerOpponentCell1.getHeigth() == 2);
-            assertTrue( workerOpponentCell1.getPlaceableAt(1).isBlock() );
+            assertTrue( workerOpponentCell1.getPlaceableAt(0).isBlock() );
             assertTrue( workerOpponentCell1.getPlaceableAt(1).equals( workerOpponent1 ) );
             assertTrue( workerOpponentCell1.getPlaceableAt(2) == null );
             // check workerOpponentCell2
