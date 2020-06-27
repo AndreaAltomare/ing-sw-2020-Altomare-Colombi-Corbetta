@@ -249,21 +249,21 @@ public class ViewPlayer extends ViewObject {
     public String toWTerminal(){ return this.getName(); }
 
     /**
-     * Method that will return Player's name with his color, if it has a color
+     * Method that will return Player's name with his color ( == his workers's color ), if there is a color
      * that will represent the ViewPlayer on the CLI.
      *
-     * @return colored name ( default color if there is a color)
+     * @return colored name ( nothing color if there isn't a color)
      */
     @Override
     public String toCLI(){
         String playerString = this.getName();
-        String playerColor;
+        String playerColor = ""; // nothing color
         ViewWorker[] workerArray;
 
         try {
             workerArray = this.getWorkers();
-            playerColor = CLIViewer.getWorkerCLIColor(workerArray[0].getColor());
-        } catch (NotFoundException e) {
+            playerColor = workerArray[0].getWorkerCLIColor();
+        } catch (NotFoundException | NullPointerException e) {
             playerColor = "";
         }
 

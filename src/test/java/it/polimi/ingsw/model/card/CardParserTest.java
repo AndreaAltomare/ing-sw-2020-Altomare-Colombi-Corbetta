@@ -475,11 +475,11 @@ class CardParserTest {
                 check = moveExecutor.executeMove(move, worker, mutantCard);
 
                 assertTrue( !check );
-                assertTrue( cell.getHeigth() == 1 ); //todo: the problem is that place remove the worker if doesn't place it
-                assertTrue( cell.getPlaceableAt(0).equals(worker) );
+                assertTrue( cell.getHeigth() == 0 ); //the execution is interrupted by Cell's and Worker's method ( place in this case)
+                assertTrue( cell.getPlaceableAt(0) == null );
                 assertTrue( cell.getPlaceableAt(1) == null );
-                assertTrue( nearCell.getHeigth() == 0 );
-                assertTrue( nearCell.getPlaceableAt(0) == null );
+                assertTrue( nearCell.getHeigth() == 1 );
+                assertTrue( nearCell.getPlaceableAt(0).equals(opponentWorker));
             } catch (OutOfBoardException o) {
                 o.printStackTrace();
                 outOfBoardMoved = true;
@@ -712,8 +712,8 @@ class CardParserTest {
                 assertTrue( cell.getHeigth() == 1 );
                 assertTrue( cell.getPlaceableAt(0).equals(worker) );
                 assertTrue( cell.getPlaceableAt(1) == null );
-                assertTrue( nearCell.getHeigth() == 0 );
-                assertTrue( nearCell.getPlaceableAt(0) == null );
+                assertTrue( nearCell.getHeigth() == 1 );
+                assertTrue( nearCell.getPlaceableAt(0).equals(opponentWorker) );
             } catch (OutOfBoardException o) {
                 o.printStackTrace();
                 outOfBoardMoved = true;

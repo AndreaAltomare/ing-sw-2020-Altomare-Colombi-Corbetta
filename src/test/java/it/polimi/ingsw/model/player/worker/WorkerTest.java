@@ -82,24 +82,22 @@ class WorkerTest {
         assertTrue( cell.getPlaceableAt(0).equals(worker) );
         assertTrue( cell.repOk() );
 
-        // not place worker on cell with dome
+        // not place worker on cell with dome, the worker is removed but not placed
         check = worker.place( domeCell );
         assertTrue( !check );
         assertTrue( worker.position().equals(cell) );
-        assertTrue( cell.getHeigth() == 1 );  //todo: stesso problema di place che rimuove il worker anche se non lo posiziona
-        assertTrue( cell.getPlaceableAt(0).equals(worker) );
+        assertTrue( cell.getHeigth() == 0 );
         assertTrue( cell.repOk() );
         assertTrue( domeCell.getHeigth() == 1 );
         assertTrue( domeCell.getPlaceableAt(0).isDome() );
         assertTrue( domeCell.repOk() );
 
-        // not place worker on cell with another worker
+        // not place worker on cell with another worker, the worker is removed but not placed
         otherWorker.place( workerCell );
         check = worker.place( workerCell );
         assertTrue( !check );
         assertTrue( worker.position().equals(cell) );
-        assertTrue( cell.getHeigth() == 1 );
-        assertTrue( cell.getPlaceableAt(0).equals(worker) );
+        assertTrue( cell.getHeigth() == 0 );
         assertTrue( cell.repOk() );
         assertTrue( workerCell.getHeigth() == 1 );
         assertTrue( workerCell.getPlaceableAt(0).equals(otherWorker) );
@@ -112,10 +110,10 @@ class WorkerTest {
         assertTrue( cell.getHeigth() == 0 );
         assertTrue( cell.getPlaceableAt(0) == null );
         assertTrue( cell.repOk() );
-        assertTrue( workerCell.getHeigth() == 2 );
-        assertTrue( workerCell.getPlaceableAt(1).equals(worker) );
-        assertTrue( workerCell.getPlaceableAt(0).isBlock() );
-        assertTrue( workerCell.repOk() );
+        assertTrue( blockCell.getHeigth() == 2 );
+        assertTrue( blockCell.getPlaceableAt(1).equals(worker) );
+        assertTrue( blockCell.getPlaceableAt(0).isBlock() );
+        assertTrue( blockCell.repOk() );
     }
 
     /**

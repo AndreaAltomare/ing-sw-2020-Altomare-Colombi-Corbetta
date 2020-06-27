@@ -532,12 +532,7 @@ class ModelTest {
         model.setPlayerCard("Apollo", playerListString.get(2));
 
         assertNull(model.placeWorker(6, 1, playerListString.get(0)));
-        try {
-            assertNull(model.placeWorker(0, 0, "notExistingPlayer"));
-        }catch(NullPointerException e){
-            excepted = true;
-        }
-        assertTrue(excepted);
+        assertNull(model.placeWorker(0, 0, "notExistingPlayer"));
         assertNotNull(model.placeWorker(0, 1, playerListString.get(0)));
         assertNull(model.placeWorker(0, 1, playerListString.get(0)));
         assertNotNull(model.placeWorker(0, 2, playerListString.get(0)));

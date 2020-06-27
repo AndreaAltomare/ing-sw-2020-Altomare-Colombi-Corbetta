@@ -103,7 +103,6 @@ class GodPowerTest {
         godPower.setMovementsLeft(posInteger);
         assertTrue(godPower.getMovementsLeft().equals(posInteger));
 
-        //TODO: wait the help to understand how manage negative values and then change
         godPower.setMovementsLeft(negInteger);
         assertTrue(godPower.getMovementsLeft().equals(negInteger));
 
@@ -128,7 +127,6 @@ class GodPowerTest {
         godPower.setConstructionLeft(posInteger);
         assertTrue(godPower.getConstructionLeft().equals(posInteger));
 
-        //TODO: wait the help to understand how manage negative values and then change
         godPower.setConstructionLeft(negInteger);
         assertTrue(godPower.getConstructionLeft().equals(negInteger));
 
@@ -297,7 +295,6 @@ class GodPowerTest {
         assertTrue(godPower.getOpponentDeniedDirection() == null);
 
         godPower.setOpponentDeniedDirection(LevelDirection.ANY);
-        //TODO: Originally was LevelDirection. (I don't know to understand, now assert if correct, there is something I do?)
         assertTrue(godPower.getOpponentDeniedDirection() == LevelDirection.ANY);
 
     }
@@ -377,7 +374,6 @@ class GodPowerTest {
         godPower.setHotLevelDepth( positiveInt );
         assertTrue( godPower.getHotLevelDepth() == positiveInt );
 
-        //TODO: wait the help to understand how manage negative values and then change
         godPower.setHotLevelDepth( negativeInt );
         assertTrue( godPower.getHotLevelDepth() == negativeInt );
 

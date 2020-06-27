@@ -23,50 +23,10 @@ import java.util.Map;
 
 public class WTerminalViewer extends Viewer {
 
-    private static Map<ViewPlayer, Symbols> workerMap = new HashMap<>(3);
     private it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer WTerminalStatusViewer = null;
 
     public WTerminalViewer(){
         Viewer.registerViewer(this);
-    }
-
-    /**
-     * Adds in workerMap the viewPLayer as key and a Symbols which represents worker's image of that player
-     * if it is possible and if there are enough Symbols for workers, then returns that Symbols if it is correctly added or null if it isn't
-     * @param viewPlayer ViewPlayer to assign a Symbols for his worker
-     * @return the Symbols assigned if it is correctly assigned, null if it isn't
-     */
-    public Symbols assignWorkerSymbol(ViewPlayer viewPlayer) {
-        int size;
-        Symbols workerSymbol = null;
-
-        size = workerMap.size();
-        switch (size) {
-            case 0:
-                workerSymbol = workerMap.put(viewPlayer, Symbols.WORKER_1);
-                break;
-            case 1:
-                workerSymbol= workerMap.put(viewPlayer, Symbols.WORKER_2);
-                break;
-            case 2:
-                workerSymbol= workerMap.put(viewPlayer, Symbols.WORKER_3);
-                break;
-            default:
-                ;
-        }
-
-        return workerSymbol;
-    }
-
-    /**
-     * Returns the Symbols assigned to viewPlayer or null if there isn't a Symbols assigned to viewPLayer
-     * @param viewPlayer ViewPlayer with a worker's Symbols assigned
-     * @return Symbols assigned to viewPlayer if viewPlayer has an assigned Symbols, null if it haven't
-     */
-    public static Symbols getWorkerSymbol(ViewPlayer viewPlayer) {
-        Symbols workerSymbol = workerMap.get(viewPlayer);
-
-        return workerSymbol;
     }
 
     //todo: check it in the after simulation test if the refresh message are always after change subStatus message, in it isn't

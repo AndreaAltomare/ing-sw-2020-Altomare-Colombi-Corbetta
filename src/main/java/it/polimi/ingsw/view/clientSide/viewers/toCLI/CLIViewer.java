@@ -19,66 +19,12 @@ import java.util.Map;
 
 public class CLIViewer extends Viewer{
 
-    private static Map<Color, String> colorMap = new HashMap<>(3);
     private CLIStatusViewer cliStatusViewer = null;
 
     public CLIViewer(){
         Viewer.registerViewer(this);
     }
 
-    /**
-     * Adds in workerMap the worker's Color as key and a string which represents worker's ANSIStyle
-     * if it is possible and if there are enough string color, then returns that string color if it is correctly added or null if it isn't
-     *
-     * @param workerColor Color's worker
-     * @return the string color assigned if it is correctly assigned, "" if it isn't
-     */
-    public String assignWorkerCLIColor(Color workerColor) {
-        int size;
-        String workerStyle;
-
-        if (workerColor != null) {
-            if (!colorMap.containsKey(workerColor)) {
-                size = colorMap.size();
-                switch (size) {
-                    case 0:
-                        workerStyle = colorMap.put(workerColor, ANSIStyle.RED.getEscape());
-                        break;
-                    case 1:
-                        workerStyle = colorMap.put(workerColor, ANSIStyle.YELLOW.getEscape());
-                        break;
-                    case 2:
-                        workerStyle = colorMap.put(workerColor, ANSIStyle.PURPLE.getEscape());
-                        break;
-                    default:
-                        workerStyle = "";
-                        break;
-                }
-            } else {
-                workerStyle = colorMap.get(workerColor);
-            }
-        } else {
-            workerStyle = "";
-        }
-
-        return workerStyle;
-    }
-
-    /**
-     * Returns the string color assigned to worker's Color or "" if there isn't a string color assigned to worker's Color
-     *
-     * @param workerColor worker's Color in model
-     * @return string color assigned to worker if worker has an assigned CliColor, "" if it haven't
-     */
-    public static String getWorkerCLIColor(Color workerColor) {
-        String workerCLIColor = colorMap.get(workerColor);
-
-        if (workerCLIColor == null) {
-            workerCLIColor = "";
-        }
-
-        return workerCLIColor;
-    }
 
     //todo: check it in the after simulation test if the refresh message are always after change subStatus message, in it isn't
     // change refresh() and prepareSubStatus()

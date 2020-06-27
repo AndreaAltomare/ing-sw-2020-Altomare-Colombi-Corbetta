@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewCard;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewWorker;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.WTerminalViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.GodSymbols;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.Symbols;
@@ -44,8 +45,9 @@ public interface BoardPrintFunction {
     static void printPlayersCaption(int boardRow, int cellRow) {
         final int DISTANCE_FROM_BOARD = 10;
         final int SPACE_FOR_STRING = 15;
-        String stringToPrint = "";
+        String stringToPrint;
         ViewCard viewCard;
+        ViewWorker[] workers;
 
         PrintFunction.printRepeatString(" ", DISTANCE_FROM_BOARD);
 
@@ -54,24 +56,39 @@ public interface BoardPrintFunction {
                 case 1:
                     switch (cellRow) {
                         case 2:
-                            stringToPrint = WTerminalViewer.getWorkerSymbol(viewPlayer).getUpRepresentation();
+                            try {
+                                workers = viewPlayer.getWorkers();
+                                stringToPrint = workers[0].getWorkerWTRepresentation().getUpRepresentation();
+                            } catch (NullPointerException | NotFoundException e) {
+                                stringToPrint = ""; // nothing representation to print
+                            }
                             PrintFunction.printAtTheMiddle(stringToPrint, SPACE_FOR_STRING);
                             break;
                         case 3:
-                            stringToPrint = WTerminalViewer.getWorkerSymbol(viewPlayer).getMiddleRepresentation();
+                            try {
+                                workers = viewPlayer.getWorkers();
+                                stringToPrint = workers[0].getWorkerWTRepresentation().getMiddleRepresentation();
+                            } catch (NullPointerException | NotFoundException e) {
+                                stringToPrint = ""; // nothing representation to print
+                            }
                             PrintFunction.printAtTheMiddle(stringToPrint, SPACE_FOR_STRING);
                             break;
                         case 4:
-                            stringToPrint = WTerminalViewer.getWorkerSymbol(viewPlayer).getDownRepresentation();
+                            try {
+                                workers = viewPlayer.getWorkers();
+                                stringToPrint = workers[0].getWorkerWTRepresentation().getDownRepresentation();
+                            } catch (NullPointerException | NotFoundException e) {
+                                stringToPrint = ""; // nothing representation to print
+                            }
                             PrintFunction.printAtTheMiddle(stringToPrint, SPACE_FOR_STRING);
                             break;
                        case 5:
                             break;
-                        case 6:
-                            PrintFunction.printAtTheMiddle(viewPlayer.getName(), SPACE_FOR_STRING);
-                            break;
-                        default:
-                            ;
+                       case 6:
+                           PrintFunction.printAtTheMiddle(viewPlayer.getName(), SPACE_FOR_STRING);
+                           break;
+                       default:
+                           ;
                     }
                     break;
                 case 2:
@@ -98,8 +115,8 @@ public interface BoardPrintFunction {
                             default:
                                 ;
                         }
-                    } catch (NotFoundException e) {
-                        e.printStackTrace();
+                    } catch (NotFoundException | NullPointerException e) {
+                        PrintFunction.printRepeatString("", SPACE_FOR_STRING);
                     }
                     break;
                 default:

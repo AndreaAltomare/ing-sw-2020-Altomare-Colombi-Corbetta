@@ -20,15 +20,14 @@ public class WTerminalGamePreparationViewer extends WTerminalStatusViewer {
         return viewStatus;
     }
 
+    /**
+     * Invokes the show methods on CLISubTurnViewer if there is one
+     */
     @Override
     public void show() {
 
-        if ( this.getMyWTerminalSubTurnViewer() == null){
-            for (ViewPlayer viewPlayer : ViewPlayer.getPlayerList()) {
-                this.getMyWTerminalViewer().assignWorkerSymbol(viewPlayer);
-            }
-        } else {
+        if ( this.getMyWTerminalSubTurnViewer() != null){
             this.getMyWTerminalSubTurnViewer().show();
-        }
+            }
     }
 }
