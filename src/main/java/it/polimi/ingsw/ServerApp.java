@@ -5,6 +5,7 @@ import it.polimi.ingsw.connection.server.ServerConnection;
 import it.polimi.ingsw.storage.ResourceManager;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 /**
  * Server-side Application
@@ -26,6 +27,18 @@ public class ServerApp {
         int port = DEFAULT_PORT;
         boolean defaultSettings = true;
 
+        /* Initialize information to properly work with resources */
+        try {
+            ResourceManager.initializeResources();
+        }
+        catch (URISyntaxException ex) {
+            System.out.println("Something went wrong when analyzing the application path.\nApplication is closing...");
+            System.exit(1);
+        }
+        catch (IOException ex) {
+            System.out.println("Something went wrong when getting the canonical path for the application.\nApplication is closing...");
+            System.exit(1);
+        }
 
         /* Retrieve connection configuration settings */
         if(args.length > 0) {
@@ -47,6 +60,7 @@ public class ServerApp {
         /* Start connection */
         try {
             System.out.println("Starting Server...");
+            System.out.println("Listening on PORT [" + port + "]");
             server = new ServerConnection(port);
             server.run();
         }

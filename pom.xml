@@ -5,10 +5,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>it.polimi.ingsw</groupId>
-  <artifactId>SantoriniCLI</artifactId>
+  <artifactId>SantoriniCore</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>SantoriniCLI</name>
+  <name>SantoriniCore</name>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
 
@@ -73,7 +73,7 @@
          <configuration>
             <archive>
               <manifest>
-                <mainClass>it.polimi.ingsw.view.clientSide.ViewTester</mainClass>
+                <mainClass>it.polimi.ingsw.ServerApp</mainClass>
               </manifest>
             </archive>
           </configuration>

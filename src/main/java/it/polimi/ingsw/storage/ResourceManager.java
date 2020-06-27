@@ -1,12 +1,16 @@
 package it.polimi.ingsw.storage;
 
 import com.google.gson.Gson;
+import it.polimi.ingsw.ServerApp;
 import it.polimi.ingsw.connection.ConnectionSettings;
 import it.polimi.ingsw.model.card.CardInfo;
 import it.polimi.ingsw.model.persistence.GameState;
 import it.polimi.ingsw.model.card.GodPower;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -22,10 +26,11 @@ import java.util.concurrent.Executors;
  */
 public class ResourceManager {
     private static ExecutorService executor = Executors.newFixedThreadPool(10); // for async heavy I/O interaction
-    private static final String CONNECTION_RESOURCES_PATH = "connection_settings/";
-    private static final String GAME_RESOURCES_PATH = "game_resources/";
-    private static final String CARDS_PATH = "cards/";
-    private static final String SAVES_PATH = "game_saves/";
+    private static String PARENT_DIRECTORY_PATH;
+    private static final String CONNECTION_RESOURCES_PATH = "/connection_settings/";
+    private static final String GAME_RESOURCES_PATH = "/game_resources/";
+    private static final String CARDS_PATH = "/cards/";
+    private static final String SAVES_PATH = "/game_saves/";
 
     /**
      * Get a Card's information and return its GodPower properties.
@@ -34,7 +39,7 @@ public class ResourceManager {
      * @return GodPower's instance (Card's GodPower properties)
      */
     public static GodPower callGodPower(String cardName) {
-        String cardPath = GAME_RESOURCES_PATH + CARDS_PATH + cardName.toLowerCase();
+        String cardPath = PARENT_DIRECTORY_PATH + GAME_RESOURCES_PATH + CARDS_PATH + cardName.toLowerCase();
         FileManager fileManager = FileManager.getIstance();
         String json = fileManager.getCard(cardPath);
 
@@ -52,7 +57,7 @@ public class ResourceManager {
         /* 1- Get what cards are in the Game */
         List<CardInfo> cards = new ArrayList<>();
         List<String> cardNames;
-        String filePath = GAME_RESOURCES_PATH + CARDS_PATH + "gods.config";
+        String filePath = PARENT_DIRECTORY_PATH + GAME_RESOURCES_PATH + CARDS_PATH + "gods.config";
         GodPower god;
 
         FileManager fileManager = FileManager.getIstance();
@@ -78,7 +83,7 @@ public class ResourceManager {
      * @return ConnectionSettings' instance
      */
     public static ConnectionSettings clientConnectionSettings() {
-        return getConnectionSettingsFromPath(CONNECTION_RESOURCES_PATH + "client_settings.config");
+        return getConnectionSettingsFromPath(PARENT_DIRECTORY_PATH + CONNECTION_RESOURCES_PATH + "client_settings.config");
     }
 
     /**
@@ -87,7 +92,7 @@ public class ResourceManager {
      * @return ConnectionSettings' instance
      */
     public static ConnectionSettings serverConnectionSettings() {
-        return getConnectionSettingsFromPath(CONNECTION_RESOURCES_PATH + "server_settings.config");
+        return getConnectionSettingsFromPath(PARENT_DIRECTORY_PATH + CONNECTION_RESOURCES_PATH + "server_settings.config");
     }
 
     /**
@@ -121,7 +126,7 @@ public class ResourceManager {
         Runnable saveTask = new Runnable() {
             @Override
             public void run() {
-                String fileName = GAME_RESOURCES_PATH + SAVES_PATH + "saving.dat";
+                String fileName = PARENT_DIRECTORY_PATH + GAME_RESOURCES_PATH + SAVES_PATH + "saving.dat";
                 Gson gson;
                 String json;
                 FileManager fileManager = FileManager.getIstance();
@@ -146,7 +151,7 @@ public class ResourceManager {
      * @return State of the game
      */
     public static GameState loadGameState() {
-        String fileName = GAME_RESOURCES_PATH + SAVES_PATH + "saving.dat";
+        String fileName = PARENT_DIRECTORY_PATH + GAME_RESOURCES_PATH + SAVES_PATH + "saving.dat";
         Gson gson;
         String json;
         FileManager fileManager = FileManager.getIstance();
@@ -162,5 +167,19 @@ public class ResourceManager {
         /* JSON DESERIALIZATION WITH GSON */
         gson = new Gson();
         return gson.fromJson(json, GameState.class);
+    }
+
+
+    /**
+     * Initializes application path and, eventually,
+     * other important information for Resource management.
+     *
+     * @throws URISyntaxException Exception handled by the main application class
+     * @throws IOException Exception handled by the main application class
+     */
+    public static void initializeResources() throws URISyntaxException, IOException {
+        /* Application path */
+        PARENT_DIRECTORY_PATH = new File(ServerApp.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getCanonicalFile().getParent();
+        /* No other information needed */
     }
 }
