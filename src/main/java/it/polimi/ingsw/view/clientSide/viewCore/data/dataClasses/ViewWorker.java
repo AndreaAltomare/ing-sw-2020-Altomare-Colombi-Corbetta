@@ -4,12 +4,12 @@ import it.polimi.ingsw.controller.events.WorkerMovedEvent;
 import it.polimi.ingsw.controller.events.WorkerPlacedEvent;
 import it.polimi.ingsw.controller.events.WorkerRemovedEvent;
 import it.polimi.ingsw.controller.events.WorkerSelectedEvent;
-import it.polimi.ingsw.model.move.MoveOutcomeType;
 import it.polimi.ingsw.view.clientSide.View;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.WTerminalViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.CLISymbols;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.Symbols;
@@ -38,6 +38,8 @@ public class ViewWorker extends ViewObject {
     private ViewCell position;
 
     protected Color workerColor;
+    protected String workerCLIColor;
+    protected Symbols workerWTRepresentation;
 
     private static List<ViewWorker> myList = new ArrayList<ViewWorker>();
     private static ViewWorker selected;
@@ -185,12 +187,18 @@ public class ViewWorker extends ViewObject {
             switch(workerPlaced.getColor()){
                 case BLUE:
                     myWorker.workerColor = java.awt.Color.BLUE;
+                    myWorker.workerCLIColor = ANSIStyle.RED.getEscape();
+                    myWorker.workerWTRepresentation = Symbols.WORKER_1;
                     break;
                 case BROWN:
                     myWorker.workerColor = new java.awt.Color(153, 102,  0);
+                    myWorker.workerCLIColor = ANSIStyle.YELLOW.getEscape();
+                    myWorker.workerWTRepresentation = Symbols.WORKER_2;
                     break;
                 case GREY:
                     myWorker.workerColor = java.awt.Color.GRAY;
+                    myWorker.workerCLIColor = ANSIStyle.PURPLE.getEscape();
+                    myWorker.workerWTRepresentation = Symbols.WORKER_3;
                     break;
             }
             if(View.debugging)
@@ -272,20 +280,18 @@ public class ViewWorker extends ViewObject {
      * @return String at the correct level of worker's Symbols
      */
     public String toWTerminal(SymbolsLevel representationLevel){
-        Symbols workerSymbol;
         String workerString;
 
-        workerSymbol = WTerminalViewer.getWorkerSymbol( this.player);
-        if (workerSymbol != null) {
+        if (workerWTRepresentation != null) {
             switch (representationLevel) {
                 case UP:
-                    workerString = workerSymbol.getUpRepresentation();
+                    workerString = workerWTRepresentation.getUpRepresentation();
                     break;
                 case MIDDLE:
-                    workerString = workerSymbol.getMiddleRepresentation();
+                    workerString = workerWTRepresentation.getMiddleRepresentation();
                     break;
                 case DOWN:
-                    workerString = workerSymbol.getDownRepresentation();
+                    workerString = workerWTRepresentation.getDownRepresentation();
                     break;
                 default:
                     workerString = "   ";
@@ -298,23 +304,21 @@ public class ViewWorker extends ViewObject {
     }
 
     /**
-     * Method that will return a String that will represent worker's representation chosen with the player's color found
-     * or with default color if player's color isn't found
+     * Method that will return a String that will represent worker's representation chosen with the workers' color found
+     * or with default color ( nothing color ) if workers' color isn't found
      *
-     * @return String of worker's representation chosen with player's color if it is found
+     * @return String of worker's representation chosen with workers' color if it is found
      */
     public String toCLI(boolean head){
-        String workerCLIColor;
         String workerString;
 
-        workerCLIColor = CLIViewer.getWorkerCLIColor( this.getColor() );
         if (head) {
             workerString = CLISymbols.WORKER.getUpRepresentation();
         } else {
             workerString = CLISymbols.WORKER.getMiddleRepresentation();
         }
 
-        workerString = workerCLIColor + workerString;
+        workerString = this.getWorkerCLIColor() + workerString;
 
         return workerString;
     }
@@ -508,5 +512,24 @@ public class ViewWorker extends ViewObject {
      */
     public Color getColor(){
         return workerColor;
+    }
+
+    /**
+     * getter for the color associated to the View Worker for colored CLI.
+     * If workerCLIColor == null, returns a empty string ( == nothing color )
+     *
+     * @return a String which represents the ANSI color of the View Worker
+     */
+     public String getWorkerCLIColor() {
+        return  workerCLIColor;
+    }
+
+    /**
+     * getter for the symbol associated to the View Worker for WTerminal
+     *
+     * @return a Symbol which represents the representation with ASCII's characters of the View Worker
+     */
+    public Symbols getWorkerWTRepresentation() {
+        return  workerWTRepresentation;
     }
 }

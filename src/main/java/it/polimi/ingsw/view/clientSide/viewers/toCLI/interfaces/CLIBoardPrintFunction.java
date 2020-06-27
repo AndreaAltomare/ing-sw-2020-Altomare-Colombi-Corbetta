@@ -64,8 +64,8 @@ public interface CLIBoardPrintFunction {
                         cliGodSymbols = CLIGodSymbols.searchGodSymbol( viewCard.getName() );
                         try {
                             workers = viewPlayer.getWorkers();
-                            playerColor = CLIViewer.getWorkerCLIColor(workers[0].getColor());
-                        } catch ( NotFoundException e) {
+                            playerColor = workers[0].getWorkerCLIColor();
+                        } catch ( NotFoundException | NullPointerException e) {
                             playerColor = "";
                         }
                         switch (cellRow) {
@@ -112,8 +112,8 @@ public interface CLIBoardPrintFunction {
         for (ViewPlayer viewPlayer : ViewPlayer.getPlayerList()) {
             try {
                 workers = viewPlayer.getWorkers();
-                playerColor = CLIViewer.getWorkerCLIColor( workers[0].getColor() );
-            } catch (NotFoundException e) {
+                playerColor = workers[0].getWorkerCLIColor();
+            } catch (NotFoundException | NullPointerException e) {
                 playerColor = ANSIStyle.RESET;
             }
 

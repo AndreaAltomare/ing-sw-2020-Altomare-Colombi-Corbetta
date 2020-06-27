@@ -22,10 +22,10 @@ public interface CLICellPrintFunction {
         final String DEFAULT_SELECTED_COLOR = "";
         ViewWorker selectedWorker = ViewWorker.getSelected();
         String SelectionColor;
-        String newString = string;
+        String newString;
 
         if ( selectedWorker != null ) {
-            SelectionColor = CLIViewer.getWorkerCLIColor(selectedWorker.getColor());
+            SelectionColor = selectedWorker.getWorkerCLIColor();
         } else {
             SelectionColor = DEFAULT_SELECTED_COLOR;
         }

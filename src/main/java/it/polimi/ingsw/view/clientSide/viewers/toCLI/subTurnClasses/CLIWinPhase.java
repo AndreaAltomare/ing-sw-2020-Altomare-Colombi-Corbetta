@@ -29,7 +29,7 @@ public class CLIWinPhase extends CLISubTurnViewer {
         final String WRITE_STRING = "VICTORY";
         final int DOME_MAX_LENGTH = WRITE_STRING.length() + 4;
 
-        String playerColor;
+        String playerColor = ""; //nothing color
         String myNickname;
         ViewPlayer viewPlayer;
         ViewWorker[] workers;
@@ -40,15 +40,12 @@ public class CLIWinPhase extends CLISubTurnViewer {
             try {
                 viewPlayer = ViewPlayer.searchByName(myNickname);
                 workers = viewPlayer.getWorkers();
-                playerColor = CLIViewer.getWorkerCLIColor( workers[0].getColor() );
-            } catch (NotFoundException e) {
-                playerColor = "";
+                playerColor = workers[0].getWorkerCLIColor();
+            } catch (NotFoundException | NullPointerException ignored) {
             }
         } else {
-            myNickname = "";
-            playerColor = "";
+            myNickname = ""; // nothing nickname
         }
-
 
         // dome's up part
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE + 2);

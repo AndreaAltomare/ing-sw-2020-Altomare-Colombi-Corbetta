@@ -33,7 +33,7 @@ public class CLILoosePhase extends CLISubTurnViewer {
         final int MAN_SPACE = WRITE_STRING.length() - 2*TOWER_SPACE;
         final int EDGE_SPACE = 1;
 
-        String playerColor = "";
+        String playerColor = "";  // nothing color
         ViewPlayer viewPlayer;
         ViewWorker[] workers;
 
@@ -41,9 +41,9 @@ public class CLILoosePhase extends CLISubTurnViewer {
             if ( ViewNickname.getMyNickname() != null ) {
                 viewPlayer = ViewPlayer.searchByName(ViewNickname.getMyNickname());
                 workers = viewPlayer.getWorkers();
-                playerColor = CLIViewer.getWorkerCLIColor(workers[0].getColor());
+                playerColor = workers[0].getWorkerCLIColor();
             }
-        } catch (NotFoundException ignored) {
+        } catch (NotFoundException | NullPointerException ignored) {
         }
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET,"\n", 2);
         // towers' domes
