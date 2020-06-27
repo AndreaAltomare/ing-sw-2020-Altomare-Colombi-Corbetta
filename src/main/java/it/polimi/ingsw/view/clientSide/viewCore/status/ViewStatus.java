@@ -1,9 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewCore.status;
-// TODO: write some comments to explains the meaning of every status defined
 
-import it.polimi.ingsw.view.clientSide.viewCore.data.DataStorage;
 import it.polimi.ingsw.view.clientSide.viewCore.data.ViewObject;
-import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.FirstPlayerExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.ResumingExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetNicknameExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetPlayerNumberExecuter;
@@ -31,7 +28,7 @@ import java.util.Map;
 public enum ViewStatus implements ClientAddressable {
 
     /**
-     * Initial status intended to establish a connection with the server (and state a welcome message)
+     * Initial status intended to establish a connection with the server (and state a welcome message).
      */
     READY("READY"){
         public ViewStatus getNext(){
@@ -53,7 +50,7 @@ public enum ViewStatus implements ClientAddressable {
     },
 
     /**
-     * After having established a connection, the next status is the log in status. In this status the player will choose its name and it will be sent to the server
+     * After having established a connection, the next status is the log in status. In this status the player will choose its name and it will be sent to the server.
      */
     LOGIN("LOGIN") {
         @Override
@@ -63,7 +60,7 @@ public enum ViewStatus implements ClientAddressable {
 
         @Override
         public Map<String, Executer> getExecuters() {
-            Map<String, Executer> ret = new HashMap<String, Executer>(1);
+            Map<String, Executer> ret = new HashMap<>(1);
             ret.put("NickName", new SetNicknameExecuter());
             return ret;
         }
@@ -77,7 +74,6 @@ public enum ViewStatus implements ClientAddressable {
         void onLoad() {
         }
     },
-
 
     /**
      * After the login, the player will be placed into a "waiting room" waiting for the other players to connect. To exit this status it waits for the server to notify the starting of the game.
@@ -102,7 +98,7 @@ public enum ViewStatus implements ClientAddressable {
     },
 
     /**
-     * This status is (obviously) the beginning of the game. In this status the player wion't do anything, the only things done are the initialisations of all the objects used in the game.
+     * This status is (obviously) the beginning of the game. In this status the player won't do anything, the only things done are the initialisations of all the objects used in the game.
      */
     NEW_GAME ("NEW_GAME") {
         @Override
@@ -122,7 +118,6 @@ public enum ViewStatus implements ClientAddressable {
 
         @Override
         void onLoad() {
-            //TODO: implements all the initialisations
         }
     },
 
@@ -137,7 +132,6 @@ public enum ViewStatus implements ClientAddressable {
 
         @Override
         public Map<String, Executer> getExecuters() {
-            //TODO: set the executers
             return null;
         }
 
@@ -148,7 +142,6 @@ public enum ViewStatus implements ClientAddressable {
 
         @Override
         void onLoad() {
-            //todo: implement it
         }
 
         @Override
@@ -168,7 +161,6 @@ public enum ViewStatus implements ClientAddressable {
 
         @Override
         public Map<String, Executer> getExecuters() {
-            //TODO: set the executers
             return null;
         }
 
@@ -187,7 +179,6 @@ public enum ViewStatus implements ClientAddressable {
         }
     },
 
-
     /**
      * Ending status.
      */
@@ -199,7 +190,6 @@ public enum ViewStatus implements ClientAddressable {
 
         @Override
         public Map<String, Executer> getExecuters() {
-            //TODO: set the executers
             return null;
         }
 
@@ -214,11 +204,11 @@ public enum ViewStatus implements ClientAddressable {
             ViewMessage.populateAndSend("Game Over", ViewMessage.MessageType.FROM_SERVER_MESSAGE);
 
             ViewObject.clearAll();
-            //TODO: set the onLoad
         }
     },
+
     /**
-     * status in which the player has to choose with how many other players it's going to play.
+     * status in which the challenger has to choose with how many other players it's going to play.
      */
     NUMBER_PLAYER("NUMBER_PLAYER") {
         @Override
@@ -228,7 +218,7 @@ public enum ViewStatus implements ClientAddressable {
 
         @Override
         public Map<String, Executer> getExecuters() {
-            Map<String, Executer> ret = new HashMap<String, Executer>(1);
+            Map<String, Executer> ret = new HashMap<>(1);
             ret.put("NumberPlayers", new SetPlayerNumberExecuter());
             return ret;
         }
@@ -243,6 +233,7 @@ public enum ViewStatus implements ClientAddressable {
 
         }
     },
+
     /**
      * closing status.
      */
@@ -267,6 +258,10 @@ public enum ViewStatus implements ClientAddressable {
 
         }
     },
+
+    /**
+     * Requiring the challenger if it wants to resume a previously started game.
+     */
     REQUEST_RESUMING( "REQUEST_RESUMING"){
         @Override
         public ViewStatus getNext() {
@@ -275,7 +270,7 @@ public enum ViewStatus implements ClientAddressable {
 
         @Override
         public Map<String, Executer> getExecuters() {
-            Map<String, Executer> ret = new HashMap<String, Executer>(1);
+            Map<String, Executer> ret = new HashMap<>(1);
             ret.put("Resume", new ResumingExecuter());
             return ret;
         }
@@ -291,6 +286,10 @@ public enum ViewStatus implements ClientAddressable {
         }
 
     },
+
+    /**
+     * Status in which are loaded all the information about the game to restore
+     */
     RESUMING("RESUMING"){
         @Override
         public ViewStatus getNext() {
@@ -454,22 +453,35 @@ public enum ViewStatus implements ClientAddressable {
     }
 
 
-
+    /**
+     * Method to reset the current <code>ViewStatus</code> to be READY.
+     */
     public static void reset(){
         actualStatus = READY;
         Viewer.setAllStatusViewer(ViewStatus.getActual().getViewer());
     }
 
+    /**
+     * Method that initializes the ViewStatus.
+     */
     public static void init(){
         reset();
         actualStatus.onLoad();
     }
 
+    /**
+     * Method to retrieve the current ViewStatus
+     *
+     * @return (the actual <code>ViewStatus</code>)
+     */
     public static ViewStatus getActual(){
         return actualStatus;
     }
 
+    /**
+     * Method called before dismissing the current status.
+     */
     void afterLoad(){
-        ;
+
     }
 }
