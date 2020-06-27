@@ -445,7 +445,7 @@ class MyConstructionTest {
         buildMove = new BuildMove( worker.position(), nearCell1, PlaceableType.BLOCK );
 
         checkBuild = myConstruction.checkMove(buildMove, worker);
-        assertTrue( !checkBuild );
+        assertTrue( !checkBuild );  //todo: strange! checkBuild == true but don't build,add control for build block at the third block
         assertTrue( cell.getHeigth() == 1 );
         assertTrue( nearCell1.getHeigth() == 3 );
         assertTrue( cell.getTop().equals(worker) );
@@ -2100,7 +2100,7 @@ class MyConstructionTest {
         assertTrue(myConstruction.getConstructionLeft() == 1);
 
         // after setConstructionLeft
-        myConstruction.setConstructionLeft(3);
+        myConstruction.setConstructionLeft(4);
         assertTrue( myConstruction.getConstructionLeft() == 4);
 
         // after decreaseConstructionLeft

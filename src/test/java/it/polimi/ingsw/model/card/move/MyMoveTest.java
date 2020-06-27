@@ -2475,7 +2475,6 @@ class MyMoveTest {
             assertTrue(middleCell.repOk());
             assertTrue(nearCell.repOk());
             assertTrue(worker.position().equals(middleCell));
-            assertTrue(myMove.getStartingPosition().equals(worker.position()));
 
             // clear board
             while (middleCell.getTop() != null) {
@@ -2764,7 +2763,7 @@ class MyMoveTest {
         assertTrue(myMove.getMovesLeft() == 1);
 
         // after setMovesLeft
-        myMove.setMovesLeft(3);
+        myMove.setMovesLeft(4);
         assertTrue(myMove.getMovesLeft() == 4);
 
 
@@ -2849,7 +2848,7 @@ class MyMoveTest {
 
             myMove.setOpponentForcedMove(workerMoved);
 
-            assertTrue(myMove.getStartingPosition().equals(workerMoved));
+            assertTrue(myMove.getOpponentForcedMove().equals(workerMoved));
 
         } catch (OutOfBoardException e) {
             e.printStackTrace();
@@ -2877,6 +2876,7 @@ class MyMoveTest {
      */
     @Test
     void getMethodsWorkerMove() {
+        myMove = humanCard.getMyMove();
         MyMove.WorkerMoved workerMoved;
 
         final Cell cell1;

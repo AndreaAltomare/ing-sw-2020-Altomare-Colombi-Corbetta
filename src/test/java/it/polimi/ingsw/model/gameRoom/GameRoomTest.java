@@ -1,7 +1,13 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.model.gameRoom;
 
+import it.polimi.ingsw.model.board.Board;
+import it.polimi.ingsw.model.board.Cell;
+import it.polimi.ingsw.model.board.IslandBoard;
 import it.polimi.ingsw.model.gameRoom.GameRoom;
+import it.polimi.ingsw.model.move.Move;
 import it.polimi.ingsw.model.player.Player;
+import it.polimi.ingsw.model.player.turn.MovementManager;
+import it.polimi.ingsw.model.player.worker.Worker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -64,7 +70,7 @@ class GameRoomTest {
         //remove the player
         gameRoom.removePlayer(playerName);
         playerFound = false;
-        for(Player obj : gameRoom.players)
+        for(Player obj : gameRoom.getPlayersList())
             if(obj.getNickname().equals(playerName))
                 playerFound = true;
 
@@ -110,6 +116,7 @@ class GameRoomTest {
 
     @Test
     void setupGameTest() {
+        // todo: add test when the method will be completed or remove test
     }
 
     /**
@@ -119,10 +126,16 @@ class GameRoomTest {
      */
     @Test
     void chooseChallengerTest() {
+        final String NOT_REGISTER_PLAYER_NAME = "not register name";
+
+        // with player in Game Room
         gameRoom.addPlayer(playerName);
         gameRoom.chooseChallenger(playerName);
-
         assertEquals(gameRoom.getChallenger().getNickname(), playerName);
+
+        // with player out Game Room
+        gameRoom.chooseChallenger(NOT_REGISTER_PLAYER_NAME);
+        assertNotEquals(gameRoom.getChallenger().getNickname(), NOT_REGISTER_PLAYER_NAME);
     }
 
     /**
@@ -132,10 +145,16 @@ class GameRoomTest {
      */
     @Test
     void chooseStartingPlayerTest() {
+        final String NOT_REGISTER_PLAYER_NAME = "not register name";
+
+        // with player in Game Room
         gameRoom.addPlayer(playerName);
         gameRoom.chooseStartingPlayer(playerName);
-
         assertEquals(gameRoom.getStartingPlayer().getNickname(), playerName);
+
+        // with player out Game Room
+        gameRoom.chooseStartingPlayer(NOT_REGISTER_PLAYER_NAME);
+        assertNotEquals(gameRoom.getStartingPlayer().getNickname(), NOT_REGISTER_PLAYER_NAME);
     }
 
     /**
@@ -154,4 +173,5 @@ class GameRoomTest {
         index = 1;
         assertEquals(gameRoom.getPlayer(index).getNickname(),"cpu" + index.toString());
     }
+
 }

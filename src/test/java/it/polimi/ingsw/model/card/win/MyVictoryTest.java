@@ -162,7 +162,6 @@ class MyVictoryTest {
         assertTrue( cell.getTop().isBlock() );
         assertTrue( cell.getPlaceableAt(0).isBlock() );
         assertTrue( nearCell.getTop().equals(worker) );
-        assertTrue( nearCell.getTop().isBlock() );
         assertTrue( nearCell.getPlaceableAt(2).isBlock() );
         assertTrue( nearCell.getPlaceableAt(1).isBlock() );
         assertTrue( nearCell.getPlaceableAt(0).isBlock() );
@@ -278,7 +277,6 @@ class MyVictoryTest {
         assertTrue( cell.getTop().isBlock() );
         assertTrue( cell.getPlaceableAt(0).isBlock() );
         assertTrue( nearCell.getTop().equals(worker) );
-        assertTrue( nearCell.getTop().isBlock() );
         assertTrue( nearCell.getPlaceableAt(2).isBlock() );
         assertTrue( nearCell.getPlaceableAt(1).isBlock() );
         assertTrue( nearCell.getPlaceableAt(0).isBlock() );
@@ -367,7 +365,7 @@ class MyVictoryTest {
         assertTrue( cell.getPlaceableAt(1).isBlock() );
         assertTrue( cell.getPlaceableAt(0).isBlock() );
         assertTrue( nearCell.getTop().equals(worker) );
-        assertTrue( nearCell.getPlaceableAt(1).isBlock() );
+        assertTrue( nearCell.getPlaceableAt(0).isBlock() );
         assertTrue( cell.repOk() );
         assertTrue( nearCell.repOk() );
         assertTrue( worker.position().equals(nearCell) );
