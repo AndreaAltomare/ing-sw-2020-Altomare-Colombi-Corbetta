@@ -11,12 +11,18 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import java.util.EventObject;
 
+/**
+ * Class to execute the Turn Status Change.
+ *
+ * @see Executer
+ */
 public class TurnStatusChangeExecuter extends Executer {
     private ViewSubTurn stato;
 
     /**
      * Method that reset the executer with initial values.
      */
+    @Override
     public void clear(){
         stato = null;
     }
@@ -61,13 +67,13 @@ public class TurnStatusChangeExecuter extends Executer {
      */
     public static String myType(){ return Executer.myType() + "\tTurnStatusChange"; }
 
-    @Override
     /**
      * Method that returns the event of this Executer
      *
      * @return (The event associated to this Executer)
      * @throws CannotSendEventException (if the Executer doesn't have all the information needed  by the Event)
      */
+    @Override
     public EventObject getMyEvent()throws CannotSendEventException {
         if(stato == null) throw new CannotSendEventException("No valid status set");
         if(stato == ViewSubTurn.BUILD_BLOCK || stato == ViewSubTurn.BUILD_DOME){
@@ -82,6 +88,11 @@ public class TurnStatusChangeExecuter extends Executer {
         getSender().send((TurnStatusChangeEvent)event);
     }*/
 
+    /**
+     * Method returning ture iif this Executer has to wait undo-timeout.
+     *
+     * @return (ture iif this Executer has to wait undo-timeout).
+     */
     protected boolean checkUndo(){
         return true;
     }

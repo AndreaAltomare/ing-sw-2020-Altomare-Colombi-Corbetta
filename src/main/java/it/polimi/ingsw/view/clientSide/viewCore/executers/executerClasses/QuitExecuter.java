@@ -6,10 +6,17 @@ import it.polimi.ingsw.view.events.QuitEvent;
 
 import java.util.EventObject;
 
+/**
+ * Class to execute the Quitting.
+ *
+ * @see Executer
+ */
 public class QuitExecuter extends Executer {
+
     /**
      * Method that reset the executer with initial values.
      */
+    @Override
     public void clear(){}
 
     /**
@@ -26,12 +33,12 @@ public class QuitExecuter extends Executer {
      */
     public static String myType(){ return Executer.myType() + "\tQuit"; }
 
-    @Override
     /**
      * Method that returns the event of this Executer
      *
      * @return (The event associated to this Executer)
      */
+    @Override
     public EventObject getMyEvent() {
         return new QuitEvent();
     }

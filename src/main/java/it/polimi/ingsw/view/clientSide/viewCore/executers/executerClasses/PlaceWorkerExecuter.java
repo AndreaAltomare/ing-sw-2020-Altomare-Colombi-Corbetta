@@ -8,6 +8,11 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import java.util.EventObject;
 
+/**
+ * Class to execute the Place Worker.
+ *
+ * @see Executer
+ */
 public class PlaceWorkerExecuter extends Executer {
     private int x;
     private int y;
@@ -15,6 +20,7 @@ public class PlaceWorkerExecuter extends Executer {
     /**
      * Method that reset the executer with initial values.
      */
+    @Override
     public void clear(){
         x=-1;
         y=-1;
@@ -58,13 +64,13 @@ public class PlaceWorkerExecuter extends Executer {
      */
     public static String myType(){ return Executer.myType() + "\tPlaceWorker"; }
 
-    @Override
     /**
      * Method that returns the event of this Executer
      *
      * @return (The event associated to this Executer)
      * @throws CannotSendEventException (if the Executer doesn't have all the information needed  by the Event)
      */
+    @Override
     public EventObject getMyEvent()throws CannotSendEventException {
         if(x<0||y<0) throw new CannotSendEventException("Cannot try to place the worker without having selected the destination");
         return new PlaceWorkerEvent(x, y);

@@ -14,6 +14,11 @@ import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
 
 import java.util.EventObject;
 
+/**
+ * Class to execute a Build Block
+ *
+ * @see Executer
+ */
 public class BuildBlockExecuter extends Executer {
 
     private int x;
@@ -24,6 +29,7 @@ public class BuildBlockExecuter extends Executer {
     /**
      * Method that reset the executer with initial values.
      */
+    @Override
     public void clear(){
         x=-1;
         y=-1;
@@ -106,13 +112,13 @@ public class BuildBlockExecuter extends Executer {
      */
     public static String myType(){ return Executer.myType() + "\tBuildBlock"; }
 
-    @Override
     /**
      * Method that returns the event of this Executer
      *
      * @return (The event associated to this Executer)
      * @throws CannotSendEventException (if the Executer doesn't have all the information needed  by the Event)
      */
+    @Override
     public EventObject getMyEvent()throws CannotSendEventException {
         if(ViewWorker.getSelected() == null){
             ViewSubTurn.setSubTurn(ViewSubTurn.SELECTWORKER);
@@ -144,6 +150,12 @@ public class BuildBlockExecuter extends Executer {
         getSender().send((BuildBlockEvent)event);
     }*/
 
+    /**
+     * Method returning ture iif this Executer has to wait undo-timeout.
+     *
+     * @return (ture).
+     */
+    @Override
     protected boolean checkUndo(){
         return true;
     }

@@ -6,10 +6,16 @@ import it.polimi.ingsw.view.events.TurnStatusChangeEvent;
 
 import java.util.EventObject;
 
+/**
+ * Class to execute the Next Turn.
+ *
+ * @see Executer
+ */
 public class NextTurnExecuter extends Executer {
     /**
      * Method that reset the executer with initial values.
      */
+    @Override
     public void clear(){}
 
     /**
@@ -26,12 +32,12 @@ public class NextTurnExecuter extends Executer {
      */
     public static String myType(){ return Executer.myType() + "\tQuit"; }
 
-    @Override
     /**
      * Method that returns the event of this Executer
      *
      * @return (The event associated to this Executer)
      */
+    @Override
     public EventObject getMyEvent() {
         return new TurnStatusChangeEvent(StateType.NONE);
     }

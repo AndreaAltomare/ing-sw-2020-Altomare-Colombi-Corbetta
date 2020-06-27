@@ -13,12 +13,18 @@ import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
 
 import java.util.EventObject;
 
+/**
+ * Class to execute the Select Worker.
+ *
+ * @see Executer
+ */
 public class SelectWorkerExecuter extends Executer {
     private String workerId;
 
     /**
      * Method that reset the executer with initial values.
      */
+    @Override
     public void clear(){
         workerId = null;
     }
@@ -62,18 +68,24 @@ public class SelectWorkerExecuter extends Executer {
      */
     public static String myType(){ return Executer.myType() + "\tSelectWorker"; }
 
-    @Override
     /**
      * Method that returns the event of this Executer
      *
      * @return (The event associated to this Executer)
      * @throws CannotSendEventException (if the Executer doesn't have all the information needed  by the Event)
      */
+    @Override
     public EventObject getMyEvent()throws CannotSendEventException {
         if(workerId == null) throw new CannotSendEventException("You have to select a worker");
         return new SelectWorkerEvent(workerId);
     }
 
+    /**
+     * Method that selects the Worker on the Cell.
+     *
+     * @param cell (the Cell on which there is the selected Worker).
+     * @throws WrongParametersException (if there is no Worker on the Cell).
+     */
     public void setCell(ViewCell cell) throws WrongParametersException{
         if(cell.isThereWorker())
             setWorkerId(cell.getWorker());
@@ -81,6 +93,13 @@ public class SelectWorkerExecuter extends Executer {
             throw new WrongParametersException("No worker on the selected Cell");
     }
 
+    /**
+     * Method that selects the Worker on the Cell on the given position.
+     *
+     * @param x (the x-position of the Cell).
+     * @param y (the y-position of the Cell).
+     * @throws WrongParametersException (if there is no Worker on the Cell).
+     */
     public void setCell(int x, int y) throws WrongParametersException{
         try {
             setCell(ViewBoard.getBoard().getCellAt(x, y));
@@ -94,6 +113,12 @@ public class SelectWorkerExecuter extends Executer {
         getSender().send((SelectWorkerEvent)event);
     }*/
 
+    /**
+     * Method returning ture iif this Executer has to wait undo-timeout.
+     *
+     * @return (ture iif this Executer has to wait undo-timeout).
+     */
+    @Override
     protected boolean checkUndo(){
         return true;
     }

@@ -18,6 +18,11 @@ public abstract class Executer{
 
     private static ViewSender sender;
 
+    /**
+     * Static method to set the default object on which call the <code>send</code> method.
+     *
+     * @param newSender (the <code>ViewSender</code> on which call the <code>send</code>).
+     */
     public static void setSender(ViewSender newSender){
         sender = newSender;
     }
@@ -80,7 +85,6 @@ public abstract class Executer{
         this.clear();
     }
 
-    //todo: rimuovere tutti i send overridati
     /**
      * Method that sends the event to the Server.
      *
@@ -94,7 +98,6 @@ public abstract class Executer{
         sender.send(event);
     }
 
-    //todo da rivedere (tutte le comunicazioni in uscita sono asincrone)
     /**
      * Method to send the event to the Server in a new thread.
      *
@@ -123,10 +126,20 @@ public abstract class Executer{
         this.clear();
     }
 
+    /**
+     * Method returning ture iif this Executer has to wait undo-timeout.
+     *
+     * @return (ture iif this Executer has to wait undo-timeout).
+     */
     protected boolean checkUndo(){
         return false;
     }
 
+    /**
+     * Method that returns the set Sender.
+     *
+     * @return (the <code>ViewSender</code> called for the <code>send</code>).
+     */
     protected static ViewSender getSender(){
         return sender;
     }

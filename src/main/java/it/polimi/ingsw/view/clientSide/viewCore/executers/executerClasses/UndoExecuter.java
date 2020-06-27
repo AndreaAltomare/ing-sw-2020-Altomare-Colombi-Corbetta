@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
 
+/**
+ * Class to execute the Undo.
+ *
+ * @see Executer
+ */
 public class UndoExecuter extends Executer {
     private static UndoExecuter instance = new UndoExecuter();
     private static long timeOut = 5000;
@@ -17,6 +22,10 @@ public class UndoExecuter extends Executer {
 
     private final static Object lock = new Object();
 
+
+    /**
+     * Interface to be implemented and will be notified with the Undo execution.
+     */
     public interface UndoExecuterListenerUpdate{
 
 
@@ -104,6 +113,9 @@ public class UndoExecuter extends Executer {
         instance.resetUndo();
     }
 
+    /**
+     * Method to reset the undo (timer).
+     */
     private void resetUndo(){
         if(thread!=null){
             Thread t1 = thread;
@@ -136,6 +148,11 @@ public class UndoExecuter extends Executer {
         dontSendEvent = true;
     }
 
+    /**
+     * Method to call the (last instantiated) UndoExecuter
+     *
+     * @throws CannotSendEventException (iif there is an error sending the Event).
+     */
     public static void undoIt() throws CannotSendEventException {
         instance.doIt();
     }
@@ -159,28 +176,40 @@ public class UndoExecuter extends Executer {
      */
     public static String myType(){ return Executer.myType() + "\tQuit"; }
 
-
-    //todo: implement it
-    @Override
     /**
      * Method that returns the event of this Executer
      *
      * @return (The event associated to this Executer)
      */
+    @Override
     public UndoActionEvent getMyEvent() {
         return new UndoActionEvent();
     }
 
+    /**
+     * Method that sends the event to the Server.
+     *
+     * @param event (EventObject to be submitted to the server)
+     */
     public void send(EventObject event) throws NullPointerException{
         if(event == null) return;
         getSender().send((UndoActionEvent)event);
     }
 
+
+    /**
+     * Method that returns weather the undo is actually available
+     *
+     * @return (true iif the undo is available).
+     */
     public static boolean isAvailable(){
 
         return thread!=null;
     }
 
+    /**
+     * Method to stop the current undo.
+     */
     public static void stop(){
         if(thread != null){
             thread.interrupt();
@@ -188,10 +217,19 @@ public class UndoExecuter extends Executer {
         }
     }
 
+
+    /**
+     * Method that returns true if the undo is not available.
+     *
+     * @return (true f the undo is not available)
+     */
     public static boolean getDontSendEvent(){
         return dontSendEvent;
     }
 
+    /**
+     * Method that re-enables the sending of events.
+     */
     public static void canSendEvent(){
         dontSendEvent = false;
     }

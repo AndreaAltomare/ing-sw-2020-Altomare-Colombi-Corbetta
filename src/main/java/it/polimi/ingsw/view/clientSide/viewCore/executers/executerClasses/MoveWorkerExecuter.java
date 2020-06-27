@@ -12,6 +12,11 @@ import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
 
 import java.util.EventObject;
 
+/**
+ * Class to execute the Move Worker.
+ *
+ * @see Executer
+ */
 public class MoveWorkerExecuter extends Executer {
     private String workerId; // univocal Worker identifier (who made this move)
     private int x;
@@ -20,6 +25,7 @@ public class MoveWorkerExecuter extends Executer {
     /**
      * Method that reset the executer with initial values.
      */
+    @Override
     public void clear(){
         x=-1;
         y=-1;
@@ -114,6 +120,12 @@ public class MoveWorkerExecuter extends Executer {
         getSender().send((MoveWorkerEvent)event);
     }*/
 
+    /**
+     * Method returning ture iif this Executer has to wait undo-timeout.
+     *
+     * @return (ture).
+     */
+    @Override
     protected boolean checkUndo(){
         return true;
     }

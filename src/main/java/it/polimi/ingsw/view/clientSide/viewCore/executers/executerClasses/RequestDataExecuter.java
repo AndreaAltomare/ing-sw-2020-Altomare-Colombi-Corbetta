@@ -5,11 +5,17 @@ import it.polimi.ingsw.view.events.ViewRequestDataEvent;
 
 import java.util.EventObject;
 
+/**
+ * Class to execute the Data Request.
+ *
+ * @see Executer
+ */
 public class RequestDataExecuter extends Executer {
 
     /**
      * Method that reset the executer with initial values.
      */
+    @Override
     public void clear(){}
 
     /**
@@ -26,12 +32,12 @@ public class RequestDataExecuter extends Executer {
      */
     public static String myType(){ return Executer.myType() + "\tDataRequest"; }
 
-    @Override
     /**
      * Method that returns the event of this Executer
      *
      * @return (The event associated to this Executer)
      */
+    @Override
     public EventObject getMyEvent() {
         return new ViewRequestDataEvent();
     }

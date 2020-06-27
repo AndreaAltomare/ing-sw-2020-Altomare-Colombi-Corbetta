@@ -10,12 +10,18 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import java.util.EventObject;
 
+/**
+ * Class to execute the Set Nickname.
+ *
+ * @see Executer
+ */
 public class SetNicknameExecuter extends Executer {
     private String nickname;
 
     /**
      * Method that reset the executer with initial values.
      */
+    @Override
     public void clear(){
         nickname = null;
     }
@@ -46,13 +52,13 @@ public class SetNicknameExecuter extends Executer {
      */
     public static String myType(){ return Executer.myType() + "\tSetNickname"; }
 
-    @Override
     /**
      * Method that returns the event of this Executer
      *
      * @return (The event associated to this Executer)
      * @throws CannotSendEventException (if the Executer doesn't have all the information needed  by the Event)
      */
+    @Override
     public EventObject getMyEvent()throws CannotSendEventException {
         if(nickname == null) throw new CannotSendEventException("No valid nickname set");
         SetNicknameEvent setNicknameEvent = new SetNicknameEvent(nickname);

@@ -7,6 +7,11 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import java.util.EventObject;
 
+/**
+ * Class to execute the Set Player Number.
+ *
+ * @see Executer
+ */
 public class SetPlayerNumberExecuter extends Executer {
 
     private Integer playerNumber;
@@ -14,6 +19,7 @@ public class SetPlayerNumberExecuter extends Executer {
     /**
      * Method that reset the executer with initial values.
      */
+    @Override
     public void clear(){
         playerNumber = null;
     }
@@ -44,13 +50,13 @@ public class SetPlayerNumberExecuter extends Executer {
      */
     public static String myType(){ return Executer.myType() + "\tSetPlayerNumber"; }
 
-    @Override
     /**
      * Method that returns the event of this Executer
      *
      * @return (The event associated to this Executer)
      * @throws CannotSendEventException (if the Executer doesn't have all the information needed  by the Event)
      */
+    @Override
     public EventObject getMyEvent()throws CannotSendEventException {
         if(playerNumber == null) throw new CannotSendEventException("No valid number set");
         SetPlayersNumberEvent setPlayerNumberEvent = new SetPlayersNumberEvent(playerNumber);

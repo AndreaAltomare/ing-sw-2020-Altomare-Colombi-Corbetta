@@ -11,6 +11,11 @@ import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
 
 import java.util.EventObject;
 
+/**
+ * Class to execute the Remove Block.
+ *
+ * @see Executer
+ */
 public class RemoveBlockExecuter extends Executer {
     private String workerId; // univocal Worker identifier (who EVENTUALLY made this move)
     private int x;
@@ -19,6 +24,7 @@ public class RemoveBlockExecuter extends Executer {
     /**
      * Method that reset the executer with initial values.
      */
+    @Override
     public void clear(){
         x=-1;
         y=-1;
@@ -31,6 +37,7 @@ public class RemoveBlockExecuter extends Executer {
     public RemoveBlockExecuter(){
         this.clear();
     }
+
     /**
      * Method that sets the cell on which we want to remove the block.
      *
@@ -87,19 +94,25 @@ public class RemoveBlockExecuter extends Executer {
      */
     public static String myType(){ return Executer.myType() + "\tRemoveBlock"; }
 
-    @Override
     /**
      * Method that returns the event of this Executer
      *
      * @return (The event associated to this Executer)
      * @throws CannotSendEventException (if the Executer doesn't have all the information needed  by the Event)
      */
+    @Override
     public EventObject getMyEvent()throws CannotSendEventException {
         if(x<0||y<0) throw new CannotSendEventException("Cannot try to remove a block without having selected a cell.");
         if(workerId == null) throw new CannotSendEventException("Cannot remove a block without knowing which worker is trying to remove it");
         return new RemoveBlockEvent(workerId, x, y);
     }
 
+    /**
+     * Method returning ture iif this Executer has to wait undo-timeout.
+     *
+     * @return (ture iif this Executer has to wait undo-timeout).
+     */
+    @Override
     protected boolean checkUndo(){
         return true;
     }
