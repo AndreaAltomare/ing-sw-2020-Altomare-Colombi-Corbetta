@@ -380,6 +380,21 @@ public abstract class Viewer extends Thread{
     }
 
     /**
+     * Method searcching if there is an event of given type inside the queue.
+     *
+     * @param eventType (the type of the event searched).
+     * @return  (true iif there is at least one event in the queue with such a type).
+     */
+    public boolean isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType eventType){
+        for(ViewerQueuedEvent ev: myViewerQueue){
+            if(ev.getType() == eventType){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Method that will wait untill there is a new event on
      * the BlockingQueue.
      */

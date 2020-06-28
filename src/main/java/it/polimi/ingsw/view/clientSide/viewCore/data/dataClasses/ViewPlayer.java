@@ -189,7 +189,14 @@ public class ViewPlayer extends ViewObject {
 
 
         for (String player : data.getPlayers()) {
-            new ViewPlayer(player);
+            //CHECK IF IT WORKS
+            try {
+                searchByName(player);
+            } catch (NotFoundException e) {
+                new ViewPlayer(player);
+            }
+            //PREVIOUSLY: new ViewPlayer(player);
+
             List<String> workers = data.getWorkersToPlayer().get(player);
             if(workers!=null) {
                 for (String worker : workers) {
@@ -333,6 +340,8 @@ public class ViewPlayer extends ViewObject {
      * @param name (player's name).
      */
     public ViewPlayer(String name){
+
+
         this.name = name;
         this.card = null;
         this.workers[0] = null;
