@@ -778,7 +778,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
                 ViewSubTurn.setSubTurn(ViewSubTurn.SELECTWORKER);
             }
 
-            Viewer.setAllSubTurnViewer(ViewSubTurn.getActual());
+            //Viewer.setAllSubTurnViewer(ViewSubTurn.getActual());
         }
     }
 

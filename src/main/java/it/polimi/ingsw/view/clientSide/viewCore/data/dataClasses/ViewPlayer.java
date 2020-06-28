@@ -341,11 +341,17 @@ public class ViewPlayer extends ViewObject {
      */
     public ViewPlayer(String name){
 
-
         this.name = name;
         this.card = null;
         this.workers[0] = null;
         this.workers[1] = null;
+
+        //CHANGED FOR THE CLI
+        try {
+            myList.remove(searchByName(name));
+        } catch (NotFoundException e) {
+            //e.printStackTrace();
+        }
 
         myList.add(this);
     }
