@@ -9,6 +9,8 @@ import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.TerminalViewer;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -22,10 +24,10 @@ import java.util.Scanner;
 public class ClientApp {
     /* Arguments constants */
     private static final String IP_ARG = "-ip";
-    private static final String PORT_ARG = "-ip";
-    private static final String GUI_ARG = "-gui";
-    private static final String CLI_ARG = "-cli";
-    private static final String TERMINAL_ARG = "-terminal";
+    private static final String PORT_ARG = "-port";
+    private static final String GUI_ARG = "--gui";
+    private static final String CLI_ARG = "--cli";
+    private static final String TERMINAL_ARG = "--terminal";
     private static final String BAD_ARGS = "Bad arguments.";
 
     /**
@@ -43,6 +45,19 @@ public class ClientApp {
         String ip = DEFAULT_IP;
         int port = DEFAULT_PORT;
         Viewer viewer;
+
+        /* Initialize information to properly work with resources */
+        try {
+            ResourceManager.initializeResources(ClientApp.class);
+        }
+        catch (URISyntaxException ex) {
+            System.out.println("Something went wrong when analyzing the application path.\nApplication is closing...");
+            System.exit(1);
+        }
+        catch (IOException ex) {
+            System.out.println("Something went wrong when getting the canonical path for the application.\nApplication is closing...");
+            System.exit(1);
+        }
 
         List<String> argsList = Arrays.asList(args);
 

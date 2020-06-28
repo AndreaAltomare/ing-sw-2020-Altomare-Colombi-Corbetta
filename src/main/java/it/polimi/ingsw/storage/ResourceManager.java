@@ -174,12 +174,13 @@ public class ResourceManager {
      * Initializes application path and, eventually,
      * other important information for Resource management.
      *
+     * @param mainClass Main application class
      * @throws URISyntaxException Exception handled by the main application class
      * @throws IOException Exception handled by the main application class
      */
-    public static void initializeResources() throws URISyntaxException, IOException {
+    public static void initializeResources(Class mainClass) throws URISyntaxException, IOException {
         /* Application path */
-        PARENT_DIRECTORY_PATH = new File(ServerApp.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getCanonicalFile().getParent();
+        PARENT_DIRECTORY_PATH = new File(mainClass.getProtectionDomain().getCodeSource().getLocation().toURI()).getCanonicalFile().getParent();
         /* No other information needed */
     }
 }

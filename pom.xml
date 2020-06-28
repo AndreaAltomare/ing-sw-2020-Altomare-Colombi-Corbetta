@@ -8,7 +8,7 @@
   <artifactId>AM42</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>SantoriniCore</name>
+  <name>SantoriniClient</name>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
 
@@ -17,6 +17,7 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <junit.version>5.6.1</junit.version>
+    <project.outputName>SantoriniClient</project.outputName>
   </properties>
 
   <dependencies>
@@ -79,13 +80,13 @@
           <configuration>
             <archive>
               <manifest>
-                <mainClass>it.polimi.ingsw.ServerApp</mainClass>
+                <mainClass>it.polimi.ingsw.ClientApp</mainClass>
               </manifest>
             </archive>
             <descriptorRefs>
               <descriptorRef>jar-with-dependencies</descriptorRef>
             </descriptorRefs>
-            <finalName>SantoriniCore</finalName>
+            <finalName>${project.outputName}</finalName>
             <appendAssemblyId>false</appendAssemblyId>
           </configuration>
           <executions>
@@ -99,6 +100,7 @@
             </execution>
           </executions>
         </plugin>
+
 
 
 

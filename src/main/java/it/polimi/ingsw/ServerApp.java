@@ -29,7 +29,7 @@ public class ServerApp {
 
         /* Initialize information to properly work with resources */
         try {
-            ResourceManager.initializeResources();
+            ResourceManager.initializeResources(ServerApp.class);
         }
         catch (URISyntaxException ex) {
             System.out.println("Something went wrong when analyzing the application path.\nApplication is closing...");
