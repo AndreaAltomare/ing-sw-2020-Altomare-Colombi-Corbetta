@@ -17,7 +17,6 @@ import java.util.Scanner;
 
 public class CLIPlaceWorkerPhase extends CLISubTurnViewer {
 
-    private CLIGamePreparationViewer myCLIStatusViewer = null;
     private PlaceWorkerViewer placeWorkerViewer;
 
     private final int STARTING_SPACE = 7;
@@ -117,17 +116,4 @@ public class CLIPlaceWorkerPhase extends CLISubTurnViewer {
 
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return placeWorkerViewer.getMySubTurn();
-    }
-
-
-    /**
-     * Overloading of CLISubTurnViewer's setMyCLIStatusViewer to set the correct CLIStatusViewer
-     * @param myCLIStatusViewer
-     */
-    public void setMyCLIStatusViewer( CLIGamePreparationViewer myCLIStatusViewer) {
-        this.myCLIStatusViewer = myCLIStatusViewer;
-    }
 }

@@ -13,8 +13,6 @@ import java.util.Scanner;
 
 public class WTerminalNumberPlayerViewer extends WTerminalStatusViewer {
 
-    private final ViewStatus viewStatus = ViewStatus.NUMBER_PLAYER;
-
     private NumberPlayerViewer numberPlayerViewer;
 
     final int START_SPACE = 5;
@@ -169,11 +167,6 @@ public class WTerminalNumberPlayerViewer extends WTerminalStatusViewer {
 
 
         return approvedResponse;
-    }
-
-    @Override
-    public ViewStatus getViewStatus() {
-        return viewStatus;
     }
 
     /**

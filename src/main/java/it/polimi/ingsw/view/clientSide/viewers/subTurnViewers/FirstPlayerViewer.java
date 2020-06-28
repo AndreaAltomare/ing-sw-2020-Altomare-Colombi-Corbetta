@@ -10,12 +10,14 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.CLIFirstPlayerChoosePhase;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.statusClasses.GUIResumeRequest;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.subTurnClasses.FirstPlayerSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTerminalFirstPlayerChoosePhase;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 
 import java.util.Map;
@@ -42,7 +44,7 @@ public class FirstPlayerViewer extends SubTurnViewer {
     }
 
     public WTerminalSubTurnViewer toWTerminal(){
-        WTerminalSubTurnViewer ret = super.toWTerminal();
+        WTerminalSubTurnViewer ret = new WTerminalFirstPlayerChoosePhase(this);
         if(ret!= null)
             return ret;
         else{
@@ -58,7 +60,7 @@ public class FirstPlayerViewer extends SubTurnViewer {
     }
 
     public CLISubTurnViewer toCLI() {
-        CLISubTurnViewer ret = super.toCLI();
+        CLISubTurnViewer ret = new CLIFirstPlayerChoosePhase(this);
         if(ret!= null)
             return ret;
         else{

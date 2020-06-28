@@ -124,7 +124,7 @@ public class CardSelection implements Iterator<ViewCard> {
      *
      * @return (int: the number of cards to be chosen)
      */
-    public int getRemaiing() {
+    public int getRemaining() {
         return cardExecuter.getRemaining();
     }
 

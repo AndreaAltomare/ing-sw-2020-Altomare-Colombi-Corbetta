@@ -8,10 +8,10 @@ import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.MoveViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLICheckWrite;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.CLICheckWrite;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.StopTimeScanner;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.StopTimeScanner;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses.CLIPlayingViewer;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
@@ -22,7 +22,6 @@ import java.util.Scanner;
 
 public class CLIMovePhase extends CLISubTurnViewer {
 
-    private CLIPlayingViewer myCLIStatusViewer = null;
     private MoveViewer moveViewer;
 
     private final int STARTING_SPACE = 7;
@@ -94,10 +93,6 @@ public class CLIMovePhase extends CLISubTurnViewer {
                 CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
                 System.out.print(CORRECT_COLOR_AND_SYMBOL + CORRECT_MESSAGE + ANSIStyle.RESET);
                 correctResponse = true;
-                //todo: a little CLI control if it isn't necessary cancel it and all its helper methods
-                if ( this.myCLIStatusViewer != null ) {
-                    myCLIStatusViewer.setMoveTrue();
-                }
             } else {
                 System.out.println();
                 CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
@@ -287,16 +282,4 @@ public class CLIMovePhase extends CLISubTurnViewer {
         }
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return moveViewer.getMySubTurn();
-    }
-
-    /**
-     * Overloading of CLISubTurnViewer's setMyCLIStatusViewer to set the correct CLIStatusViewer
-     * @param myCLIStatusViewer
-     */
-    public void setMyCLIStatusViewer( CLIPlayingViewer myCLIStatusViewer) {
-        this.myCLIStatusViewer = myCLIStatusViewer;
-    }
-}
+ }

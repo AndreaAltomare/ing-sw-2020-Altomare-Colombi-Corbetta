@@ -1,4 +1,4 @@
-package it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces;
+package it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

@@ -1,4 +1,4 @@
-package it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces;
+package it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility;
 
 public class CLICheckWrite {
 

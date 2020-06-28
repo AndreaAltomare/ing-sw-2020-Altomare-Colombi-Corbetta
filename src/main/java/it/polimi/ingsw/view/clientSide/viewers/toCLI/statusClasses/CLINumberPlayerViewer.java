@@ -15,8 +15,6 @@ import java.util.Scanner;
 
 public class CLINumberPlayerViewer extends CLIStatusViewer {
 
-    private final ViewStatus viewStatus = ViewStatus.NUMBER_PLAYER;
-
     private NumberPlayerViewer numberPlayerViewer;
 
     final int STARTING_SPACE = 7;
@@ -150,11 +148,6 @@ public class CLINumberPlayerViewer extends CLIStatusViewer {
 
 
         return approvedResponse;
-    }
-
-    @Override
-    public ViewStatus getViewStatus() {
-        return viewStatus;
     }
 
     /**

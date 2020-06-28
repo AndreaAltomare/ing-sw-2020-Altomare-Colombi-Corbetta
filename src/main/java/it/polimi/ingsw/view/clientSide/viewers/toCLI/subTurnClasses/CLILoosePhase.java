@@ -83,8 +83,4 @@ public class CLILoosePhase extends CLISubTurnViewer {
 
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return null;
-    }
 }

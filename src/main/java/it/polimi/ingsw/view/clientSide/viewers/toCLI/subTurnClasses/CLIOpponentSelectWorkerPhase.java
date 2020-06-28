@@ -10,7 +10,6 @@ import it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses.CLIPlayingVie
 
 public class CLIOpponentSelectWorkerPhase extends CLISubTurnViewer {
 
-    private CLIPlayingViewer myCLIStatusViewer = null;
     private OpponentSelectWorkerViewer opponentSelectWorkerViewer;
 
     private final int STARTING_SPACE = 7;
@@ -40,16 +39,4 @@ public class CLIOpponentSelectWorkerPhase extends CLISubTurnViewer {
 
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return opponentSelectWorkerViewer.getMySubTurn();
-    }
-
-    /**
-     * Overloading of CLISubTurnViewer's setMyCLIStatusViewer to set the correct CLIStatusViewer
-     * @param myCLIStatusViewer
-     */
-    public void setMyCLIStatusViewer( CLIPlayingViewer myCLIStatusViewer) {
-        this.myCLIStatusViewer = myCLIStatusViewer;
-    }
 }

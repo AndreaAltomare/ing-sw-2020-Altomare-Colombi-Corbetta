@@ -7,17 +7,10 @@ import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSt
 
 public class WTerminalGamePreparationViewer extends WTerminalStatusViewer {
 
-    private final ViewStatus viewStatus = ViewStatus.GAME_PREPARATION;
-
     private GamePreparationViewer gamePreparationViewer;
 
     public WTerminalGamePreparationViewer(GamePreparationViewer gamePreparationViewer) {
         this.gamePreparationViewer = gamePreparationViewer;
-    }
-
-    @Override
-    public ViewStatus getViewStatus() {
-        return viewStatus;
     }
 
     /**

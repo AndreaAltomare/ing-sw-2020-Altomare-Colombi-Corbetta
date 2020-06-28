@@ -21,7 +21,6 @@ import java.util.Scanner;
 
 public class CLISelectWorkerPhase extends CLISubTurnViewer {
 
-    private CLIPlayingViewer myCLIStatusViewer = null;
     private SelectWorkerViewer selectWorkerViewer;
 
     private final int STARTING_SPACE = 7;
@@ -170,16 +169,4 @@ public class CLISelectWorkerPhase extends CLISubTurnViewer {
 
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return selectWorkerViewer.getMySubTurn();
-    }
-
-    /**
-     * Overloading of CLISubTurnViewer's setMyCLIStatusViewer to set the correct CLIStatusViewer
-     * @param myCLIStatusViewer
-     */
-    public void setMyCLIStatusViewer( CLIPlayingViewer myCLIStatusViewer) {
-        this.myCLIStatusViewer = myCLIStatusViewer;
-    }
 }

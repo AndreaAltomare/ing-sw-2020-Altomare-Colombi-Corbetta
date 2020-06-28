@@ -9,17 +9,10 @@ import it.polimi.ingsw.view.exceptions.NotFoundException;
 
 public class CLIGamePreparationViewer extends CLIStatusViewer {
 
-    private final ViewStatus viewStatus = ViewStatus.GAME_PREPARATION;
-
     private GamePreparationViewer gamePreparationViewer;
 
     public CLIGamePreparationViewer(GamePreparationViewer gamePreparationViewer) {
         this.gamePreparationViewer = gamePreparationViewer;
-    }
-
-    @Override
-    public ViewStatus getViewStatus() {
-        return viewStatus;
     }
 
     /**

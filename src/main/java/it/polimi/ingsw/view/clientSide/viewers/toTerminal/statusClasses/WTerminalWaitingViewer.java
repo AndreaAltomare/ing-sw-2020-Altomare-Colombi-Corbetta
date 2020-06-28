@@ -6,7 +6,6 @@ import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSt
 
 public class WTerminalWaitingViewer extends WTerminalStatusViewer {
 
-    private final ViewStatus viewStatus = ViewStatus.WAITING;
     private WaitingViewer waitingViewer;
 
     final int SLEEP_TIME = 1000; //in ns
@@ -18,11 +17,6 @@ public class WTerminalWaitingViewer extends WTerminalStatusViewer {
      */
     public WTerminalWaitingViewer(WaitingViewer waitingViewer) {
         this.waitingViewer = waitingViewer;
-    }
-
-    @Override
-    public ViewStatus getViewStatus() {
-        return viewStatus;
     }
 
     /**

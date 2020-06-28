@@ -8,6 +8,7 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.*;
@@ -35,24 +36,7 @@ public class CLIViewer extends Viewer{
     public void refresh() {
 
         if ( cliStatusViewer != null ) {
-            if ( cliStatusViewer.getViewStatus() != null ) {
-                if ( cliStatusViewer.getMyCLISubTurnViewer() != null ) {
-                    switch ( cliStatusViewer.getMyCLISubTurnViewer().getSubTurn() ) {
-                        case PLACEWORKER:
-                        case OPPONENT_PLACEWORKER:
-                        case SELECTWORKER:
-                        case OPPONENT_SELECTWORKER:
-                        case MOVE:
-                        case OPPONENT_MOVE:
-                        case BUILD:
-                        case OPPONENT_BUILD:
-                            cliStatusViewer.show();
-                            break;
-                        default:
-                            ;
-                    }
-                }
-            }
+            cliStatusViewer.show();
         }
 
     }
@@ -65,7 +49,6 @@ public class CLIViewer extends Viewer{
             cliStatusViewer = statusViewer.toCLI();
             if ( cliStatusViewer != null ) {
                 this.cliStatusViewer = cliStatusViewer;
-                this.cliStatusViewer.setMyCLIViewer( this );
                 this.cliStatusViewer.show();
             }
         }
@@ -82,30 +65,11 @@ public class CLIViewer extends Viewer{
         if ( subTurnViewer != null) {
             cliSubTurnViewer = subTurnViewer.toCLI();
             if ( cliSubTurnViewer != null) {
-                switch ( cliSubTurnViewer.getSubTurn() ) {
-                    case PLACEWORKER:
-                    case OPPONENT_PLACEWORKER:
-                        if ( this.cliStatusViewer.getViewStatus() == ViewStatus.GAME_PREPARATION ) {
-                            this.cliStatusViewer.setMyCLISubTurnViewer(cliSubTurnViewer);
-                            this.cliStatusViewer.show();
-                        }
-                        break;
-                    case SELECTWORKER:
-                    case OPPONENT_SELECTWORKER:
-                    case MOVE:
-                    case OPPONENT_MOVE:
-                    case BUILD:
-                    case OPPONENT_BUILD:
-                        if ( this.cliStatusViewer.getViewStatus() == ViewStatus.PLAYING ) {
-                            this.cliStatusViewer.setMyCLISubTurnViewer(cliSubTurnViewer);
-                            this.cliStatusViewer.show();
-                        }
-                        break;
-                    default:
-                        ;
-                }
+                this.cliStatusViewer.setMyCLISubTurnViewer(cliSubTurnViewer);
+                this.cliStatusViewer.show();
             }
         }
+
     }
 
     /**
@@ -117,17 +81,16 @@ public class CLIViewer extends Viewer{
     private void prepareCardsPhase(ViewerQueuedEvent queuedEvent) {
         CardSelection cardSelection;
 
-        if(cliStatusViewer.getViewStatus() == ViewStatus.GAME_PREPARATION) {
-            cardSelection = (CardSelection) queuedEvent.getPayload();
-            if ( cardSelection != null) {
-                if (cardSelection.getCardList().size() > ViewPlayer.getNumberOfPlayers()) {
-                    this.cliStatusViewer.setMyCLISubTurnViewer( new CLIChooseCardsPhase(cardSelection) );
-                } else {
-                    this.cliStatusViewer.setMyCLISubTurnViewer( new CLISelectMyCardPhase(cardSelection) );
-                }
-                this.cliStatusViewer.show();
+        cardSelection = (CardSelection) queuedEvent.getPayload();
+        if ( cardSelection != null) {
+            if (cardSelection.getCardList().size() > ViewPlayer.getNumberOfPlayers()) {
+                this.cliStatusViewer.setMyCLISubTurnViewer( new CLIChooseCardsPhase(cardSelection) );
+            } else {
+                this.cliStatusViewer.setMyCLISubTurnViewer( new CLISelectMyCardPhase(cardSelection) );
             }
+            this.cliStatusViewer.show();
         }
+
     }
 
     /**
@@ -142,23 +105,27 @@ public class CLIViewer extends Viewer{
         if (viewMessage != null) {
             switch ( viewMessage.getMessageType() ) {
                 case WIN_MESSAGE:
-                    if (this.cliStatusViewer.getViewStatus() == ViewStatus.PLAYING) {
-                        this.cliStatusViewer.setMyCLISubTurnViewer( new CLIWinPhase() );
-                        this.cliStatusViewer.show();
-                    }
+                    this.cliStatusViewer.setMyCLISubTurnViewer( new CLIWinPhase() );
+                    this.cliStatusViewer.show();
                     break;
                 case LOOSE_MESSAGE:
-                    if (this.cliStatusViewer.getViewStatus() == ViewStatus.PLAYING) {
-                        this.cliStatusViewer.setMyCLISubTurnViewer( new CLILoosePhase() );
-                        this.cliStatusViewer.show();
-                    }
+                    this.cliStatusViewer.setMyCLISubTurnViewer( new CLILoosePhase() );
+                    this.cliStatusViewer.show();
                     break;
                 case FROM_SERVER_ERROR:
                 case FATAL_ERROR_MESSAGE:
-                case EXECUTER_ERROR_MESSAGE:
-                    if ( this.cliStatusViewer != null ) {
-                        cliStatusViewer.show();
-                    }
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 1);
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", 7); //starting space
+                    System.out.println(ANSIStyle.RED + "[Error Message]: " + viewMessage.getPayload() + ANSIStyle.RESET);
+//                    if ( this.cliStatusViewer != null ) {
+//                        cliStatusViewer.show();
+//                    }
+                    break;
+                case FROM_SERVER_MESSAGE:
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 1);
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", 7); //starting space
+                    System.out.println(ANSIStyle.GREEN + "[Server Message]: " + viewMessage.getPayload() + ANSIStyle.RESET);
+                    break;
                 default:
                     ;
             }
@@ -205,6 +172,6 @@ public class CLIViewer extends Viewer{
 
         this.exit();
 
-
     }
+
 }

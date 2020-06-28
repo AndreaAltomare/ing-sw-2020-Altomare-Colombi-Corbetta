@@ -18,9 +18,7 @@ import java.util.Scanner;
 //todo: rivedere intera classe per sistemare uso degli executer
 public class WTerminalSelectMyCardPhase extends WTerminalSubTurnViewer {
 
-    private WTerminalGamePreparationViewer myWTerminalStatusViewer = null;
-    private ViewSubTurn viewSubTurn = ViewSubTurn.SELECTCARD;
-    private CardSelectionExecuter cardSelectionExecuter = new CardSelectionExecuter();
+    private CardSelectionExecuter cardSelectionExecuter;
     private CardSelection cardSelection;
 
     private final int STARTING_SPACE = 7;
@@ -30,6 +28,7 @@ public class WTerminalSelectMyCardPhase extends WTerminalSubTurnViewer {
 
     public WTerminalSelectMyCardPhase(CardSelection cardSelection) {
         this.cardSelection = cardSelection;
+        this.cardSelectionExecuter = (CardSelectionExecuter) cardSelection.getExecuter();
     }
 
     /**
@@ -242,16 +241,4 @@ public class WTerminalSelectMyCardPhase extends WTerminalSubTurnViewer {
 
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return viewSubTurn;
-    }
-
-    /**
-     * Overloading of WTerminalSubTurnViewer's setMyWTerminalStatusViewer to set the correct WTerminalStatusViewer
-     * @param myWTerminalStatusViewer
-     */
-    public void setMyWTerminalStatusViewer( WTerminalGamePreparationViewer myWTerminalStatusViewer) {
-        this.myWTerminalStatusViewer = myWTerminalStatusViewer;
-    }
 }

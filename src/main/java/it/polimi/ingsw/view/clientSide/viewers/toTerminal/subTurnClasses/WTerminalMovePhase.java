@@ -17,7 +17,6 @@ import java.util.Scanner;
 
 public class WTerminalMovePhase extends WTerminalSubTurnViewer {
 
-    private WTerminalPlayingViewer myWTerminalStatusViewer = null;
     private MoveViewer moveViewer;
 
     private final int STARTING_SPACE = 7;
@@ -101,10 +100,6 @@ public class WTerminalMovePhase extends WTerminalSubTurnViewer {
                 moveWorkerExecuter.setCell( selectedCell );
                 moveWorkerExecuter.doIt();
                 correctResponse = true;
-                //todo: a little CLI control if it isn't necessary cancel it and all its helper methods
-                if ( this.myWTerminalStatusViewer != null ) {
-                    myWTerminalStatusViewer.setMoveTrue();
-                }
             } else {
                 System.out.println();
                 PrintFunction.printRepeatString(" ", STARTING_SPACE);
@@ -207,13 +202,6 @@ public class WTerminalMovePhase extends WTerminalSubTurnViewer {
             System.out.println();
             System.out.println();
 
-/*            //todo: valutarlo
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-*/
             ViewBoard.getBoard().toWTerminal();
 
             System.out.println();
@@ -254,16 +242,4 @@ public class WTerminalMovePhase extends WTerminalSubTurnViewer {
         }
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return moveViewer.getMySubTurn();
-    }
-
-    /**
-     * Overloading of WTerminalSubTurnViewer's setMyWTerminalStatusViewer to set the correct WTerminalStatusViewer
-     * @param myWTerminalStatusViewer
-     */
-    public void setMyWTerminalStatusViewer( WTerminalPlayingViewer myWTerminalStatusViewer) {
-        this.myWTerminalStatusViewer = myWTerminalStatusViewer;
-    }
 }

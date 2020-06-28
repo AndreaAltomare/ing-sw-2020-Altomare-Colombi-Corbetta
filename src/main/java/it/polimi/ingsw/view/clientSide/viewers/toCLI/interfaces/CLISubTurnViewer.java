@@ -12,16 +12,7 @@ import it.polimi.ingsw.view.exceptions.NotFoundException;
 public abstract class CLISubTurnViewer implements SpecificSubTurnViewer {
 
     public abstract void show();
-
-    public abstract ViewSubTurn getSubTurn();
-
-    public void setMyCLIStatusViewer(CLIStatusViewer myCLIStatusViewer) {
-        /*System.out.printf("\n\t[CLI ERROR: you can't set CLIStatusViewer %s to CLISubTurnViewer %s!]\n",
-                                    myCLIStatusViewer.getViewStatus().toString(),
-                                    this.getSubTurn().toString());*/ //todo:maybe add the control of CLIStatus in this method
-    }
-
-    //TODO: maybe move it in CLIPlayingViewer
+    
     /**
      * Prints the Name, Epithet and Description of all the player's God with the color of player
      */

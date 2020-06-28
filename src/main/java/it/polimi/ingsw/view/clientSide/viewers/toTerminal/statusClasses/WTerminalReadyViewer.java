@@ -7,8 +7,6 @@ import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFuncti
 
 public class WTerminalReadyViewer extends WTerminalStatusViewer {
 
-    private final ViewStatus viewStatus = ViewStatus.READY;
-
     private ReadyViewer readyViewer;
 
     final int SCALE_HIGH = 2;
@@ -27,11 +25,6 @@ public class WTerminalReadyViewer extends WTerminalStatusViewer {
      */
     public WTerminalReadyViewer(ReadyViewer readyViewer) {
         this.readyViewer = readyViewer;
-    }
-
-    @Override
-    public ViewStatus getViewStatus() {
-        return viewStatus;
     }
 
     /**

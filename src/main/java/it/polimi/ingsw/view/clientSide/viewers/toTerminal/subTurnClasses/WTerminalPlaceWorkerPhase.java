@@ -15,7 +15,6 @@ import java.util.Scanner;
 
 public class WTerminalPlaceWorkerPhase extends WTerminalSubTurnViewer {
 
-    private WTerminalGamePreparationViewer myWTerminalStatusViewer = null;
     private PlaceWorkerViewer placeWorkerViewer;
 
     private final int STARTING_SPACE = 7;
@@ -111,16 +110,4 @@ public class WTerminalPlaceWorkerPhase extends WTerminalSubTurnViewer {
 
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return placeWorkerViewer.getMySubTurn();
-    }
-
-    /**
-     * Overloading of WTerminalSubTurnViewer's setMyWTerminalStatusViewer to set the correct WTerminalStatusViewer
-     * @param myWTerminalStatusViewer
-     */
-    public void setMyWTerminalStatusViewer( WTerminalGamePreparationViewer myWTerminalStatusViewer) {
-        this.myWTerminalStatusViewer = myWTerminalStatusViewer;
-    }
 }

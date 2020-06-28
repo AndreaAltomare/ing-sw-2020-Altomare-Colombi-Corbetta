@@ -21,9 +21,7 @@ import java.util.Scanner;
 //todo: rivedere intera classe per sistemare uso degli executer
 public class CLIChooseCardsPhase extends CLISubTurnViewer {
 
-    private CLIGamePreparationViewer myCLIStatusViewer = null;
-    private ViewSubTurn viewSubTurn = ViewSubTurn.SELECTCARD;
-    private CardsChoosingExecuter cardsChoosingExecuter = new CardsChoosingExecuter( ViewPlayer.getNumberOfPlayers());
+    private CardsChoosingExecuter cardsChoosingExecuter;
     private CardSelection cardSelection;
     private List<ViewCard> selectedCards= new ArrayList<>();
 
@@ -41,6 +39,7 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
 
     public CLIChooseCardsPhase(CardSelection cardSelection) {
         this.cardSelection = cardSelection;
+        cardsChoosingExecuter = (CardsChoosingExecuter) cardSelection.getExecuter();
     }
 
     /**
@@ -212,7 +211,7 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
                 response = this.SelOrDeselRequest(seeCard);
             } while ( !response );
         } catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();
+            e.printStackTrace();  // todo: remove after testing
         }
         System.out.println();
     }
@@ -285,43 +284,26 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
      */
     @Override
     public void show() {
-        final String ALL_RIGHT_MESSAGE = "THe cards are correctly selected";
+        final String ALL_RIGHT_MESSAGE = "The cards are correctly selected";
 
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
-        if ( true ) {//if ( viewSubTurn.isMyTurn() ) { todo:check it
-            this.showChooseInterface();
-            for (ViewCard viewCard : selectedCards) {
-                try {
-                    cardsChoosingExecuter.add(viewCard);
-                } catch (WrongParametersException e) {
-                    e.printStackTrace();
-                }
-            }
+        this.showChooseInterface();
+        for (ViewCard viewCard : selectedCards) {
             try {
-                cardsChoosingExecuter.doIt();
-                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
-                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-                System.out.print(CORRECT_COLOR_AND_SYMBOL + ALL_RIGHT_MESSAGE +ANSIStyle.RESET + "\n");
-            } catch (CannotSendEventException e) {
+                cardsChoosingExecuter.add(viewCard);
+            } catch (WrongParametersException e) {
                 e.printStackTrace();
             }
-        } else {
-            this.showWaitMessage();
+        }
+        try {
+            cardsChoosingExecuter.doIt();
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.print(CORRECT_COLOR_AND_SYMBOL + ALL_RIGHT_MESSAGE +ANSIStyle.RESET + "\n");
+        } catch (CannotSendEventException e) {
+            e.printStackTrace();
         }
         System.out.println();
-    }
-
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return viewSubTurn;
-    }
-
-    /**
-     * Overloading of CLISubTurnViewer's setMyCLIStatusViewer to set the correct CLIStatusViewer
-     * @param myCLIStatusViewer
-     */
-    public void setMyCLIStatusViewer( CLIGamePreparationViewer myCLIStatusViewer) {
-        this.myCLIStatusViewer = myCLIStatusViewer;
     }
 
 }

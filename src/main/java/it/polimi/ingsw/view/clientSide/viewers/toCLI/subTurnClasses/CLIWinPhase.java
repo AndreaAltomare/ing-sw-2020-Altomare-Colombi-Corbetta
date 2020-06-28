@@ -85,8 +85,4 @@ public class CLIWinPhase extends CLISubTurnViewer {
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return null;
-    }
 }

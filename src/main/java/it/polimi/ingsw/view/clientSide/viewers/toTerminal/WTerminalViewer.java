@@ -7,9 +7,10 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.CLILoosePhase;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.CLIWinPhase;
-import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.Symbols;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTerminalChooseCardsPhase;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTerminalLoosePhase;
@@ -17,13 +18,10 @@ import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTermin
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTerminalWinPhase;
 import it.polimi.ingsw.view.exceptions.EmptyQueueException;
 
-import java.util.HashMap;
-import java.util.Map;
-
 
 public class WTerminalViewer extends Viewer {
 
-    private it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer WTerminalStatusViewer = null;
+    private WTerminalStatusViewer wTerminalStatusViewer = null;
 
     public WTerminalViewer(){
         Viewer.registerViewer(this);
@@ -37,40 +35,21 @@ public class WTerminalViewer extends Viewer {
     @Override
     public void refresh() {
 
-        if ( WTerminalStatusViewer != null ) {
-            if ( WTerminalStatusViewer.getViewStatus() != null ) {
-                if ( WTerminalStatusViewer.getMyWTerminalSubTurnViewer() != null ) {
-                    switch ( WTerminalStatusViewer.getMyWTerminalSubTurnViewer().getSubTurn() ) {
-                        case PLACEWORKER:
-                        case OPPONENT_PLACEWORKER:
-                        case SELECTWORKER:
-                        case OPPONENT_SELECTWORKER:
-                        case MOVE:
-                        case OPPONENT_MOVE:
-                        case BUILD:
-                        case OPPONENT_BUILD:
-                           WTerminalStatusViewer.show();
-                           break;
-                        default:
-                            ;
-                    }
-                }
-            }
+        if ( wTerminalStatusViewer != null ) {
+           wTerminalStatusViewer.show();
         }
-
 
     }
 
     private void prepareStatusViewer(ViewerQueuedEvent queuedEvent) {
         StatusViewer statusViewer = (StatusViewer) queuedEvent.getPayload();
-        it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer WTerminalStatusViewer;
+        WTerminalStatusViewer wTerminalStatusViewer;
 
         if ( statusViewer != null) {
-            WTerminalStatusViewer = statusViewer.toWTerminal();
-            if ( WTerminalStatusViewer != null ) {
-                this.WTerminalStatusViewer = WTerminalStatusViewer;
-                this.WTerminalStatusViewer.setMyWTerminalViewer( this );
-                this.WTerminalStatusViewer.show();
+            wTerminalStatusViewer = statusViewer.toWTerminal();
+            if ( wTerminalStatusViewer != null ) {
+                this.wTerminalStatusViewer = wTerminalStatusViewer;
+                this.wTerminalStatusViewer.show();
             }
         }
     }
@@ -86,28 +65,8 @@ public class WTerminalViewer extends Viewer {
         if ( subTurnViewer != null) {
             WTerminalSubTurnViewer = subTurnViewer.toWTerminal();
             if ( WTerminalSubTurnViewer != null) {
-                switch ( WTerminalSubTurnViewer.getSubTurn() ) {
-                    case PLACEWORKER:
-                    case OPPONENT_PLACEWORKER:
-                        if ( this.WTerminalStatusViewer.getViewStatus() == ViewStatus.GAME_PREPARATION ) {
-                            this.WTerminalStatusViewer.setMyWTerminalSubTurnViewer(WTerminalSubTurnViewer);
-                            this.WTerminalStatusViewer.show();
-                        }
-                        break;
-                    case SELECTWORKER:
-                    case OPPONENT_SELECTWORKER:
-                    case MOVE:
-                    case OPPONENT_MOVE:
-                    case BUILD:
-                    case OPPONENT_BUILD:
-                        if ( this.WTerminalStatusViewer.getViewStatus() == ViewStatus.PLAYING ) {
-                            this.WTerminalStatusViewer.setMyWTerminalSubTurnViewer(WTerminalSubTurnViewer);
-                            this.WTerminalStatusViewer.show();
-                        }
-                        break;
-                    default:
-                        ;
-                }
+                this.wTerminalStatusViewer.setMyWTerminalSubTurnViewer(WTerminalSubTurnViewer);
+                this.wTerminalStatusViewer.show();
             }
         }
     }
@@ -120,16 +79,14 @@ public class WTerminalViewer extends Viewer {
     private void prepareCardsPhase(ViewerQueuedEvent queuedEvent) {
         CardSelection cardSelection;
 
-        if(WTerminalStatusViewer.getViewStatus() == ViewStatus.GAME_PREPARATION) {
-            cardSelection = (CardSelection) queuedEvent.getPayload();
-            if ( cardSelection != null) {
-                if (cardSelection.getCardList().size() > ViewPlayer.getNumberOfPlayers()) {
-                    this.WTerminalStatusViewer.setMyWTerminalSubTurnViewer( new WTerminalChooseCardsPhase(cardSelection) );
-                } else {
-                    this.WTerminalStatusViewer.setMyWTerminalSubTurnViewer( new WTerminalSelectMyCardPhase(cardSelection) );
-                }
-                this.WTerminalStatusViewer.show();
+        cardSelection = (CardSelection) queuedEvent.getPayload();
+        if ( cardSelection != null) {
+            if (cardSelection.getCardList().size() > ViewPlayer.getNumberOfPlayers()) {
+                this.wTerminalStatusViewer.setMyWTerminalSubTurnViewer(new WTerminalChooseCardsPhase(cardSelection));
+            } else {
+                this.wTerminalStatusViewer.setMyWTerminalSubTurnViewer(new WTerminalSelectMyCardPhase(cardSelection));
             }
+            this.wTerminalStatusViewer.show();
         }
     }
 
@@ -145,21 +102,32 @@ public class WTerminalViewer extends Viewer {
         if (viewMessage != null) {
             switch ( viewMessage.getMessageType() ) {
                 case WIN_MESSAGE:
-                    if ( this.WTerminalStatusViewer.getViewStatus() == ViewStatus.PLAYING ) {
-                        this.WTerminalStatusViewer.setMyWTerminalSubTurnViewer(new WTerminalWinPhase());
-                        this.WTerminalStatusViewer.show();
-                    }
+                    this.wTerminalStatusViewer.setMyWTerminalSubTurnViewer(new WTerminalWinPhase());
+                    this.wTerminalStatusViewer.show();
                     break;
                 case LOOSE_MESSAGE:
-                    if ( this.WTerminalStatusViewer.getViewStatus() == ViewStatus.PLAYING ) {
-                        this.WTerminalStatusViewer.setMyWTerminalSubTurnViewer(new WTerminalLoosePhase());
-                        this.WTerminalStatusViewer.show();
-                    }
+                    this.wTerminalStatusViewer.setMyWTerminalSubTurnViewer(new WTerminalLoosePhase());
+                    this.wTerminalStatusViewer.show();
+                    break;
+                case FROM_SERVER_ERROR:
+                case FATAL_ERROR_MESSAGE:
+                    PrintFunction.printRepeatString("\n", 1);
+                    PrintFunction.printRepeatString(" ", 7); // starting space
+                    System.out.println("[Error Message]: " + viewMessage.getPayload());
+//                    if ( this.cliStatusViewer != null ) {
+//                        cliStatusViewer.show();
+//                    }
+                    break;
+                case FROM_SERVER_MESSAGE:
+                    PrintFunction.printRepeatString("\n", 1);
+                    PrintFunction.printRepeatString(" ", 7); // starting space
+                    System.out.println("[Server Message]: " + viewMessage.getPayload());
                     break;
                 default:
                     ;
             }
         }
+
     }
 
     @Override

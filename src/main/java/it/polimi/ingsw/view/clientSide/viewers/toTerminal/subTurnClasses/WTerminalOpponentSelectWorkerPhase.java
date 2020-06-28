@@ -12,7 +12,6 @@ import it.polimi.ingsw.view.exceptions.NotFoundException;
 
 public class WTerminalOpponentSelectWorkerPhase extends WTerminalSubTurnViewer {
 
-    private WTerminalPlayingViewer myWTerminalStatusViewer = null;
     private OpponentSelectWorkerViewer opponentSelectWorkerViewer;
 
     private final int STARTING_SPACE = 7;
@@ -67,16 +66,4 @@ public class WTerminalOpponentSelectWorkerPhase extends WTerminalSubTurnViewer {
 
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return opponentSelectWorkerViewer.getMySubTurn();
-    }
-
-    /**
-     * Overloading of WTerminalSubTurnViewer's setMyWTerminalStatusViewer to set the correct WTerminalStatusViewer
-     * @param myWTerminalStatusViewer
-     */
-    public void setMyWTerminalStatusViewer( WTerminalPlayingViewer myWTerminalStatusViewer) {
-        this.myWTerminalStatusViewer = myWTerminalStatusViewer;
-    }
 }

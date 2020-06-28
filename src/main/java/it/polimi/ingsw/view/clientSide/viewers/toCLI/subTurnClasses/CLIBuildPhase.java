@@ -10,10 +10,10 @@ import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.BuildViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.CLISymbols;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLICheckWrite;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.CLICheckWrite;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.StopTimeScanner;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.StopTimeScanner;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses.CLIPlayingViewer;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
@@ -24,7 +24,6 @@ import java.util.Scanner;
 
 public class CLIBuildPhase extends CLISubTurnViewer {
 
-    private CLIPlayingViewer myCLIStatusViewer = null;
     private BuildViewer buildViewer;
 
     private final int STARTING_SPACE = 7;
@@ -106,10 +105,6 @@ public class CLIBuildPhase extends CLISubTurnViewer {
                     System.out.println();
                     CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
                     System.out.print(CORRECT_COLOR_AND_SYMBOL + CORRECT_MESSAGE + ANSIStyle.RESET);
-                    //todo: a little CLI control if it isn't necessary cancel it and all its helper methods
-                    if (this.myCLIStatusViewer != null) {
-                        myCLIStatusViewer.setBuildAfterMoveTrue();
-                    }
                 } else {
                     System.out.println();
                     CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
@@ -263,7 +258,7 @@ public class CLIBuildPhase extends CLISubTurnViewer {
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
             System.out.println(CORRECT_COLOR_AND_SYMBOL + CORRECT_CHANGE_PHASE_MESSAGE + ANSIStyle.RESET);
         } catch (WrongParametersException | CannotSendEventException e) {
-            e.printStackTrace();
+            e.printStackTrace();        //todo: cancel after testing
         }
 
         return changePhase;
@@ -275,28 +270,15 @@ public class CLIBuildPhase extends CLISubTurnViewer {
      * @return
      */
     private boolean endTurn() {
-        final String IMPOSSIBLE_CHANGE_MESSAGE = "It isn't possible to end turn, you must still ";
 
         NextTurnExecuter nextTurnExecuter = new NextTurnExecuter();
         boolean endTurn = false;
 
-        //todo: little check, if it isn't necessary cancel it and all its structure
-        if ( myCLIStatusViewer.isMove() && myCLIStatusViewer.isBuild()) {
-            try {
-                nextTurnExecuter.doIt();
-                endTurn = true;
-            } catch (CannotSendEventException e) {
-                e.printStackTrace(); //todo: delete after testing
-            }
-        } else {
-            System.out.println();
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-            System.out.print(ERROR_COLOR_AND_SYMBOL + IMPOSSIBLE_CHANGE_MESSAGE );
-            if ( !myCLIStatusViewer.isMove() ) {
-                System.out.println("MOVE!" + ANSIStyle.RESET);
-            } else {
-                System.out.println("BUILD!" + ANSIStyle.RESET);
-            }
+        try {
+            nextTurnExecuter.doIt();
+            endTurn = true;
+        } catch (CannotSendEventException e) {
+            e.printStackTrace(); //todo: delete after testing
         }
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
 
@@ -402,16 +384,4 @@ public class CLIBuildPhase extends CLISubTurnViewer {
         }
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return buildViewer.getMySubTurn();
-    }
-
-    /**
-     * Overloading of CLISubTurnViewer's setMyCLIStatusViewer to set the correct CLIStatusViewer
-     * @param myCLIStatusViewer
-     */
-    public void setMyCLIStatusViewer( CLIPlayingViewer myCLIStatusViewer) {
-        this.myCLIStatusViewer = myCLIStatusViewer;
-    }
 }

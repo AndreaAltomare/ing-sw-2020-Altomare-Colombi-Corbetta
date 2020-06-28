@@ -95,8 +95,4 @@ public class WTerminalLoosePhase extends WTerminalSubTurnViewer {
 
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return null;
-    }
 }
