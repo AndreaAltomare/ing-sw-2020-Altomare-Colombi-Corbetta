@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
+import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.events.UndoActionEvent;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 
@@ -82,6 +83,7 @@ public class UndoExecuter extends Executer {
      * Method to notify all the listeners the undo is available (with the call of the light method).
      */
     private void notifyLOn(){
+        Viewer.setAllUndo();
         for (UndoExecuterListenerUpdate l: myListener) {
             l.undoLightAvailable();
         }

@@ -1,9 +1,11 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI;
 
 import it.polimi.ingsw.model.player.worker.Worker;
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewWorker;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.UndoExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
@@ -12,16 +14,21 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.*;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.CLICheckWrite;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.StopTimeScanner;
+import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.EmptyQueueException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 public class CLIViewer extends Viewer{
 
@@ -40,14 +47,16 @@ public class CLIViewer extends Viewer{
     @Override
     public void refresh() {
 
-        try {
-            if (ViewSubTurn.getActual() == ViewSubTurn.PLACEWORKER && ViewPlayer.searchByName(ViewNickname.getMyNickname()).getWorkers()[1]!=null)
-                return;
-        } catch (NotFoundException ignore) {
-
-        }
-        if ( cliStatusViewer != null ) {
-            cliStatusViewer.show();
+        if ( cliStatusViewer != null) {
+            try {
+                if (ViewSubTurn.getActual() == ViewSubTurn.PLACEWORKER && ViewPlayer.searchByName(ViewNickname.getMyNickname()).getWorkers()[1] == null)
+                    return;
+            } catch (NotFoundException ignore) {
+                cliStatusViewer.show();
+            }
+            if (!ViewSubTurn.getActual().isMyTurn()) {
+                cliStatusViewer.show();
+            }
         }
 
     }
@@ -71,6 +80,7 @@ public class CLIViewer extends Viewer{
      */
     private void prepareSubTurnViewer(ViewerQueuedEvent queuedEvent) {
         SubTurnViewer subTurnViewer = (SubTurnViewer) queuedEvent.getPayload();
+//        SubTurnViewer subTurnViewer = ViewSubTurn.getActual().getSubViewer();
         CLISubTurnViewer cliSubTurnViewer;
 
         if ( subTurnViewer != null) {
@@ -124,21 +134,62 @@ public class CLIViewer extends Viewer{
                     this.cliStatusViewer.show();
                     break;
                 case FROM_SERVER_ERROR:
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 1);
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", 7); //starting space
+                    System.out.println(ANSIStyle.RED.getEscape() + "[Error Message]: " + viewMessage.getPayload() + ANSIStyle.RESET);
+                    if ( this.cliStatusViewer != null && !this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN) && !this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS)) {
+                        cliStatusViewer.show();
+                    }
+                    break;
                 case FATAL_ERROR_MESSAGE:
                     CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 1);
                     CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", 7); //starting space
-                    System.out.println(ANSIStyle.RED + "[Error Message]: " + viewMessage.getPayload() + ANSIStyle.RESET);
-                    if ( this.cliStatusViewer != null ) {
-                        cliStatusViewer.show();
-                    }
+                    System.out.println(ANSIStyle.RED.getEscape() + "[Error Message]: " + viewMessage.getPayload() + ANSIStyle.RESET);
                     break;
                 case FROM_SERVER_MESSAGE:
                     CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 1);
                     CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", 7); //starting space
-                    System.out.println(ANSIStyle.GREEN + "[Server Message]: " + viewMessage.getPayload() + ANSIStyle.RESET);
+                    System.out.println(ANSIStyle.GREEN.getEscape() + "[Server Message]: " + viewMessage.getPayload() + ANSIStyle.RESET);
                     break;
                 default:
                     ;
+            }
+        }
+    }
+
+    private void undo() {
+        final int STARTING_SPACE = 7;
+        final String WRITE_MARK = ANSIStyle.UNDERSCORE.getEscape() + UnicodeSymbol.PENCIL.getEscape() + ANSIStyle.RESET;
+
+
+        CLICheckWrite cliCheckWrite = new CLICheckWrite();
+        int waitingTime = 5; // in sec
+        Thread stopScannerThread = new Thread( new StopTimeScanner(cliCheckWrite, waitingTime));
+        String input;
+
+        ViewBoard.getBoard().toCLI();       // print the board to see last move1
+
+
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        stopScannerThread.start();
+        System.out.printf("Press ENTER bottom in %d second to undo your move:\n", waitingTime);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        System.out.print( WRITE_MARK );
+        input = new Scanner(System.in).nextLine();
+        if ( cliCheckWrite.firstToWrite() ) {
+            try {
+                UndoExecuter.undoIt();
+                System.out.println("[CLIMessage]: used undoExecuter"); //todo:remove after testing
+            } catch (CannotSendEventException e) {
+            }
+        } else {
+            System.out.println("[CLIMessage]: time over, play continues"); //todo:remove after testing
+            try {
+                Thread.sleep(750);
+            } catch (InterruptedException ignored) {
+            }
+            if (!this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN)) {
+                this.setSubTurnViewer(ViewSubTurn.getActual().getSubViewer());
             }
         }
     }
@@ -172,6 +223,9 @@ public class CLIViewer extends Viewer{
                     case MESSAGE:
                         this.prepareMessage(queuedEvent);
                         break;
+                    case UNDO:
+                        this.undo();
+                        break;
                     default:
                         ;
                 }
@@ -184,5 +238,14 @@ public class CLIViewer extends Viewer{
         this.exit();
 
     }
+
+//    @Override
+//    protected void enqueue(ViewerQueuedEvent viewerQueuedEvent) {
+//        if ( viewerQueuedEvent.getType() == ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN && isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN)) {
+//            return;
+//        } else {
+//            super.enqueue(viewerQueuedEvent);
+//        }
+//    }
 
 }

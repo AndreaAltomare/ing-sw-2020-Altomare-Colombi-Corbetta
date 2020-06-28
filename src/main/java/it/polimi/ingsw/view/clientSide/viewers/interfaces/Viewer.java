@@ -53,6 +53,10 @@ public abstract class Viewer extends Thread{
              */
             CARDSELECTION,
             /**
+             * actives undo manager
+             */
+            UNDO,
+            /**
              * This preannunces an exit, so the Viewers have to stop the various things.
              */
             EXIT;
@@ -166,6 +170,14 @@ public abstract class Viewer extends Thread{
     }
 
     /**
+     * Method that executes the "setUndo" method on each Viewer of myViewer.
+     */
+    public static void setAllUndo(){
+        for (Viewer i: myViewers)
+            i.setUndo(null);
+    }
+
+    /**
      * Method that executes the "sendMessage" method on each Viewer of myViewer.
      *
      * @param message (the ViewMessage to be notified)
@@ -227,6 +239,16 @@ public abstract class Viewer extends Thread{
     public void setRefresh(Object payload){
         enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.REFRESH, payload));
     }
+
+    /**
+     * Method called when needs to be done an Undo on the Viewer
+     *
+     * @param payload (should be null, but can be different. No need to check it).
+     */
+    public void setUndo(Object payload){
+        enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.UNDO, payload));
+    }
+
 
     /**
      * Method called when needs to be set a new ViewMessage on the Viewer.

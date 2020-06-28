@@ -285,35 +285,6 @@ public class CLIBuildPhase extends CLISubTurnViewer {
         return endTurn;
     }
 
-    //TODO: there is a little bug: if the player writes after or at waitingTime, a "\n" can remain on buffer input
-    /**
-     * asks to player to press enter bottom in waitingTime and starts a Thread which write after waitingTime
-     * if the player doesn't response in waitingTime. UndoExecuter is only used if the player responses in waitingTime
-     */
-    private void undoRequest() {
-        CLICheckWrite cliCheckWrite = new CLICheckWrite();
-        int waitingTime = 5; // in sec
-        Thread stopScannerThread = new Thread( new StopTimeScanner(cliCheckWrite, waitingTime));
-        String input;
-
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-        stopScannerThread.start();
-        System.out.printf("Press ENTER bottom in %d second to undo your move:\n", waitingTime);
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-        System.out.print( WRITE_MARK );
-        input = new Scanner(System.in).nextLine();
-        if ( cliCheckWrite.firstToWrite() ) {
-            try {
-                UndoExecuter.undoIt();
-                System.out.println("[CLIMessage]: used undoExecuter"); //todo:remove after testing
-            } catch (CannotSendEventException e) {
-                e.printStackTrace(); //todo: remove it and maybe ad a message
-            }
-        } else {
-            System.out.println("[CLIMessage]: time over, play continues"); //todo:remove after testing
-        }
-    }
-
     /**
      * Prints the board and a request of command and uses some private methods to execute them as long as
      * a construction, a change status or a endTurn is correctly executed
@@ -379,9 +350,6 @@ public class CLIBuildPhase extends CLISubTurnViewer {
             }
         }
 
-        if ( built ) {
-            this.undoRequest();
-        }
-    }
+     }
 
 }

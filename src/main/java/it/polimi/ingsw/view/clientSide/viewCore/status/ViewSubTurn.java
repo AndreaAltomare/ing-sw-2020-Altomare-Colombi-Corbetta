@@ -470,7 +470,8 @@ public enum ViewSubTurn implements ClientAddressable {
         } catch (NotFoundException e) {
             if(st=="NONE"){
                 setStaticPlayer("");
-                set("SELECTWORKER");
+                // before it was a SELECTWORKER
+                set("OPPONENT_SELECTWORKER");
             }else {
                 setSubTurn(null);
             }
