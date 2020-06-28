@@ -1,11 +1,10 @@
 package it.polimi.ingsw.storage;
 
 import com.google.gson.Gson;
-import it.polimi.ingsw.ServerApp;
 import it.polimi.ingsw.connection.ConnectionSettings;
 import it.polimi.ingsw.model.card.CardInfo;
-import it.polimi.ingsw.model.persistence.GameState;
 import it.polimi.ingsw.model.card.GodPower;
+import it.polimi.ingsw.model.persistence.GameState;
 
 import java.io.File;
 import java.io.FileNotFoundException;
