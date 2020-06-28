@@ -532,4 +532,25 @@ public class ViewWorker extends ViewObject {
     public Symbols getWorkerWTRepresentation() {
         return  workerWTRepresentation;
     }
+
+    public void setWorkerColor(it.polimi.ingsw.model.player.worker.Color color){
+        switch(color){
+            case BLUE:
+                this.workerColor = java.awt.Color.BLUE;
+                this.workerCLIColor = ANSIStyle.RED.getEscape();
+                this.workerWTRepresentation = Symbols.WORKER_1;
+                break;
+            case BROWN:
+                this.workerColor = new java.awt.Color(153, 102,  0);
+                this.workerCLIColor = ANSIStyle.YELLOW.getEscape();
+                this.workerWTRepresentation = Symbols.WORKER_2;
+                break;
+            case GREY:
+                this.workerColor = java.awt.Color.GRAY;
+                this.workerCLIColor = ANSIStyle.PURPLE.getEscape();
+                this.workerWTRepresentation = Symbols.WORKER_3;
+                break;
+        }
+
+    }
 }

@@ -758,7 +758,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
                 for(WorkerData workerId: playerData.getWorkers()){
                     try {
-                        new ViewWorker(workerId.getWorkerId(), myPlayer);
+                        new ViewWorker(workerId.getWorkerId(), myPlayer).setWorkerColor(workerId.getColor());
                         if(workerId.getChosen()== ChooseType.CHOSEN){
                             selectedWorker = workerId.getWorkerId();
                         }
