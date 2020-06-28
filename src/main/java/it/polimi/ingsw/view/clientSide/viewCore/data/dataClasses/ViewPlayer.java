@@ -60,6 +60,11 @@ public class ViewPlayer extends ViewObject {
         return workers;
     }
 
+    // CLI prloblem of color
+    public ViewWorker getOneWorker() {
+        return workers[0];
+    }
+
     /**
      * Method to set the card for this player.
      *

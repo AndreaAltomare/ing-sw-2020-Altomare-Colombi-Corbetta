@@ -55,6 +55,7 @@ public class CLIFirstPlayerChoosePhase extends CLISubTurnViewer {
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
             System.out.printf( "%d: " + player + "\n", playerNumber );
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", SPACE_BETWEEN_LINES);
+            playerNumber++;
         }
 
         // read response

@@ -1,7 +1,11 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI;
 
+import it.polimi.ingsw.model.player.worker.Worker;
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewWorker;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
@@ -13,6 +17,7 @@ import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.*;
 import it.polimi.ingsw.view.exceptions.EmptyQueueException;
+import it.polimi.ingsw.view.exceptions.NotFoundException;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -35,6 +40,12 @@ public class CLIViewer extends Viewer{
     @Override
     public void refresh() {
 
+        try {
+            if (ViewSubTurn.getActual() == ViewSubTurn.PLACEWORKER && ViewPlayer.searchByName(ViewNickname.getMyNickname()).getWorkers()[1]!=null)
+                return;
+        } catch (NotFoundException ignore) {
+
+        }
         if ( cliStatusViewer != null ) {
             cliStatusViewer.show();
         }
@@ -117,9 +128,9 @@ public class CLIViewer extends Viewer{
                     CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 1);
                     CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", 7); //starting space
                     System.out.println(ANSIStyle.RED + "[Error Message]: " + viewMessage.getPayload() + ANSIStyle.RESET);
-//                    if ( this.cliStatusViewer != null ) {
-//                        cliStatusViewer.show();
-//                    }
+                    if ( this.cliStatusViewer != null ) {
+                        cliStatusViewer.show();
+                    }
                     break;
                 case FROM_SERVER_MESSAGE:
                     CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 1);
@@ -156,7 +167,7 @@ public class CLIViewer extends Viewer{
                         this.prepareCardsPhase(queuedEvent);
                         break;
                     case REFRESH:
-                        //this.refresh(); //todo: active after connection test if it is necessary
+                        this.refresh(); //todo: active after connection test if it is necessary
                         break;
                     case MESSAGE:
                         this.prepareMessage(queuedEvent);
