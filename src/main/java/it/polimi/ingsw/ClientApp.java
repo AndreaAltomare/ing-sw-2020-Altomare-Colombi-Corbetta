@@ -8,6 +8,7 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.TerminalViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.WTerminalViewer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -99,8 +100,9 @@ public class ClientApp {
      */
     private static Viewer getViewer(List<String> arguments) {
         if(!(arguments.contains(CLI_ARG) || arguments.contains(TERMINAL_ARG)))
-            return  new CLIViewer();
-//            return new GUIViewer();
+//            return  new WTerminalViewer();
+//            return  new CLIViewer();
+            return new GUIViewer();
         else if(arguments.contains(GUI_ARG))
             return new GUIViewer();
         else if(arguments.contains(CLI_ARG))

@@ -52,6 +52,7 @@ public class WTerminalFirstPlayerChoosePhase extends WTerminalSubTurnViewer {
             PrintFunction.printRepeatString(" ", STARTING_SPACE);
             System.out.printf( "%d: " + player + "\n", playerNumber );
             PrintFunction.printRepeatString("\n", SPACE_BETWEEN_LINES);
+            playerNumber++;
         }
 
         // read response

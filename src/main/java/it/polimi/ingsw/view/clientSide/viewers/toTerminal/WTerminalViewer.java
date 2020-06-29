@@ -118,7 +118,7 @@ public class WTerminalViewer extends Viewer {
         Thread stopScannerThread = new Thread( new WTerminalStopTimeScanner(wTerminalCheckWrite, waitingTime));
         String input;
 
-        ViewBoard.getBoard().toCLI();       // print the board to see last move1
+        ViewBoard.getBoard().toWTerminal();       // print the board to see last move1
 
         PrintFunction.printRepeatString(" ", STARTING_SPACE);
         stopScannerThread.start();
@@ -218,7 +218,7 @@ public class WTerminalViewer extends Viewer {
                         this.refresh();
                         break;
                     case MESSAGE:
-                        this.prepareMessage(queuedEvent);
+                        end = this.prepareMessage(queuedEvent);
                         break;
                     case UNDO:
                         this.undo();

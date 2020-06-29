@@ -65,7 +65,7 @@ public class WTerminalResumeGameViewer extends WTerminalStatusViewer {
 
         // read command
         PrintFunction.printRepeatString(" ", STARTING_SPACE);
-        System.out.println(">>");
+        System.out.print(">>");
         try {
             command = new Scanner(System.in).nextInt();
             switch (command) {
