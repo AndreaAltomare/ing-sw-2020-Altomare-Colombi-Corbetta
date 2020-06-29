@@ -101,8 +101,8 @@ public class ClientApp {
     private static Viewer getViewer(List<String> arguments) {
         if(!(arguments.contains(CLI_ARG) || arguments.contains(TERMINAL_ARG)))
 //            return  new WTerminalViewer();
-            return  new CLIViewer();
-//            return new GUIViewer();
+//            return  new CLIViewer();
+            return new GUIViewer();
         else if(arguments.contains(GUI_ARG))
             return new GUIViewer();
         else if(arguments.contains(CLI_ARG))
