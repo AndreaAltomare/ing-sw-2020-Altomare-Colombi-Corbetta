@@ -42,7 +42,7 @@ class BuildMoveTest {
 
             // after initialization with second constructor
             buildMove = new BuildMove(FloorDirection.ANY, LevelDirection.ANY, 0, cell2, PlaceableType.WORKER);
-            assertTrue( buildMove.getBlockType() == PlaceableType.WORKER ); //todo: ask if it is necessary to add a control
+            assertTrue( buildMove.getBlockType() == PlaceableType.WORKER );
 
             // after set method
             buildMove.setBlockType(PlaceableType.DOME);

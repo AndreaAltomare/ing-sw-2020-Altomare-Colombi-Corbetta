@@ -68,8 +68,4 @@ public class WTerminalWinPhase extends WTerminalSubTurnViewer {
         PrintFunction.printRepeatString("\n", 2);
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return null;
-    }
 }

@@ -1,111 +1,56 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI;
 
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
-import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.UndoExecuter;
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.*;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.CLICheckWrite;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.CLIStopTimeScanner;
+import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.EmptyQueueException;
+import it.polimi.ingsw.view.exceptions.NotFoundException;
 
-import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Scanner;
 
 public class CLIViewer extends Viewer{
 
-    private static Map<Color, String> colorMap = new HashMap<>(3);
     private CLIStatusViewer cliStatusViewer = null;
 
     public CLIViewer(){
         Viewer.registerViewer(this);
     }
 
-    /**
-     * Adds in workerMap the worker's Color as key and a string which represents worker's ANSIStyle
-     * if it is possible and if there are enough string color, then returns that string color if it is correctly added or null if it isn't
-     *
-     * @param workerColor Color's worker
-     * @return the string color assigned if it is correctly assigned, "" if it isn't
-     */
-    public String assignWorkerCLIColor(Color workerColor) {
-        int size;
-        String workerStyle;
+    public static void printErrorMessage(String errorMessage) {
 
-        if (workerColor != null) {
-            if (!colorMap.containsKey(workerColor)) {
-                size = colorMap.size();
-                switch (size) {
-                    case 0:
-                        workerStyle = colorMap.put(workerColor, ANSIStyle.RED.getEscape());
-                        break;
-                    case 1:
-                        workerStyle = colorMap.put(workerColor, ANSIStyle.YELLOW.getEscape());
-                        break;
-                    case 2:
-                        workerStyle = colorMap.put(workerColor, ANSIStyle.PURPLE.getEscape());
-                        break;
-                    default:
-                        workerStyle = "";
-                        break;
-                }
-            } else {
-                workerStyle = colorMap.get(workerColor);
-            }
-        } else {
-            workerStyle = "";
-        }
-
-        return workerStyle;
     }
 
-    /**
-     * Returns the string color assigned to worker's Color or "" if there isn't a string color assigned to worker's Color
-     *
-     * @param workerColor worker's Color in model
-     * @return string color assigned to worker if worker has an assigned CliColor, "" if it haven't
-     */
-    public static String getWorkerCLIColor(Color workerColor) {
-        String workerCLIColor = colorMap.get(workerColor);
-
-        if (workerCLIColor == null) {
-            workerCLIColor = "";
-        }
-
-        return workerCLIColor;
-    }
-
-    //todo: check it in the after simulation test if the refresh message are always after change subStatus message, in it isn't
-    // change refresh() and prepareSubStatus()
     /**
      * For all the subTurnStatus which use the board, this method checks the subTurnStatus and shows it if it shows the board
      */
     @Override
     public void refresh() {
 
-        if ( cliStatusViewer != null ) {
-            if ( cliStatusViewer.getViewStatus() != null ) {
-                if ( cliStatusViewer.getMyCLISubTurnViewer() != null ) {
-                    switch ( cliStatusViewer.getMyCLISubTurnViewer().getSubTurn() ) {
-                        case PLACEWORKER:
-                        case OPPONENT_PLACEWORKER:
-                        case SELECTWORKER:
-                        case OPPONENT_SELECTWORKER:
-                        case MOVE:
-                        case OPPONENT_MOVE:
-                        case BUILD:
-                        case OPPONENT_BUILD:
-                            cliStatusViewer.show();
-                            break;
-                        default:
-                            ;
-                    }
-                }
+        if ( cliStatusViewer != null) {
+            try {
+                if (ViewSubTurn.getActual() == ViewSubTurn.PLACEWORKER && ViewPlayer.searchByName(ViewNickname.getMyNickname()).getWorkers()[1] == null)
+                    return;
+            } catch (NotFoundException ignore) {
+                cliStatusViewer.show();
+            }
+            if (!ViewSubTurn.getActual().isMyTurn()) {
+                cliStatusViewer.show();
             }
         }
 
@@ -119,7 +64,6 @@ public class CLIViewer extends Viewer{
             cliStatusViewer = statusViewer.toCLI();
             if ( cliStatusViewer != null ) {
                 this.cliStatusViewer = cliStatusViewer;
-                this.cliStatusViewer.setMyCLIViewer( this );
                 this.cliStatusViewer.show();
             }
         }
@@ -130,36 +74,22 @@ public class CLIViewer extends Viewer{
      * @param queuedEvent
      */
     private void prepareSubTurnViewer(ViewerQueuedEvent queuedEvent) {
-        SubTurnViewer subTurnViewer = (SubTurnViewer) queuedEvent.getPayload();
+        SubTurnViewer subTurnViewer;
+        try {
+            subTurnViewer = ViewSubTurn.getActual().getSubViewer();
+        } catch (NullPointerException e) {
+            subTurnViewer = (SubTurnViewer) queuedEvent.getPayload();
+        }
         CLISubTurnViewer cliSubTurnViewer;
 
         if ( subTurnViewer != null) {
             cliSubTurnViewer = subTurnViewer.toCLI();
             if ( cliSubTurnViewer != null) {
-                switch ( cliSubTurnViewer.getSubTurn() ) {
-                    case PLACEWORKER:
-                    case OPPONENT_PLACEWORKER:
-                        if ( this.cliStatusViewer.getViewStatus() == ViewStatus.GAME_PREPARATION ) {
-                            this.cliStatusViewer.setMyCLISubTurnViewer(cliSubTurnViewer);
-                            this.cliStatusViewer.show();
-                        }
-                        break;
-                    case SELECTWORKER:
-                    case OPPONENT_SELECTWORKER:
-                    case MOVE:
-                    case OPPONENT_MOVE:
-                    case BUILD:
-                    case OPPONENT_BUILD:
-                        if ( this.cliStatusViewer.getViewStatus() == ViewStatus.PLAYING ) {
-                            this.cliStatusViewer.setMyCLISubTurnViewer(cliSubTurnViewer);
-                            this.cliStatusViewer.show();
-                        }
-                        break;
-                    default:
-                        ;
-                }
+                this.cliStatusViewer.setMyCLISubTurnViewer(cliSubTurnViewer);
+                this.cliStatusViewer.show();
             }
         }
+
     }
 
     /**
@@ -171,17 +101,16 @@ public class CLIViewer extends Viewer{
     private void prepareCardsPhase(ViewerQueuedEvent queuedEvent) {
         CardSelection cardSelection;
 
-        if(cliStatusViewer.getViewStatus() == ViewStatus.GAME_PREPARATION) {
-            cardSelection = (CardSelection) queuedEvent.getPayload();
-            if ( cardSelection != null) {
-                if (cardSelection.getCardList().size() > ViewPlayer.getNumberOfPlayers()) {
-                    this.cliStatusViewer.setMyCLISubTurnViewer( new CLIChooseCardsPhase(cardSelection) );
-                } else {
-                    this.cliStatusViewer.setMyCLISubTurnViewer( new CLISelectMyCardPhase(cardSelection) );
-                }
-                this.cliStatusViewer.show();
+        cardSelection = (CardSelection) queuedEvent.getPayload();
+        if ( cardSelection != null) {
+            if (cardSelection.getCardList().size() > ViewPlayer.getNumberOfPlayers()) {
+                this.cliStatusViewer.setMyCLISubTurnViewer( new CLIChooseCardsPhase(cardSelection) );
+            } else {
+                this.cliStatusViewer.setMyCLISubTurnViewer( new CLISelectMyCardPhase(cardSelection) );
             }
+            this.cliStatusViewer.show();
         }
+
     }
 
     /**
@@ -190,31 +119,78 @@ public class CLIViewer extends Viewer{
      *
      * @param queuedEvent Event to read ( after check that its Type == MESSAGE )
      */
-    private void prepareMessage(ViewerQueuedEvent queuedEvent) {
+    private boolean prepareMessage(ViewerQueuedEvent queuedEvent) {
+        boolean end = false;
         ViewMessage viewMessage = (ViewMessage) queuedEvent.getPayload();
 
         if (viewMessage != null) {
             switch ( viewMessage.getMessageType() ) {
                 case WIN_MESSAGE:
-                    if (this.cliStatusViewer.getViewStatus() == ViewStatus.PLAYING) {
-                        this.cliStatusViewer.setMyCLISubTurnViewer( new CLIWinPhase() );
-                        this.cliStatusViewer.show();
-                    }
+                    this.cliStatusViewer.setMyCLISubTurnViewer( new CLIWinPhase() );
+                    this.cliStatusViewer.show();
                     break;
                 case LOOSE_MESSAGE:
-                    if (this.cliStatusViewer.getViewStatus() == ViewStatus.PLAYING) {
-                        this.cliStatusViewer.setMyCLISubTurnViewer( new CLILoosePhase() );
-                        this.cliStatusViewer.show();
-                    }
+                    this.cliStatusViewer.setMyCLISubTurnViewer( new CLILoosePhase() );
+                    this.cliStatusViewer.show();
                     break;
                 case FROM_SERVER_ERROR:
-                case FATAL_ERROR_MESSAGE:
-                case EXECUTER_ERROR_MESSAGE:
-                    if ( this.cliStatusViewer != null ) {
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 1);
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", 7); //starting space
+                    System.out.println(ANSIStyle.RED.getEscape() + "[Error Message]: " + viewMessage.getPayload() + ANSIStyle.RESET);
+                    if ( this.cliStatusViewer != null && !this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN) && !this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS)) {
                         cliStatusViewer.show();
                     }
+                    break;
+                case FATAL_ERROR_MESSAGE:
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 1);
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", 7); //starting space
+                    System.out.println(ANSIStyle.RED.getEscape() + "[Fatal Error Message]: " + viewMessage.getPayload() + ANSIStyle.RESET);
+                    end = true;
+                    break;
+                case FROM_SERVER_MESSAGE:
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 1);
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", 7); //starting space
+                    System.out.println(ANSIStyle.GREEN.getEscape() + "[Server Message]: " + viewMessage.getPayload() + ANSIStyle.RESET);
+                    break;
                 default:
                     ;
+            }
+        }
+        return end;
+    }
+
+    private void undo() {
+        final int STARTING_SPACE = 7;
+        final String WRITE_MARK = ANSIStyle.UNDERSCORE.getEscape() + UnicodeSymbol.PENCIL.getEscape() + ANSIStyle.RESET;
+
+        CLICheckWrite cliCheckWrite = new CLICheckWrite();
+        int waitingTime = 5; // in sec
+        Thread stopScannerThread = new Thread( new CLIStopTimeScanner(cliCheckWrite, waitingTime));
+        String input;
+
+        ViewBoard.getBoard().toCLI();       // print the board to see last move1
+
+
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        stopScannerThread.start();
+        System.out.printf("Press ENTER bottom in %d second to undo your move:\n", waitingTime);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        System.out.print( WRITE_MARK );
+        input = new Scanner(System.in).nextLine();
+        if ( cliCheckWrite.firstToWrite() ) {
+            try {
+                UndoExecuter.undoIt();
+                System.out.println("[CLIMessage]: used undoExecuter"); //todo:remove after testing
+            } catch (CannotSendEventException e) {
+            }
+        } else {
+            System.out.println("[CLIMessage]: time over, play continues"); //todo:remove after testing
+            try {
+                Thread.sleep(750);
+            } catch (InterruptedException ignored) {
+            }
+            if (!this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN)) {
+                this.setSubTurnViewer(ViewSubTurn.getActual().getSubViewer());
             }
         }
     }
@@ -243,10 +219,13 @@ public class CLIViewer extends Viewer{
                         this.prepareCardsPhase(queuedEvent);
                         break;
                     case REFRESH:
-                        //this.refresh(); //todo: active after connection test if it is necessary
+                        this.refresh(); //todo: active after connection test if it is necessary
                         break;
                     case MESSAGE:
-                        this.prepareMessage(queuedEvent);
+                        end = this.prepareMessage(queuedEvent);
+                        break;
+                    case UNDO:
+                        this.undo();
                         break;
                     default:
                         ;
@@ -257,8 +236,18 @@ public class CLIViewer extends Viewer{
             }
         }
 
-        this.exit();
-
+        //this.exit();
+        Viewer.exitAll();
 
     }
+
+    @Override
+    protected void enqueue(ViewerQueuedEvent viewerQueuedEvent) {
+        if ( viewerQueuedEvent.getType() == ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN && isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN)) {
+            return;
+        } else {
+            super.enqueue(viewerQueuedEvent);
+        }
+    }
+
 }

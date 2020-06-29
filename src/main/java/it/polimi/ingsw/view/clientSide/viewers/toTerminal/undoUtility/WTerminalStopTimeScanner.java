@@ -1,20 +1,21 @@
-package it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces;
+package it.polimi.ingsw.view.clientSide.viewers.toTerminal.undoUtility;
+
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-public class StopTimeScanner implements Runnable {
+public class WTerminalStopTimeScanner implements Runnable {
 
-    private CLICheckWrite cliCheckWrite;
+    private WTerminalCheckWrite wTerminalCheckWrite;
     private int waitingTime; // in ms
 
     /**
      * constructor which set the CLICheckWrite and the waiting time in second
-     * @param cliCheckWrite
+     * @param wTerminalCheckWrite
      * @param waitingInSec
      */
-    public StopTimeScanner( CLICheckWrite cliCheckWrite, int waitingInSec ) {
-        this.cliCheckWrite = cliCheckWrite;
+    public WTerminalStopTimeScanner(WTerminalCheckWrite wTerminalCheckWrite, int waitingInSec ) {
+        this.wTerminalCheckWrite = wTerminalCheckWrite;
         this.waitingTime = waitingInSec * 1000;
     }
 
@@ -28,7 +29,7 @@ public class StopTimeScanner implements Runnable {
             Robot robot = new Robot();
 
             Thread.sleep( this.waitingTime );
-            if ( this.cliCheckWrite.firstToWrite() ) {
+            if ( this.wTerminalCheckWrite.firstToWrite() ) {
                 robot.keyPress(KeyEvent.VK_ENTER);
                 robot.keyRelease(KeyEvent.VK_ENTER);
             }

@@ -10,7 +10,6 @@ import it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses.CLIGamePrepar
 
 public class CLIOpponentPlaceWorkerPhase extends CLISubTurnViewer {
 
-    private CLIGamePreparationViewer myCLIStatusViewer = null;
     private OpponentPlaceWorkerViewer opponentPlaceWorkerViewer;
 
     private final int STARTING_SPACE = 7;
@@ -27,26 +26,19 @@ public class CLIOpponentPlaceWorkerPhase extends CLISubTurnViewer {
         final String WAITING_MESSAGE = "A player is placing his worker, please waiting";
 
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
-        ViewBoard.getBoard().toCLI();
+        try {
+            ViewBoard.getBoard().toCLI();
 
-        System.out.println();
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-        System.out.println(WAITING_MESSAGE);
-        System.out.println();
-        //todo: maybe to do an little animation like in CLIWaitingStatus
+            System.out.println();
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.println(WAITING_MESSAGE);
+            System.out.println();
+            //todo: maybe to do an little animation like in CLIWaitingStatus
+
+        }catch(NullPointerException e){
+            // do anything and exit from state if there isn't the board
+        }
+
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return opponentPlaceWorkerViewer.getMySubTurn();
-    }
-
-
-    /**
-     * Overloading of CLISubTurnViewer's setMyCLIStatusViewer to set the correct CLIStatusViewer
-     * @param myCLIStatusViewer
-     */
-    public void setMyCLIStatusViewer( CLIGamePreparationViewer myCLIStatusViewer) {
-        this.myCLIStatusViewer = myCLIStatusViewer;
-    }
 }

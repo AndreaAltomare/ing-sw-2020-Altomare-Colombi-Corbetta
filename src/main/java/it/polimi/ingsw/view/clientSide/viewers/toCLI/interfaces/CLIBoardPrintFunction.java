@@ -52,7 +52,7 @@ public interface CLIBoardPrintFunction {
         CLIGodSymbols cliGodSymbols;
         String playerColor;
         ViewCard viewCard;
-        ViewWorker[] workers;
+        ViewWorker worker;
 
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", DISTANCE_FROM_BOARD);
 
@@ -63,10 +63,10 @@ public interface CLIBoardPrintFunction {
                         viewCard = viewPlayer.getCard();
                         cliGodSymbols = CLIGodSymbols.searchGodSymbol( viewCard.getName() );
                         try {
-                            workers = viewPlayer.getWorkers();
-                            playerColor = CLIViewer.getWorkerCLIColor(workers[0].getColor());
-                        } catch ( NotFoundException e) {
-                            playerColor = "";
+                            worker = viewPlayer.getOneWorker();
+                            playerColor = worker.getWorkerCLIColor();
+                        } catch ( NullPointerException e) {
+                            playerColor = ANSIStyle.RESET;
                         }
                         switch (cellRow) {
                             case 1:
@@ -105,15 +105,15 @@ public interface CLIBoardPrintFunction {
     static void printPlayersCaptionAtEdgeCell(int boardRow) {
         String playerColor;
         ViewCard viewCard;
-        ViewWorker[] workers;
+        ViewWorker worker;
 
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", DISTANCE_FROM_BOARD);
 
         for (ViewPlayer viewPlayer : ViewPlayer.getPlayerList()) {
             try {
-                workers = viewPlayer.getWorkers();
-                playerColor = CLIViewer.getWorkerCLIColor( workers[0].getColor() );
-            } catch (NotFoundException e) {
+                worker = viewPlayer.getOneWorker();
+                playerColor = worker.getWorkerCLIColor();
+            } catch ( NullPointerException e) {
                 playerColor = ANSIStyle.RESET;
             }
 

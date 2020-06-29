@@ -1,13 +1,12 @@
-package it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces;
+package it.polimi.ingsw.view.clientSide.viewers.toTerminal.undoUtility;
 
-public class CLICheckWrite {
-
+public class WTerminalCheckWrite {
     private boolean written;
 
     /**
      * Constructor which sets written at false
      */
-    public CLICheckWrite() {
+    public WTerminalCheckWrite() {
         written = false;
     }
 

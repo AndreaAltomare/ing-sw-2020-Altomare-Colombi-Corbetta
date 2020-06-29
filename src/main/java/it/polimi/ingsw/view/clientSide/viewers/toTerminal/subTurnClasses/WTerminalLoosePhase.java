@@ -67,7 +67,13 @@ public class WTerminalLoosePhase extends WTerminalSubTurnViewer {
         PrintFunction.printRepeatString(" ", STARTING_SPACE + 1);
         PrintFunction.printRepeatString("_", EDGE_SPACE - 1);
         System.out.print("_|____|___");
-        PrintFunction.printAtTheMiddle("/|\\", MAN_SPACE);
+        if ( ((MAN_SPACE - 3) % 2) == 0 ) {
+            PrintFunction.printRepeatString("_", (MAN_SPACE - 3) / 2 );
+        } else {
+            PrintFunction.printRepeatString("_", (MAN_SPACE - 3) / 2  + 1);
+        }
+        System.out.print("/_\\");
+        PrintFunction.printRepeatString("_", (MAN_SPACE - 3) / 2);
         System.out.print("___|____|_");
         PrintFunction.printRepeatString("_", EDGE_SPACE - 1);
         System.out.println(" ");
@@ -95,8 +101,4 @@ public class WTerminalLoosePhase extends WTerminalSubTurnViewer {
 
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return null;
-    }
 }

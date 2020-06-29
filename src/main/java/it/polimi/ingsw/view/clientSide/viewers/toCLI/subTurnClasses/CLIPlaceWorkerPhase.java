@@ -17,7 +17,6 @@ import java.util.Scanner;
 
 public class CLIPlaceWorkerPhase extends CLISubTurnViewer {
 
-    private CLIGamePreparationViewer myCLIStatusViewer = null;
     private PlaceWorkerViewer placeWorkerViewer;
 
     private final int STARTING_SPACE = 7;
@@ -107,7 +106,11 @@ public class CLIPlaceWorkerPhase extends CLISubTurnViewer {
         while ( placedNumber < maxWorkers) {
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
 
-            ViewBoard.getBoard().toCLI();
+            try {
+                ViewBoard.getBoard().toCLI();
+            }catch(NullPointerException e){
+                break;  //exit from state if there isn't the board
+            }
 
             if ( this.placeWorkerRequest( maxWorkers - placedNumber) ) {
                 placedNumber++;
@@ -117,17 +120,4 @@ public class CLIPlaceWorkerPhase extends CLISubTurnViewer {
 
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return placeWorkerViewer.getMySubTurn();
-    }
-
-
-    /**
-     * Overloading of CLISubTurnViewer's setMyCLIStatusViewer to set the correct CLIStatusViewer
-     * @param myCLIStatusViewer
-     */
-    public void setMyCLIStatusViewer( CLIGamePreparationViewer myCLIStatusViewer) {
-        this.myCLIStatusViewer = myCLIStatusViewer;
-    }
 }

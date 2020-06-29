@@ -14,8 +14,6 @@ import java.util.Scanner;
 
 public class CLILoginViewer extends CLIStatusViewer {
 
-    private final ViewStatus viewStatus = ViewStatus.LOGIN;
-
     private LoginViewer loginViewer;
 
     final int STARTING_SPACE = 7;
@@ -157,11 +155,6 @@ public class CLILoginViewer extends CLIStatusViewer {
         System.out.println();
 
         return approvedResponse;
-    }
-
-    @Override
-    public ViewStatus getViewStatus() {
-        return viewStatus;
     }
 
     /**

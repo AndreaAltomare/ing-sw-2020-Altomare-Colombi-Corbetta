@@ -40,7 +40,12 @@ public class WTerminalSelectWorkerPhase extends WTerminalSubTurnViewer {
         while ( !selected ) {
             System.out.println();
             System.out.println();
-            ViewBoard.getBoard().toWTerminal();
+
+            try {
+                ViewBoard.getBoard().toWTerminal();
+            }catch(NullPointerException e){
+                break;  //exit from state if there isn't the board
+            }
 
             System.out.println();
             PrintFunction.printRepeatString(" ", STARTING_SPACE);
@@ -179,16 +184,4 @@ public class WTerminalSelectWorkerPhase extends WTerminalSubTurnViewer {
 
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return selectWorkerViewer.getMySubTurn();
-    }
-
-    /**
-     * Overloading of WTerminalSubTurnViewer's setMyWTerminalStatusViewer to set the correct WTerminalStatusViewer
-     * @param myWTerminalStatusViewer
-     */
-    public void setMyWTerminalStatusViewer( WTerminalPlayingViewer myWTerminalStatusViewer) {
-        this.myWTerminalStatusViewer = myWTerminalStatusViewer;
-    }
 }

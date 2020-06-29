@@ -1,72 +1,41 @@
 package it.polimi.ingsw.view.clientSide.viewers.toTerminal;
 
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
-import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.UndoExecuter;
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.CLILoosePhase;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.CLIWinPhase;
-import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.Symbols;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.CLICheckWrite;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.CLIStopTimeScanner;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTerminalChooseCardsPhase;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTerminalLoosePhase;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTerminalSelectMyCardPhase;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTerminalWinPhase;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.undoUtility.WTerminalCheckWrite;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.undoUtility.WTerminalStopTimeScanner;
+import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.EmptyQueueException;
+import it.polimi.ingsw.view.exceptions.NotFoundException;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Scanner;
 
 
 public class WTerminalViewer extends Viewer {
 
-    private static Map<ViewPlayer, Symbols> workerMap = new HashMap<>(3);
-    private it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer WTerminalStatusViewer = null;
+    private WTerminalStatusViewer wTerminalStatusViewer = null;
 
     public WTerminalViewer(){
         Viewer.registerViewer(this);
-    }
-
-    /**
-     * Adds in workerMap the viewPLayer as key and a Symbols which represents worker's image of that player
-     * if it is possible and if there are enough Symbols for workers, then returns that Symbols if it is correctly added or null if it isn't
-     * @param viewPlayer ViewPlayer to assign a Symbols for his worker
-     * @return the Symbols assigned if it is correctly assigned, null if it isn't
-     */
-    public Symbols assignWorkerSymbol(ViewPlayer viewPlayer) {
-        int size;
-        Symbols workerSymbol = null;
-
-        size = workerMap.size();
-        switch (size) {
-            case 0:
-                workerSymbol = workerMap.put(viewPlayer, Symbols.WORKER_1);
-                break;
-            case 1:
-                workerSymbol= workerMap.put(viewPlayer, Symbols.WORKER_2);
-                break;
-            case 2:
-                workerSymbol= workerMap.put(viewPlayer, Symbols.WORKER_3);
-                break;
-            default:
-                ;
-        }
-
-        return workerSymbol;
-    }
-
-    /**
-     * Returns the Symbols assigned to viewPlayer or null if there isn't a Symbols assigned to viewPLayer
-     * @param viewPlayer ViewPlayer with a worker's Symbols assigned
-     * @return Symbols assigned to viewPlayer if viewPlayer has an assigned Symbols, null if it haven't
-     */
-    public static Symbols getWorkerSymbol(ViewPlayer viewPlayer) {
-        Symbols workerSymbol = workerMap.get(viewPlayer);
-
-        return workerSymbol;
     }
 
     //todo: check it in the after simulation test if the refresh message are always after change subStatus message, in it isn't
@@ -77,40 +46,29 @@ public class WTerminalViewer extends Viewer {
     @Override
     public void refresh() {
 
-        if ( WTerminalStatusViewer != null ) {
-            if ( WTerminalStatusViewer.getViewStatus() != null ) {
-                if ( WTerminalStatusViewer.getMyWTerminalSubTurnViewer() != null ) {
-                    switch ( WTerminalStatusViewer.getMyWTerminalSubTurnViewer().getSubTurn() ) {
-                        case PLACEWORKER:
-                        case OPPONENT_PLACEWORKER:
-                        case SELECTWORKER:
-                        case OPPONENT_SELECTWORKER:
-                        case MOVE:
-                        case OPPONENT_MOVE:
-                        case BUILD:
-                        case OPPONENT_BUILD:
-                           WTerminalStatusViewer.show();
-                           break;
-                        default:
-                            ;
-                    }
-                }
+        if ( wTerminalStatusViewer != null) {
+            try {
+                if (ViewSubTurn.getActual() == ViewSubTurn.PLACEWORKER && ViewPlayer.searchByName(ViewNickname.getMyNickname()).getWorkers()[1] == null)
+                    return;
+            } catch (NotFoundException ignore) {
+                wTerminalStatusViewer.show();
+            }
+            if (!ViewSubTurn.getActual().isMyTurn()) {
+                wTerminalStatusViewer.show();
             }
         }
-
 
     }
 
     private void prepareStatusViewer(ViewerQueuedEvent queuedEvent) {
         StatusViewer statusViewer = (StatusViewer) queuedEvent.getPayload();
-        it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer WTerminalStatusViewer;
+        WTerminalStatusViewer wTerminalStatusViewer;
 
         if ( statusViewer != null) {
-            WTerminalStatusViewer = statusViewer.toWTerminal();
-            if ( WTerminalStatusViewer != null ) {
-                this.WTerminalStatusViewer = WTerminalStatusViewer;
-                this.WTerminalStatusViewer.setMyWTerminalViewer( this );
-                this.WTerminalStatusViewer.show();
+            wTerminalStatusViewer = statusViewer.toWTerminal();
+            if ( wTerminalStatusViewer != null ) {
+                this.wTerminalStatusViewer = wTerminalStatusViewer;
+                this.wTerminalStatusViewer.show();
             }
         }
     }
@@ -126,28 +84,8 @@ public class WTerminalViewer extends Viewer {
         if ( subTurnViewer != null) {
             WTerminalSubTurnViewer = subTurnViewer.toWTerminal();
             if ( WTerminalSubTurnViewer != null) {
-                switch ( WTerminalSubTurnViewer.getSubTurn() ) {
-                    case PLACEWORKER:
-                    case OPPONENT_PLACEWORKER:
-                        if ( this.WTerminalStatusViewer.getViewStatus() == ViewStatus.GAME_PREPARATION ) {
-                            this.WTerminalStatusViewer.setMyWTerminalSubTurnViewer(WTerminalSubTurnViewer);
-                            this.WTerminalStatusViewer.show();
-                        }
-                        break;
-                    case SELECTWORKER:
-                    case OPPONENT_SELECTWORKER:
-                    case MOVE:
-                    case OPPONENT_MOVE:
-                    case BUILD:
-                    case OPPONENT_BUILD:
-                        if ( this.WTerminalStatusViewer.getViewStatus() == ViewStatus.PLAYING ) {
-                            this.WTerminalStatusViewer.setMyWTerminalSubTurnViewer(WTerminalSubTurnViewer);
-                            this.WTerminalStatusViewer.show();
-                        }
-                        break;
-                    default:
-                        ;
-                }
+                this.wTerminalStatusViewer.setMyWTerminalSubTurnViewer(WTerminalSubTurnViewer);
+                this.wTerminalStatusViewer.show();
             }
         }
     }
@@ -160,15 +98,48 @@ public class WTerminalViewer extends Viewer {
     private void prepareCardsPhase(ViewerQueuedEvent queuedEvent) {
         CardSelection cardSelection;
 
-        if(WTerminalStatusViewer.getViewStatus() == ViewStatus.GAME_PREPARATION) {
-            cardSelection = (CardSelection) queuedEvent.getPayload();
-            if ( cardSelection != null) {
-                if (cardSelection.getCardList().size() > ViewPlayer.getNumberOfPlayers()) {
-                    this.WTerminalStatusViewer.setMyWTerminalSubTurnViewer( new WTerminalChooseCardsPhase(cardSelection) );
-                } else {
-                    this.WTerminalStatusViewer.setMyWTerminalSubTurnViewer( new WTerminalSelectMyCardPhase(cardSelection) );
-                }
-                this.WTerminalStatusViewer.show();
+        cardSelection = (CardSelection) queuedEvent.getPayload();
+        if ( cardSelection != null) {
+            if (cardSelection.getCardList().size() > ViewPlayer.getNumberOfPlayers()) {
+                this.wTerminalStatusViewer.setMyWTerminalSubTurnViewer(new WTerminalChooseCardsPhase(cardSelection));
+            } else {
+                this.wTerminalStatusViewer.setMyWTerminalSubTurnViewer(new WTerminalSelectMyCardPhase(cardSelection));
+            }
+            this.wTerminalStatusViewer.show();
+        }
+    }
+
+    private void undo() {
+        final int STARTING_SPACE = 7;
+
+
+        WTerminalCheckWrite wTerminalCheckWrite = new WTerminalCheckWrite();
+        int waitingTime = 5; // in sec
+        Thread stopScannerThread = new Thread( new WTerminalStopTimeScanner(wTerminalCheckWrite, waitingTime));
+        String input;
+
+        ViewBoard.getBoard().toWTerminal();       // print the board to see last move1
+
+        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        stopScannerThread.start();
+        System.out.printf("Press ENTER bottom in %d second to undo your move:\n", waitingTime);
+        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        System.out.print( ">>" );
+        input = new Scanner(System.in).nextLine();
+        if ( wTerminalCheckWrite.firstToWrite() ) {
+            try {
+                UndoExecuter.undoIt();
+                System.out.println("[CLIMessage]: used undoExecuter"); //todo:remove after testing
+            } catch (CannotSendEventException e) {
+            }
+        } else {
+            System.out.println("[CLIMessage]: time over, play continues"); //todo:remove after testing
+            try {
+                Thread.sleep(750);
+            } catch (InterruptedException ignored) {
+            }
+            if (!this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN)) {
+                this.setSubTurnViewer(ViewSubTurn.getActual().getSubViewer());
             }
         }
     }
@@ -179,27 +150,45 @@ public class WTerminalViewer extends Viewer {
      *
      * @param queuedEvent Event to read ( after check that its Type == MESSAGE )
      */
-    private void prepareMessage(ViewerQueuedEvent queuedEvent) {
+    private boolean prepareMessage(ViewerQueuedEvent queuedEvent) {
         ViewMessage viewMessage = (ViewMessage) queuedEvent.getPayload();
+        boolean end = false;
 
         if (viewMessage != null) {
             switch ( viewMessage.getMessageType() ) {
                 case WIN_MESSAGE:
-                    if ( this.WTerminalStatusViewer.getViewStatus() == ViewStatus.PLAYING ) {
-                        this.WTerminalStatusViewer.setMyWTerminalSubTurnViewer(new WTerminalWinPhase());
-                        this.WTerminalStatusViewer.show();
-                    }
+                    this.wTerminalStatusViewer.setMyWTerminalSubTurnViewer(new WTerminalWinPhase());
+                    this.wTerminalStatusViewer.show();
                     break;
                 case LOOSE_MESSAGE:
-                    if ( this.WTerminalStatusViewer.getViewStatus() == ViewStatus.PLAYING ) {
-                        this.WTerminalStatusViewer.setMyWTerminalSubTurnViewer(new WTerminalLoosePhase());
-                        this.WTerminalStatusViewer.show();
+                    this.wTerminalStatusViewer.setMyWTerminalSubTurnViewer(new WTerminalLoosePhase());
+                    this.wTerminalStatusViewer.show();
+                    break;
+                case FROM_SERVER_ERROR:
+                    PrintFunction.printRepeatString("\n", 1);
+                    PrintFunction.printRepeatString(" ", 7); // starting space
+                    System.out.println("[Error Message]: " + viewMessage.getPayload());
+                    if ( this.wTerminalStatusViewer != null && !this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN) && !this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS)) {
+                        wTerminalStatusViewer.show();
                     }
+                    break;
+                case FATAL_ERROR_MESSAGE:
+                    PrintFunction.printRepeatString("\n", 1);
+                    PrintFunction.printRepeatString(" ", 7); // starting space
+                    System.out.println("[Fatal Error Message]: " + viewMessage.getPayload());
+                    end = true;
+                    break;
+                case FROM_SERVER_MESSAGE:
+                    PrintFunction.printRepeatString("\n", 1);
+                    PrintFunction.printRepeatString(" ", 7); // starting space
+                    System.out.println("[Server Message]: " + viewMessage.getPayload());
                     break;
                 default:
                     ;
             }
         }
+
+        return  end;
     }
 
     @Override
@@ -226,10 +215,13 @@ public class WTerminalViewer extends Viewer {
                         this.prepareCardsPhase(queuedEvent);
                         break;
                     case REFRESH:
-                        //this.refresh();
+                        this.refresh();
                         break;
                     case MESSAGE:
-                        this.prepareMessage(queuedEvent);
+                        end = this.prepareMessage(queuedEvent);
+                        break;
+                    case UNDO:
+                        this.undo();
                         break;
                     default:
                         ;
@@ -240,9 +232,18 @@ public class WTerminalViewer extends Viewer {
             }
         }
 
-        this.exit();
+        // this.exit    eliminate if it isn't necessary
+        Viewer.exitAll();
 
+    }
 
+    @Override
+    protected void enqueue(ViewerQueuedEvent viewerQueuedEvent) {
+        if ( viewerQueuedEvent.getType() == ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN && isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN)) {
+            return;
+        } else {
+            super.enqueue(viewerQueuedEvent);
+        }
     }
 
 }

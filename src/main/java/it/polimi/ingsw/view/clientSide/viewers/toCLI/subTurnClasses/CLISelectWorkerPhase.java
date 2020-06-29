@@ -21,7 +21,6 @@ import java.util.Scanner;
 
 public class CLISelectWorkerPhase extends CLISubTurnViewer {
 
-    private CLIPlayingViewer myCLIStatusViewer = null;
     private SelectWorkerViewer selectWorkerViewer;
 
     private final int STARTING_SPACE = 7;
@@ -48,7 +47,11 @@ public class CLISelectWorkerPhase extends CLISubTurnViewer {
 
         while ( !selected ) {
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
-            ViewBoard.getBoard().toCLI();
+            try {
+                ViewBoard.getBoard().toCLI();
+            }catch(NullPointerException e){
+                break;  //exit from state if there isn't the board
+            }
 
             System.out.println();
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
@@ -170,16 +173,4 @@ public class CLISelectWorkerPhase extends CLISubTurnViewer {
 
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return selectWorkerViewer.getMySubTurn();
-    }
-
-    /**
-     * Overloading of CLISubTurnViewer's setMyCLIStatusViewer to set the correct CLIStatusViewer
-     * @param myCLIStatusViewer
-     */
-    public void setMyCLIStatusViewer( CLIPlayingViewer myCLIStatusViewer) {
-        this.myCLIStatusViewer = myCLIStatusViewer;
-    }
 }

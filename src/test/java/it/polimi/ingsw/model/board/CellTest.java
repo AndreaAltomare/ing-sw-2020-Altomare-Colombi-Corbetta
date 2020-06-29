@@ -91,9 +91,9 @@ class CellTest {
         assertTrue( !(cell.equals(cell2)) );
         // cells with same x and y value are equals
         assertTrue( cell.equals(cell3) );
-        // cells with same x and y value but different board are equals  //todo: speak to friends
+        // cells with same x and y value but different board are equals
         assertTrue( cell.equals( cell4 ) );
-        // cells with same x and y value and board are equals  //todo: speak to friends
+        // cells with same x and y value and board are equals
         assertTrue( cell5.equals( cell4 ) );
     }
 
@@ -1172,7 +1172,6 @@ class CellTest {
 
     }
 
-    //todo: do test to place(Placeable Type)
 
     /**
      * Check if place() can build only block or dome and also if it is possible

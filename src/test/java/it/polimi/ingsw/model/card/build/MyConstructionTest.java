@@ -445,7 +445,7 @@ class MyConstructionTest {
         buildMove = new BuildMove( worker.position(), nearCell1, PlaceableType.BLOCK );
 
         checkBuild = myConstruction.checkMove(buildMove, worker);
-        assertTrue( !checkBuild );  //todo: strange! checkBuild == true but don't build,add control for build block at the third block
+        assertTrue( checkBuild );  // control for build block at the third block is Cell methods used during execution and not in check
         assertTrue( cell.getHeigth() == 1 );
         assertTrue( nearCell1.getHeigth() == 3 );
         assertTrue( cell.getTop().equals(worker) );
@@ -739,7 +739,7 @@ class MyConstructionTest {
 
         // reset ConstructionLeft, constructionExecuted and clear Cells
         myConstruction.resetConstructionLeft();
-        demeterCard.setConstructionExecuted(true);
+        demeterCard.setConstructionExecuted(false);
         while ( cell.getTop() != null ) {
             cell.removePlaceable();
         }
@@ -864,20 +864,30 @@ class MyConstructionTest {
 
         buildMove = new BuildMove(worker.position(), nearCell2, PlaceableType.BLOCK);
 
-        checkBuild = myConstruction.checkMove(buildMove, worker);
-        assertTrue( !checkBuild );
-        assertTrue( cell.getHeigth() == 1 );
-        assertTrue( nearCell1.getHeigth() == 1 );
-        assertTrue( nearCell2.getHeigth() == 3 );
-        assertTrue( cell.getTop().equals(worker) );
-        assertTrue( nearCell1.getTop().isBlock() );
-        assertTrue( nearCell2.getTop().isBlock() );
-        assertTrue( nearCell2.getPlaceableAt(1).isBlock() );
-        assertTrue( nearCell2.getPlaceableAt(0).isBlock() );
-        assertTrue( cell.repOk() );
-        assertTrue( nearCell1.repOk() );
-        assertTrue( nearCell2.repOk() );
-        assertTrue( worker.position().equals( cell ) );
+        try {
+            checkBuild = myConstruction.checkMove(buildMove, worker);
+            assertTrue( checkBuild );  // control of can't build a block on a cell with three block is executed by Cell's methods during execution, not by checkMove
+            checkExecute = myConstruction.executeMove(buildMove, worker);
+            assertTrue( !checkExecute );
+            assertTrue( cell.getHeigth() == 1 );
+            assertTrue( nearCell1.getHeigth() == 1 );
+            assertTrue( nearCell2.getHeigth() == 3 );
+            assertTrue( cell.getTop().equals(worker) );
+            assertTrue( nearCell1.getTop().isBlock() );
+            assertTrue( nearCell2.getTop().isBlock() );
+            assertTrue( nearCell2.getPlaceableAt(1).isBlock() );
+            assertTrue( nearCell2.getPlaceableAt(0).isBlock() );
+            assertTrue( cell.repOk() );
+            assertTrue( nearCell1.repOk() );
+            assertTrue( nearCell2.repOk() );
+            assertTrue( worker.position().equals( cell ) );
+        } catch (OutOfBoardException o) {
+            checkOutOfBoard = true;
+        } finally {
+            assertTrue(!checkOutOfBoard);
+            checkOutOfBoard = false;
+        }
+
 
         // reset ConstructionLeft, constructionExecuted and clear Cells
         myConstruction.resetConstructionLeft();
@@ -1093,8 +1103,7 @@ class MyConstructionTest {
         }
 
 
-        /* can build a Block at the first time on a Cells with two Blocks but not another Block on same Cell at the second time*/
-        nearCell1.buildBlock();
+        /* can build a Block at the first time on a Cells with two Blocks and another Block on same Cell at the second time*/
         nearCell1.buildBlock();
         worker.place(cell);
         buildMove = new BuildMove(worker.position(), nearCell1, PlaceableType.BLOCK);
@@ -1104,10 +1113,9 @@ class MyConstructionTest {
             checkExecute = myConstruction.executeMove(buildMove, worker);
             assertTrue(checkExecute);
             assertTrue(cell.getHeigth() == 1);
-            assertTrue(nearCell1.getHeigth() == 3);
+            assertTrue(nearCell1.getHeigth() == 2);
             assertTrue(cell.getTop().equals(worker));
             assertTrue(nearCell1.getTop().isBlock());
-            assertTrue( nearCell1.getPlaceableAt(1).isBlock() );
             assertTrue( nearCell1.getPlaceableAt(0).isBlock() );
             assertTrue(cell.repOk());
             assertTrue(nearCell1.repOk());
@@ -1126,17 +1134,27 @@ class MyConstructionTest {
 
         buildMove = new BuildMove(worker.position(), nearCell1, PlaceableType.BLOCK);
 
-        checkBuild = myConstruction.checkMove(buildMove, worker);
-        assertTrue( !checkBuild );
-        assertTrue(cell.getHeigth() == 1);
-        assertTrue(nearCell1.getHeigth() == 3);
-        assertTrue(cell.getTop().equals(worker));
-        assertTrue(nearCell1.getTop().isBlock());
-        assertTrue(nearCell1.getPlaceableAt(1).isBlock());
-        assertTrue(nearCell1.getPlaceableAt(0).isBlock());
-        assertTrue(cell.repOk());
-        assertTrue(nearCell1.repOk());
-        assertTrue(worker.position().equals(cell));
+        try {
+            checkBuild = myConstruction.checkMove(buildMove, worker);
+            assertTrue(checkBuild);
+            checkExecute = myConstruction.executeMove(buildMove, worker);
+            assertTrue(checkExecute);
+            assertTrue(cell.getHeigth() == 1);
+            assertTrue(nearCell1.getHeigth() == 3);
+            assertTrue(cell.getTop().equals(worker));
+            assertTrue(nearCell1.getTop().isBlock());
+            assertTrue(nearCell1.getPlaceableAt(1).isBlock());
+            assertTrue(nearCell1.getPlaceableAt(0).isBlock());
+            assertTrue(cell.repOk());
+            assertTrue(nearCell1.repOk());
+            assertTrue(worker.position().equals(cell));
+
+        } catch (OutOfBoardException o) {
+            checkOutOfBoard = true;
+        } finally {
+            assertTrue(!checkOutOfBoard);
+            checkOutOfBoard = false;
+        }
 
         // reset ConstructionLeft, constructionExecuted and clear Cells
         myConstruction.resetConstructionLeft();
@@ -1842,7 +1860,7 @@ class MyConstructionTest {
         assertTrue(nearCell2.getHeigth() == 0);
         assertTrue(cell.getTop().equals(worker));
         assertTrue(nearCell1.getTop().isBlock());
-        assertTrue(nearCell2.getTop().isBlock());
+        assertTrue(nearCell2.getTop() == null);
         assertTrue(cell.repOk());
         assertTrue(nearCell1.repOk());
         assertTrue(nearCell2.repOk());
@@ -2104,7 +2122,7 @@ class MyConstructionTest {
         assertTrue( myConstruction.getConstructionLeft() == 4);
 
         // after decreaseConstructionLeft
-        myConstruction.resetConstructionLeft();
+        myConstruction.decreaseConstructionLeft();
         assertTrue(myConstruction.getConstructionLeft() == 3);
 
         // after resetConstructionLeft()

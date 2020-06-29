@@ -6,30 +6,61 @@ import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSu
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSubTurnViewer;
 
+
+/**
+ * Class used to retrieve the various viewer for CLI, GUI, WTerminal, and all the Viewers connected to one SubTurn.
+ */
 public abstract class SubTurnViewer {
 
-    protected ViewSubTurn mySubTurn;
+    /**
+     * Reference to the SubTurn to which this refers to.
+     */
+    private ViewSubTurn mySubTurn;
 
+    /**
+     * Constructor.
+     *
+     * @param viewSubTurn (the ViewSubTurn to which this refers to).
+     */
     public SubTurnViewer (ViewSubTurn viewSubTurn){
         mySubTurn = viewSubTurn;
     }
 
+    /**
+     * Method to retrieve the ViewSubTurn to which this refers to.
+     *
+     * @return (the ViewSubTurn to which this refers to).
+     */
     public ViewSubTurn getMySubTurn(){
         return mySubTurn;
     }
 
+    /**
+     * Method to the Terminal's representation of this Status.
+     */
     public TerminalSubTurnViewer toTerminal() {
         return null;
     }
 
+    /**
+     * Method to the GUI's representation of this Status.
+     */
     public GUISubTurnViewer toGUI() {
         return null;
     }
 
+    /**
+     * Method to the WTerminal's representation of this Status.
+     */
     public WTerminalSubTurnViewer toWTerminal() {
         return null;
     }
 
-    public CLISubTurnViewer toCLI() { return null; }
+    /**
+     * Method to the CLI's representation of this Status.
+     */
+    public CLISubTurnViewer toCLI() {
+        return null;
+    }
 
 }

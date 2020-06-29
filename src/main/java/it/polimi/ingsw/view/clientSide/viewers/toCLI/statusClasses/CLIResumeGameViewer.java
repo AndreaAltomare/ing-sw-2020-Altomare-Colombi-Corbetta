@@ -1,21 +1,34 @@
-package it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses;
+package it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses;
 
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.ResumingExecuter;
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
+import it.polimi.ingsw.view.clientSide.viewers.statusViewers.RequestResumingViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.CLISymbols;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
+import it.polimi.ingsw.view.exceptions.AlreadySetException;
+import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class CLIResumeGamePhase extends CLISubTurnViewer {
+public class CLIResumeGameViewer extends CLIStatusViewer {
+
+    private RequestResumingViewer requestResumingViewer;
 
     private final int STARTING_SPACE = 7;
     private final String ERROR_COLOR_AND_SYMBOL = ANSIStyle.RED.getEscape() + UnicodeSymbol.X_MARK.getEscape();
     private final String CORRECT_COLOR_AND_SYMBOL = ANSIStyle.GREEN.getEscape() + UnicodeSymbol.CHECK_MARK.getEscape();
     private final String WRITE_MARK = ANSIStyle.UNDERSCORE.getEscape() + UnicodeSymbol.PENCIL.getEscape() + ANSIStyle.RESET;
+
+
+    public CLIResumeGameViewer(RequestResumingViewer requestResumingViewer) {
+        this.requestResumingViewer = requestResumingViewer;
+    }
 
     /**
      * Prints a little image to represent the phase
@@ -39,20 +52,20 @@ public class CLIResumeGamePhase extends CLISubTurnViewer {
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE + 1 + MACHINERY_LENGTH + 2);
         System.out.println( MACHINERY_COLOR + "//\\" + ANSIStyle.RESET);
 
-        // machinery and cabin's upper part, then arm's machinery
+        // machinery and cabin's upper part, then machinery's arm
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE + 1 );
         CLIPrintFunction.printRepeatString(MACHINERY_BACK_COLOR, " ", MACHINERY_LENGTH - CAB_LENGTH);
         CLIPrintFunction.printAtTheMiddle(CAB_BACK_COLOR + WORKER_COLOR, "o", 1, CAB_LENGTH);
         System.out.println(MACHINERY_COLOR + " //  \\_" + ANSIStyle.RESET);
 
-        // machinery and cabin's down part, then arm's machinery, demolition ball and block's third level
+        // machinery and cabin's down part, then machinery's arm, demolition ball and block's third level
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE + 1 );
         CLIPrintFunction.printRepeatString(MACHINERY_BACK_COLOR, " ", MACHINERY_LENGTH - CAB_LENGTH);
         CLIPrintFunction.printAtTheMiddle(CAB_BACK_COLOR + WORKER_COLOR, " |\\", 3, CAB_LENGTH);
         System.out.print(MACHINERY_COLOR + "//   (_) " + ANSIStyle.RESET);
         System.out.println(BLOCK_COLOR + CLISymbols.BLOCK.getMiddleRepresentation() + ANSIStyle.RESET);
 
-        // machinery's down part, then arm's machinery, block's second level
+        // machinery's down part, then machinery's arm, block's second level
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE + 1 );
         CLIPrintFunction.printRepeatString(MACHINERY_BACK_COLOR, " ", MACHINERY_LENGTH );
         System.out.print(MACHINERY_COLOR + "/" + ANSIStyle.RESET);
@@ -76,14 +89,16 @@ public class CLIResumeGamePhase extends CLISubTurnViewer {
     private boolean restartRequest() {
         final String RESTART_REQUEST = "There is a saved game, do you want delete it?";
         final String RESTART_COMMAND = "Yes, start another game!";
-        final String CONTINUE_COMMAND = "No, continue this game!";
+        final String CONTINUE_COMMAND = "No, continue saved game!";
         final String WRONG_COMMAND_MESSAGE = "The chosen command doesn't exist";
         final int LINE_BETWEEN_STRING = 1;
 
+        ResumingExecuter resumingExecuter = (ResumingExecuter) requestResumingViewer.getMyExecuters().get("Resume");
         boolean commandSelected = false;
         int command;
 
         // ask request
+        System.out.println();
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
         System.out.println(RESTART_REQUEST);
 
@@ -96,31 +111,51 @@ public class CLIResumeGamePhase extends CLISubTurnViewer {
 
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
         System.out.println("2: " + CONTINUE_COMMAND);
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", STARTING_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", LINE_BETWEEN_STRING);
 
         // read command
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-        System.out.println(WRITE_MARK);
+        System.out.print(WRITE_MARK);
         try {
             command = new Scanner(System.in).nextInt();
             switch (command) {
                 case 1:
-                    // todo: add resume game operation
-                    commandSelected = true;
+                    try {
+                        resumingExecuter.setResume(false);
+                    } catch (AlreadySetException ignored) {
+                    }
+                    try {
+                        resumingExecuter.doIt();
+                        commandSelected = true;
+                    } catch (CannotSendEventException e) {
+                        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", LINE_BETWEEN_STRING);
+                        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                        System.out.printf(ERROR_COLOR_AND_SYMBOL + "%s" + ANSIStyle.RESET, e.toString());
+                    }
                     break;
                 case 2:
-                    // todo: add continue game
-                    commandSelected = true;
+                    try {
+                        resumingExecuter.setResume(true);
+                    } catch (AlreadySetException ignored) {
+                    }
+                    try {
+                        resumingExecuter.doIt();
+                        commandSelected = true;
+                    } catch (CannotSendEventException e) {
+                        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", LINE_BETWEEN_STRING);
+                        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                        System.out.printf(ERROR_COLOR_AND_SYMBOL + "%s" + ANSIStyle.RESET, e.toString());
+                    }
                     break;
                 default:
-                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", STARTING_SPACE);
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", LINE_BETWEEN_STRING);
                     CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-                    System.out.println(ERROR_COLOR_AND_SYMBOL + WRONG_COMMAND_MESSAGE + ANSIStyle.RESET);
+                    System.out.print(ERROR_COLOR_AND_SYMBOL + WRONG_COMMAND_MESSAGE + ANSIStyle.RESET);
             }
         } catch (InputMismatchException e) {
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", STARTING_SPACE);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", LINE_BETWEEN_STRING);
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-            System.out.println(ERROR_COLOR_AND_SYMBOL + WRONG_COMMAND_MESSAGE + ANSIStyle.RESET);
+            System.out.print(ERROR_COLOR_AND_SYMBOL + WRONG_COMMAND_MESSAGE + ANSIStyle.RESET);
         }
 
         return  commandSelected;
@@ -140,14 +175,10 @@ public class CLIResumeGamePhase extends CLISubTurnViewer {
             this.showRestartImage();
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 1);
             endResume = this.restartRequest();
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 1);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
 
         }
 
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return null;
-    }
 }

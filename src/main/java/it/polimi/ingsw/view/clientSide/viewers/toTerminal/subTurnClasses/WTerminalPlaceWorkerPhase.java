@@ -15,7 +15,6 @@ import java.util.Scanner;
 
 public class WTerminalPlaceWorkerPhase extends WTerminalSubTurnViewer {
 
-    private WTerminalGamePreparationViewer myWTerminalStatusViewer = null;
     private PlaceWorkerViewer placeWorkerViewer;
 
     private final int STARTING_SPACE = 7;
@@ -88,20 +87,17 @@ public class WTerminalPlaceWorkerPhase extends WTerminalSubTurnViewer {
     @Override
     public void show() {
         int placedNumber = 0;
-        int maxWorkers = 1; // 2  //todo: may use Player to know the max number of Worker for each pLayer
+        int maxWorkers = 1;
 
         while ( placedNumber < maxWorkers) {
             System.out.println();
             System.out.println();
 
-/*            //todo: valutarlo
             try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                ViewBoard.getBoard().toWTerminal();
+            }catch(NullPointerException e){
+                break;  //exit from state if there isn't the board
             }
-*/
-            ViewBoard.getBoard().toWTerminal();
 
             if ( this.placeWorkerRequest( maxWorkers - placedNumber) ) {
                 placedNumber++;
@@ -111,16 +107,4 @@ public class WTerminalPlaceWorkerPhase extends WTerminalSubTurnViewer {
 
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return placeWorkerViewer.getMySubTurn();
-    }
-
-    /**
-     * Overloading of WTerminalSubTurnViewer's setMyWTerminalStatusViewer to set the correct WTerminalStatusViewer
-     * @param myWTerminalStatusViewer
-     */
-    public void setMyWTerminalStatusViewer( WTerminalGamePreparationViewer myWTerminalStatusViewer) {
-        this.myWTerminalStatusViewer = myWTerminalStatusViewer;
-    }
 }

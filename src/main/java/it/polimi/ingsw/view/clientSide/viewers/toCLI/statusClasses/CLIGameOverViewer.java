@@ -5,17 +5,11 @@ import it.polimi.ingsw.view.clientSide.viewers.statusViewers.GameOverViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 
 public class CLIGameOverViewer extends CLIStatusViewer {
-    private final ViewStatus viewStatus = ViewStatus.GAME_OVER;
 
     private GameOverViewer gameOverViewer;
 
     public CLIGameOverViewer(GameOverViewer gameOverViewer) {
         this.gameOverViewer = gameOverViewer;
-    }
-
-    @Override
-    public ViewStatus getViewStatus() {
-        return viewStatus;
     }
 
     /**

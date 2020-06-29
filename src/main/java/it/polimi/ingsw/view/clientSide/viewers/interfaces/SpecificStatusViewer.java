@@ -1,8 +1,12 @@
 package it.polimi.ingsw.view.clientSide.viewers.interfaces;
 
-import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
-
-import java.util.List;
-
+//Left empty to have less restrictions on the Viewers.
+/**
+ * Interface implemented by all the Classes implementing any
+ * specific StatusViewer.
+ *
+ * It'll be useful either to set common methods and to have
+ * all those similar Classes implementing a same interface.
+ */
 public interface SpecificStatusViewer {
 }

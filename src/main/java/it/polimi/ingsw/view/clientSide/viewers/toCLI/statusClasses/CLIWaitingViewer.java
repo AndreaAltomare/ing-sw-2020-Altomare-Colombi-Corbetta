@@ -9,7 +9,6 @@ import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 
 public class CLIWaitingViewer extends CLIStatusViewer {
 
-    private final ViewStatus viewStatus = ViewStatus.WAITING;
     private WaitingViewer waitingViewer;
 
     final String WAITING_MESSAGE = "Please waiting ";
@@ -22,11 +21,6 @@ public class CLIWaitingViewer extends CLIStatusViewer {
      */
     public CLIWaitingViewer(WaitingViewer waitingViewer) {
         this.waitingViewer = waitingViewer;
-    }
-
-    @Override
-    public ViewStatus getViewStatus() {
-        return viewStatus;
     }
 
     /**

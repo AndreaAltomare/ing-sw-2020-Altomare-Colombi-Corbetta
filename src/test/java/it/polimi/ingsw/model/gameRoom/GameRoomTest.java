@@ -116,7 +116,7 @@ class GameRoomTest {
 
     @Test
     void setupGameTest() {
-        // todo: add test when the method will be completed or remove test
+        assertTrue(true); // in the future a setupGameTest can will be implemented and a test be added
     }
 
     /**

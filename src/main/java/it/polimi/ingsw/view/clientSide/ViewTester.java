@@ -1,3 +1,4 @@
+/*
 package it.polimi.ingsw.view.clientSide;
 
 import it.polimi.ingsw.controller.events.*;
@@ -738,7 +739,8 @@ public class ViewTester implements ViewSender {
         myWaitBuilt();
     }
 
-    /*private void myMain() {
+    */
+/*private void myMain() {
 
 
         initialization();
@@ -987,7 +989,9 @@ public class ViewTester implements ViewSender {
 
 
 
-        *//*view.update((NextStatusEvent)new NextStatusEvent("Playing"));
+        *//*
+*/
+/*view.update((NextStatusEvent)new NextStatusEvent("Playing"));
 
         synchronized (waitingObj) {
             try {
@@ -1038,8 +1042,12 @@ public class ViewTester implements ViewSender {
         ViewBoard.getBoard().toGUI();
         Viewer.setAllRefresh();
         System.out.println("aggiorno la board da View");*//*
+*/
+/*
 
-        *//*synchronized (obj) {
+        *//*
+*/
+/*synchronized (obj) {
             try {
                 obj.wait(2500);
             } catch (InterruptedException e) {
@@ -1084,8 +1092,12 @@ public class ViewTester implements ViewSender {
 
         ViewBoard.getBoard().setSelectedCell(0, 0);
         Viewer.setAllRefresh();*//*
+*/
+/*
 
     }
-*/
+*//*
+
 
 }
+*/

@@ -9,7 +9,6 @@ import it.polimi.ingsw.view.clientSide.viewers.toTerminal.statusClasses.WTermina
 
 public class WTerminalOpponentPlaceWorkerPhase extends WTerminalSubTurnViewer {
 
-    private WTerminalGamePreparationViewer myWTerminalStatusViewer = null;
     private OpponentPlaceWorkerViewer opponentPlaceWorkerViewer;
 
     private final int STARTING_SPACE = 7;
@@ -26,6 +25,7 @@ public class WTerminalOpponentPlaceWorkerPhase extends WTerminalSubTurnViewer {
 
         System.out.println();
         System.out.println();
+        try {
         ViewBoard.getBoard().toWTerminal();
 
         System.out.println();
@@ -33,18 +33,11 @@ public class WTerminalOpponentPlaceWorkerPhase extends WTerminalSubTurnViewer {
         System.out.println("A player is placing his worker, please waiting");
         System.out.println();
         //todo: maybe to do an little animation like in CLIWaitingStatus
+
+        }catch(NullPointerException e){
+            // do anything exit from state if there isn't the board
+        }
+
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return opponentPlaceWorkerViewer.getMySubTurn();
-    }
-
-    /**
-     * Overloading of WTerminalSubTurnViewer's setMyWTerminalStatusViewer to set the correct WTerminalStatusViewer
-     * @param myWTerminalStatusViewer
-     */
-    public void setMyWTerminalStatusViewer( WTerminalGamePreparationViewer myWTerminalStatusViewer) {
-        this.myWTerminalStatusViewer = myWTerminalStatusViewer;
-    }
 }

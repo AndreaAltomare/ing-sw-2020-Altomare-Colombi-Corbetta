@@ -13,6 +13,19 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Class helping to choose the Card(s).
+ * It provides methods to iterate on the Cards as if they were
+ * in a circular list, and to select/deselect them.
+ *
+ * It also provides method to retrieve the List of available cards,
+ * the number of cards to be chosen, the Executer and also methods
+ * to set all those parameters.
+ *
+ * The settters are used in the ViewCore to populate it, and the
+ * getter -and the selecter/deselecter- are intended to be used by
+ * the various Viewers.
+ */
 public class CardSelection implements Iterator<ViewCard> {
 
     private List<ViewCard> cardList;
@@ -111,7 +124,7 @@ public class CardSelection implements Iterator<ViewCard> {
      *
      * @return (int: the number of cards to be chosen)
      */
-    public int getRemaiing() {
+    public int getRemaining() {
         return cardExecuter.getRemaining();
     }
 
@@ -139,6 +152,11 @@ public class CardSelection implements Iterator<ViewCard> {
         return cardList.get(iterator);
     }
 
+    /**
+     * Method inherited by Iterator.
+     *
+     * @return (true if cardList.size()>0).
+     */
     @Override
     public boolean hasNext() {
         return cardList.size()>0;

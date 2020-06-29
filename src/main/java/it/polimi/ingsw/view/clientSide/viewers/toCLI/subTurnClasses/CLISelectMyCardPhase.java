@@ -21,9 +21,7 @@ import java.util.Scanner;
 //todo: rivedere intera classe per sistemare uso degli executer
 public class CLISelectMyCardPhase extends CLISubTurnViewer {
 
-    private CLIGamePreparationViewer myCLIStatusViewer = null;
-    private ViewSubTurn viewSubTurn = ViewSubTurn.SELECTCARD;
-    private CardSelectionExecuter cardSelectionExecuter = new CardSelectionExecuter();
+    private CardSelectionExecuter cardSelectionExecuter;
     private CardSelection cardSelection;
 
     private final int STARTING_SPACE = 7;
@@ -37,6 +35,7 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
 
     public CLISelectMyCardPhase(CardSelection cardSelection) {
         this.cardSelection = cardSelection;
+        cardSelectionExecuter = (CardSelectionExecuter) cardSelection.getExecuter();
     }
 
     /**
@@ -262,19 +261,6 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
         }
         System.out.println();
 
-    }
-
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return viewSubTurn;
-    }
-
-    /**
-     * Overloading of CLISubTurnViewer's setMyCLIStatusViewer to set the correct CLIStatusViewer
-     * @param myCLIStatusViewer
-     */
-    public void setMyCLIStatusViewer( CLIGamePreparationViewer myCLIStatusViewer) {
-        this.myCLIStatusViewer = myCLIStatusViewer;
     }
 
 }

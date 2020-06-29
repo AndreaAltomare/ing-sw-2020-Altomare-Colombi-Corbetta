@@ -2,9 +2,12 @@ package it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.BuildBlockExecuter;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.NextTurnExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.TurnStatusChangeExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.BuildViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.Symbols;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
@@ -18,7 +21,6 @@ import java.util.Scanner;
 
 public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
 
-    private WTerminalPlayingViewer myWTerminalStatusViewer = null;
     private BuildViewer buildViewer;
 
     private final int STARTING_SPACE = 7;
@@ -29,30 +31,6 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
         this.buildViewer = buildViewer;
     }
 
-
-    /**
-     * Prints the Name, Epithet and Description of all the player's God
-     */
-    private void showCardsDetails () {
-        ViewCard viewCard;
-
-        for (ViewPlayer viewPlayer : ViewPlayer.getPlayerList()) {
-            System.out.println();
-            System.out.println();
-            try {
-                viewCard = viewPlayer.getCard();
-                //todo:maybe add god's symbol
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Name: %s\n", viewCard.getName());
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Epithet: %s\n", viewCard.getEpiteth());
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Description: %s\n", viewCard.getDescription());
-            } catch (NotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     /**
      * Prints the request to build using a private method to choose block's type, checks the response,
@@ -109,10 +87,6 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
                     buildBlockExecuter.setPlaceable(pLaceableToBuild);
                     buildBlockExecuter.doIt();
                     correctResponse = true;
-                    //todo: a little CLI control if it isn't necessary cancel it and all its helper methods
-                    if (this.myWTerminalStatusViewer != null) {
-                        myWTerminalStatusViewer.setBuildAfterMoveTrue();
-                    }
                 } else {
                     System.out.println();
                     PrintFunction.printRepeatString(" ", STARTING_SPACE);
@@ -271,22 +245,19 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
      * @return
      */
     private boolean endTurn() {
+        NextTurnExecuter nextTurnExecuter = new NextTurnExecuter();
         boolean endTurn = false;
 
-        //todo: little check, if it isn't necessary cancel it and all its structure
-        if ( myWTerminalStatusViewer.isMove() && myWTerminalStatusViewer.isBuild()) {
-            //todo: change the end's turn way after testing
-            endTurn = this.toMovePhase();
-        } else {
-            System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.print(">< It isn't possible to end turn, you must still ");
-            if ( !myWTerminalStatusViewer.isMove() ) {
-                System.out.println("MOVE!");
-            } else {
-                System.out.println("BUILD!");
-            }
+        try {
+            nextTurnExecuter.doIt();
+            endTurn = true;
+        } catch (CannotSendEventException e) {
+            e.printStackTrace(); //todo: delete after testing
         }
+        PrintFunction.printRepeatString("\n", 2);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
+
+
 
         return endTurn;
     }
@@ -304,14 +275,11 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
             System.out.println();
             System.out.println();
 
-/*            //todo: valutarlo
             try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                ViewBoard.getBoard().toWTerminal();
+            }catch(NullPointerException e){
+                break;  //exit from state if there isn't the board
             }
-*/
-            ViewBoard.getBoard().toWTerminal();
 
             System.out.println();
             PrintFunction.printRepeatString(" ", STARTING_SPACE);
@@ -332,7 +300,7 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
                 actionSelected = new Scanner(System.in).nextInt();
                 switch (actionSelected) {
                     case 1:
-                        this.showCardsDetails();
+                        this.showCardsDetails(STARTING_SPACE);
                         break;
                     case 2:
                         endBuild = this.showBuildRequest();
@@ -356,16 +324,4 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
         }
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return buildViewer.getMySubTurn();
-    }
-
-    /**
-     * Overloading of WTerminalSubTurnViewer's setMyWTerminalStatusViewer to set the correct WTerminalStatusViewer
-     * @param myWTerminalStatusViewer
-     */
-    public void setMyWTerminalStatusViewer( WTerminalPlayingViewer myWTerminalStatusViewer) {
-        this.myWTerminalStatusViewer = myWTerminalStatusViewer;
-    }
 }

@@ -10,7 +10,6 @@ import it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses.CLIPlayingVie
 
 public class CLIOpponentSelectWorkerPhase extends CLISubTurnViewer {
 
-    private CLIPlayingViewer myCLIStatusViewer = null;
     private OpponentSelectWorkerViewer opponentSelectWorkerViewer;
 
     private final int STARTING_SPACE = 7;
@@ -28,6 +27,7 @@ public class CLIOpponentSelectWorkerPhase extends CLISubTurnViewer {
         final String WAITING_MESSAGE = "A player is selecting his worker, please wait";
 
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
+        try {
         ViewBoard.getBoard().toCLI();
 
         System.out.println();
@@ -37,19 +37,10 @@ public class CLIOpponentSelectWorkerPhase extends CLISubTurnViewer {
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
         System.out.println(WAITING_MESSAGE);
         //todo: maybe add a little animation like WaitingViewer
+        }catch(NullPointerException e){
+            // do anything and exit from state if there isn't the board
+        }
 
     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return opponentSelectWorkerViewer.getMySubTurn();
-    }
-
-    /**
-     * Overloading of CLISubTurnViewer's setMyCLIStatusViewer to set the correct CLIStatusViewer
-     * @param myCLIStatusViewer
-     */
-    public void setMyCLIStatusViewer( CLIPlayingViewer myCLIStatusViewer) {
-        this.myCLIStatusViewer = myCLIStatusViewer;
-    }
 }

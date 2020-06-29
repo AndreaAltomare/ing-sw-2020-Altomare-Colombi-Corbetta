@@ -8,7 +8,6 @@ import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 
 public class CLIReadyViewer extends CLIStatusViewer {
-    private final ViewStatus viewStatus = ViewStatus.READY;
 
     private ReadyViewer readyViewer;
 
@@ -28,11 +27,6 @@ public class CLIReadyViewer extends CLIStatusViewer {
      */
     public CLIReadyViewer(ReadyViewer readyViewer) {
         this.readyViewer = readyViewer;
-    }
-
-    @Override
-    public ViewStatus getViewStatus() {
-        return viewStatus;
     }
 
     /**

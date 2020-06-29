@@ -12,8 +12,6 @@ import java.util.Scanner;
 
 public class WTerminalLoginViewer extends WTerminalStatusViewer {
 
-    private final ViewStatus viewStatus = ViewStatus.LOGIN;
-
     private LoginViewer loginViewer;
 
     final int STARTING_SPACE = 7;
@@ -146,11 +144,6 @@ public class WTerminalLoginViewer extends WTerminalStatusViewer {
         System.out.println();
 
         return approvedResponse;
-    }
-
-    @Override
-    public ViewStatus getViewStatus() {
-        return viewStatus;
     }
 
     /**

@@ -4,17 +4,13 @@ import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.BuildBlockExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.NextTurnExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.TurnStatusChangeExecuter;
-import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.UndoExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.BuildViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.CLISymbols;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLICheckWrite;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.StopTimeScanner;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses.CLIPlayingViewer;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
@@ -24,7 +20,6 @@ import java.util.Scanner;
 
 public class CLIBuildPhase extends CLISubTurnViewer {
 
-    private CLIPlayingViewer myCLIStatusViewer = null;
     private BuildViewer buildViewer;
 
     private final int STARTING_SPACE = 7;
@@ -106,10 +101,6 @@ public class CLIBuildPhase extends CLISubTurnViewer {
                     System.out.println();
                     CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
                     System.out.print(CORRECT_COLOR_AND_SYMBOL + CORRECT_MESSAGE + ANSIStyle.RESET);
-                    //todo: a little CLI control if it isn't necessary cancel it and all its helper methods
-                    if (this.myCLIStatusViewer != null) {
-                        myCLIStatusViewer.setBuildAfterMoveTrue();
-                    }
                 } else {
                     System.out.println();
                     CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
@@ -263,7 +254,7 @@ public class CLIBuildPhase extends CLISubTurnViewer {
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
             System.out.println(CORRECT_COLOR_AND_SYMBOL + CORRECT_CHANGE_PHASE_MESSAGE + ANSIStyle.RESET);
         } catch (WrongParametersException | CannotSendEventException e) {
-            e.printStackTrace();
+            e.printStackTrace();        //todo: cancel after testing
         }
 
         return changePhase;
@@ -275,61 +266,19 @@ public class CLIBuildPhase extends CLISubTurnViewer {
      * @return
      */
     private boolean endTurn() {
-        final String IMPOSSIBLE_CHANGE_MESSAGE = "It isn't possible to end turn, you must still ";
 
         NextTurnExecuter nextTurnExecuter = new NextTurnExecuter();
         boolean endTurn = false;
 
-        //todo: little check, if it isn't necessary cancel it and all its structure
-        if ( myCLIStatusViewer.isMove() && myCLIStatusViewer.isBuild()) {
-            try {
-                nextTurnExecuter.doIt();
-                endTurn = true;
-            } catch (CannotSendEventException e) {
-                e.printStackTrace(); //todo: delete after testing
-            }
-        } else {
-            System.out.println();
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-            System.out.print(ERROR_COLOR_AND_SYMBOL + IMPOSSIBLE_CHANGE_MESSAGE );
-            if ( !myCLIStatusViewer.isMove() ) {
-                System.out.println("MOVE!" + ANSIStyle.RESET);
-            } else {
-                System.out.println("BUILD!" + ANSIStyle.RESET);
-            }
+        try {
+            nextTurnExecuter.doIt();
+            endTurn = true;
+        } catch (CannotSendEventException e) {
+            e.printStackTrace(); //todo: delete after testing
         }
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
 
         return endTurn;
-    }
-
-    //TODO: there is a little bug: if the player writes after or at waitingTime, a "\n" can remain on buffer input
-    /**
-     * asks to player to press enter bottom in waitingTime and starts a Thread which write after waitingTime
-     * if the player doesn't response in waitingTime. UndoExecuter is only used if the player responses in waitingTime
-     */
-    private void undoRequest() {
-        CLICheckWrite cliCheckWrite = new CLICheckWrite();
-        int waitingTime = 5; // in sec
-        Thread stopScannerThread = new Thread( new StopTimeScanner(cliCheckWrite, waitingTime));
-        String input;
-
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-        stopScannerThread.start();
-        System.out.printf("Press ENTER bottom in %d second to undo your move:\n", waitingTime);
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-        System.out.print( WRITE_MARK );
-        input = new Scanner(System.in).nextLine();
-        if ( cliCheckWrite.firstToWrite() ) {
-            try {
-                UndoExecuter.undoIt();
-                System.out.println("[CLIMessage]: used undoExecuter"); //todo:remove after testing
-            } catch (CannotSendEventException e) {
-                e.printStackTrace(); //todo: remove it and maybe ad a message
-            }
-        } else {
-            System.out.println("[CLIMessage]: time over, play continues"); //todo:remove after testing
-        }
     }
 
     /**
@@ -346,13 +295,16 @@ public class CLIBuildPhase extends CLISubTurnViewer {
         final String WRONG_COMMAND_MESSAGE = "The chosen command doesn't exist, please change it";
 
         boolean endBuild = false;
-        boolean built = false;
         int actionSelected;
 
         while ( !endBuild ) {
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
 
-            ViewBoard.getBoard().toCLI();
+            try {
+                ViewBoard.getBoard().toCLI();
+            }catch(NullPointerException e){
+                break;  //exit from state if there isn't the board
+            }
 
             System.out.println();
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
@@ -377,7 +329,6 @@ public class CLIBuildPhase extends CLISubTurnViewer {
                         break;
                     case 2:
                         endBuild = this.showBuildRequest();
-                        built = endBuild;
                         break;
                     case 3:
                         endBuild = this.toMovePhase();
@@ -397,21 +348,6 @@ public class CLIBuildPhase extends CLISubTurnViewer {
             }
         }
 
-        if ( built ) {
-            this.undoRequest();
-        }
-    }
+     }
 
-    @Override
-    public ViewSubTurn getSubTurn() {
-        return buildViewer.getMySubTurn();
-    }
-
-    /**
-     * Overloading of CLISubTurnViewer's setMyCLIStatusViewer to set the correct CLIStatusViewer
-     * @param myCLIStatusViewer
-     */
-    public void setMyCLIStatusViewer( CLIPlayingViewer myCLIStatusViewer) {
-        this.myCLIStatusViewer = myCLIStatusViewer;
-    }
 }

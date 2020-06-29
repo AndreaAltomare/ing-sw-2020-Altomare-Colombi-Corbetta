@@ -60,6 +60,11 @@ public class ViewPlayer extends ViewObject {
         return workers;
     }
 
+    // CLI prloblem of color
+    public ViewWorker getOneWorker() {
+        return workers[0];
+    }
+
     /**
      * Method to set the card for this player.
      *
@@ -184,7 +189,14 @@ public class ViewPlayer extends ViewObject {
 
 
         for (String player : data.getPlayers()) {
-            new ViewPlayer(player);
+            //CHECK IF IT WORKS
+            try {
+                searchByName(player);
+            } catch (NotFoundException e) {
+                new ViewPlayer(player);
+            }
+            //PREVIOUSLY: new ViewPlayer(player);
+
             List<String> workers = data.getWorkersToPlayer().get(player);
             if(workers!=null) {
                 for (String worker : workers) {
@@ -249,21 +261,21 @@ public class ViewPlayer extends ViewObject {
     public String toWTerminal(){ return this.getName(); }
 
     /**
-     * Method that will return Player's name with his color, if it has a color
+     * Method that will return Player's name with his color ( == his workers's color ), if there is a color
      * that will represent the ViewPlayer on the CLI.
      *
-     * @return colored name ( default color if there is a color)
+     * @return colored name ( nothing color if there isn't a color)
      */
     @Override
     public String toCLI(){
         String playerString = this.getName();
-        String playerColor;
+        String playerColor = ""; // nothing color
         ViewWorker[] workerArray;
 
         try {
             workerArray = this.getWorkers();
-            playerColor = CLIViewer.getWorkerCLIColor(workerArray[0].getColor());
-        } catch (NotFoundException e) {
+            playerColor = workerArray[0].getWorkerCLIColor();
+        } catch (NotFoundException | NullPointerException e) {
             playerColor = "";
         }
 
@@ -328,10 +340,18 @@ public class ViewPlayer extends ViewObject {
      * @param name (player's name).
      */
     public ViewPlayer(String name){
+
         this.name = name;
         this.card = null;
         this.workers[0] = null;
         this.workers[1] = null;
+
+        //CHANGED FOR THE CLI
+        try {
+            myList.remove(searchByName(name));
+        } catch (NotFoundException e) {
+            //e.printStackTrace();
+        }
 
         myList.add(this);
     }

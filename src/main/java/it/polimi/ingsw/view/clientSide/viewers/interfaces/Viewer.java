@@ -12,29 +12,79 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 /**
- * Interface for the various visualizer
+ * Class managing the connection between the common back-end
+ * of the View (/Client) and the Viewers (front end).
+ *
+ * This class can (/have to) be extended with a specific one
+ * for each new Viewer, but has some static methods and functionalities
+ * that will make easier the communication to all the Viewers.
  *
  * @author giorgio
  */
 public abstract class Viewer extends Thread{
 
+    /**
+     * Enumeration defining the various types of Events
+     * notifiables to the various Viewers.
+     */
     public static class ViewerQueuedEvent{
         public enum ViewerQueuedEventType{
+            /**
+             * Message from server/client/executers that should be shown.
+             */
             MESSAGE,
+            /**
+             * The current SubTurn has to be set to be the one specified
+             * into the event.
+             */
             SET_SUBTURN,
+            /**
+             * The current Status has to be set to be the one specified
+             * into the event.
+             */
             SET_STATUS,
+            /**
+             * The Viewer has to refresh the screen -due to some changes
+             * in the back-end representation.
+             */
             REFRESH,
+            /**
+             * the Viewer has to manage the phase of cards selection.
+             */
             CARDSELECTION,
+            /**
+             * actives undo manager
+             */
+            UNDO,
+            /**
+             * This preannunces an exit, so the Viewers have to stop the various things.
+             */
             EXIT;
         }
 
         private Object payload;
         private ViewerQueuedEventType type;
 
+        /**
+         * Method returning the type of this QueuedEvent.
+         *
+         * @return (the type of this).
+         */
         public ViewerQueuedEventType getType(){ return type; }
 
+        /**
+         * Method returning the event of this.
+         *
+         * @return (the event of this).
+         */
         public Object getPayload(){ return this.payload; }
 
+        /**
+         * Constructor.
+         *
+         * @param type      (the <code>ViewerQueuedEventType</code> type of this event).
+         * @param payload   (the payload of this event).
+         */
         public ViewerQueuedEvent(ViewerQueuedEventType type, Object payload){
             this.type = type;
             this.payload = payload;
@@ -82,65 +132,148 @@ public abstract class Viewer extends Thread{
             i.setSubTurnViewer(viewSubTurn.getSubViewer());
     }
 
+    /**
+     * Method that executes the "setSubTurnViewer" method on each Viewer of myViewer.
+     *
+     * @param subTurnViewer (SubTurnViewer to be set)
+     */
     public static void setAllSubTurnViewer(SubTurnViewer subTurnViewer){
         for (Viewer i: myViewers)
             i.setSubTurnViewer(subTurnViewer);
     }
 
+    /**
+     * Method that executes the "setCardSelection" method on each Viewer of myViewer.
+     *
+     * @param cardSelection (CardSelection to be set)
+     */
     public static void setAllCardSelection(CardSelection cardSelection){
         for (Viewer i: myViewers)
             i.setCardSelection(cardSelection);
     }
 
+    /**
+     * Method that executes the "setRefresh" method on each Viewer of myViewer.
+     *
+     * @param payload (Object to be set, default: null and to be ignored)
+     */
     public static void setAllRefresh(Object payload){
         for (Viewer i: myViewers)
             i.setRefresh(payload);
     }
 
+    /**
+     * Method that executes the "setRefresh" method on each Viewer of myViewer.
+     */
     public static void setAllRefresh(){
         setAllRefresh(null);
     }
 
+    /**
+     * Method that executes the "setUndo" method on each Viewer of myViewer.
+     */
+    public static void setAllUndo(){
+        for (Viewer i: myViewers)
+            i.setUndo(null);
+    }
+
+    /**
+     * Method that executes the "sendMessage" method on each Viewer of myViewer.
+     *
+     * @param message (the ViewMessage to be notified)
+     */
     public static void sendAllMessage(ViewMessage message) {
         for (Viewer i: myViewers)
             i.sendMessage(message);
     }
 
+
+    /**
+     * Method that executes the "exit" method on each Viewer of myViewer
+     * and then terminates the execution of the program.
+     */
     public static void exitAll(){
         for (Viewer i: myViewers)
             i.exit();
         System.exit(0);
     }
 
-    //Fuzione che forza un refresh della view
+    /**
+     * Method doing the Refresh of the Viewer
+     */
     public abstract void refresh();
 
-    //Funzione che segnala al Viewer di controllare lo stato ASAP
+    /**
+     * Method called when needs to be set a new StatusViewer on the Viewer.
+     *
+     * @param statusViewer (the StatusViewer to be set).
+     */
     public void setStatusViewer(StatusViewer statusViewer){
         if(statusViewer != null)
             enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS, statusViewer));
     }
 
+    /**
+     * Method called when needs to be set a new SubTurnViewer on the Viewer.
+     *
+     * @param subTurnViewer (the SubTurnViewer to be set).
+     */
     public void setSubTurnViewer(SubTurnViewer subTurnViewer){
         enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN, subTurnViewer));
     }
 
+    /**
+     * Method called when needs to be set a new CardSelection on the Viewer.
+     *
+     * @param cardSelection (the CardSelection to be set).
+     */
     public void setCardSelection(CardSelection cardSelection){
         enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.CARDSELECTION, cardSelection));
     }
 
+    /**
+     * Method called when needs to be done a Refresh on the Viewer
+     *
+     * @param payload (should be null, but can be different. No need to check it).
+     */
     public void setRefresh(Object payload){
         enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.REFRESH, payload));
     }
 
+    /**
+     * Method called when needs to be done an Undo on the Viewer
+     *
+     * @param payload (should be null, but can be different. No need to check it).
+     */
+    public void setUndo(Object payload){
+        enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.UNDO, payload));
+    }
+
+
+    /**
+     * Method called when needs to be set a new ViewMessage on the Viewer.
+     *
+     * @param message (the ViewMessage to be set).
+     */
     public void sendMessage(ViewMessage message){
         enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.MESSAGE, message));
     }
 
+    /**
+     * Method called before quitting the program.
+     */
     public void exit(){
         enqueue(new ViewerQueuedEvent(ViewerQueuedEvent.ViewerQueuedEventType.EXIT, null));
     }
 
+    /**
+     * Method that adds a ViewerQueuedEvent to the blockingQueue.
+     * It'll add all the ViewerQueuedEvent that cannot be executed
+     * immediately and so will be retrieved by a different thread.
+     * Should be overrided in each new Viewer.
+     *
+     * @param event (the ViewerQueuedEvent to add to the BlockingQueue).
+     */
     protected void enqueue(ViewerQueuedEvent event){
         try {
             synchronized (myViewerQueue) {
@@ -159,12 +292,23 @@ public abstract class Viewer extends Thread{
         wakersNotify();
     }
 
+    /**
+     * Method that will notify all the threads waiting on the wakers Object.
+     */
     protected void wakersNotify(){
         synchronized (wakers){
             wakers.notifyAll();
         }
     }
 
+
+    /**
+     * Method to check if the BlockingQueue is empty or not.
+     * It'll not throw rhe Queue is empty, else it'll throw
+     * the CheckQueueException.
+     *
+     * @throws CheckQueueException (iif the BlockingQueue isn't empty).
+     */
     public void goOn() throws CheckQueueException {
         synchronized (myViewerQueue){
             if(myViewerQueue.isEmpty()) return;
@@ -172,6 +316,14 @@ public abstract class Viewer extends Thread{
         throw new CheckQueueException();
     }
 
+    /**
+     * Method to be called to wait for the timeout
+     * or throw CheckQueueException if/when BlockingQueue
+     * is no longer empty.
+     *
+     * @param timeOut (the timeOut duration in millis).
+     * @throws CheckQueueException  (iif the BlockingQueue is no empty).
+     */
     public void waitTimeOut(long timeOut) throws CheckQueueException{
         synchronized (wakers){
             try {
@@ -187,6 +339,13 @@ public abstract class Viewer extends Thread{
         }
     }
 
+    /**
+     * Method returning the first event added into the Blocking queue
+     * and removes it from the queue (FIFO).
+     *
+     * @return (the first ViewerQueuedEvent of the BlockingQueue).
+     * @throws EmptyQueueException  (if the BlockingQueue is empty).
+     */
     protected ViewerQueuedEvent getNextEvent()throws EmptyQueueException {
         synchronized (myViewerQueue){
             if(!myViewerQueue.isEmpty()) return myViewerQueue.remove();
@@ -194,6 +353,13 @@ public abstract class Viewer extends Thread{
         throw new EmptyQueueException();
     }
 
+    /**
+     * Method returning the type of the first element of the
+     * BlockingQueue without removing it
+     *
+     * @return (the type of the first event enqueued into the BlockingQueue).
+     * @throws EmptyQueueException (iif the BlockingQueue is empty).
+     */
     public ViewerQueuedEvent.ViewerQueuedEventType seeEnqueuedType() throws EmptyQueueException{
         synchronized (myViewerQueue){
             if(myViewerQueue.isEmpty()){
@@ -205,6 +371,14 @@ public abstract class Viewer extends Thread{
     }
 
 
+    /**
+     * Method that waits until a new event of specified type is added
+     * to the BlockingQueue
+     * It'll create some problems and so it's not recomended to use it
+     * unless a really strong belif it's the only way.
+     *
+     * @param eventType (type of the event it's waiting for).
+     */
     //Non usarlo a meno di sapere che c'è un thread che serve ogni tipo di evento
     @Deprecated
     public void waitNextEventType(ViewerQueuedEvent.ViewerQueuedEventType eventType){
@@ -227,6 +401,25 @@ public abstract class Viewer extends Thread{
         }
     }
 
+    /**
+     * Method searcching if there is an event of given type inside the queue.
+     *
+     * @param eventType (the type of the event searched).
+     * @return  (true iif there is at least one event in the queue with such a type).
+     */
+    public boolean isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType eventType){
+        for(ViewerQueuedEvent ev: myViewerQueue){
+            if(ev.getType() == eventType){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Method that will wait untill there is a new event on
+     * the BlockingQueue.
+     */
     public void waitNextEvent(){
         synchronized (wakers){
             try {
