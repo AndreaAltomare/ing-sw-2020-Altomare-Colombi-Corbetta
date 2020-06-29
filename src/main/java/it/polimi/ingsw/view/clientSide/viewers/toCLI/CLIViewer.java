@@ -32,9 +32,10 @@ public class CLIViewer extends Viewer{
         Viewer.registerViewer(this);
     }
 
+    public static void printErrorMessage(String errorMessage) {
 
-    //todo: check it in the after simulation test if the refresh message are always after change subStatus message, in it isn't
-    // change refresh() and prepareSubStatus()
+    }
+
     /**
      * For all the subTurnStatus which use the board, this method checks the subTurnStatus and shows it if it shows the board
      */
@@ -161,7 +162,6 @@ public class CLIViewer extends Viewer{
     private void undo() {
         final int STARTING_SPACE = 7;
         final String WRITE_MARK = ANSIStyle.UNDERSCORE.getEscape() + UnicodeSymbol.PENCIL.getEscape() + ANSIStyle.RESET;
-
 
         CLICheckWrite cliCheckWrite = new CLICheckWrite();
         int waitingTime = 5; // in sec

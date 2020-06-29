@@ -1,11 +1,7 @@
 package it.polimi.ingsw.view.clientSide.viewers.toTerminal.statusClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.ResumingExecuter;
-import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.RequestResumingViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.CLISymbols;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer;
 import it.polimi.ingsw.view.exceptions.AlreadySetException;
