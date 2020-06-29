@@ -26,13 +26,19 @@ public class CLIOpponentPlaceWorkerPhase extends CLISubTurnViewer {
         final String WAITING_MESSAGE = "A player is placing his worker, please waiting";
 
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
-        ViewBoard.getBoard().toCLI();
+        try {
+            ViewBoard.getBoard().toCLI();
 
-        System.out.println();
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-        System.out.println(WAITING_MESSAGE);
-        System.out.println();
-        //todo: maybe to do an little animation like in CLIWaitingStatus
+            System.out.println();
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            System.out.println(WAITING_MESSAGE);
+            System.out.println();
+            //todo: maybe to do an little animation like in CLIWaitingStatus
+
+        }catch(NullPointerException e){
+            // do anything and exit from state if there isn't the board
+        }
+
     }
 
 }

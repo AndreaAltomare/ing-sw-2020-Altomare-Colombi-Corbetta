@@ -1,12 +1,9 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI;
 
-import it.polimi.ingsw.model.player.worker.Worker;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
-import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewWorker;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.UndoExecuter;
-import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
@@ -20,14 +17,11 @@ import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.*;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.CLICheckWrite;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.StopTimeScanner;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.CLIStopTimeScanner;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.EmptyQueueException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 
-import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 public class CLIViewer extends Viewer{
@@ -79,8 +73,12 @@ public class CLIViewer extends Viewer{
      * @param queuedEvent
      */
     private void prepareSubTurnViewer(ViewerQueuedEvent queuedEvent) {
-        SubTurnViewer subTurnViewer = (SubTurnViewer) queuedEvent.getPayload();
-//        SubTurnViewer subTurnViewer = ViewSubTurn.getActual().getSubViewer();
+        SubTurnViewer subTurnViewer;
+        try {
+            subTurnViewer = ViewSubTurn.getActual().getSubViewer();
+        } catch (NullPointerException e) {
+            subTurnViewer = (SubTurnViewer) queuedEvent.getPayload();
+        }
         CLISubTurnViewer cliSubTurnViewer;
 
         if ( subTurnViewer != null) {
@@ -167,7 +165,7 @@ public class CLIViewer extends Viewer{
 
         CLICheckWrite cliCheckWrite = new CLICheckWrite();
         int waitingTime = 5; // in sec
-        Thread stopScannerThread = new Thread( new StopTimeScanner(cliCheckWrite, waitingTime));
+        Thread stopScannerThread = new Thread( new CLIStopTimeScanner(cliCheckWrite, waitingTime));
         String input;
 
         ViewBoard.getBoard().toCLI();       // print the board to see last move1
@@ -243,13 +241,13 @@ public class CLIViewer extends Viewer{
 
     }
 
-//    @Override
-//    protected void enqueue(ViewerQueuedEvent viewerQueuedEvent) {
-//        if ( viewerQueuedEvent.getType() == ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN && isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN)) {
-//            return;
-//        } else {
-//            super.enqueue(viewerQueuedEvent);
-//        }
-//    }
+    @Override
+    protected void enqueue(ViewerQueuedEvent viewerQueuedEvent) {
+        if ( viewerQueuedEvent.getType() == ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN && isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN)) {
+            return;
+        } else {
+            super.enqueue(viewerQueuedEvent);
+        }
+    }
 
 }

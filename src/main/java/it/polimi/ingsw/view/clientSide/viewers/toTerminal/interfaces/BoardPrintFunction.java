@@ -47,7 +47,7 @@ public interface BoardPrintFunction {
         final int SPACE_FOR_STRING = 15;
         String stringToPrint;
         ViewCard viewCard;
-        ViewWorker[] workers;
+        ViewWorker worker;
 
         PrintFunction.printRepeatString(" ", DISTANCE_FROM_BOARD);
 
@@ -57,27 +57,27 @@ public interface BoardPrintFunction {
                     switch (cellRow) {
                         case 2:
                             try {
-                                workers = viewPlayer.getWorkers();
-                                stringToPrint = workers[0].getWorkerWTRepresentation().getUpRepresentation();
-                            } catch (NullPointerException | NotFoundException e) {
+                                worker = viewPlayer.getOneWorker();
+                                stringToPrint = worker.getWorkerWTRepresentation().getUpRepresentation();
+                            } catch (NullPointerException e) {
                                 stringToPrint = ""; // nothing representation to print
                             }
                             PrintFunction.printAtTheMiddle(stringToPrint, SPACE_FOR_STRING);
                             break;
                         case 3:
                             try {
-                                workers = viewPlayer.getWorkers();
-                                stringToPrint = workers[0].getWorkerWTRepresentation().getMiddleRepresentation();
-                            } catch (NullPointerException | NotFoundException e) {
+                                worker = viewPlayer.getOneWorker();
+                                stringToPrint = worker.getWorkerWTRepresentation().getMiddleRepresentation();
+                            } catch (NullPointerException e) {
                                 stringToPrint = ""; // nothing representation to print
                             }
                             PrintFunction.printAtTheMiddle(stringToPrint, SPACE_FOR_STRING);
                             break;
                         case 4:
                             try {
-                                workers = viewPlayer.getWorkers();
-                                stringToPrint = workers[0].getWorkerWTRepresentation().getDownRepresentation();
-                            } catch (NullPointerException | NotFoundException e) {
+                                worker = viewPlayer.getOneWorker();
+                                stringToPrint = worker.getWorkerWTRepresentation().getDownRepresentation();
+                            } catch (NullPointerException e) {
                                 stringToPrint = ""; // nothing representation to print
                             }
                             PrintFunction.printAtTheMiddle(stringToPrint, SPACE_FOR_STRING);

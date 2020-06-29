@@ -1,7 +1,10 @@
 package it.polimi.ingsw.view.clientSide.viewers.toTerminal;
 
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
+import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
-import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
+import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.UndoExecuter;
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
@@ -9,6 +12,8 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.CLICheckWrite;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.CLIStopTimeScanner;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
@@ -16,7 +21,13 @@ import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTermin
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTerminalLoosePhase;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTerminalSelectMyCardPhase;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTerminalWinPhase;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.undoUtility.WTerminalCheckWrite;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.undoUtility.WTerminalStopTimeScanner;
+import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.EmptyQueueException;
+import it.polimi.ingsw.view.exceptions.NotFoundException;
+
+import java.util.Scanner;
 
 
 public class WTerminalViewer extends Viewer {
@@ -35,8 +46,16 @@ public class WTerminalViewer extends Viewer {
     @Override
     public void refresh() {
 
-        if ( wTerminalStatusViewer != null ) {
-           wTerminalStatusViewer.show();
+        if ( wTerminalStatusViewer != null) {
+            try {
+                if (ViewSubTurn.getActual() == ViewSubTurn.PLACEWORKER && ViewPlayer.searchByName(ViewNickname.getMyNickname()).getWorkers()[1] == null)
+                    return;
+            } catch (NotFoundException ignore) {
+                wTerminalStatusViewer.show();
+            }
+            if (!ViewSubTurn.getActual().isMyTurn()) {
+                wTerminalStatusViewer.show();
+            }
         }
 
     }
@@ -90,14 +109,50 @@ public class WTerminalViewer extends Viewer {
         }
     }
 
+    private void undo() {
+        final int STARTING_SPACE = 7;
+
+
+        WTerminalCheckWrite wTerminalCheckWrite = new WTerminalCheckWrite();
+        int waitingTime = 5; // in sec
+        Thread stopScannerThread = new Thread( new WTerminalStopTimeScanner(wTerminalCheckWrite, waitingTime));
+        String input;
+
+        ViewBoard.getBoard().toCLI();       // print the board to see last move1
+
+        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        stopScannerThread.start();
+        System.out.printf("Press ENTER bottom in %d second to undo your move:\n", waitingTime);
+        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        System.out.print( ">>" );
+        input = new Scanner(System.in).nextLine();
+        if ( wTerminalCheckWrite.firstToWrite() ) {
+            try {
+                UndoExecuter.undoIt();
+                System.out.println("[CLIMessage]: used undoExecuter"); //todo:remove after testing
+            } catch (CannotSendEventException e) {
+            }
+        } else {
+            System.out.println("[CLIMessage]: time over, play continues"); //todo:remove after testing
+            try {
+                Thread.sleep(750);
+            } catch (InterruptedException ignored) {
+            }
+            if (!this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN)) {
+                this.setSubTurnViewer(ViewSubTurn.getActual().getSubViewer());
+            }
+        }
+    }
+
     /**
      * Sets and shows the correct representation of the message on the WTerminal using some WTerminalStatusView or WTerminalSubTurnView
      * if it is necessary
      *
      * @param queuedEvent Event to read ( after check that its Type == MESSAGE )
      */
-    private void prepareMessage(ViewerQueuedEvent queuedEvent) {
+    private boolean prepareMessage(ViewerQueuedEvent queuedEvent) {
         ViewMessage viewMessage = (ViewMessage) queuedEvent.getPayload();
+        boolean end = false;
 
         if (viewMessage != null) {
             switch ( viewMessage.getMessageType() ) {
@@ -110,13 +165,18 @@ public class WTerminalViewer extends Viewer {
                     this.wTerminalStatusViewer.show();
                     break;
                 case FROM_SERVER_ERROR:
-                case FATAL_ERROR_MESSAGE:
                     PrintFunction.printRepeatString("\n", 1);
                     PrintFunction.printRepeatString(" ", 7); // starting space
                     System.out.println("[Error Message]: " + viewMessage.getPayload());
-//                    if ( this.cliStatusViewer != null ) {
-//                        cliStatusViewer.show();
-//                    }
+                    if ( this.wTerminalStatusViewer != null && !this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN) && !this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS)) {
+                        wTerminalStatusViewer.show();
+                    }
+                    break;
+                case FATAL_ERROR_MESSAGE:
+                    PrintFunction.printRepeatString("\n", 1);
+                    PrintFunction.printRepeatString(" ", 7); // starting space
+                    System.out.println("[Fatal Error Message]: " + viewMessage.getPayload());
+                    end = true;
                     break;
                 case FROM_SERVER_MESSAGE:
                     PrintFunction.printRepeatString("\n", 1);
@@ -128,6 +188,7 @@ public class WTerminalViewer extends Viewer {
             }
         }
 
+        return  end;
     }
 
     @Override
@@ -154,10 +215,13 @@ public class WTerminalViewer extends Viewer {
                         this.prepareCardsPhase(queuedEvent);
                         break;
                     case REFRESH:
-                        //this.refresh();
+                        this.refresh();
                         break;
                     case MESSAGE:
                         this.prepareMessage(queuedEvent);
+                        break;
+                    case UNDO:
+                        this.undo();
                         break;
                     default:
                         ;
@@ -168,9 +232,18 @@ public class WTerminalViewer extends Viewer {
             }
         }
 
-        this.exit();
+        // this.exit    eliminate if it isn't necessary
+        Viewer.exitAll();
 
+    }
 
+    @Override
+    protected void enqueue(ViewerQueuedEvent viewerQueuedEvent) {
+        if ( viewerQueuedEvent.getType() == ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN && isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN)) {
+            return;
+        } else {
+            super.enqueue(viewerQueuedEvent);
+        }
     }
 
 }

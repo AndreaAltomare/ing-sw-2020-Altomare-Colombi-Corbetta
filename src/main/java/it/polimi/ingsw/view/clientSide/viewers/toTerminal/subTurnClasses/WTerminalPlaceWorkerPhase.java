@@ -87,20 +87,17 @@ public class WTerminalPlaceWorkerPhase extends WTerminalSubTurnViewer {
     @Override
     public void show() {
         int placedNumber = 0;
-        int maxWorkers = 1; // 2  //todo: may use Player to know the max number of Worker for each pLayer
+        int maxWorkers = 1;
 
         while ( placedNumber < maxWorkers) {
             System.out.println();
             System.out.println();
 
-/*            //todo: valutarlo
             try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                ViewBoard.getBoard().toWTerminal();
+            }catch(NullPointerException e){
+                break;  //exit from state if there isn't the board
             }
-*/
-            ViewBoard.getBoard().toWTerminal();
 
             if ( this.placeWorkerRequest( maxWorkers - placedNumber) ) {
                 placedNumber++;

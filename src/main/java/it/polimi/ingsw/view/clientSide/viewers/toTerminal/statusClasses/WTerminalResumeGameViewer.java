@@ -126,7 +126,7 @@ public class WTerminalResumeGameViewer extends WTerminalStatusViewer {
             this.showRestartImage();
             PrintFunction.printRepeatString("\n", 1);
             endResume = this.restartRequest();
-            PrintFunction.printRepeatString("\n", 1);
+            PrintFunction.printRepeatString("\n", 2);
 
         }
 

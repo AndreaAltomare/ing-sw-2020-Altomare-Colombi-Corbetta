@@ -106,7 +106,11 @@ public class CLIPlaceWorkerPhase extends CLISubTurnViewer {
         while ( placedNumber < maxWorkers) {
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
 
-            ViewBoard.getBoard().toCLI();
+            try {
+                ViewBoard.getBoard().toCLI();
+            }catch(NullPointerException e){
+                break;  //exit from state if there isn't the board
+            }
 
             if ( this.placeWorkerRequest( maxWorkers - placedNumber) ) {
                 placedNumber++;

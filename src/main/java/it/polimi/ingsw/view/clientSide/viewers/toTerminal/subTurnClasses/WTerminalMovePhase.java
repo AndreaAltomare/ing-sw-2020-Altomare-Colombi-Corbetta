@@ -27,31 +27,6 @@ public class WTerminalMovePhase extends WTerminalSubTurnViewer {
     }
 
     /**
-     * Prints the Name, Epithet and Description of all the player's God
-     */
-    private void showCardsDetails () {
-        ViewCard viewCard;
-
-        for ( ViewPlayer viewPlayer : ViewPlayer.getPlayerList() ) {
-            System.out.println();
-            System.out.println();
-            try {
-                viewCard = viewPlayer.getCard();
-                //todo:maybe add god's symbol
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Name: %s\n", viewCard.getName());
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Epithet: %s\n", viewCard.getEpiteth());
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Description: %s\n", viewCard.getDescription());
-            } catch (NotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
-
-    /**
      * Prints the request to move the worker, checks the response, notifies the movement to Viewer and returns true
      * if it is all correct, or false if it isn't ( notifies to player when the input isn't correct)
      * @return
@@ -202,7 +177,11 @@ public class WTerminalMovePhase extends WTerminalSubTurnViewer {
             System.out.println();
             System.out.println();
 
-            ViewBoard.getBoard().toWTerminal();
+            try {
+                ViewBoard.getBoard().toWTerminal();
+            }catch(NullPointerException e){
+                break;  //exit from state if there isn't the board
+            }
 
             System.out.println();
             PrintFunction.printRepeatString(" ", STARTING_SPACE);
@@ -221,7 +200,7 @@ public class WTerminalMovePhase extends WTerminalSubTurnViewer {
                 actionSelected = new Scanner(System.in).nextInt();
                 switch ( actionSelected ) {
                     case 1:
-                        this.showCardsDetails();
+                        this.showCardsDetails(STARTING_SPACE);
                         break;
                     case 2:
                         endMove = this.showMoveRequest();

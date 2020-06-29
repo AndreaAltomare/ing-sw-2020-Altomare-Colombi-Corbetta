@@ -173,7 +173,7 @@ public class CLIResumeGameViewer extends CLIStatusViewer {
 
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
             this.showRestartImage();
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 1);
             endResume = this.restartRequest();
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
 

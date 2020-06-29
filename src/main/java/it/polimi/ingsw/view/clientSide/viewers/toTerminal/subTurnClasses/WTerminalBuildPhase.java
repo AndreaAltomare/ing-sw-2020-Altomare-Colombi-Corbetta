@@ -32,31 +32,6 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
     }
 
 
-    // todo: move in WTerminalSubTurnViewer
-    /**
-     * Prints the Name, Epithet and Description of all the player's God
-     */
-    private void showCardsDetails () {
-        ViewCard viewCard;
-
-        for (ViewPlayer viewPlayer : ViewPlayer.getPlayerList()) {
-            System.out.println();
-            System.out.println();
-            try {
-                viewCard = viewPlayer.getCard();
-                //todo:maybe add god's symbol
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Name: %s\n", viewCard.getName());
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Epithet: %s\n", viewCard.getEpiteth());
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Description: %s\n", viewCard.getDescription());
-            } catch (NotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     /**
      * Prints the request to build using a private method to choose block's type, checks the response,
      * notifies the construction to Viewer and returns true if it is all correct,
@@ -300,7 +275,11 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
             System.out.println();
             System.out.println();
 
-            ViewBoard.getBoard().toWTerminal();
+            try {
+                ViewBoard.getBoard().toWTerminal();
+            }catch(NullPointerException e){
+                break;  //exit from state if there isn't the board
+            }
 
             System.out.println();
             PrintFunction.printRepeatString(" ", STARTING_SPACE);
@@ -321,7 +300,7 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
                 actionSelected = new Scanner(System.in).nextInt();
                 switch (actionSelected) {
                     case 1:
-                        this.showCardsDetails();
+                        this.showCardsDetails(STARTING_SPACE);
                         break;
                     case 2:
                         endBuild = this.showBuildRequest();

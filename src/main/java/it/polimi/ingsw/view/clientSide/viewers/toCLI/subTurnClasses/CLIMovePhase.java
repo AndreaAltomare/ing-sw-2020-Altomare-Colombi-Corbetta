@@ -3,16 +3,12 @@ package it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.MoveWorkerExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.TurnStatusChangeExecuter;
-import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.UndoExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.MoveViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.CLICheckWrite;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.StopTimeScanner;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses.CLIPlayingViewer;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
@@ -202,7 +198,6 @@ public class CLIMovePhase extends CLISubTurnViewer {
         final String WRONG_COMMAND_MESSAGE = "The chosen command doesn't exist, please change it";
 
         boolean endMove = false;
-        boolean moved = false;
         int actionSelected;
 
         while ( !endMove ) {
@@ -211,8 +206,7 @@ public class CLIMovePhase extends CLISubTurnViewer {
             try {
                 ViewBoard.getBoard().toCLI();
             }catch(NullPointerException e){
-                endMove = true;
-                break;
+                break;  //exit from state if there isn't the board
             }
 
             System.out.println();
@@ -236,7 +230,6 @@ public class CLIMovePhase extends CLISubTurnViewer {
                         break;
                     case 2:
                         endMove = this.showMoveRequest();
-                        moved = endMove;
                         break;
                     case 3:
                         endMove = this.toBuildPhase();

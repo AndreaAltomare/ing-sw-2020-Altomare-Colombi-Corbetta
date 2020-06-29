@@ -27,6 +27,7 @@ public class CLIOpponentSelectWorkerPhase extends CLISubTurnViewer {
         final String WAITING_MESSAGE = "A player is selecting his worker, please wait";
 
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
+        try {
         ViewBoard.getBoard().toCLI();
 
         System.out.println();
@@ -36,6 +37,9 @@ public class CLIOpponentSelectWorkerPhase extends CLISubTurnViewer {
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
         System.out.println(WAITING_MESSAGE);
         //todo: maybe add a little animation like WaitingViewer
+        }catch(NullPointerException e){
+            // do anything and exit from state if there isn't the board
+        }
 
     }
 

@@ -3,7 +3,7 @@ package it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
-public class StopTimeScanner implements Runnable {
+public class CLIStopTimeScanner implements Runnable {
 
     private CLICheckWrite cliCheckWrite;
     private int waitingTime; // in ms
@@ -13,7 +13,7 @@ public class StopTimeScanner implements Runnable {
      * @param cliCheckWrite
      * @param waitingInSec
      */
-    public StopTimeScanner( CLICheckWrite cliCheckWrite, int waitingInSec ) {
+    public CLIStopTimeScanner(CLICheckWrite cliCheckWrite, int waitingInSec ) {
         this.cliCheckWrite = cliCheckWrite;
         this.waitingTime = waitingInSec * 1000;
     }
