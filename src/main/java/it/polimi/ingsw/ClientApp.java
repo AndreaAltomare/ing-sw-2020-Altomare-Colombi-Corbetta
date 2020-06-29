@@ -7,7 +7,6 @@ import it.polimi.ingsw.view.clientSide.View;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toTerminal.TerminalViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.WTerminalViewer;
 
 import java.io.IOException;
@@ -115,17 +114,16 @@ public class ClientApp {
      */
     private static Viewer getViewer(List<String> arguments) {
         if(!(arguments.contains(CLI_ARG) || arguments.contains(TERMINAL_ARG)))
-//            return  new WTerminalViewer();
-//            return  new CLIViewer();
             return new GUIViewer();
         else if(arguments.contains(GUI_ARG))
             return new GUIViewer();
         else if(arguments.contains(CLI_ARG))
             return new CLIViewer();
-        else if(arguments.contains(TERMINAL_ARG))
-            return new TerminalViewer();
+        else if(arguments.contains(TERMINAL_ARG)) {
+            //return new TerminalViewer();
+            return  new WTerminalViewer();
+        }
         else
             return null;
     }
 }
-// modifica merge

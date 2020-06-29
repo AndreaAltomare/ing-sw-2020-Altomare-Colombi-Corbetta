@@ -5,14 +5,11 @@ import it.polimi.ingsw.chat.ChatMessageListener;
 import it.polimi.ingsw.connection.client.ClientConnection;
 import it.polimi.ingsw.controller.events.*;
 import it.polimi.ingsw.model.card.CardInfo;
-import it.polimi.ingsw.model.move.MoveOutcomeType;
-import it.polimi.ingsw.model.board.placeables.PlaceableType;
 import it.polimi.ingsw.model.persistence.GameState;
 import it.polimi.ingsw.model.persistence.players.PlayerData;
 import it.polimi.ingsw.model.persistence.players.PlayersState;
 import it.polimi.ingsw.model.persistence.players.WorkerData;
 import it.polimi.ingsw.model.player.turn.StateType;
-import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.player.worker.ChooseType;
 import it.polimi.ingsw.observer.MVEventListener;
 import it.polimi.ingsw.observer.Observable;
@@ -22,14 +19,13 @@ import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.FirstPlayerExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.UndoExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.interfaces.ViewSender;
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
+import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.PlayerMessages;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
-import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
-import it.polimi.ingsw.view.events.*;
-import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
-import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
+import it.polimi.ingsw.view.events.QuitEvent;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongEventException;
 import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
@@ -37,12 +33,12 @@ import it.polimi.ingsw.view.exceptions.WrongViewObjectException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static it.polimi.ingsw.model.player.turn.StateType.*;
+import static it.polimi.ingsw.model.player.turn.StateType.CONSTRUCTION;
+import static it.polimi.ingsw.model.player.turn.StateType.MOVEMENT;
 
 public class View extends Observable<Object> implements MVEventListener, Runnable, ViewSender { // todo: maybe this class extends Observable<Object> for proper interaction with Network Handler
     /* Multi-threading operations */
@@ -62,12 +58,10 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
     private boolean meWinner = false;
 
-    //private boolean amITheChallenger = false;
-
     /* ########## TESTING ########## */
-    private int boardXsize, boardYsize;
-    private List<String> players;
-    private Map<String, List<String>> workersToPlayer;
+//    private int boardXsize, boardYsize;
+//    private List<String> players;
+//    private Map<String, List<String>> workersToPlayer;
 
     public View(Scanner in, ClientConnection connection, Viewer viewer) {
         this.in = in;
@@ -76,32 +70,15 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         connection.setChatMessageHandler(new ChatMessageReceiver());
     }
 
-    // TODO: con questo sistema viene verificato anche che la comunicazione con Pattern Observer funzioni correttamente su thread diversi
-    // TODO: ricordarsi che il metodo run() gira su un thread differente rispetto quello dove "girano" i metodi update() --> i metodi update() vengono chiamati sullo stesso thread di client.ClientConnection
+
     @Override
     public void run() {
-        // TODO: commentato perché ho bisogno di fare ancora qualche test...
-        /*new TerminalViewer();
-        new CLIViewer();
-        new GUIViewer();
-        System.out.println("Hello World");
-
-        ViewStatus.init();
-        Viewer.setAllStatusViewer(ViewStatus.getActual().getViewer());
-
-        ViewStatus.nextStatus();
-        Viewer.setAllStatusViewer(ViewStatus.getActual().getViewer());*/
-
-        //new TerminalViewer().start();
         viewer.start();
-        //new WTerminalViewer().start();
-        //new CLIViewer().start();
         Executer.setSender(this);
         ViewStatus.init();
 
 
 
-        // todo istanziare connessione ecc...
         tConnection = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -117,6 +94,9 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         tConnection.start();
 
 
+
+
+        /* ########## USEFUL FOR TESTING ########## */
         //System.out.println("Welcome! Type something.");
 //        input = in.nextLine();
 //        while(!input.equals("quit")) {
@@ -294,7 +274,6 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 //        }
 //
 //        notify(new QuitEvent());
-//        // TODO: close connection, and gracefully close the whole application
     }
 
     //#######################UPDATE##########################
@@ -692,7 +671,6 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         ViewStatus.setStatus("CLOSING");
         ViewMessage.populateAndSend(lobbyFull.getMessage(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
         ViewMessage.populateAndSend(lobbyFull.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
-        // TODO: close connection, and gracefully close the whole application
     }
 
 
@@ -829,97 +807,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     }
 
 
-    // TODO: 09/05/20 metodi per il test
-    /*// TODO: con questo sistema viene verificato anche che la comunicazione con Pattern Observer funzioni correttamente su thread diversi
-    // TODO: ricordarsi che il metodo run() gira su un thread differente rispetto quello dove "girano" i metodi update() --> i metodi update() vengono chiamati sullo stesso thread di client.ClientConnection
-    @Override
-    public void run() {
-        // TODO: commentato perché ho bisogno di fare ancora qualche test...
-        *//*new TerminalViewer();
-        new CLIViewer();
-        new GUIViewer();
-        System.out.println("Hello World");
-
-        ViewStatus.init();
-        Viewer.setAllStatusViewer(ViewStatus.getActual().getViewer());
-
-        ViewStatus.nextStatus();
-        Viewer.setAllStatusViewer(ViewStatus.getActual().getViewer());*//*
-
-
-
-        // todo istanziare connessione ecc...
-        tConnection = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    connection.run();
-                }
-                catch (IOException ex) {
-                    System.err.println(ex.getMessage());
-                }
-            }
-        });
-        tConnection.start();
-
-
-        //System.out.println("Welcome! Type something.");
-        input = in.nextLine();
-        while(!input.equals("quit")) {
-            switch (input) {
-                case "alto":
-                case "andrea":
-                case "giorgio":
-                case "marco":
-                    nickname = input;
-                    notify(new SetNicknameEvent(input)); // submit nickname
-                    break;
-                case "1":
-                case "2":
-                case "3":
-                case "4":
-                case "5":
-                    notify(new SetPlayersNumberEvent(Integer.parseInt(input))); // by this way we ensure auto-boxing from int to Object type works correctly
-                    break;
-                case "build_block":
-                    notify(new BuildBlockEvent("Worker1@" + nickname, 3, 5, PlaceableType.BLOCK));
-                    break;
-                case "select_card":
-                    notify(new CardSelectionEvent("zeus"));
-                    break;
-                case "move_worker":
-                    notify(new MoveWorkerEvent("Worker1@" + nickname, 3, 3));
-                    break;
-                case "place_worker":
-                    notify(new PlaceWorkerEvent(1, 1));
-                    break;
-                case "remove_block":
-                    notify(new RemoveBlockEvent("Worker1@" + nickname, 4, 1));
-                    break;
-                case "remove_worker":
-                    notify(new RemoveWorkerEvent("Worker2@" + nickname, 0, 0));
-                    break;
-                case "select_worker":
-                    notify(new SelectWorkerEvent("Worker1@" + nickname));
-                    break;
-                case "turn_change":
-                    notify(new TurnStatusChangeEvent(StateType.MOVEMENT));
-                    break;
-                case "data_request":
-                    notify(new ViewRequestDataEvent());
-                    break;
-                default:
-                    System.out.println("Invalid request. Try again.");
-                    break;
-            }
-
-            input = in.nextLine();
-        }
-
-        notify(new QuitEvent());
-        // TODO: close connection, and gracefully close the whole application
-    }
-
+    /* ################ USEFUL FOR TESTING ################# */
 //    /**
 //     * Method called to make the status go ahead of one step.
 //     *
@@ -930,7 +818,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 //    public void update(NextStatusEvent nextStatus) {
 ////        ViewMessage.populateAndSend(nextStatus.toString(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
 ////        ViewStatus.nextStatus();
-//        System.out.println("[NextStatusEvent] " + nextStatus.getMessage()); // todo [debug]
+//        System.out.println("[NextStatusEvent] " + nextStatus.getMessage());
 //    }
 //
 //    /**
@@ -943,7 +831,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 //        //It is in the LOGIN status...so we only need to display the error message
 ////        ViewNickname.clear();
 ////        ViewMessage.populateAndSend(invalidNickname.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
-//        System.out.println("[InvalidNicknameEvent] Invalid nickname! Try again."); // todo [debug]
+//        System.out.println("[InvalidNicknameEvent] Invalid nickname! Try again.");
 //    }
 //
 //    /**
@@ -968,8 +856,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 ////        ViewStatus.setStatus("CLOSING");
 ////        ViewMessage.populateAndSend(lobbyFull.getMessage(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
 ////        ViewMessage.populateAndSend(lobbyFull.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
-//        System.out.println("[LobbyFullEvent] Lobby is full!"); // todo [debug]
-//        // TODO: close connection, and gracefully close the whole application
+//        System.out.println("[LobbyFullEvent] Lobby is full!");
 //    }
 //
 //    /**
@@ -984,7 +871,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 ////        } else {
 ////            ViewMessage.populateAndSend(playerWin.getLosersMessage(), ViewMessage.MessageType.LOOSE_MESSAGE);
 ////        }
-//        System.out.println("[PlayerWinEvent] Player " + playerWin.getPlayerNickname() + " has won!"); // todo [debug]
+//        System.out.println("[PlayerWinEvent] Player " + playerWin.getPlayerNickname() + " has won!");
 //    }
 //
 //    /**
@@ -997,7 +884,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 ////        if (ViewNickname.getMyNickname().equals(playerLose.getPlayerNickname())) {
 ////            ViewMessage.populateAndSend(playerLose.getMessage(), ViewMessage.MessageType.LOOSE_MESSAGE);
 ////        }
-//        System.out.println("[PlayerLoseEvent] Player " + playerLose.getPlayerNickname() + " has lost!"); // todo [debug]
+//        System.out.println("[PlayerLoseEvent] Player " + playerLose.getPlayerNickname() + " has lost!");
 //    }
 //
 //    /**
@@ -1010,23 +897,23 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 ////        ViewSubTurn.set(turnStatusChange.getState().toString());
 ////        ViewSubTurn.getActual().setPlayer(turnStatusChange.getPlayerNickname());
 ////        Viewer.setAllSubTurnViewer(ViewSubTurn.getActual().getSubViewer());
-//        //System.out.println("Turn status changed to: " + turnStatusChange.getState().toString()); // todo: check what toString() of an enum prints... [si, funziona.]
+//        //System.out.println("Turn status changed to: " + turnStatusChange.getState().toString());
 //        if(turnStatusChange.getPlayerNickname().equals(nickname))
 //            if(turnStatusChange.success()) {
 //                if(turnStatusChange.getState().equals(StateType.NONE))
-//                    System.out.println("[TurnStatusChangedEvent] You have passed your turn!"); // todo [debug]
+//                    System.out.println("[TurnStatusChangedEvent] You have passed your turn!");
 //                else
-//                    System.out.println("[TurnStatusChangedEvent] Your turn is now: " + turnStatusChange.getState().toString()); // todo [debug]
+//                    System.out.println("[TurnStatusChangedEvent] Your turn is now: " + turnStatusChange.getState().toString());
 //            }
 //            else
-//                System.out.println("[TurnStatusChangedEvent] Cannot change to state: " + turnStatusChange.getState().toString()); // todo [debug]
+//                System.out.println("[TurnStatusChangedEvent] Cannot change to state: " + turnStatusChange.getState().toString());
 //        else
 //            System.out.println("[TurnStatusChangedEvent] Player " + turnStatusChange.getPlayerNickname() + "'s turn is now: " + turnStatusChange.getState().toString());
 //    }
 //
 //    @Override
 //    public void update(GameOverEvent gameOver) {
-//        System.out.println("[GameOverEvent] Game over!"); // todo [debug]
+//        System.out.println("[GameOverEvent] Game over!");
 //    }
 //
 //    @Override
@@ -1045,8 +932,8 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 ////        ViewStatus.setStatus("CLOSING");
 ////        ViewMessage.populateAndSend(serverQuit.getMessage(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
 ////        ViewMessage.populateAndSend(serverQuit.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
-//        System.out.println("[ServerQuitEvent] " + serverQuit.getMessage()); // todo [debug]
-//        connection.closeConnection(); // TODO PER GIORGIO: aggiungi questo statement nel tuo metodo update() (questo lo usavo per i miei test): serve a chiudere la connessione ed i relativi thread.
+//        System.out.println("[ServerQuitEvent] " + serverQuit.getMessage());
+//        connection.closeConnection();
 //    }
 //
 //    /* Message listener */
@@ -1058,7 +945,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 //    @Override
 //    public void update(MessageEvent message) {
 ////        ViewMessage.populateAndSend(message.getMessage(), ViewMessage.MessageType.FROM_SERVER_MESSAGE);
-//        System.out.println("[MessageEvent] " + message.getMessage()); // todo [debug]
+//        System.out.println("[MessageEvent] " + message.getMessage());
 //    }
 //
 //
@@ -1071,7 +958,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 //    @Override
 //    public void update(ErrorMessageEvent message) {
 ////        ViewMessage.populateAndSend(message.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
-//        System.out.println("[ErrorMessageEvent] " + message.getMessage()); // todo [debug]
+//        System.out.println("[ErrorMessageEvent] " + message.getMessage());
 //    }
 //
 //
@@ -1120,7 +1007,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 ////        for (CardInfo card: cardList) {
 ////            new ViewCard(card.getName(), card.getEpithet(), card.getDescription());
 ////        }
-//        // todo [debug]
+//
 //        if(cardsInformation.getPlayer().equals("")) {
 //            if(cardsInformation.getChallenger().equals(nickname)) {
 //                System.out.println("[CardsInformationEvent] You are the challenger.\nChoose a number of cards equal to the number of players for this game."); // todo [debug]
@@ -1151,18 +1038,18 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 //    @Override
 //    public void update(CardSelectedEvent cardSelected) {
 ////        ViewNickname.setMyCard(cardSelected.getCardName());
-//        // todo [debug]
+//
 //        if(cardSelected.getPlayerNickname().equals(nickname)) {
 //            if (cardSelected.success())
-//                System.out.println("[CardSelectedEvent] You have correctly selected the card: " + cardSelected.getCardName()); // todo [debug]
+//                System.out.println("[CardSelectedEvent] You have correctly selected the card: " + cardSelected.getCardName());
 //            else
-//                System.out.println("[CardSelectedEvent] The Card you have selected is not valid!"); // todo [debug]
+//                System.out.println("[CardSelectedEvent] The Card you have selected is not valid!");
 //        }
 //        else {
 //            if (cardSelected.success())
 //                System.out.println("[CardSelectedEvent] Player " + cardSelected.getPlayerNickname() + " has correctly selected the card: " + cardSelected.getCardName()); // todo [debug]
 //            else
-//                System.out.println("[CardSelectedEvent] The Card Player " + cardSelected.getPlayerNickname() + " has selected is not valid!"); // todo [debug]
+//                System.out.println("[CardSelectedEvent] The Card Player " + cardSelected.getPlayerNickname() + " has selected is not valid!");
 //        }
 //    }
 //
@@ -1187,12 +1074,12 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 ////            ViewMessage.populateAndSend("Wrong cell received", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
 ////        }
 //        if(workerMoved.getMoveOutcome() == MoveOutcomeType.EXECUTED || workerMoved.getMoveOutcome() == MoveOutcomeType.TURN_SWITCHED || workerMoved.getMoveOutcome() == MoveOutcomeType.TURN_OVER || workerMoved.getMoveOutcome() == MoveOutcomeType.LOSS || workerMoved.getMoveOutcome() == MoveOutcomeType.WIN) {
-//            System.out.println("[WorkerMovedEvent] Worker '" + workerMoved.getWorker() + "' was correctly moved:"); // todo [debug]
-//            System.out.println("    Initial position: ( " + workerMoved.getInitialX() + " , " + workerMoved.getInitialY() + " )"); // todo [debug]
-//            System.out.println("    Current position: ( " + workerMoved.getFinalX() + " , " + workerMoved.getFinalY() + " )"); // todo [debug]
+//            System.out.println("[WorkerMovedEvent] Worker '" + workerMoved.getWorker() + "' was correctly moved:");
+//            System.out.println("    Initial position: ( " + workerMoved.getInitialX() + " , " + workerMoved.getInitialY() + " )");
+//            System.out.println("    Current position: ( " + workerMoved.getFinalX() + " , " + workerMoved.getFinalY() + " )");
 //        }
 //        else
-//            System.out.println("[WorkerMovedEvent] Worker '" + workerMoved.getWorker() + "' movement is not valid!"); // todo [debug]
+//            System.out.println("[WorkerMovedEvent] Worker '" + workerMoved.getWorker() + "' movement is not valid!");
 //    }
 //
 //    @Override
@@ -1211,9 +1098,9 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 ////        else
 ////            ViewMessage.populateAndSend("Wrong block recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
 //        if(blockBuilt.getMoveOutcome() == MoveOutcomeType.EXECUTED || blockBuilt.getMoveOutcome() == MoveOutcomeType.TURN_SWITCHED || blockBuilt.getMoveOutcome() == MoveOutcomeType.TURN_OVER || blockBuilt.getMoveOutcome() == MoveOutcomeType.LOSS || blockBuilt.getMoveOutcome() == MoveOutcomeType.WIN)
-//            System.out.println("[BlockBuiltEvent] A '" + blockBuilt.getBlockType().toString() + "' was correctly built in place: ( " + blockBuilt.getX() + " , " + blockBuilt.getY() + " )"); // todo [debug]
+//            System.out.println("[BlockBuiltEvent] A '" + blockBuilt.getBlockType().toString() + "' was correctly built in place: ( " + blockBuilt.getX() + " , " + blockBuilt.getY() + " )");
 //        else
-//            System.out.println("[BlockBuiltEvent] '" + blockBuilt.getBlockType().toString() + "' was NOT built. Invalid BuildMove."); // todo [debug]
+//            System.out.println("[BlockBuiltEvent] '" + blockBuilt.getBlockType().toString() + "' was NOT built. Invalid BuildMove.");
 //    }
 //
 //    @Override
@@ -1229,7 +1116,6 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 ////            cell.removeDome();
 ////        else
 ////            cell.removeLevel();
-//        // todo: This kind of event should not be displayed!
 //        System.err.println("[BlockRemovedEvent] A block was correctly removed. (This kind of event SHALL NOT be displayed!)"); // todo [debug]
 //    }
 //
@@ -1246,7 +1132,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 //    @Override
 //    public void update(RequireStartPlayerEvent requireStartPlayer) {
 //        if(requireStartPlayer.getChallenger().equals(nickname)) {
-//            System.out.println("[RequireStartPlayerEvent] You are the challenger.\nChoose the Start Player: "); // todo [debug]
+//            System.out.println("[RequireStartPlayerEvent] You are the challenger.\nChoose the Start Player: ");
 //            List<String> players = requireStartPlayer.getPlayers();
 //            players.forEach(x -> System.out.println("    - " + x));
 //        }
@@ -1257,7 +1143,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 //    @Override
 //    public void update(RequirePlaceWorkersEvent requirePlaceWorkers) {
 //        if(requirePlaceWorkers.getPlayer().equals(nickname)) {
-//            System.out.println("[RequirePlaceWorkersEvent] Place worker."); // todo [debug]
+//            System.out.println("[RequirePlaceWorkersEvent] Place worker.");
 //        }
 //        else
 //            System.out.println("Other players are placing their Workers. Wait...");
@@ -1287,17 +1173,17 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
 
     /* ########## AUXILIARY TEST METHODS ########## */
-    private void printGameInfo() {
-        if(!View.debugging)
-            return;
-        System.out.println("Players list and their Workers: ");
-        for (String player : players) {
-            System.out.println(player);
-            List<String> workers = workersToPlayer.get(player);
-            for (String worker : workers)
-                System.out.println("     - " + worker);
-        }
-    }
+//    private void printGameInfo() {
+//        if(!View.debugging)
+//            return;
+//        System.out.println("Players list and their Workers: ");
+//        for (String player : players) {
+//            System.out.println(player);
+//            List<String> workers = workersToPlayer.get(player);
+//            for (String worker : workers)
+//                System.out.println("     - " + worker);
+//        }
+//    }
 
     /**
      * Helper inner class aimed to handle chat messages received
