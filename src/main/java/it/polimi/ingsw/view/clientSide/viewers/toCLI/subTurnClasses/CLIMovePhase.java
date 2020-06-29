@@ -208,7 +208,12 @@ public class CLIMovePhase extends CLISubTurnViewer {
         while ( !endMove ) {
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
 
-            ViewBoard.getBoard().toCLI();
+            try {
+                ViewBoard.getBoard().toCLI();
+            }catch(NullPointerException e){
+                endMove = true;
+                break;
+            }
 
             System.out.println();
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);

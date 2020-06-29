@@ -120,7 +120,8 @@ public class CLIViewer extends Viewer{
      *
      * @param queuedEvent Event to read ( after check that its Type == MESSAGE )
      */
-    private void prepareMessage(ViewerQueuedEvent queuedEvent) {
+    private boolean prepareMessage(ViewerQueuedEvent queuedEvent) {
+        boolean end = false;
         ViewMessage viewMessage = (ViewMessage) queuedEvent.getPayload();
 
         if (viewMessage != null) {
@@ -144,7 +145,8 @@ public class CLIViewer extends Viewer{
                 case FATAL_ERROR_MESSAGE:
                     CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 1);
                     CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", 7); //starting space
-                    System.out.println(ANSIStyle.RED.getEscape() + "[Error Message]: " + viewMessage.getPayload() + ANSIStyle.RESET);
+                    System.out.println(ANSIStyle.RED.getEscape() + "[Fatal Error Message]: " + viewMessage.getPayload() + ANSIStyle.RESET);
+                    end = true;
                     break;
                 case FROM_SERVER_MESSAGE:
                     CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 1);
@@ -155,6 +157,7 @@ public class CLIViewer extends Viewer{
                     ;
             }
         }
+        return end;
     }
 
     private void undo() {
@@ -221,7 +224,7 @@ public class CLIViewer extends Viewer{
                         this.refresh(); //todo: active after connection test if it is necessary
                         break;
                     case MESSAGE:
-                        this.prepareMessage(queuedEvent);
+                        end = this.prepareMessage(queuedEvent);
                         break;
                     case UNDO:
                         this.undo();
@@ -235,7 +238,8 @@ public class CLIViewer extends Viewer{
             }
         }
 
-        this.exit();
+        //this.exit();
+        Viewer.exitAll();
 
     }
 

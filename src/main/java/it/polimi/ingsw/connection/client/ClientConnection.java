@@ -190,7 +190,7 @@ public class ClientConnection extends MVEventSubject implements Observer<Object>
             socket.close();
             if(View.debugging)
                 System.out.println("Connection closed.");
-            ViewMessage.populateAndSend("Connection closed.", ViewMessage.MessageType.FROM_SERVER_ERROR);
+            ViewMessage.populateAndSend("Connection closed.", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
         }
     }
 
