@@ -495,6 +495,12 @@ public enum ViewSubTurn implements ClientAddressable {
      * @param player  (the name of the actual Player).
      */
     public static void set(String st, String player){
+        if(st=="NONE") {
+            setStaticPlayer("");
+            // before it was a SELECTWORKER
+            set("OPPONENT_SELECTWORKER");
+            return;
+        }
         set(st);
         setStaticPlayer(player);
         if(actualSubTurn != null && !actualSubTurn.isMyTurn()){
