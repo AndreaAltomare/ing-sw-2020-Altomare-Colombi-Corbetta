@@ -10,6 +10,7 @@ import java.util.EventObject;
  * Class to execute the Next Turn.
  *
  * @see Executer
+ * @author giorgio
  */
 public class NextTurnExecuter extends Executer {
     /**

@@ -10,6 +10,7 @@ import java.util.EventObject;
  * Class to execute the Quitting.
  *
  * @see Executer
+ * @author giorgio
  */
 public class QuitExecuter extends Executer {
 

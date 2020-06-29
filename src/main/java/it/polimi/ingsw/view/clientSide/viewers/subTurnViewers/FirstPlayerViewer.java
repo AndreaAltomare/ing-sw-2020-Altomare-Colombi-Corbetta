@@ -1,32 +1,39 @@
 package it.polimi.ingsw.view.clientSide.viewers.subTurnViewers;
 
-import it.polimi.ingsw.view.clientSide.viewCore.executers.Executer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.FirstPlayerExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
-import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.CLIFirstPlayerChoosePhase;
-import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toGUI.statusClasses.GUIResumeRequest;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.subTurnClasses.FirstPlayerSubTurn;
-import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTerminalFirstPlayerChoosePhase;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 
-import java.util.Map;
-
+/**
+ * Class that offers the <code>SubTurnViewer</code> for the CHOOSE_FIRST_PLAYER.
+ *
+ * @see SubTurnViewer
+ * @author giorgio
+ */
 public class FirstPlayerViewer extends SubTurnViewer {
+
+    /**
+     * Constructor.
+     *
+     * @param viewSubTurn (the <code>ViewSubTurn</code> to which this referrs to).
+     */
     public FirstPlayerViewer (ViewSubTurn viewSubTurn) {
         super(viewSubTurn);
     }
 
+    /**
+     * Method to the GUI's representation of this Status.
+     */
+    @Override
     public GUISubTurnViewer toGUI(){
         GUISubTurnViewer ret = new FirstPlayerSubTurn(this);
         if(ret!= null)
@@ -43,6 +50,10 @@ public class FirstPlayerViewer extends SubTurnViewer {
         }
     }
 
+    /**
+     * Method to the WTerminal's representation of this Status.
+     */
+    @Override
     public WTerminalSubTurnViewer toWTerminal(){
         WTerminalSubTurnViewer ret = new WTerminalFirstPlayerChoosePhase(this);
         if(ret!= null)
@@ -59,6 +70,10 @@ public class FirstPlayerViewer extends SubTurnViewer {
         }
     }
 
+    /**
+     * Method to the CLI's representation of this Status.
+     */
+    @Override
     public CLISubTurnViewer toCLI() {
         CLISubTurnViewer ret = new CLIFirstPlayerChoosePhase(this);
         if(ret!= null)

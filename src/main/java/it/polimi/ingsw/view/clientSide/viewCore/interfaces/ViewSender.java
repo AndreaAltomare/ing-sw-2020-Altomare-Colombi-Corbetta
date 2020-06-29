@@ -2,6 +2,8 @@ package it.polimi.ingsw.view.clientSide.viewCore.interfaces;
 
 /**
  * Interface implemented by the Class(es) to be notified with the events to be send to Server.
+ *
+ * @author giorgio
  */
 public interface ViewSender {
     /*public void send(SetNicknameEvent event);

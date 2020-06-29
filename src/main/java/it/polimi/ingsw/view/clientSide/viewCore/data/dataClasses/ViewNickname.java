@@ -7,6 +7,11 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.EventObject;
 
+/**
+ * Class to represent the nickname of the current player
+ *
+ * @author giorgio
+ */
 public class ViewNickname extends ViewObject {
 
     private String name;

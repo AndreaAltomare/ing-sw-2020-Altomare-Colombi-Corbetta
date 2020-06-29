@@ -13,6 +13,7 @@ import java.util.List;
  * Class to execute the Undo.
  *
  * @see Executer
+ * @author giorgio
  */
 public class UndoExecuter extends Executer {
     private static UndoExecuter instance = new UndoExecuter();

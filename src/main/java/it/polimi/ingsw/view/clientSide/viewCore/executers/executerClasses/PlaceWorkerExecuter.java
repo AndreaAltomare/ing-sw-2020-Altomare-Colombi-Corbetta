@@ -12,6 +12,7 @@ import java.util.EventObject;
  * Class to execute the Place Worker.
  *
  * @see Executer
+ * @author giorgio
  */
 public class PlaceWorkerExecuter extends Executer {
     private int x;

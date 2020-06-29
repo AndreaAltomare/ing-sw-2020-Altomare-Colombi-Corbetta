@@ -7,6 +7,8 @@ package it.polimi.ingsw.view.clientSide.viewers.interfaces;
  *
  * It'll be useful either to set common methods and to have
  * all those similar Classes implementing a same interface.
+ *
+ * @author giorgio
  */
 public interface SpecificSubTurnViewer {
 }

@@ -3,6 +3,11 @@ package it.polimi.ingsw.view.clientSide.viewCore.executers;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewCard;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
+/**
+ * Interface implemented by classes managing the card selection and giving the possibility to iterate on the various cards and to select/deselect them.
+ *
+ * @author giorgio
+ */
 public interface CardExecuter {
 
     /**

@@ -18,6 +18,7 @@ import java.util.EventObject;
  * Class to execute a Build Block
  *
  * @see Executer
+ * @author giorgio
  */
 public class BuildBlockExecuter extends Executer {
 

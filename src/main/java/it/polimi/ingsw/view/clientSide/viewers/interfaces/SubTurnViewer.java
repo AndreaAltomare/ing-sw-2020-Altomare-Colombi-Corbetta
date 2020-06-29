@@ -9,6 +9,8 @@ import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalSub
 
 /**
  * Class used to retrieve the various viewer for CLI, GUI, WTerminal, and all the Viewers connected to one SubTurn.
+ *
+ * @author giorgio
  */
 public abstract class SubTurnViewer {
 

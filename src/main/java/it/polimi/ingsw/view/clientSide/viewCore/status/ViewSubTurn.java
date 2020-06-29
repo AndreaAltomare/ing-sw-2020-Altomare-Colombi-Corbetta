@@ -19,6 +19,8 @@ import it.polimi.ingsw.view.interfaces.Addressable;
  * and the action that can be performed in each moment.
  *
  * It specifies, for example, the turn status on which the game is.
+ *
+ * @author giorgio
  */
 public enum ViewSubTurn implements ClientAddressable {
 

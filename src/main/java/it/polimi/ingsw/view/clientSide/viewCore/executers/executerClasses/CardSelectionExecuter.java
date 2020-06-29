@@ -15,6 +15,7 @@ import java.util.EventObject;
  * Class to execute a Card Selection
  *
  * @see Executer
+ * @author giorgio
  */
 public class CardSelectionExecuter extends Executer implements CardExecuter {
     private String nameCard;

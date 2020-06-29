@@ -16,6 +16,7 @@ import java.util.EventObject;
  * Class to execute the Player Message chat.
  *
  * @see Executer
+ * @author giorgio
  */
 public class PlayerMessageExecuter extends Executer {
 

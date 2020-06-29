@@ -15,6 +15,7 @@ import java.util.EventObject;
  * Class to execute the Turn Status Change.
  *
  * @see Executer
+ * @author giorgio
  */
 public class TurnStatusChangeExecuter extends Executer {
     private ViewSubTurn stato;

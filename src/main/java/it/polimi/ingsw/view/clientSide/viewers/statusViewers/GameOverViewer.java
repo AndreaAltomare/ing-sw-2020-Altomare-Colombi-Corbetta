@@ -7,8 +7,19 @@ import it.polimi.ingsw.view.clientSide.viewers.toGUI.statusClasses.GUIGameOverSt
 
 import java.util.Map;
 
+/**
+ * Class representing the <code>StatusViewer</code> of the GAME_OVER status.
+ *
+ * @see StatusViewer
+ * @author giorgio
+ */
 public class GameOverViewer extends StatusViewer {
 
+    /**
+     * constructor.
+     *
+     * @param executers (the map of Executer used in this Status).
+     */
     public GameOverViewer(Map<String, Executer> executers){
         myExecuters = executers;
         myWTerminal = null;
