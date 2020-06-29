@@ -52,20 +52,20 @@ public class CLIResumeGameViewer extends CLIStatusViewer {
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE + 1 + MACHINERY_LENGTH + 2);
         System.out.println( MACHINERY_COLOR + "//\\" + ANSIStyle.RESET);
 
-        // machinery and cabin's upper part, then arm's machinery
+        // machinery and cabin's upper part, then machinery's arm
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE + 1 );
         CLIPrintFunction.printRepeatString(MACHINERY_BACK_COLOR, " ", MACHINERY_LENGTH - CAB_LENGTH);
         CLIPrintFunction.printAtTheMiddle(CAB_BACK_COLOR + WORKER_COLOR, "o", 1, CAB_LENGTH);
         System.out.println(MACHINERY_COLOR + " //  \\_" + ANSIStyle.RESET);
 
-        // machinery and cabin's down part, then arm's machinery, demolition ball and block's third level
+        // machinery and cabin's down part, then machinery's arm, demolition ball and block's third level
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE + 1 );
         CLIPrintFunction.printRepeatString(MACHINERY_BACK_COLOR, " ", MACHINERY_LENGTH - CAB_LENGTH);
         CLIPrintFunction.printAtTheMiddle(CAB_BACK_COLOR + WORKER_COLOR, " |\\", 3, CAB_LENGTH);
         System.out.print(MACHINERY_COLOR + "//   (_) " + ANSIStyle.RESET);
         System.out.println(BLOCK_COLOR + CLISymbols.BLOCK.getMiddleRepresentation() + ANSIStyle.RESET);
 
-        // machinery's down part, then arm's machinery, block's second level
+        // machinery's down part, then machinery's arm, block's second level
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE + 1 );
         CLIPrintFunction.printRepeatString(MACHINERY_BACK_COLOR, " ", MACHINERY_LENGTH );
         System.out.print(MACHINERY_COLOR + "/" + ANSIStyle.RESET);

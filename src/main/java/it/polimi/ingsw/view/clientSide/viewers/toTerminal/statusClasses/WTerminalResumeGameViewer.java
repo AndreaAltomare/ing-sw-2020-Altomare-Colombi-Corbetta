@@ -4,6 +4,7 @@ import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.Resumi
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.RequestResumingViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.CLISymbols;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer;
@@ -28,7 +29,45 @@ public class WTerminalResumeGameViewer extends WTerminalStatusViewer {
      * example //todo: add image
      */
     private void showRestartImage() {
-        // todo: add print code image
+        final int MACHINERY_LENGTH = 6;
+
+        PrintFunction.printRepeatString("\n", 1);
+        // arm's top of machinery
+        PrintFunction.printRepeatString(" ", STARTING_SPACE + MACHINERY_LENGTH + 3);
+        System.out.println("_");
+
+        // arm's upper part of machinery
+        PrintFunction.printRepeatString(" ", STARTING_SPACE + MACHINERY_LENGTH + 2);
+        System.out.println( "//\\" );
+
+        // machine's upper part, machinery's arm and third block's upper part
+        System.out.print(" ");
+        PrintFunction.printRepeatString("_", MACHINERY_LENGTH - 2);
+        PrintFunction.printRepeatString(" ", 2);
+        System.out.println("//  \\_    __");
+
+        // machinery's down part, cabin,  then arm's machinery, demolition ball and block's third level
+        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        System.out.print("/");
+        PrintFunction.printRepeatString(" ", MACHINERY_LENGTH - 4);
+        System.out.print("|_\\//   (_)");
+        System.out.println(" _|__|");
+
+        // machinery's down part, then arm's machinery, block's second level
+        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        System.out.print("\\");
+        PrintFunction.printRepeatString("_", MACHINERY_LENGTH - 2);
+        System.out.print("//");
+        PrintFunction.printRepeatString(" ", 5);
+        System.out.println(" _|__|  \"");
+
+        // machinery's track, block's first level
+        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        System.out.print("(");
+        PrintFunction.printRepeatString("_", MACHINERY_LENGTH - 1);
+        System.out.print(")");
+        PrintFunction.printRepeatString(" ", 5);
+        System.out.println("|__|  \"");
     }
 
     /**
