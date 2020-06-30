@@ -41,6 +41,8 @@ public class ViewWorker extends ViewObject {
     protected String workerCLIColor;
     protected Symbols workerWTRepresentation;
 
+    private String workerImageFileName;
+
     private static List<ViewWorker> myList = new ArrayList<ViewWorker>();
     private static ViewWorker selected;
 
@@ -184,11 +186,13 @@ public class ViewWorker extends ViewObject {
         try {
             myWorker = new ViewWorker(workerPlaced.getWorker(), ViewSubTurn.getActual().getPlayer());
             myWorker.placeOn(workerPlaced.getX(), workerPlaced.getY());
-            switch(workerPlaced.getColor()){
+            myWorker.setWorkerColor(workerPlaced.getColor());
+            /*switch(workerPlaced.getColor()){
                 case BLUE:
                     myWorker.workerColor = java.awt.Color.BLUE;
                     myWorker.workerCLIColor = ANSIStyle.RED.getEscape();
                     myWorker.workerWTRepresentation = Symbols.WORKER_1;
+
                     break;
                 case BROWN:
                     myWorker.workerColor = new java.awt.Color(153, 102,  0);
@@ -200,7 +204,7 @@ public class ViewWorker extends ViewObject {
                     myWorker.workerCLIColor = ANSIStyle.PURPLE.getEscape();
                     myWorker.workerWTRepresentation = Symbols.WORKER_3;
                     break;
-            }
+            }*/
             if(View.debugging)
                 System.out.println(workerPlaced.getWorker() + "(" + workerPlaced.getX()+":"+workerPlaced.getY()+")");
         } catch (NotFoundException | WrongViewObjectException e) {
@@ -332,17 +336,12 @@ public class ViewWorker extends ViewObject {
     public ImagePanel toGUI(){
         ImagePanel background = new ImagePanel(1, 1, 0, 0, "/img/board/cells/void_space.png");
         try {
-
-            background.add(new ImagePanel(0.8, 0.8, 0.1 ,0.1 , "/img/godPodium/" + getPlayer().getCard().getName() + ".png"));
+            //background.add(new ImagePanel(0.8, 0.8, 0.1 ,0.1 , "/img/godPodium/" + getPlayer().getCard().getName() + ".png"));
+            background.add(new ImagePanel(0.8, 0.8, 0.1 ,0.1 , workerImageFileName));
         } catch (Exception e) {
             background.add( new ImagePanel(0.8, 0.8, 0.1 ,0.1 ,  "/img/godPodium/Default.png"));
         }
         return background;
-/*
-        if(ViewNickname.getMyNickname().equals(getPlayer().getName()))
-            return new ImagePanel(1, 1, 0 ,0 , "/img/board/cells/my_worker.png");
-        else
-            return new ImagePanel(1, 1, 0 ,0 , "/img/board/cells/adv_worker.png");*/
     }
 
     /**
@@ -533,22 +532,30 @@ public class ViewWorker extends ViewObject {
         return  workerWTRepresentation;
     }
 
+    /**
+     * Method setting the color of this Worker.
+     *
+     * @param color (the Color of this Worker).
+     */
     public void setWorkerColor(it.polimi.ingsw.model.player.worker.Color color){
         switch(color){
             case BLUE:
                 this.workerColor = java.awt.Color.BLUE;
                 this.workerCLIColor = ANSIStyle.RED.getEscape();
                 this.workerWTRepresentation = Symbols.WORKER_1;
+                this.workerImageFileName = "/img/board/workers/worker_blue.png";
                 break;
             case BROWN:
                 this.workerColor = new java.awt.Color(153, 102,  0);
                 this.workerCLIColor = ANSIStyle.YELLOW.getEscape();
                 this.workerWTRepresentation = Symbols.WORKER_2;
+                this.workerImageFileName = "/img/board/workers/worker_brown.png";
                 break;
             case GREY:
                 this.workerColor = java.awt.Color.GRAY;
                 this.workerCLIColor = ANSIStyle.PURPLE.getEscape();
                 this.workerWTRepresentation = Symbols.WORKER_3;
+                this.workerImageFileName = "/img/board/workers/worker_grey.png";
                 break;
         }
 
