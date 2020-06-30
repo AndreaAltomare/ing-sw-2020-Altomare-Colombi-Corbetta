@@ -94,7 +94,8 @@ public class GUILoginStatus extends GUIStatusViewer {
                         executer.doIt();
                     } catch (WrongParametersException | CannotSendEventException e) {
                         ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
-                        e.printStackTrace();
+                        if(View.debugging)
+                            e.printStackTrace();
                     }
                 }
         );

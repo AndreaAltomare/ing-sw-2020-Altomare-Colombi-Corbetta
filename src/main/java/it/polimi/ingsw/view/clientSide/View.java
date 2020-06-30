@@ -90,7 +90,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
                 }
                 catch (IOException ex) {
                     System.err.println(ex.getMessage());
-                    //todo: aggiungere Error Message.
+                    ViewMessage.populateAndSend(ex.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
                 }
             }
         });

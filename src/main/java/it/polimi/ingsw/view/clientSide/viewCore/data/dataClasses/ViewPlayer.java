@@ -60,6 +60,11 @@ public class ViewPlayer extends ViewObject {
         return workers;
     }
 
+    /**
+     * Method returning one ViewWorker of the Player or null if not existing.
+     *
+     * @return (one ViewWorker of the Player or null if not existing).
+     */
     // CLI prloblem of color
     public ViewWorker getOneWorker() {
         return workers[0];

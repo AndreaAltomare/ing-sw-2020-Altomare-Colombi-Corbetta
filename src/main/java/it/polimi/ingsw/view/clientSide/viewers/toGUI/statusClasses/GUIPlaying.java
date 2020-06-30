@@ -2,6 +2,8 @@ package it.polimi.ingsw.view.clientSide.viewers.toGUI.statusClasses;
 
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.gamePanel.GamePanel;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton.PlayerPanel;
+import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton.PlayingPlayersButton;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.interfaces.GUISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.sounds.SoundEffect;
@@ -35,6 +37,7 @@ public class GUIPlaying extends GUIStatusViewer {
     @Override
     public boolean hasJPanel() {
         gamePanel = GamePanel.getLast();
+        gamePanel.add(new PlayingPlayersButton());
         setSubTurn(new NoActionSubTurn(null));
         return false;
     }

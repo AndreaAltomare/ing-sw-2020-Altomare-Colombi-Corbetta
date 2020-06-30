@@ -5,6 +5,7 @@ import it.polimi.ingsw.connection.client.ClientConnection;
 import it.polimi.ingsw.storage.ResourceManager;
 import it.polimi.ingsw.view.clientSide.View;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
+import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.WTerminalViewer;
@@ -90,6 +91,7 @@ public class ClientApp {
         /* GET VIEWER SETTINGS */
         viewer = getViewer(argsList);
         if(viewer == null) {
+            ViewMessage.populateAndSend(BAD_ARGS, ViewMessage.MessageType.FROM_SERVER_ERROR);
             //if(View.debugging)
             System.out.println(BAD_ARGS);
             return;
