@@ -67,11 +67,12 @@ public class ServerApp {
         try {
             System.out.println("Starting Server...");
             System.out.println("Listening on PORT [" + port + "]");
-            server = new ServerConnection(port); // todo: provare qui che succede se metto un parametro non numerico... e anche con un ip non valido...
+            server = new ServerConnection(port);
             server.run();
         }
         catch (IOException ex) {
             System.err.println("Impossible to initialize the Server: " + ex.getMessage() + "!");
+            System.exit(1);
         }
     }
 }
