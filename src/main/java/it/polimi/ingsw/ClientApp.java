@@ -79,7 +79,13 @@ public class ClientApp {
         }
         else {
             /* Retrieve connection configuration settings */
-            connectionSettings = ResourceManager.clientConnectionSettings();
+            connectionSettings = null;
+            try {
+                connectionSettings = ResourceManager.clientConnectionSettings();
+            }
+            catch (Exception ex) {
+                System.out.println("Bad configuration format.\nClient is going to be initialized with default connection settings.\n\n");
+            }
             if (connectionSettings != null) {
                 ip = connectionSettings.getIp();
                 port = connectionSettings.getPort();

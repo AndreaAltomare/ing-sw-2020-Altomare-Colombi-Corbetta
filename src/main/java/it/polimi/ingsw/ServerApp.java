@@ -52,7 +52,13 @@ public class ServerApp {
         }
 
         if(defaultSettings) {
-            connectionSettings = ResourceManager.serverConnectionSettings();
+            connectionSettings = null;
+            try {
+                connectionSettings = ResourceManager.serverConnectionSettings();
+            }
+            catch (Exception ex) {
+                System.out.println("Bad configuration format.\nServer is going to be initialized with default connection settings.\n\n");
+            }
             if (connectionSettings != null)
                 port = connectionSettings.getPort();
         }
@@ -61,7 +67,7 @@ public class ServerApp {
         try {
             System.out.println("Starting Server...");
             System.out.println("Listening on PORT [" + port + "]");
-            server = new ServerConnection(port);
+            server = new ServerConnection(port); // todo: provare qui che succede se metto un parametro non numerico... e anche con un ip non valido...
             server.run();
         }
         catch (IOException ex) {
