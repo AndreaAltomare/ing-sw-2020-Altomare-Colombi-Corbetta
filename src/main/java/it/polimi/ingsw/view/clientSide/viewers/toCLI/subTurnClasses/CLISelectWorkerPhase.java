@@ -23,12 +23,6 @@ public class CLISelectWorkerPhase extends CLISubTurnViewer {
 
     private SelectWorkerViewer selectWorkerViewer;
 
-    private final int STARTING_SPACE = 7;
-    private final int WORKER_SPACE = 5;
-    private final String ERROR_COLOR_AND_SYMBOL = ANSIStyle.RED.getEscape() + UnicodeSymbol.X_MARK.getEscape();
-    private final String CORRECT_COLOR_AND_SYMBOL = ANSIStyle.GREEN.getEscape() + UnicodeSymbol.CHECK_MARK.getEscape();
-    private final String WRITE_MARK = ANSIStyle.UNDERSCORE.getEscape() + UnicodeSymbol.PENCIL.getEscape() + ANSIStyle.RESET;
-
     public CLISelectWorkerPhase(SelectWorkerViewer selectWorkerViewer) {
         this.selectWorkerViewer = selectWorkerViewer;
     }
@@ -54,34 +48,30 @@ public class CLISelectWorkerPhase extends CLISubTurnViewer {
             }
 
             System.out.println();
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
             System.out.println(COMMAND_REQUEST);
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
             System.out.println("1:" + DETAILS_GODS_COMMAND);
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
             System.out.println("2:" + SELECT_WORKER_COMMAND);
 
             System.out.println();
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-            System.out.print(WRITE_MARK);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
+            System.out.print(CLIPrintFunction.WRITE_MARK);
             try {
                 actionSelected = new Scanner(System.in).nextInt();
                 switch ( actionSelected ) {
                     case 1:
-                        this.showCardsDetails(STARTING_SPACE);
+                        this.showCardsDetails(true);
                         break;
                     case 2:
                         selected = this.showSelectRequest();
                         break;
                     default:
-                        System.out.println();
-                        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-                        System.out.println(ERROR_COLOR_AND_SYMBOL + WRONG_COMMAND_MESSAGE + ANSIStyle.RESET);
+                        CLIPrintFunction.printError(WRONG_COMMAND_MESSAGE);
                 }
             } catch (InputMismatchException e) {
-                System.out.println();
-                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-                System.out.println(ERROR_COLOR_AND_SYMBOL + WRONG_COMMAND_MESSAGE + ANSIStyle.RESET);
+                CLIPrintFunction.printError(WRONG_COMMAND_MESSAGE);
             }
         }
 
@@ -94,20 +84,20 @@ public class CLISelectWorkerPhase extends CLISubTurnViewer {
      */
     private boolean showSelectRequest() {
         final String REQUEST = "Please, choose your worker:";
-        final String CORRECT_MESSAGE = "The worker is correctly selected";
+        final String CORRECT_MESSAGE = "The select request is correctly sent";
         final String WRONG_WORKER_MESSAGE = "The chosen value isn't a valid worker's number";
         final String WRONG_VALUE_MESSAGE = "The chosen value isn't correct";
+        String wrongSetMessage = "Your worker isn't correctly set";
 
         boolean isSelected = false;
         int worker;
         int workerNumber = 1;
-        String playerColor;
         ViewPlayer viewPlayer;
         List<ViewWorker> workerList = new ArrayList<>();
         SelectWorkerExecuter selectWorkerExecuter = (SelectWorkerExecuter) selectWorkerViewer.getMySubTurn().getExecuter();
 
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
         System.out.println(REQUEST);
 
         try {
@@ -119,28 +109,28 @@ public class CLISelectWorkerPhase extends CLISubTurnViewer {
                     workerNumber++;
                 }
                 System.out.println();
-                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-                System.out.print(WRITE_MARK);
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
+                System.out.print(CLIPrintFunction.WRITE_MARK);
                 worker = new Scanner( System.in ).nextInt();
                 if ( worker > 0 && worker < workerNumber) {
                     selectWorkerExecuter.setWorkerId( workerList.get( worker - 1) );
-                    selectWorkerExecuter.doIt();
-                    System.out.println();
-                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-                    System.out.print(CORRECT_COLOR_AND_SYMBOL + CORRECT_MESSAGE +ANSIStyle.RESET);
                     isSelected = true;
+                    selectWorkerExecuter.doIt();
+                    CLIPrintFunction.printCheck(CORRECT_MESSAGE);
                 } else {
-                    System.out.println();
-                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-                    System.out.print(ERROR_COLOR_AND_SYMBOL + WRONG_WORKER_MESSAGE + ANSIStyle.RESET);
+                    CLIPrintFunction.printError(WRONG_WORKER_MESSAGE);
                 }
             }
-        } catch (NotFoundException | WrongParametersException | CannotSendEventException e) {
-            e.printStackTrace();
+        } catch (NotFoundException ignored) {
         } catch (InputMismatchException i) {
-            System.out.println();
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-            System.out.print(ERROR_COLOR_AND_SYMBOL + WRONG_VALUE_MESSAGE + ANSIStyle.RESET);
+            CLIPrintFunction.printError(WRONG_VALUE_MESSAGE);
+        } catch (WrongParametersException e) {
+            if (!e.getMessage().equals("")) {
+                wrongSetMessage = e.getMessage();
+            }
+            CLIPrintFunction.printError(wrongSetMessage);
+        }catch (CannotSendEventException e) {
+            CLIPrintFunction.printError(e.getErrorMessage());
         }
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
 
@@ -154,21 +144,21 @@ public class CLISelectWorkerPhase extends CLISubTurnViewer {
      * @param workerNumber
      */
     private void printWorker( ViewWorker viewWorker, int workerNumber ) {
+        final int WORKER_SPACE = 5;
 
         try {
             System.out.println();
             //first line
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE + 2);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE + 2);
             CLIPrintFunction.printAtTheMiddle(ANSIStyle.RESET, viewWorker.toCLI(true), CLISymbols.WORKER.getLength(), WORKER_SPACE);
             System.out.println();
             //second line
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE );
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE );
             System.out.printf("%d.", workerNumber);
             CLIPrintFunction.printAtTheMiddle(ANSIStyle.RESET, viewWorker.toCLI(false), CLISymbols.WORKER.getLength(), WORKER_SPACE);
             System.out.printf("Worker's cell: ( Row: %d ; Columns: %d )", viewWorker.getPosition().getX(), viewWorker.getPosition().getY());
             System.out.println();
-        } catch (NotFoundException e) {
-            e.printStackTrace();
+        } catch (NotFoundException ignored) {
         }
 
     }

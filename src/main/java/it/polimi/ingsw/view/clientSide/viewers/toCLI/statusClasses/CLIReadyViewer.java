@@ -11,7 +11,6 @@ public class CLIReadyViewer extends CLIStatusViewer {
 
     private ReadyViewer readyViewer;
 
-    final int STARTING_SPACE = 7;
     final int COLUMNS_THICKNESS = 2;
     final int COLUMNS_HIGH = 2;
     final String TITLE = "SANTORINI";
@@ -41,6 +40,7 @@ public class CLIReadyViewer extends CLIStatusViewer {
         this.showTitle();
         this.showColumns();
         this.showStaircase();
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
     }
 
     /**
@@ -49,7 +49,7 @@ public class CLIReadyViewer extends CLIStatusViewer {
      */
     private void showPediment() {
 
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
         CLIPrintFunction.printAtTheMiddle(TEMPLE_COLOR,UnicodeSymbol.HIGH_BLOCK_1.getEscape() +
                                                                     UnicodeSymbol.HIGH_BLOCK_2.getEscape() +
                                                                     UnicodeSymbol.HIGH_BLOCK_3.getEscape() +
@@ -76,7 +76,7 @@ public class CLIReadyViewer extends CLIStatusViewer {
      */
     private void showTitle() {
 
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
         CLIPrintFunction.printAtTheMiddle(TEMPLE_BACK_COLOR + TITLE_COLOR, TITLE, TITLE.length(), PEDIMENT_LENGTH);
         System.out.println();
 
@@ -91,7 +91,7 @@ public class CLIReadyViewer extends CLIStatusViewer {
     private void showColumns() {
 
         for (int columnLevel = 0; columnLevel < COLUMNS_HIGH; columnLevel++) {
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE + 1);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE + 1);
             for (int columnNumber = 0; columnNumber < COLUMNS_NUMBER; columnNumber++) {
                 CLIPrintFunction.printRepeatString(TEMPLE_BACK_COLOR, " ", COLUMNS_THICKNESS);
                 CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", COLUMNS_THICKNESS);
@@ -109,7 +109,7 @@ public class CLIReadyViewer extends CLIStatusViewer {
      */
     private void showStaircase() {
 
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
         System.out.print( TEMPLE_COLOR + UnicodeSymbol.SCALE_LEFT.getEscape() );
         CLIPrintFunction.printRepeatString( TEMPLE_COLOR, UnicodeSymbol.HIGH_BLOCK_8.getEscape(), PEDIMENT_LENGTH - 2);
         System.out.print( TEMPLE_COLOR + UnicodeSymbol.SCALE_RIGHT.getEscape() );

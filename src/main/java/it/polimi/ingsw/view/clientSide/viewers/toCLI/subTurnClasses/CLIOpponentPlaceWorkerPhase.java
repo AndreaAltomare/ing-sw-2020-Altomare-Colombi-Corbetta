@@ -12,8 +12,6 @@ public class CLIOpponentPlaceWorkerPhase extends CLISubTurnViewer {
 
     private OpponentPlaceWorkerViewer opponentPlaceWorkerViewer;
 
-    private final int STARTING_SPACE = 7;
-
     public CLIOpponentPlaceWorkerPhase(OpponentPlaceWorkerViewer opponentPlaceWorkerViewer ) {
         this.opponentPlaceWorkerViewer = opponentPlaceWorkerViewer;
     }
@@ -30,10 +28,9 @@ public class CLIOpponentPlaceWorkerPhase extends CLISubTurnViewer {
             ViewBoard.getBoard().toCLI();
 
             System.out.println();
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
             System.out.println(WAITING_MESSAGE);
             System.out.println();
-            //todo: maybe to do an little animation like in CLIWaitingStatus
 
         }catch(NullPointerException e){
             // do anything and exit from state if there isn't the board

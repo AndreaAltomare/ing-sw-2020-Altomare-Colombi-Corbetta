@@ -18,6 +18,7 @@ import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.*;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.CLICheckWrite;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.CLIStopTimeScanner;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.EmptyQueueException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
@@ -30,10 +31,6 @@ public class CLIViewer extends Viewer{
 
     public CLIViewer(){
         Viewer.registerViewer(this);
-    }
-
-    public static void printErrorMessage(String errorMessage) {
-
     }
 
     /**
@@ -134,23 +131,17 @@ public class CLIViewer extends Viewer{
                     this.cliStatusViewer.show();
                     break;
                 case FROM_SERVER_ERROR:
-                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 1);
-                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", 7); //starting space
-                    System.out.println(ANSIStyle.RED.getEscape() + "[Error Message]: " + viewMessage.getPayload() + ANSIStyle.RESET);
+                    CLIPrintFunction.printError("ERROR: " + viewMessage.getPayload());
                     if ( this.cliStatusViewer != null && !this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN) && !this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS)) {
                         cliStatusViewer.show();
                     }
                     break;
                 case FATAL_ERROR_MESSAGE:
-                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 1);
-                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", 7); //starting space
-                    System.out.println(ANSIStyle.RED.getEscape() + "[Fatal Error Message]: " + viewMessage.getPayload() + ANSIStyle.RESET);
+                    CLIPrintFunction.printError("FATAL ERROR: " + viewMessage.getPayload());
                     end = true;
                     break;
                 case FROM_SERVER_MESSAGE:
-                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 1);
-                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", 7); //starting space
-                    System.out.println(ANSIStyle.GREEN.getEscape() + "[Server Message]: " + viewMessage.getPayload() + ANSIStyle.RESET);
+                    CLIPrintFunction.printCheck(viewMessage.getPayload());
                     break;
                 default:
                     ;
@@ -160,10 +151,10 @@ public class CLIViewer extends Viewer{
     }
 
     private void undo() {
-        final int STARTING_SPACE = 7;
-        final String WRITE_MARK = ANSIStyle.UNDERSCORE.getEscape() + UnicodeSymbol.PENCIL.getEscape() + ANSIStyle.RESET;
 
         CLICheckWrite cliCheckWrite = new CLICheckWrite();
+        final String UNDO_ACTIVE_MESSAGE = "Undo request is correctly sent";
+        final String UNDO_REJECT_MESSAGE = "The play continues";
         int waitingTime = 5; // in sec
         Thread stopScannerThread = new Thread( new CLIStopTimeScanner(cliCheckWrite, waitingTime));
         String input;
@@ -171,19 +162,21 @@ public class CLIViewer extends Viewer{
         ViewBoard.getBoard().toCLI();       // print the board to see last move1
 
 
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
         stopScannerThread.start();
         System.out.printf("Press ENTER bottom in %d second to undo your move:\n", waitingTime);
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-        System.out.print( WRITE_MARK );
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
+        System.out.print( CLIPrintFunction.WRITE_MARK );
         input = new Scanner(System.in).nextLine();
         if ( cliCheckWrite.firstToWrite() ) {
             try {
                 UndoExecuter.undoIt();
-                System.out.println("[CLIMessage]: used undoExecuter"); //todo:remove after testing
+                CLIPrintFunction.printCheck(UNDO_ACTIVE_MESSAGE);
             } catch (CannotSendEventException e) {
+                CLIPrintFunction.printError(e.getErrorMessage());
             }
         } else {
+            CLIPrintFunction.printCheck(UNDO_REJECT_MESSAGE);
             System.out.println("[CLIMessage]: time over, play continues"); //todo:remove after testing
             try {
                 Thread.sleep(750);
@@ -219,7 +212,7 @@ public class CLIViewer extends Viewer{
                         this.prepareCardsPhase(queuedEvent);
                         break;
                     case REFRESH:
-                        this.refresh(); //todo: active after connection test if it is necessary
+                        this.refresh();
                         break;
                     case MESSAGE:
                         end = this.prepareMessage(queuedEvent);
@@ -236,7 +229,6 @@ public class CLIViewer extends Viewer{
             }
         }
 
-        //this.exit();
         Viewer.exitAll();
 
     }

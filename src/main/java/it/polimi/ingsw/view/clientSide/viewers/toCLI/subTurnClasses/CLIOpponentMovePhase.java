@@ -12,8 +12,6 @@ public class CLIOpponentMovePhase extends CLISubTurnViewer {
 
     private OpponentMoveViewer opponentMoveViewer;
 
-    private final int STARTING_SPACE = 7;
-
     public CLIOpponentMovePhase(OpponentMoveViewer opponentMoveViewer) {
         this.opponentMoveViewer = opponentMoveViewer;
     }
@@ -32,12 +30,11 @@ public class CLIOpponentMovePhase extends CLISubTurnViewer {
             ViewBoard.getBoard().toCLI();
 
             System.out.println();
-            this.showCardsDetails(STARTING_SPACE);
+            this.showCardsDetails(false);
 
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
             System.out.println(WAITING_MESSAGE);
-            //todo: maybe add a little animation like WaitingViewer
 
         }catch(NullPointerException e){
             // do anithing and exit from state if there isn't the board

@@ -20,12 +20,6 @@ public class CLIResumeGameViewer extends CLIStatusViewer {
 
     private RequestResumingViewer requestResumingViewer;
 
-    private final int STARTING_SPACE = 7;
-    private final String ERROR_COLOR_AND_SYMBOL = ANSIStyle.RED.getEscape() + UnicodeSymbol.X_MARK.getEscape();
-    private final String CORRECT_COLOR_AND_SYMBOL = ANSIStyle.GREEN.getEscape() + UnicodeSymbol.CHECK_MARK.getEscape();
-    private final String WRITE_MARK = ANSIStyle.UNDERSCORE.getEscape() + UnicodeSymbol.PENCIL.getEscape() + ANSIStyle.RESET;
-
-
     public CLIResumeGameViewer(RequestResumingViewer requestResumingViewer) {
         this.requestResumingViewer = requestResumingViewer;
     }
@@ -45,35 +39,35 @@ public class CLIResumeGameViewer extends CLIStatusViewer {
 
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 1);
         // arm's top of machinery
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE + 1 + MACHINERY_LENGTH + 3);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE + 1 + MACHINERY_LENGTH + 3);
         System.out.println( MACHINERY_COLOR + "_" + ANSIStyle.RESET);
 
         // arm's upper part of machinery
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE + 1 + MACHINERY_LENGTH + 2);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE + 1 + MACHINERY_LENGTH + 2);
         System.out.println( MACHINERY_COLOR + "//\\" + ANSIStyle.RESET);
 
         // machinery and cabin's upper part, then machinery's arm
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE + 1 );
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE + 1 );
         CLIPrintFunction.printRepeatString(MACHINERY_BACK_COLOR, " ", MACHINERY_LENGTH - CAB_LENGTH);
         CLIPrintFunction.printAtTheMiddle(CAB_BACK_COLOR + WORKER_COLOR, "o", 1, CAB_LENGTH);
         System.out.println(MACHINERY_COLOR + " //  \\_" + ANSIStyle.RESET);
 
         // machinery and cabin's down part, then machinery's arm, demolition ball and block's third level
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE + 1 );
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE + 1 );
         CLIPrintFunction.printRepeatString(MACHINERY_BACK_COLOR, " ", MACHINERY_LENGTH - CAB_LENGTH);
         CLIPrintFunction.printAtTheMiddle(CAB_BACK_COLOR + WORKER_COLOR, " |\\", 3, CAB_LENGTH);
         System.out.print(MACHINERY_COLOR + "//   (_) " + ANSIStyle.RESET);
         System.out.println(BLOCK_COLOR + CLISymbols.BLOCK.getMiddleRepresentation() + ANSIStyle.RESET);
 
         // machinery's down part, then machinery's arm, block's second level
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE + 1 );
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE + 1 );
         CLIPrintFunction.printRepeatString(MACHINERY_BACK_COLOR, " ", MACHINERY_LENGTH );
         System.out.print(MACHINERY_COLOR + "/" + ANSIStyle.RESET);
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", 7);
         System.out.println(BLOCK_COLOR + CLISymbols.BLOCK.getMiddleRepresentation() + ANSIStyle.RESET + " \"");
 
         // machinery's track, block's first level
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE );
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE );
         System.out.print(MACHINERY_COLOR + "(" + ANSIStyle.RESET);
         CLIPrintFunction.printRepeatString(MACHINERY_COLOR, "_", MACHINERY_LENGTH );
         System.out.print(MACHINERY_COLOR + ")" + ANSIStyle.RESET);
@@ -98,24 +92,23 @@ public class CLIResumeGameViewer extends CLIStatusViewer {
         int command;
 
         // ask request
-        System.out.println();
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
         System.out.println(RESTART_REQUEST);
 
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", LINE_BETWEEN_STRING);
 
         // show command
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
         System.out.println("1: " + RESTART_COMMAND);
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", LINE_BETWEEN_STRING);
 
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
         System.out.println("2: " + CONTINUE_COMMAND);
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", LINE_BETWEEN_STRING);
 
         // read command
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-        System.out.print(WRITE_MARK);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
+        System.out.print(CLIPrintFunction.WRITE_MARK);
         try {
             command = new Scanner(System.in).nextInt();
             switch (command) {
@@ -125,12 +118,10 @@ public class CLIResumeGameViewer extends CLIStatusViewer {
                     } catch (AlreadySetException ignored) {
                     }
                     try {
-                        resumingExecuter.doIt();
                         commandSelected = true;
+                        resumingExecuter.doIt();
                     } catch (CannotSendEventException e) {
-                        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", LINE_BETWEEN_STRING);
-                        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-                        System.out.printf(ERROR_COLOR_AND_SYMBOL + "%s" + ANSIStyle.RESET, e.toString());
+                        CLIPrintFunction.printError(e.getErrorMessage());
                     }
                     break;
                 case 2:
@@ -139,23 +130,17 @@ public class CLIResumeGameViewer extends CLIStatusViewer {
                     } catch (AlreadySetException ignored) {
                     }
                     try {
-                        resumingExecuter.doIt();
                         commandSelected = true;
+                        resumingExecuter.doIt();
                     } catch (CannotSendEventException e) {
-                        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", LINE_BETWEEN_STRING);
-                        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-                        System.out.printf(ERROR_COLOR_AND_SYMBOL + "%s" + ANSIStyle.RESET, e.toString());
+                        CLIPrintFunction.printError(e.getErrorMessage());
                     }
                     break;
                 default:
-                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", LINE_BETWEEN_STRING);
-                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-                    System.out.print(ERROR_COLOR_AND_SYMBOL + WRONG_COMMAND_MESSAGE + ANSIStyle.RESET);
+                    CLIPrintFunction.printError(WRONG_COMMAND_MESSAGE);
             }
         } catch (InputMismatchException e) {
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", LINE_BETWEEN_STRING);
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-            System.out.print(ERROR_COLOR_AND_SYMBOL + WRONG_COMMAND_MESSAGE + ANSIStyle.RESET);
+            CLIPrintFunction.printError(WRONG_COMMAND_MESSAGE);
         }
 
         return  commandSelected;

@@ -13,7 +13,6 @@ public class CLIWaitingViewer extends CLIStatusViewer {
 
     final String WAITING_MESSAGE = "Please waiting ";
     final int SLEEP_TIME = 1000; //in ns
-    final int STARTING_SPACE = 7;
 
     /**
      * Constructor to set the correct StatusViewer
@@ -30,7 +29,7 @@ public class CLIWaitingViewer extends CLIStatusViewer {
     @Override
     public void show() {
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
         System.out.print( WAITING_MESSAGE );
         //animation
         try {
@@ -40,9 +39,8 @@ public class CLIWaitingViewer extends CLIStatusViewer {
             System.out.print( ANSIStyle.YELLOW.getEscape() + UnicodeSymbol.HIGH_BLOCK_5.getEscape());
             Thread.sleep(SLEEP_TIME);
             System.out.print( ANSIStyle.GREEN.getEscape() + UnicodeSymbol.HIGH_BLOCK_8.getEscape());
-            } catch (InterruptedException e) {
-            e.printStackTrace(); //todo: eliminate after testing
+            } catch (InterruptedException ignored) {
         }
-        System.out.println();
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
     }
 }

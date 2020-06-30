@@ -1,16 +1,51 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces;
 
+import com.sun.org.apache.bcel.internal.generic.StackProducer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
-import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
 
 public interface CLIPrintFunction {
 
+    int MESSAGE_SLEEP_TIME = 2000; // in ns
     int STARTING_SPACE = 7;
     String ERROR_COLOR_AND_SYMBOL = ANSIStyle.RED.getEscape() + UnicodeSymbol.X_MARK.getEscape();
     String CORRECT_COLOR_AND_SYMBOL = ANSIStyle.GREEN.getEscape() + UnicodeSymbol.CHECK_MARK.getEscape();
     String WRITE_MARK = ANSIStyle.UNDERSCORE.getEscape() + UnicodeSymbol.PENCIL.getEscape() + ANSIStyle.RESET;
 
+
+    /**
+     * Prints errorMessage with color and symbol of ERROR_COLOR_AND_SYMBOL, then waits a few second (MESSAGE_SLEEP_TIME / 1000)
+     * so the player can read it
+     *
+     * @param errorMessage
+     */
+    static void printError(String errorMessage) {
+        System.out.println();
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        System.out.println( ERROR_COLOR_AND_SYMBOL + errorMessage + ANSIStyle.RESET);
+        System.out.println();
+        try {
+            Thread.sleep(MESSAGE_SLEEP_TIME);
+        } catch (InterruptedException ignored) {
+        }
+    }
+
+    /**
+     * Prints checkMessage with color and symbol of CORRECT_COLOR_AND_SYMBOL, then waits a few second (MESSAGE_SLEEP_TIME / 1000)
+     * so the player can read it
+     *
+     * @param checkMessage
+     */
+    static void printCheck(String checkMessage) {
+        System.out.println();
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        System.out.println( ERROR_COLOR_AND_SYMBOL + checkMessage + ANSIStyle.RESET);
+        System.out.println();
+        try {
+            Thread.sleep(MESSAGE_SLEEP_TIME);
+        } catch (InterruptedException ignored) {
+        }
+    }
 
     /**
      * Methods that implements a for cycle to print on standard output
@@ -39,12 +74,12 @@ public interface CLIPrintFunction {
     static void printAtTheMiddle(String style, String middleString, int stringLength, int totalLength) {
         System.out.print( style );
         if ( ((totalLength - stringLength) % 2 ) == 0) {
-            PrintFunction.printRepeatString(" ", (totalLength - stringLength) / 2);
+            CLIPrintFunction.printRepeatString(""," ", (totalLength - stringLength) / 2);
         } else {
-            PrintFunction.printRepeatString(" ", ((totalLength - stringLength) / 2) + 1);
+            CLIPrintFunction.printRepeatString(""," ", ((totalLength - stringLength) / 2) + 1);
         }
         System.out.print(middleString);
-        PrintFunction.printRepeatString(" ", (totalLength - stringLength) / 2);
+        CLIPrintFunction.printRepeatString(""," ", (totalLength - stringLength) / 2);
         System.out.print(ANSIStyle.RESET );
 
     }

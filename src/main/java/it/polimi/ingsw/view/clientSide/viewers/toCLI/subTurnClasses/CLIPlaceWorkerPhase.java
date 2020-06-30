@@ -19,12 +19,6 @@ public class CLIPlaceWorkerPhase extends CLISubTurnViewer {
 
     private PlaceWorkerViewer placeWorkerViewer;
 
-    private final int STARTING_SPACE = 7;
-    private final String ERROR_COLOR_AND_SYMBOL = ANSIStyle.RED.getEscape() + UnicodeSymbol.X_MARK.getEscape();
-    private final String CORRECT_COLOR_AND_SYMBOL = ANSIStyle.GREEN.getEscape() + UnicodeSymbol.CHECK_MARK.getEscape();
-    private final String WRITE_MARK = ANSIStyle.UNDERSCORE.getEscape() + UnicodeSymbol.PENCIL.getEscape() + ANSIStyle.RESET;
-
-
     public CLIPlaceWorkerPhase(PlaceWorkerViewer placeWorkerViewer ) {
         this.placeWorkerViewer = placeWorkerViewer;
     }
@@ -36,9 +30,9 @@ public class CLIPlaceWorkerPhase extends CLISubTurnViewer {
      */
     private boolean placeWorkerRequest(int workerToPlace) {
         final String REQUEST = "Please, choose the cell where place your worker:";
-        final String OUT_OF_BOARD_MESSAGE = "The cell chosen is out of board, please change it";
         final String WRONG_VALUE_MESSAGE = "The chosen value isn't correct, please change it";
-        final String CORRECT_PLACE = "Your worker is correctly set";
+        final String CORRECT_PLACE = "Your place request is correctly sent";
+        String outOfBoardMessage = "The cell chosen is out of board, please change it";
 
         PlaceWorkerExecuter placeWorkerExecuter = (PlaceWorkerExecuter) placeWorkerViewer.getMySubTurn().getExecuter();
         boolean placed = false;
@@ -46,47 +40,42 @@ public class CLIPlaceWorkerPhase extends CLISubTurnViewer {
         int column;
 
         System.out.println();
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
         System.out.printf("You have %d worker to place\n", workerToPlace);
         System.out.println();
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
         System.out.print(REQUEST + "\n");
 
         try {
             System.out.println();
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-            System.out.print( WRITE_MARK + "Row:");
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
+            System.out.print( CLIPrintFunction.WRITE_MARK + "Row:");
             row = new Scanner( System.in ).nextInt();
             System.out.println();
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-            System.out.print( WRITE_MARK + "Column:");
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
+            System.out.print( CLIPrintFunction.WRITE_MARK + "Column:");
             column = new Scanner( System.in ).nextInt();
             if ( row < 0 || row >= ViewBoard.getBoard().getXDim() || column < 0 || column >= ViewBoard.getBoard().getYDim() ) {
-                System.out.println();
-                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-                System.out.println(ERROR_COLOR_AND_SYMBOL + OUT_OF_BOARD_MESSAGE + ANSIStyle.RESET);
+                CLIPrintFunction.printError(outOfBoardMessage);
             } else {
                 placeWorkerExecuter.clear();
                 try {
                     placeWorkerExecuter.setCell(row, column);
-                    placeWorkerExecuter.doIt();
-                    System.out.println();
-                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-                    System.out.println(CORRECT_COLOR_AND_SYMBOL + CORRECT_PLACE + ANSIStyle.RESET);
                     placed = true;
+                    placeWorkerExecuter.doIt();
+                    CLIPrintFunction.printCheck(CORRECT_PLACE);
                 } catch (WrongParametersException e) {
-                    System.out.println();
-                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-                    System.out.println(ERROR_COLOR_AND_SYMBOL + OUT_OF_BOARD_MESSAGE + ANSIStyle.RESET);
+                    if (!e.getMessage().equals("")) {
+                        outOfBoardMessage = e.getMessage();
+                    }
+                    CLIPrintFunction.printError(outOfBoardMessage);
                 } catch (CannotSendEventException e) {
-                    e.printStackTrace();
+                    CLIPrintFunction.printError(e.getErrorMessage());
                 }
 
             }
         } catch (InputMismatchException e) {
-            System.out.println();
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-            System.out.println(ERROR_COLOR_AND_SYMBOL + WRONG_VALUE_MESSAGE + ANSIStyle.RESET);
+            CLIPrintFunction.printError(WRONG_VALUE_MESSAGE);
         }
         System.out.println();
 
@@ -101,9 +90,9 @@ public class CLIPlaceWorkerPhase extends CLISubTurnViewer {
     @Override
     public void show() {
         int placedNumber = 0;
-        int maxWorkers = 1; // 2  //todo: may use Player to know the max number of Worker for each pLayer
+        int workersToPlace = 1;
 
-        while ( placedNumber < maxWorkers) {
+        while ( placedNumber < workersToPlace) {
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
 
             try {
@@ -112,7 +101,7 @@ public class CLIPlaceWorkerPhase extends CLISubTurnViewer {
                 break;  //exit from state if there isn't the board
             }
 
-            if ( this.placeWorkerRequest( maxWorkers - placedNumber) ) {
+            if ( this.placeWorkerRequest( workersToPlace - placedNumber) ) {
                 placedNumber++;
             }
 

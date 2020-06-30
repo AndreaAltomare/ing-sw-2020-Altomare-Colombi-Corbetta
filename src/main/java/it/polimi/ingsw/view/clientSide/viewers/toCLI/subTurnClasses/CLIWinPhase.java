@@ -13,8 +13,6 @@ import it.polimi.ingsw.view.exceptions.NotFoundException;
 
 public class CLIWinPhase extends CLISubTurnViewer {
 
-    final int STARTING_SPACE = 7;
-
     public CLIWinPhase() {}
 
     /**
@@ -48,37 +46,37 @@ public class CLIWinPhase extends CLISubTurnViewer {
         }
 
         // dome's up part
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE + 2);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE + 2);
         CLIPrintFunction.printRepeatString(DOME_COLOR, UnicodeSymbol.HIGH_BLOCK_4.getEscape(), DOME_MAX_LENGTH - 4 );
         System.out.println(ANSIStyle.RESET);
 
         // dome's middle part with WRITE_STRING
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE + 1);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE + 1);
         CLIPrintFunction.printAtTheMiddle(DOME_BACK_COLOR + WRITE_COLOR, WRITE_STRING, WRITE_STRING.length(), DOME_MAX_LENGTH - 2);
         System.out.println(ANSIStyle.RESET);
 
         // dome's down part
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
         CLIPrintFunction.printRepeatString(DOME_BACK_COLOR, " ", DOME_MAX_LENGTH);
         System.out.println(ANSIStyle.RESET);
 
         // human's head an arms
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
         CLIPrintFunction.printAtTheMiddle(playerColor, "\\O/", 3, DOME_MAX_LENGTH);
         System.out.println(ANSIStyle.RESET);
 
         // human's body
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
         CLIPrintFunction.printAtTheMiddle(playerColor, " | ", 3, DOME_MAX_LENGTH);
         System.out.println(ANSIStyle.RESET);
 
         // human's legs
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
         CLIPrintFunction.printAtTheMiddle(playerColor, "/ \\", 3, DOME_MAX_LENGTH);
         System.out.println(ANSIStyle.RESET);
 
         //winning player's name
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
         CLIPrintFunction.printAtTheMiddle(playerColor, myNickname, myNickname.length(), DOME_MAX_LENGTH);
         System.out.println(ANSIStyle.RESET);
 

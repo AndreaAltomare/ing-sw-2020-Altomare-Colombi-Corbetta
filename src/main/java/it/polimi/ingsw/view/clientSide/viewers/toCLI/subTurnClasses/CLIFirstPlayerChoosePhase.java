@@ -1,7 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.FirstPlayerExecuter;
-import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.FirstPlayerViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
@@ -16,11 +15,6 @@ import java.util.Scanner;
 public class CLIFirstPlayerChoosePhase extends CLISubTurnViewer {
 
     private FirstPlayerViewer firstPlayerViewer;
-
-    private final int STARTING_SPACE = 7;
-    private final String ERROR_COLOR_AND_SYMBOL = ANSIStyle.RED.getEscape() + UnicodeSymbol.X_MARK.getEscape();
-    private final String CORRECT_COLOR_AND_SYMBOL = ANSIStyle.GREEN.getEscape() + UnicodeSymbol.CHECK_MARK.getEscape();
-    private final String WRITE_MARK = ANSIStyle.UNDERSCORE.getEscape() + UnicodeSymbol.PENCIL.getEscape() + ANSIStyle.RESET;
 
     public CLIFirstPlayerChoosePhase( FirstPlayerViewer firstPlayerViewer) {
         this.firstPlayerViewer = firstPlayerViewer;
@@ -44,7 +38,7 @@ public class CLIFirstPlayerChoosePhase extends CLISubTurnViewer {
         int playerNumber;
 
         // ask request
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
         System.out.println(FIRST_PLAYER_REQUEST);
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", SPACE_BETWEEN_LINES);
 
@@ -52,36 +46,30 @@ public class CLIFirstPlayerChoosePhase extends CLISubTurnViewer {
         playerStringList = firstPlayerExecuter.getPlayerList();
         playerNumber = 1; // start add number to players from number 1
         for (String player : playerStringList) {
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
             System.out.printf( "%d: " + player + "\n", playerNumber );
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", SPACE_BETWEEN_LINES);
             playerNumber++;
         }
 
         // read response
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-        System.out.print(WRITE_MARK);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
+        System.out.print(CLIPrintFunction.WRITE_MARK);
         try {
             playerNumber = new Scanner(System.in).nextInt();
             if ( playerNumber > 0 && playerNumber <= playerStringList.size() ) {
                 firstPlayerExecuter.set( playerStringList.get(playerNumber - 1 ) );
                 try {
-                    firstPlayerExecuter.doIt();
                     chosen = true;
+                    firstPlayerExecuter.doIt();
                 } catch (CannotSendEventException e) {
-                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", SPACE_BETWEEN_LINES);
-                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-                    System.out.printf(ERROR_COLOR_AND_SYMBOL + "%s" + ANSIStyle.RESET, e.toString());
+                    CLIPrintFunction.printError(e.getErrorMessage());
                 }
             } else {
-                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", SPACE_BETWEEN_LINES);
-                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE );
-                System.out.print(ERROR_COLOR_AND_SYMBOL + WRONG_NUMBER_MESSAGE + ANSIStyle.RESET);
+                CLIPrintFunction.printError(WRONG_NUMBER_MESSAGE);
             }
         } catch (InputMismatchException e) {
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", SPACE_BETWEEN_LINES);
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE );
-            System.out.print(ERROR_COLOR_AND_SYMBOL + WRONG_INPUT_TYPE_MESSAGE + ANSIStyle.RESET);
+            CLIPrintFunction.printError(WRONG_INPUT_TYPE_MESSAGE);
         }
 
         return  chosen;
@@ -96,8 +84,6 @@ public class CLIFirstPlayerChoosePhase extends CLISubTurnViewer {
 
         while (!chosen) {
 
-            //CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
-            //todo: maybe add private method to see an image
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
             chosen = this.firstPLayerRequest();
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);

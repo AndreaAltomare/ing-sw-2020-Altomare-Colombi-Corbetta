@@ -18,23 +18,18 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-//todo: rivedere intera classe per sistemare uso degli executer
 public class CLIChooseCardsPhase extends CLISubTurnViewer {
 
     private CardsChoosingExecuter cardsChoosingExecuter;
     private CardSelection cardSelection;
     private List<ViewCard> selectedCards= new ArrayList<>();
 
-    private final int STARTING_SPACE = 7;
     private final int SELECTION_SPACE = 3;
     private final int GOD_SYMBOL_SPACE = CLIGodSymbols.getMaxRepresentationLength() + 2;
     private final int GOD_NAME_SPACE = CLIGodSymbols.getMaxNameLength() + 2;
     private final String SELECTION_COLOR = ANSIStyle.GREY.getEscape();
     private final String SELECTION_BACK_COLOR = ANSIStyle.BACK_GREY.getEscape();
     private final String SELECTION_WRITE_COLOR = ANSIStyle.BLUE.getEscape();
-    private final String ERROR_COLOR_AND_SYMBOL = ANSIStyle.RED.getEscape() + UnicodeSymbol.X_MARK.getEscape();
-    private final String CORRECT_COLOR_AND_SYMBOL = ANSIStyle.GREEN.getEscape() + UnicodeSymbol.CHECK_MARK.getEscape();
-    private final String WRITE_MARK = ANSIStyle.UNDERSCORE.getEscape() + UnicodeSymbol.PENCIL.getEscape() + ANSIStyle.RESET;
 
 
     public CLIChooseCardsPhase(CardSelection cardSelection) {
@@ -57,47 +52,64 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
      * Prints a numbered list with Gods' Symbols and gods
      */
     private void printCardList() {
+        final int SPACE_BETWEEN_CARDS = 40;
+        final int CARDS_COLUMNS = 2;
         CLIGodSymbols cliGodSymbols;
+        List<ViewCard> cardList = cardSelection.getCardList();
         Integer cardNumber = 1;
         String upString;
         String middleString;
         String downString;
 
         System.out.println();
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
         System.out.println("Card List:");
-        for (ViewCard viewCard : cardSelection.getCardList()) {
+        for (ViewCard viewCard : cardList) {
 
             try {
                 cliGodSymbols = CLIGodSymbols.searchGodSymbol(viewCard.getName());
 
                 System.out.println();
                 // first line
-                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
                 upString = this.checkLeftSelect(viewCard, false) + "  ";
                 upString = upString + CLIPrintFunction.increaseLengthWithSpace(cliGodSymbols.getUpRepresentation(), cliGodSymbols.getRepresentationLength(), GOD_SYMBOL_SPACE);
                 upString = upString + CLIPrintFunction.increaseLengthWithSpace("", 0, GOD_NAME_SPACE);
                 upString = upString + this.checkRightSelect(viewCard, false);
-                System.out.println(upString);
+                System.out.print(upString);
+                if ( ((cardList.indexOf(viewCard)) % CARDS_COLUMNS) == (CARDS_COLUMNS - 1) || cardList.indexOf(viewCard) == (cardList.size() - 1) ) {
+                    System.out.println();
+                } {
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", SPACE_BETWEEN_CARDS);
+                }
                 // second line
-                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
                 middleString = this.checkLeftSelect(viewCard, true) + "  ";
                 middleString = middleString + CLIPrintFunction.increaseLengthWithSpace(cliGodSymbols.getMiddleRepresentation(), cliGodSymbols.getRepresentationLength(), GOD_SYMBOL_SPACE);
                 middleString = middleString + CLIPrintFunction.increaseLengthWithSpace("", 0, GOD_NAME_SPACE);
                 middleString = middleString + this.checkRightSelect(viewCard, true);
-                System.out.println(middleString);
+                System.out.print(middleString);
+                if ( ((cardList.indexOf(viewCard)) % CARDS_COLUMNS) == (CARDS_COLUMNS - 1) || cardList.indexOf(viewCard) == (cardList.size() - 1) ) {
+                    System.out.println();
+                } {
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", SPACE_BETWEEN_CARDS);
+                }
                 // third line
-                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
                 downString = this.checkLeftSelect(viewCard, false) + cardNumber.toString() + ".";
                 downString = downString + CLIPrintFunction.increaseLengthWithSpace(cliGodSymbols.getDownRepresentation(), cliGodSymbols.getRepresentationLength(), GOD_SYMBOL_SPACE);
                 downString = downString + CLIPrintFunction.increaseLengthWithSpace(viewCard.getName(), viewCard.getName().length(), GOD_NAME_SPACE);
                 downString = downString + this.checkRightSelect(viewCard, false);
-                System.out.println(downString);
+                System.out.print(downString);
+                if ( ((cardList.indexOf(viewCard)) % CARDS_COLUMNS) == (CARDS_COLUMNS - 1) || cardList.indexOf(viewCard) == (cardList.size() - 1) ) {
+                    System.out.println();
+                } {
+                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", SPACE_BETWEEN_CARDS);
+                }
 
                 cardNumber++;
 
-            } catch (NotFoundException e) {
-                e.printStackTrace();
+            } catch (NotFoundException | NullPointerException ignored) {
             }
 
         }
@@ -164,20 +176,18 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
 
         System.out.println();
         do {
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
             System.out.println(REQUEST_MESSAGE);
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-            System.out.print(WRITE_MARK);
+            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
+            System.out.print(CLIPrintFunction.WRITE_MARK);
             try {
                 numberSelected = new Scanner(System.in).nextInt();
                 if ( (numberSelected <= 0 || numberSelected > cardSelection.getCardList().size()) ) {
-                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE );
-                    System.out.println(ERROR_COLOR_AND_SYMBOL + WRONG_NUMBER_MESSAGE + ANSIStyle.RESET);
+                    CLIPrintFunction.printError(WRONG_NUMBER_MESSAGE);
                 }
             } catch (InputMismatchException e) {
                 numberSelected = -1;
-                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE );
-                System.out.println(ERROR_COLOR_AND_SYMBOL + WRONG_VALUE_MESSAGE + ANSIStyle.RESET);
+                CLIPrintFunction.printError(WRONG_VALUE_MESSAGE);
             }
         } while ( (numberSelected <= 0 || numberSelected > cardSelection.getCardList().size() ));
         System.out.println();
@@ -201,17 +211,15 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
             System.out.println();
             seeCard = cardSelection.getCardList().get(godCardNumber - 1);
             do {
-                //todo:maybe add god's symbol
-                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
                 System.out.printf(WRITE_PART_STYLE + "Name:" + ANSIStyle.RESET +  "%s\n\n", seeCard.getName());
-                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
                 System.out.printf(WRITE_PART_STYLE + "Epithet:" + ANSIStyle.RESET + "%s\n\n", seeCard.getEpiteth());
-                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
                 System.out.printf(WRITE_PART_STYLE + "Description:" + ANSIStyle.RESET + "%s\n\n", seeCard.getDescription());
                 response = this.SelOrDeselRequest(seeCard);
             } while ( !response );
-        } catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();  // todo: remove after testing
+        } catch (IndexOutOfBoundsException ignored) {
         }
         System.out.println();
     }
@@ -230,15 +238,15 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
         int intResponse;
 
         System.out.println();
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
         if ( selectedCards.contains(viewCard) ) {
             System.out.println( DESELECTION_REQUEST );
         } else {
             System.out.println( SELECTION_REQUEST );
         }
 
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-        System.out.print( WRITE_MARK + INPUT_CHOOSE );
+        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
+        System.out.print( CLIPrintFunction.WRITE_MARK + INPUT_CHOOSE );
         try {
             intResponse = new Scanner( System.in ).nextInt();
         } catch ( InputMismatchException e) {
@@ -254,8 +262,7 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
                 }
             } else {
                 response = false;
-                CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-                System.out.println( ERROR_COLOR_AND_SYMBOL + WRONG_VALUE_MESSAGE + ANSIStyle.RESET);
+                CLIPrintFunction.printError(WRONG_VALUE_MESSAGE);
             }
         } else {
             response = true;
@@ -267,24 +274,14 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
     }
 
     /**
-     * Prints a waiting message to players who can't choose
-     */
-    private void showWaitMessage() {
-
-        System.out.println();
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-        System.out.println("A player is choosing the cards, please wait");
-        System.out.println();
-        //todo: maybe to do an little animation like in CLIWaitingStatus
-    }
-
-    /**
      * Understands and shows the correct phase for each player using some private methods, then uses executur to send
      * message when there are
      */
     @Override
     public void show() {
-        final String ALL_RIGHT_MESSAGE = "The cards are correctly selected";
+        final String ALL_RIGHT_MESSAGE = "The cards' list is correctly send";
+        String wrongSendSetMessage = "The card request isn't correctly set";
+
 
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
         this.showChooseInterface();
@@ -292,16 +289,16 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
             try {
                 cardsChoosingExecuter.add(viewCard);
             } catch (WrongParametersException e) {
-                e.printStackTrace();
+                if (!e.getMessage().equals("")) {
+                    CLIPrintFunction.printError(wrongSendSetMessage);
+                }
             }
         }
         try {
             cardsChoosingExecuter.doIt();
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-            System.out.print(CORRECT_COLOR_AND_SYMBOL + ALL_RIGHT_MESSAGE +ANSIStyle.RESET + "\n");
+            CLIPrintFunction.printCheck(ALL_RIGHT_MESSAGE);
         } catch (CannotSendEventException e) {
-            e.printStackTrace();
+            CLIPrintFunction.printError(e.getErrorMessage());
         }
         System.out.println();
     }
