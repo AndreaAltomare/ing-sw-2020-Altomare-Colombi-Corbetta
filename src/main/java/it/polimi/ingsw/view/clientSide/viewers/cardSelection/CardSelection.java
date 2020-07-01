@@ -25,6 +25,8 @@ import java.util.List;
  * The settters are used in the ViewCore to populate it, and the
  * getter -and the selecter/deselecter- are intended to be used by
  * the various Viewers.
+ *
+ * @author giorgio
  */
 public class CardSelection implements Iterator<ViewCard> {
 

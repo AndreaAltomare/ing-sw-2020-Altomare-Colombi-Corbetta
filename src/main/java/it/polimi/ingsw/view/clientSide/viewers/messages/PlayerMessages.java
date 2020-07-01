@@ -6,6 +6,8 @@ import it.polimi.ingsw.view.clientSide.viewers.toGUI.helperPanels.skeleton.ChatP
 
 /**
  * Class to manage the Chat system.
+ *
+ * @author giorgio
  */
 public class PlayerMessages {
 

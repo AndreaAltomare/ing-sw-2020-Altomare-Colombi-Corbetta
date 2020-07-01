@@ -11,6 +11,7 @@ import java.util.EventObject;
  * Class to execute the Set Player Number.
  *
  * @see Executer
+ * @author giorgio
  */
 public class SetPlayerNumberExecuter extends Executer {
 

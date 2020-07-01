@@ -15,6 +15,7 @@ import java.util.EventObject;
  * Class to execute the Remove Worker.
  *
  * @see Executer
+ * @author giorgio
  */
 public class RemoveWorkerExecuter extends Executer {
 

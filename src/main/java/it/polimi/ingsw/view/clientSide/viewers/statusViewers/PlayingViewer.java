@@ -8,7 +8,19 @@ import it.polimi.ingsw.view.clientSide.viewers.toGUI.statusClasses.GUIPlaying;
 
 import java.util.Map;
 
+/**
+ * Class representing the <code>StatusViewer</code> of the PLAYING status.
+ *
+ * @see StatusViewer
+ * @author giorgio
+ */
 public class PlayingViewer extends StatusViewer {
+
+    /**
+     * constructor.
+     *
+     * @param executers (the map of Executer used in this Status).
+     */
     public PlayingViewer(Map<String, Executer> executers){
 
         myExecuters = executers;

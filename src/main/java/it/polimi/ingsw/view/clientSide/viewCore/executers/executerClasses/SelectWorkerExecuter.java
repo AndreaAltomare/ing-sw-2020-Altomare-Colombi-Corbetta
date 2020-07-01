@@ -17,6 +17,7 @@ import java.util.EventObject;
  * Class to execute the Select Worker.
  *
  * @see Executer
+ * @author giorgio
  */
 public class SelectWorkerExecuter extends Executer {
     private String workerId;

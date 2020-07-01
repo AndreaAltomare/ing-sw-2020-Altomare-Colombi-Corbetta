@@ -16,6 +16,7 @@ import java.util.EventObject;
  * Class to execute the Move Worker.
  *
  * @see Executer
+ * @author giorgio
  */
 public class MoveWorkerExecuter extends Executer {
     private String workerId; // univocal Worker identifier (who made this move)

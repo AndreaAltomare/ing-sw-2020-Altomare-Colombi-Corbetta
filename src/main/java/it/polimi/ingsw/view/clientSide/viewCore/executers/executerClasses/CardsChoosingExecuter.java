@@ -17,6 +17,7 @@ import java.util.List;
  * Class to execute a Cards Choosing.
  *
  * @see Executer
+ * @author giorgio
  */
 public class CardsChoosingExecuter extends Executer implements CardExecuter {
 
