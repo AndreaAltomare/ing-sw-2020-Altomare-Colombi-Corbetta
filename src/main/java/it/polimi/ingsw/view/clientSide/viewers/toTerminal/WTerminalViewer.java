@@ -10,10 +10,6 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.CLICheckWrite;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.CLIStopTimeScanner;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
@@ -38,8 +34,6 @@ public class WTerminalViewer extends Viewer {
         Viewer.registerViewer(this);
     }
 
-    //todo: check it in the after simulation test if the refresh message are always after change subStatus message, in it isn't
-    // change refresh() and prepareSubStatus()
     /**
      * For all the subTurnStatus which use the board, this method checks the subTurnStatus and shows it if it shows the board
      */
@@ -110,30 +104,30 @@ public class WTerminalViewer extends Viewer {
     }
 
     private void undo() {
-        final int STARTING_SPACE = 7;
-
 
         WTerminalCheckWrite wTerminalCheckWrite = new WTerminalCheckWrite();
+        final String UNDO_ACTIVE_MESSAGE = "Undo request is correctly sent";
+        final String UNDO_REJECT_MESSAGE = "The play continues";
         int waitingTime = 5; // in sec
         Thread stopScannerThread = new Thread( new WTerminalStopTimeScanner(wTerminalCheckWrite, waitingTime));
-        String input;
 
         ViewBoard.getBoard().toWTerminal();       // print the board to see last move1
 
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         stopScannerThread.start();
         System.out.printf("Press ENTER bottom in %d second to undo your move:\n", waitingTime);
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         System.out.print( ">>" );
-        input = new Scanner(System.in).nextLine();
+        new Scanner(System.in).nextLine();
         if ( wTerminalCheckWrite.firstToWrite() ) {
             try {
                 UndoExecuter.undoIt();
-                System.out.println("[CLIMessage]: used undoExecuter"); //todo:remove after testing
+                PrintFunction.printCheck(UNDO_ACTIVE_MESSAGE);
             } catch (CannotSendEventException e) {
+                PrintFunction.printError(e.getErrorMessage());
             }
         } else {
-            System.out.println("[CLIMessage]: time over, play continues"); //todo:remove after testing
+            PrintFunction.printCheck(UNDO_REJECT_MESSAGE);
             try {
                 Thread.sleep(750);
             } catch (InterruptedException ignored) {
@@ -165,23 +159,17 @@ public class WTerminalViewer extends Viewer {
                     this.wTerminalStatusViewer.show();
                     break;
                 case FROM_SERVER_ERROR:
-                    PrintFunction.printRepeatString("\n", 1);
-                    PrintFunction.printRepeatString(" ", 7); // starting space
-                    System.out.println("[Error Message]: " + viewMessage.getPayload());
+                    PrintFunction.printError("ERROR: " + viewMessage.getPayload());
                     if ( this.wTerminalStatusViewer != null && !this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN) && !this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS)) {
                         wTerminalStatusViewer.show();
                     }
                     break;
                 case FATAL_ERROR_MESSAGE:
-                    PrintFunction.printRepeatString("\n", 1);
-                    PrintFunction.printRepeatString(" ", 7); // starting space
-                    System.out.println("[Fatal Error Message]: " + viewMessage.getPayload());
+                    PrintFunction.printError("FATAL ERROR: " + viewMessage.getPayload());
                     end = true;
                     break;
                 case FROM_SERVER_MESSAGE:
-                    PrintFunction.printRepeatString("\n", 1);
-                    PrintFunction.printRepeatString(" ", 7); // starting space
-                    System.out.println("[Server Message]: " + viewMessage.getPayload());
+                    PrintFunction.printCheck(viewMessage.getPayload());
                     break;
                 default:
                     ;
@@ -227,8 +215,7 @@ public class WTerminalViewer extends Viewer {
                         ;
                 }
 
-            } catch (EmptyQueueException e) {
-                ;
+            } catch (EmptyQueueException ignored) {
             }
         }
 

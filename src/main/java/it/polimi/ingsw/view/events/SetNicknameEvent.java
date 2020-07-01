@@ -9,6 +9,11 @@ import java.util.EventObject;
 public class SetNicknameEvent extends EventObject {
     private String nickname;
 
+    /**
+     * Constructs the SetNicknameEvent to notify the Server that the player has chosen the given nickname.
+     *
+     * @param nickname (the nickname chosen by the Player).
+     */
     public SetNicknameEvent(String nickname) {
         super(new Object());
         this.nickname = nickname;

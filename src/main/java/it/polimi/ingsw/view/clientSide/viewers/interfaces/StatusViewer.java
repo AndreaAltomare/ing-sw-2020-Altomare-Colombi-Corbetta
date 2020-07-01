@@ -10,6 +10,8 @@ import java.util.Map;
 
 /**
  * Class used to retrieve the various viewer for CLI, GUI, WTerminal, and all the Viewers connected to one Status
+ *
+ * @author giorgio
  */
 public abstract class StatusViewer {
 

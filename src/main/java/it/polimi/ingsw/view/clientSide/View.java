@@ -40,6 +40,9 @@ import java.util.concurrent.Executors;
 import static it.polimi.ingsw.model.player.turn.StateType.CONSTRUCTION;
 import static it.polimi.ingsw.model.player.turn.StateType.MOVEMENT;
 
+/**
+ * Class that connects the View with the connection (and so with the Server).
+ */
 public class View extends Observable<Object> implements MVEventListener, Runnable, ViewSender { // todo: maybe this class extends Observable<Object> for proper interaction with Network Handler
     /* Multi-threading operations */
     private ExecutorService executor = Executors.newFixedThreadPool(128);
@@ -63,6 +66,13 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 //    private List<String> players;
 //    private Map<String, List<String>> workersToPlayer;
 
+    /**
+     * Constructor
+     *
+     * @param in          (the Scanner from which read the input for the test/debugging).
+     * @param connection  (the ClientConnection to be used for the connection).
+     * @param viewer      (the Viewer to be used for this execution).
+     */
     public View(Scanner in, ClientConnection connection, Viewer viewer) {
         this.in = in;
         this.connection = connection;
@@ -71,6 +81,9 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     }
 
 
+    /**
+     * Method that starts th Viewer, make it visible an does all the things to run properly the Client.
+     */
     @Override
     public void run() {
         viewer.start();
@@ -87,7 +100,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
                 }
                 catch (IOException ex) {
                     System.err.println(ex.getMessage());
-                    //todo: aggiungere Error Message.
+                    ViewMessage.populateAndSend(ex.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
                 }
             }
         });
@@ -369,22 +382,6 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         }else if((ViewNickname.getMyNickname()).equals(ViewSubTurn.getActual().getPlayer())){
             ViewMessage.populateAndSend("Cannot place theere your worker. retry", ViewMessage.MessageType.FROM_SERVER_MESSAGE);
         }
-        /*ViewWorker myWorker;
-
-        if(workerPlaced.success()) {
-            try {
-                myWorker = new ViewWorker(workerPlaced.getWorker(), ViewSubTurn.getActual().getPlayer());
-                myWorker.placeOn(workerPlaced.getX(), workerPlaced.getY());
-                if(View.debugging)
-                    System.out.println(workerPlaced.getWorker() + "(" + workerPlaced.getX()+":"+workerPlaced.getY()+")");
-            } catch (NotFoundException | WrongViewObjectException e) {
-                ViewMessage.populateAndSend(e.getMessage(), ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
-                e.printStackTrace();
-            }
-        }else if((ViewNickname.getMyNickname()).equals(ViewSubTurn.getActual().getPlayer())){
-            ViewMessage.populateAndSend("Cannot place theere your worker. retry", ViewMessage.MessageType.FROM_SERVER_MESSAGE);
-        }
-        Viewer.setAllRefresh();*/
     }
 
     /**
@@ -464,11 +461,6 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         }else if(turnStatusChange.getPlayerNickname().equals(ViewNickname.getMyNickname())){
             ViewMessage.populateAndSend("You cannot do this turn change", ViewMessage.MessageType.FROM_SERVER_ERROR);
         }
-
-        /*ViewSubTurn.set(turnStatusChange.getState().toString(), turnStatusChange.getPlayerNickname());
-        ViewSubTurn.getActual().setPlayer(turnStatusChange.getPlayerNickname());
-        Viewer.setAllSubTurnViewer(ViewSubTurn.getActual().getSubViewer());
-        //System.out.println("Turn status changed to: " + turnStatusChange.getState().toString());*/
     }
 
     /**
@@ -490,9 +482,6 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
      */
     @Override
     public void update(CardSelectedEvent cardSelected) {
-        /*if(View.debugging)
-            System.out.println("[FROM SERVER] " + cardSelected.getPlayerNickname() + " selected: " + cardSelected.getCardName());*/
-
         try {
             ViewPlayer.populate(cardSelected);
         } catch (WrongEventException e) {
@@ -513,11 +502,6 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         //checks for the undo
         if(ViewSubTurn.getActual().isMyTurn() && ViewObject.outcome(workerMoved.getMoveOutcome()))
             UndoExecuter.startUndo();
-        /*try {
-            ((ViewWorker)ViewWorker.search(workerMoved.getWorker())).placeOn(workerMoved.getFinalX(), workerMoved.getFinalY());
-        } catch (NotFoundException | WrongViewObjectException e) {
-            ViewMessage.populateAndSend("Wrong cell recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
-        }*/
     }
 
     @Override
@@ -532,19 +516,6 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         //check for the undo
         if(ViewSubTurn.getActual().isMyTurn() && ViewObject.outcome(blockBuilt.getMoveOutcome()))
             UndoExecuter.startUndo();
-        /*ViewCell cell;
-        try {
-            cell = ((ViewBoard) ViewBoard.search(ViewBoard.getClassId())).getCellAt(blockBuilt.getX(), blockBuilt.getY());
-        } catch (NotFoundException | WrongViewObjectException e) {
-            ViewMessage.populateAndSend("Wrong cell recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
-            return;
-        }
-        if(blockBuilt.getBlockType().equals(PlaceableType.BLOCK))
-            cell.buildLevel();
-        else if(blockBuilt.getBlockType().equals(PlaceableType.DOME))
-            cell.buildDome();
-        else
-            ViewMessage.populateAndSend("Wrong block recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);*/
     }
 
     /**
@@ -576,6 +547,11 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         }
     }
 
+    /**
+     * Method that signals that Worker has been selected.
+     *
+     * @param workerSelected (WorkerSelectedEvent from the server).
+     */
     @Override
     public void update(WorkerSelectedEvent workerSelected) {
         if (workerSelected.success()){
@@ -586,14 +562,6 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
             ViewSubTurn.afterSelection();
 
-            //if(ViewSubTurn.getActual().getPlayer().equals(ViewNickname.getMyNickname()))
-
-
-           /* if(workerSelected.getPlayerNickname().equals(ViewNickname.getMyNickname())) {
-                ViewSubTurn.setSubTurn(ViewSubTurn.MOVE, workerSelected.getPlayerNickname());
-            }else{
-                ViewSubTurn.setSubTurn(ViewSubTurn.MOVE, workerSelected.getPlayerNickname());
-            }*/
             Viewer.setAllSubTurnViewer(ViewSubTurn.getActual());
             if(View.debugging)
                 System.out.println("Worker named '" + workerSelected.getWorker() + "was correctly SELECTED");
@@ -602,6 +570,11 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         }
     }
 
+    /**
+     * Method that signals that has been done the undo.
+     *
+     * @param undoOk (UndoOkEvent from the server).
+     */
     @Override
     public void update(UndoOkEvent undoOk) {
         ViewBoard.populate(undoOk.getBoardState());
@@ -618,11 +591,11 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         Viewer.setAllRefresh();
     }
 
-
-
-    //##################SOON TESTED####################
-
-
+    /**
+     * Method that signals that the placeable has been removed.
+     *
+     * @param blockRemoved (BlockRemovedEvent from the server).
+     */
     @Override
     public void update(BlockRemovedEvent blockRemoved) {
         try {
@@ -630,19 +603,13 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         } catch (WrongEventException e) {
             ViewMessage.populateAndSend("Wrong message recived recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
         }
-        /*ViewCell cell;
-        try {
-            cell = ((ViewBoard) ViewBoard.search(ViewBoard.getClassId())).getCellAt(blockRemoved.getX(), blockRemoved.getY());
-        } catch (NotFoundException | WrongViewObjectException e) {
-            ViewMessage.populateAndSend("Wrong cell recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
-            return;
-        }
-        if(cell.isDoomed())
-            cell.removeDome();
-        else
-            cell.removeLevel();*/
     }
 
+    /**
+     * Method that signals that the worker has been removed.
+     *
+     * @param workerRemoved (WorkerRemovedEvent from the server).
+     */
     @Override
     public void update(WorkerRemovedEvent workerRemoved) {
         try {
@@ -650,16 +617,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         } catch (WrongEventException e) {
             ViewMessage.populateAndSend("Wrong message recived recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
         }
-/*
-        try {
-            ((ViewWorker)ViewWorker.search(workerRemoved.getWorker())).removeWorker();
-        } catch (NotFoundException | WrongViewObjectException e) {
-            ViewMessage.populateAndSend("Cannot remove worker", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
-        }*/
     }
-
-
-    //##################NOT YET TESTED####################
 
     /**
      * Method that the lobby is full and closes the application.
@@ -673,8 +631,11 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         ViewMessage.populateAndSend(lobbyFull.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
     }
 
-
-
+    /**
+     * Method that the game is over.
+     *
+     * @param gameOver (GameOverEvent from the server)
+     */
     @Override
     public void update(GameOverEvent gameOver) {
         if(!ViewStatus.getActual().getId().equals("GAME_OVER")){
@@ -687,6 +648,11 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         }
     }
 
+    /**
+     * Method that the game is being resumed.
+     *
+     * @param gameResuming (GameResumingEvent from the server)
+     */
     @Override
     public void update(GameResumingEvent gameResuming) {
         GameState gameState = gameResuming.getGameState();
@@ -696,9 +662,6 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         if(gameState == null){
             ViewMessage.populateAndSend("Threre is an unfinished game", ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
             ViewStatus.setStatus("REQUEST_RESUMING");
-
-            //Viewer.setAllStatusViewer(ViewStatus.getActual().getViewer());
-
         }else{
             ViewMessage.populateAndSend("Resuming old game", ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
             ViewStatus.setStatus("RESUMING");
@@ -756,8 +719,6 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
             }else{
                 ViewSubTurn.setSubTurn(ViewSubTurn.SELECTWORKER);
             }
-
-            //Viewer.setAllSubTurnViewer(ViewSubTurn.getActual());
         }
     }
 
@@ -775,10 +736,14 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         connection.closeConnection(); // todo add code to handle disconnection
     }
 
+    /**
+     * Method to notify the challenger that it's needed it choose the
+     * starting Player for the current game.
+     *
+     * @param requireStartPlayer Event: Require Start Player
+     */
     @Override
     public void update(RequireStartPlayerEvent requireStartPlayer) {
-
-        //send(new SetStartPlayerEvent(requireStartPlayer.getPlayers().get(0)));
 
         if(requireStartPlayer.getChallenger().equals(ViewNickname.getMyNickname())) {
             ViewSubTurn.setSubTurn(ViewSubTurn.CHOOSE_FIRST_PLAYER, ViewNickname.getMyNickname());
@@ -790,18 +755,33 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
     //#########################END UPDATE###################################
 
+    /**
+     * Method used to retrieve the player's nickname.
+     *
+     * @return (the player's nickname).
+     */
     public String getNickname() {
         String ret = ViewNickname.getMyNickname();
         return ret==null?"":ret;
     }
 
-    //todo: serve?
-    public void setNickname(String nickname) { throw new NullPointerException("Questo metodo non dovrebbe essere chiamato"); }
+    //Unused and dangerous to be called.
+    //public void setNickname(String nickname) { throw new NullPointerException("Questo metodo non dovrebbe essere chiamato"); }
 
+    /**
+     * Method to retrieve the connectionActive.
+     *
+     * @return (the connectionActive).
+     */
     public boolean isConnectionActive() {
         return connectionActive;
     }
 
+    /**
+     * Method to set the connectionActive.
+     *
+     * @param connectionActive (the new value of connectionActive).
+     */
     public void setConnectionActive(boolean connectionActive) {
         this.connectionActive = connectionActive;
     }
@@ -1193,6 +1173,12 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
      */
     private class ChatMessageReceiver implements ChatMessageListener {
 
+        /**
+         * Method called on the arrival of a  ChatMessageEvent from Server
+         * to notify it to all the Viewers which need it.
+         *
+         * @param chatMessage (Chat message).
+         */
         @Override
         public synchronized void update(ChatMessageEvent chatMessage) {
             if(View.debugging){
@@ -1211,12 +1197,10 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         }
     }
 
-
-    //todo: sistemare javadoc
     /**
-     * Wrapper method
+     * Wrapper method used to send Events to the server.
      *
-     * @param o (Event)
+     * @param o (Event to be send to the server)
      */
     @Override
     public void send(Object o){

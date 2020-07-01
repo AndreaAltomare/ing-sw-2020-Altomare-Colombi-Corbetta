@@ -14,6 +14,7 @@ import java.util.EventObject;
  * Class to execute the Set Nickname.
  *
  * @see Executer
+ * @author giorgio
  */
 public class SetNicknameExecuter extends Executer {
     private String nickname;

@@ -12,6 +12,12 @@ import java.util.EventObject;
 public class TurnStatusChangeEvent extends EventObject {
     private StateType turnStatus;
 
+    /**
+     * Constructs a TurnStatusChangeEvent to notify the Server the player's
+     * intention to change the TurnStatus.
+     *
+     * @param turnStatus (the new StateType in which the player wants to be switched).
+     */
     public TurnStatusChangeEvent(StateType turnStatus) {
         super(new Object());
         this.turnStatus = turnStatus;

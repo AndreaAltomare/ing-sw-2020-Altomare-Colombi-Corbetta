@@ -7,7 +7,6 @@ public enum UnicodeSymbol {
     X_MARK("\u2716"),
 
     PENCIL("\u270E"),
-    HAMMER("\u2692"),
     SELECTION_LEFT("\u2771"),
     SELECTION_RIGHT("\u2770"),
 

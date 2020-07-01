@@ -64,7 +64,10 @@ public class ViewMessage {
      * @param payload (the payload of the message).
      * @param messageType (the type of the message).
      */
-    public static void populateAndSend(String payload, MessageType messageType){ new ViewMessage(payload, messageType).sendMessage(); }
+    public static void populateAndSend(String payload, MessageType messageType){
+        if(payload!=null)
+            new ViewMessage(payload, messageType).sendMessage();
+    }
 
     /**
      * Method to retrieve the list of all the messages of given type generated during this execution.

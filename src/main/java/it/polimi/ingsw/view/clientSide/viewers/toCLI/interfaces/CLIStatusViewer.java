@@ -1,8 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces;
 
-import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SpecificStatusViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
 
 public abstract class CLIStatusViewer implements SpecificStatusViewer {
 

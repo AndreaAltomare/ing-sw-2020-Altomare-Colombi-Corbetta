@@ -7,6 +7,8 @@ import it.polimi.ingsw.view.interfaces.Addressable;
 
 /**
  * Interface implemented by all the Object addressable by a unique String.
+ *
+ * @author giorgio
  */
 public interface ClientAddressable extends Addressable {
 

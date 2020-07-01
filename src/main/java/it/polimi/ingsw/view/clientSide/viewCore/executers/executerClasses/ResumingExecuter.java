@@ -12,6 +12,7 @@ import java.util.EventObject;
  * Class to execute the Resuming.
  *
  * @see Executer
+ * @author giorgio
  */
 public class ResumingExecuter extends Executer {
     private boolean resume;

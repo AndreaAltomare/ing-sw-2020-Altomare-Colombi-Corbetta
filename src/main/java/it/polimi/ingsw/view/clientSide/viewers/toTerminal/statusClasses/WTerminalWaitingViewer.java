@@ -1,13 +1,14 @@
 package it.polimi.ingsw.view.clientSide.viewers.toTerminal.statusClasses;
 
-import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.WaitingViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer;
 
 public class WTerminalWaitingViewer extends WTerminalStatusViewer {
 
     private WaitingViewer waitingViewer;
 
+    final String WAITING_MESSAGE = "Please waiting ";
     final int SLEEP_TIME = 1000; //in ns
     final int NUMBER_OF_TIME = 3;
 
@@ -25,13 +26,13 @@ public class WTerminalWaitingViewer extends WTerminalStatusViewer {
      */
     @Override
     public void show() {
-        System.out.print(   "\n\t" +
-                            "Please waiting");
+        PrintFunction.printRepeatString("\n", 2);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
+        System.out.print( WAITING_MESSAGE );
         for (int i = 0; i < NUMBER_OF_TIME; i++) {
             try {
                 Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {
-                e.printStackTrace(); //todo: eliminate after testing
             }
             System.out.print(".");
         }

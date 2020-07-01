@@ -10,12 +10,23 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import java.util.Scanner;
 
+/**
+ * Class to represent the <code>TerminalStatusViewer</code> for the ViewStatus NUMBER_PLAYER .
+ */
 public class TerminalNumberPlayerViewer extends TerminalStatusViewer {
 
     StatusViewer parentViewer;
 
+    /**
+     * Constructor.
+     *
+     * @param parentViewer (the StatusViewer to which this refers).
+     */
     public TerminalNumberPlayerViewer(StatusViewer parentViewer){ this.parentViewer = parentViewer; }
 
+    /**
+     * Method to print the status representation.
+     */
     @Override
     public void print() {
         int num;

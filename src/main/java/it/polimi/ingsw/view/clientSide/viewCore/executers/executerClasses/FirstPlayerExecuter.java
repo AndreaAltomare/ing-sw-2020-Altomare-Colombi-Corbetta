@@ -12,6 +12,7 @@ import java.util.EventObject;
  * Class to execute a First Player.
  *
  * @see Executer
+ * @author giorgio
  */
 public class FirstPlayerExecuter extends Executer {
 

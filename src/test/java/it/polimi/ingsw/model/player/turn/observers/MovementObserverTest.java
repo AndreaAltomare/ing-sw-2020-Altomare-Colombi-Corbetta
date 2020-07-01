@@ -16,8 +16,16 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test for MovementObserverTest.
+ *
+ * @author giorgio
+ */
 class MovementObserverTest {
 
+    /**
+     * Stub Class for AdversaryMove
+     */
     private class MyAdversaryObserver extends AdversaryMove {
         boolean allowed;
         boolean loose;
@@ -57,6 +65,10 @@ class MovementObserverTest {
         }
     }
 
+
+    /**
+     * Test method for method check.
+     */
     @Test
     void check(){
         String maoID = "Test";
@@ -136,6 +148,9 @@ class MovementObserverTest {
         assertEquals(((MyAdversaryObserver) tested.getAdversaryMoveObserver()).getMyId(), maoID);
     }
 
+    /**
+     * Test method for getAdversaryMoveObserver
+     */
     @Test
     void getAdversaryMoveObserver() {
         GodPower gp = new GodPower();

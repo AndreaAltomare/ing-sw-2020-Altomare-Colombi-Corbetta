@@ -15,6 +15,7 @@ import java.util.EventObject;
  * Class to execute the Remove Block.
  *
  * @see Executer
+ * @author giorgio
  */
 public class RemoveBlockExecuter extends Executer {
     private String workerId; // univocal Worker identifier (who EVENTUALLY made this move)

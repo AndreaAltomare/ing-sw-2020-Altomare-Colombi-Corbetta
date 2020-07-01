@@ -9,7 +9,19 @@ import it.polimi.ingsw.view.clientSide.viewers.toTerminal.statusClasses.Terminal
 
 import java.util.Map;
 
+/**
+ * Class representing the <code>StatusViewer</code> of the READY status.
+ *
+ * @see StatusViewer
+ * @author giorgio
+ */
 public class ReadyViewer extends StatusViewer {
+
+    /**
+     * constructor.
+     *
+     * @param executers (the map of Executer used in this Status).
+     */
     public ReadyViewer(Map<String, Executer> executers) {
 
         myExecuters = executers;

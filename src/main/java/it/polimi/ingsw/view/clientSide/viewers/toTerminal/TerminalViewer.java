@@ -8,21 +8,43 @@ import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.exceptions.CheckQueueException;
 import it.polimi.ingsw.view.exceptions.EmptyQueueException;
 
+/**
+ * <code>Viewer</code> referring to the Terminal and managing it (and its' working).
+ *
+ * It was used into the first development stages and then left apart.
+ * It hasn't been removed because of it's possible utility in the future development.
+ */
 public class TerminalViewer extends Viewer {
+    /**
+     * Method doing the Refresh of the Viewer
+     */
     @Override
     public void refresh() { }
 
+    /**
+     * Constructor.
+     */
     public TerminalViewer(){
-        super(); // TODO: Nei costruttori degli altri Viewer, la chiamata a super() non c'è. Perché?
+        super();
         Viewer.registerViewer(this);
     }
 
+    /**
+     * Method that adds a ViewerQueuedEvent to the blockingQueue.
+     * It'll add all the ViewerQueuedEvent that cannot be executed
+     * immediately and so will be retrieved by a different thread.
+     *
+     * It immediately prints the Messages.
+     *
+     * @param event (the ViewerQueuedEvent to add to the BlockingQueue).
+     */
+    @Override
     protected void enqueue(ViewerQueuedEvent event){
         if(event.getType()==ViewerQueuedEvent.ViewerQueuedEventType.MESSAGE){
             new Thread(){
                 String mySt;
 
-                public Thread setSt(String st){
+                Thread setSt(String st){
                     mySt = st;
                     return this;
                 }
@@ -36,6 +58,10 @@ public class TerminalViewer extends Viewer {
         }
     }
 
+
+    /**
+     * MEthod to start, initialise and execute the TerminalViewer.
+     */
     @Override
     public void run() {
         ViewerQueuedEvent queued;

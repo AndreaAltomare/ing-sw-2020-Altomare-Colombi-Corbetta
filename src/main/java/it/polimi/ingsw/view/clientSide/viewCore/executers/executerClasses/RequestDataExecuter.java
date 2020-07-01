@@ -9,6 +9,7 @@ import java.util.EventObject;
  * Class to execute the Data Request.
  *
  * @see Executer
+ * @author giorgio
  */
 public class RequestDataExecuter extends Executer {
 

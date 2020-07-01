@@ -14,6 +14,15 @@ public class BuildBlockEvent extends EventObject {
     private int y;
     private PlaceableType blockType;
 
+    /**
+     * Constructs a BuildBlockEvent to notify the server the intention of
+     * the Player to Build a Block of the given type on the given Cell.
+     *
+     * @param workerId (the id of the Worker trying to build)
+     * @param x (the x_position on the Cell on which build).
+     * @param y (the y_position on the Cell on which build).
+     * @param blockType (the type of the Block to be built).
+     */
     public BuildBlockEvent(String workerId, int x, int y, PlaceableType blockType) {
         super(new Object());
         this.workerId = workerId;

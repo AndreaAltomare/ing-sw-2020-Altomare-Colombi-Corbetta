@@ -9,6 +9,12 @@ import java.util.EventObject;
 public class SetStartPlayerEvent extends EventObject {
     private String startPlayer;
 
+    /**
+     * Constructs a SetStartPlayerEvent to notify the Server the player chosen
+     * to be the starting one.
+     *
+     * @param startPlayer (the player chosen to be the starting one).
+     */
     public SetStartPlayerEvent(String startPlayer) {
         super(new Object());
         this.startPlayer = startPlayer;

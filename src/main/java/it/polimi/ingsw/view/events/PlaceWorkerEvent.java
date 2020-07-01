@@ -11,6 +11,13 @@ public class PlaceWorkerEvent extends EventObject {
     private int x;
     private int y;
 
+    /**
+     * Constructs a PlaceWorkerEvent to notify the server the intention of
+     * the Player to Place a Worker on the given Cell.
+     *
+     * @param x (the x_position on the Cell on which it wants to place the Worker).
+     * @param y (the y_position on the Cell on which it wants to place the Worker).
+     */
     public PlaceWorkerEvent(int x, int y) {
         super(new Object());
         this.x = x;

@@ -9,6 +9,12 @@ import java.util.EventObject;
 public class CardSelectionEvent extends EventObject {
     private String cardName;
 
+    /**
+     * Constructs a CardSelectionEvent to notify the Server which
+     * card the player has chosen
+     *
+     * @param cardName (the name of the card chosen by the player)
+     */
     public CardSelectionEvent(String cardName) {
         super(new Object());
         this.cardName = cardName;

@@ -16,6 +16,7 @@ import java.util.EventObject;
  * Class to execute the Player Message chat.
  *
  * @see Executer
+ * @author giorgio
  */
 public class PlayerMessageExecuter extends Executer {
 
@@ -54,8 +55,10 @@ public class PlayerMessageExecuter extends Executer {
     public ChatMessageEvent getMyEvent(){
         if(View.debugging)
             System.out.println(payload);
-        if(ViewStatus.getActual() != ViewStatus.PLAYING)
+        if(ViewStatus.getActual() != ViewStatus.PLAYING){
+            ViewMessage.populateAndSend("wait, <br/>too fast!!", ViewMessage.MessageType.EXECUTER_ERROR_MESSAGE);
             return null;
+        }
         PlayerMessages.addMsg(payload);
         return new ChatMessageEvent(ViewNickname.getMyNickname(), payload);
     }
