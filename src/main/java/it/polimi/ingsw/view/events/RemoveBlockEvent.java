@@ -11,6 +11,14 @@ public class RemoveBlockEvent extends EventObject {
     private int x;
     private int y;
 
+    /**
+     * Constructs a RemoveBlockEvent to notify the server the intention
+     * to remove a Block from the given Cell.
+     *
+     * @param workerId (the Id of the Worker wanting to remove the Block).
+     * @param x (the x_position on the Cell on which it wants to remove the Block).
+     * @param y (the y_position on the Cell on which it wants to remove the Block).
+     */
     public RemoveBlockEvent(String workerId, int x, int y) {
         super(new Object());
         this.workerId = workerId;

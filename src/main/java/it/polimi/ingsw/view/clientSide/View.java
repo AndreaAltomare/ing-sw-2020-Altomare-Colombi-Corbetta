@@ -66,6 +66,13 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 //    private List<String> players;
 //    private Map<String, List<String>> workersToPlayer;
 
+    /**
+     * Constructor
+     *
+     * @param in          (the Scanner from which read the input for the test/debugging).
+     * @param connection  (the ClientConnection to be used for the connection).
+     * @param viewer      (the Viewer to be used for this execution).
+     */
     public View(Scanner in, ClientConnection connection, Viewer viewer) {
         this.in = in;
         this.connection = connection;
@@ -74,6 +81,9 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
     }
 
 
+    /**
+     * Method that starts th Viewer, make it visible an does all the things to run properly the Client.
+     */
     @Override
     public void run() {
         viewer.start();
@@ -581,10 +591,6 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         Viewer.setAllRefresh();
     }
 
-
-
-    //##################SOON TESTED####################
-
     /**
      * Method that signals that the placeable has been removed.
      *
@@ -612,9 +618,6 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
             ViewMessage.populateAndSend("Wrong message recived recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
         }
     }
-
-
-    //##################NOT YET TESTED####################
 
     /**
      * Method that the lobby is full and closes the application.
@@ -733,6 +736,12 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         connection.closeConnection(); // todo add code to handle disconnection
     }
 
+    /**
+     * Method to notify the challenger that it's needed it choose the
+     * starting Player for the current game.
+     *
+     * @param requireStartPlayer Event: Require Start Player
+     */
     @Override
     public void update(RequireStartPlayerEvent requireStartPlayer) {
 
@@ -746,18 +755,33 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 
     //#########################END UPDATE###################################
 
+    /**
+     * Method used to retrieve the player's nickname.
+     *
+     * @return (the player's nickname).
+     */
     public String getNickname() {
         String ret = ViewNickname.getMyNickname();
         return ret==null?"":ret;
     }
 
-    //todo: serve? NO
-    public void setNickname(String nickname) { throw new NullPointerException("Questo metodo non dovrebbe essere chiamato"); }
+    //Unused and dangerous to be called.
+    //public void setNickname(String nickname) { throw new NullPointerException("Questo metodo non dovrebbe essere chiamato"); }
 
+    /**
+     * Method to retrieve the connectionActive.
+     *
+     * @return (the connectionActive).
+     */
     public boolean isConnectionActive() {
         return connectionActive;
     }
 
+    /**
+     * Method to set the connectionActive.
+     *
+     * @param connectionActive (the new value of connectionActive).
+     */
     public void setConnectionActive(boolean connectionActive) {
         this.connectionActive = connectionActive;
     }
@@ -1149,6 +1173,12 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
      */
     private class ChatMessageReceiver implements ChatMessageListener {
 
+        /**
+         * Method called on the arrival of a  ChatMessageEvent from Server
+         * to notify it to all the Viewers which need it.
+         *
+         * @param chatMessage (Chat message).
+         */
         @Override
         public synchronized void update(ChatMessageEvent chatMessage) {
             if(View.debugging){

@@ -7,16 +7,29 @@ import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.LoginViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalStatusViewer;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
+import it.polimi.ingsw.view.exceptions.CheckQueueException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import java.util.Scanner;
 
+/**
+ * Class to represent the <code>TerminalStatusViewer</code> for the ViewStatus LOGIN .
+ */
 public class TerminalLoginStatus extends TerminalStatusViewer {
 
     StatusViewer parentViewer;
 
+
+    /**
+     * Constructor.
+     *
+     * @param parentViewer (the StatusViewer to which this refers).
+     */
     public TerminalLoginStatus(StatusViewer parentViewer){ this.parentViewer = parentViewer; }
 
+    /**
+     * Method to print the status representation.
+     */
     @Override
     public void print() {
         String name;

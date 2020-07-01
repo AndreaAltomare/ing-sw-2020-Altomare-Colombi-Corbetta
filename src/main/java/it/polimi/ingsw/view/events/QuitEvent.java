@@ -8,6 +8,9 @@ import java.util.EventObject;
  */
 public class QuitEvent extends EventObject {
 
+    /**
+     * Constructs a QuitEvent to notify the Server the intention of the player to quit.
+     */
     public QuitEvent() {
         super(new Object());
     }

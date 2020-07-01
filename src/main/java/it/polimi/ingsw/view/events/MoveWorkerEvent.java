@@ -11,6 +11,14 @@ public class MoveWorkerEvent extends EventObject {
     private int x;
     private int y;
 
+    /**
+     * Constructs a MoveWorkerEvent to notify the server the intention of
+     * the Player to Move a Worker to the given Cell.
+     *
+     * @param workerId (the id of the Worker trying to move)
+     * @param x (the x_position on the Cell on which it wants to move).
+     * @param y (the y_position on the Cell on which it wants to move).
+     */
     public MoveWorkerEvent(String workerId, int x, int y) {
         super(new Object());
         this.workerId = workerId;

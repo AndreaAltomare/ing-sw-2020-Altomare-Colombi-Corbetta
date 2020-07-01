@@ -1,4 +1,4 @@
-package it.polimi.ingsw.view.clientSide;
+/*package it.polimi.ingsw.view.clientSide;
 
 /**
  * Interface made to connect the view with the communication layer
@@ -7,8 +7,7 @@ package it.polimi.ingsw.view.clientSide;
  * "divide et impera" so one day soon we'll say "veni, vidi, vici"
  *
  * @author giorgio
- */
-//todo remove
+ *//*
 public class ViewManager {
 
     //istanzio l'oggetto evento
@@ -25,4 +24,4 @@ public class ViewManager {
     //Ritorna true se l'invio ha avuto successto, false altrimenti.
     public boolean sendEvent(String event){return false;}
 
-}
+}*/

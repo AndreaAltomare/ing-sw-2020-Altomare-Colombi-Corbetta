@@ -9,6 +9,12 @@ import java.util.EventObject;
 public class SelectWorkerEvent extends EventObject {
     private String workerId; // univocal Worker identifier
 
+    /**
+     * Constructs a SelectWorkerEvent to notify the Server the intention
+     * of the Player to Select the given Worker.
+     *
+     * @param workerId (the Id of the Worker the Player wants to Select).
+     */
     public SelectWorkerEvent(String workerId) {
         super(new Object());
         this.workerId = workerId;

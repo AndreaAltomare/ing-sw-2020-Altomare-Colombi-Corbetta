@@ -9,6 +9,12 @@ import java.util.EventObject;
 public class GameResumingResponseEvent extends EventObject {
     private boolean wantToResumeGame;
 
+    /**
+     * Constructs a GameResponseEvent to notify the Server weather
+     * the player wants to resume a previous game or not.
+     *
+     * @param wantToResumeGame (true iif the player wants to resume a previous game).
+     */
     public GameResumingResponseEvent(boolean wantToResumeGame) {
         super(new Object());
         this.wantToResumeGame = wantToResumeGame;

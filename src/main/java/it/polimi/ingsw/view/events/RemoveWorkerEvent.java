@@ -11,6 +11,14 @@ public class RemoveWorkerEvent extends EventObject {
     private int x;
     private int y;
 
+    /**
+     * Constructs a RemoveWorkerEvent to notify the server the intention
+     * to remove a Worker from the given Cell.
+     *
+     * @param workerId (the Id of the Worker wanting to make the action).
+     * @param x (the x_position on the Cell on which it wants to remove the Worker).
+     * @param y (the y_position on the Cell on which it wants to remove the Worker).
+     */
     public RemoveWorkerEvent(String workerId, int x, int y) {
         super(new Object());
     }
