@@ -69,8 +69,18 @@ public enum ClientStatus {
      */
     public static String getClassId(){ return "[AppStatus]"; }
 
+    /**
+     * Method returning a unique String representing the Object univocally.
+     *
+     * @return (a unique String representing the Object univocally).
+     */
     public String toString(){ return getClassId() + "\t" + id; }
 
+    /**
+     * Method returning a String identifying this inside the Class.
+     *
+     * @return (a String identifying this inside the Class).
+     */
     public String getId() { return id; }
 
     /**
