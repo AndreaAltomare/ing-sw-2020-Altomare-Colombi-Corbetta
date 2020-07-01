@@ -14,7 +14,6 @@ public interface Addressable {
     public String getId();
 
 
-    //todo chiedere ai prof.
     //observer pattern
     /**
      * Method returning a unique String for each class.

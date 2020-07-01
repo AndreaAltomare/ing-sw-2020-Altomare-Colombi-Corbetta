@@ -304,7 +304,7 @@ public class SocketClientConnection extends Observable<Object> implements Client
             server.lobby(this, nickname);
 
             /* 4- Execute Connection manager to handle network problems */
-            //executor.submit(connectionManager); // TODO: commentato temporaneamente per permettere il debug. RIATTIVARE!!
+            executor.submit(connectionManager);
 
             /* 5- Keep listening to te Client while connection is active */
             while(isActive()) {

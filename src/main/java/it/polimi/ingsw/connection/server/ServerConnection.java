@@ -36,7 +36,14 @@ public class ServerConnection {
     private Map<String, ClientConnection> waitingConnection = new HashMap<>(); // In case of Multiple Games (Waiting list)
     private Map<String, ClientConnection> playingConnection = new HashMap<>(); // In case of Multiple Games (Playing list)
 
+    /**
+     * Minimum number of Clients to play a game.
+     */
     public final int MINIMUM_CLIENTS_REQUIRED = 2; // public because it can never change (by definition of Game match)
+
+    /**
+     * Maximum number of Clients to play a game.
+     */
     public final int MAXIMUM_CLIENTS_REQUIRED = 3; // public because it can never change (by definition of Game match)
     private int numberOfPlayers;
     private volatile boolean lobbyCreated;

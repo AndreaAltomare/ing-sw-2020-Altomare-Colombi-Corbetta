@@ -43,7 +43,7 @@ import static it.polimi.ingsw.model.player.turn.StateType.MOVEMENT;
 /**
  * Class that connects the View with the connection (and so with the Server).
  */
-public class View extends Observable<Object> implements MVEventListener, Runnable, ViewSender { // todo: maybe this class extends Observable<Object> for proper interaction with Network Handler
+public class View extends Observable<Object> implements MVEventListener, Runnable, ViewSender {
     /* Multi-threading operations */
     private ExecutorService executor = Executors.newFixedThreadPool(128);
     /* General */
@@ -733,7 +733,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
         ViewMessage.populateAndSend(serverQuit.getMessage(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
         ViewMessage.populateAndSend(serverQuit.getMessage(), ViewMessage.MessageType.FROM_SERVER_ERROR);
         // disconnection
-        connection.closeConnection(); // todo add code to handle disconnection
+        connection.closeConnection();
     }
 
     /**
@@ -823,7 +823,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 //    public void update(RequirePlayersNumberEvent requirePlayersNumber) {
 ////        ViewMessage.populateAndSend(requirePlayersNumber.getMessage(), ViewMessage.MessageType.CHANGE_STATUS_MESSAGE);
 ////        ViewStatus.setStatus("NUMBER_PLAYER");
-//        System.out.println("[RequirePlayersNumberEvent] You are the first player. Choose the number of players for this game (2 or 3):"); // todo [debug]
+//        System.out.println("[RequirePlayersNumberEvent] You are the first player. Choose the number of players for this game (2 or 3):");
 //    }
 //
 //    /**
@@ -990,7 +990,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 //
 //        if(cardsInformation.getPlayer().equals("")) {
 //            if(cardsInformation.getChallenger().equals(nickname)) {
-//                System.out.println("[CardsInformationEvent] You are the challenger.\nChoose a number of cards equal to the number of players for this game."); // todo [debug]
+//                System.out.println("[CardsInformationEvent] You are the challenger.\nChoose a number of cards equal to the number of players for this game.");
 //                System.out.println("Cards: ");
 //                List<CardInfo> cardList = cardsInformation.getCards();
 //                cardList.forEach(x -> System.out.println("    - " + x.getName()));
@@ -1027,7 +1027,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 //        }
 //        else {
 //            if (cardSelected.success())
-//                System.out.println("[CardSelectedEvent] Player " + cardSelected.getPlayerNickname() + " has correctly selected the card: " + cardSelected.getCardName()); // todo [debug]
+//                System.out.println("[CardSelectedEvent] Player " + cardSelected.getPlayerNickname() + " has correctly selected the card: " + cardSelected.getCardName());
 //            else
 //                System.out.println("[CardSelectedEvent] The Card Player " + cardSelected.getPlayerNickname() + " has selected is not valid!");
 //        }
@@ -1041,7 +1041,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 ////            ViewMessage.populateAndSend("Wrong placed recived", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
 ////        }
 //        if(workerPlaced.success())
-//            System.out.println("[WorkerPlacedEvent] Worker '" + workerPlaced.getWorker() + "' was correctly placed in position: ( " + workerPlaced.getX() + " , " + workerPlaced.getY() + " )"); // todo [debug]
+//            System.out.println("[WorkerPlacedEvent] Worker '" + workerPlaced.getWorker() + "' was correctly placed in position: ( " + workerPlaced.getX() + " , " + workerPlaced.getY() + " )");
 //        else
 //            System.out.println("[WorkerPlacedEvent] A Worker was not correctly placed!");
 //    }
@@ -1096,7 +1096,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 ////            cell.removeDome();
 ////        else
 ////            cell.removeLevel();
-//        System.err.println("[BlockRemovedEvent] A block was correctly removed. (This kind of event SHALL NOT be displayed!)"); // todo [debug]
+//        System.err.println("[BlockRemovedEvent] A block was correctly removed. (This kind of event SHALL NOT be displayed!)");
 //    }
 //
 //    @Override
@@ -1106,7 +1106,7 @@ public class View extends Observable<Object> implements MVEventListener, Runnabl
 ////        } catch (NotFoundException | WrongViewObjectException e) {
 ////            ViewMessage.populateAndSend("Cannot remove worker", ViewMessage.MessageType.FATAL_ERROR_MESSAGE);
 ////        }
-//        System.out.println("[WorkerRemovedEvent] Worker '" + workerRemoved.getWorker() + "' was correctly removed from position: ( " + workerRemoved.getX() + " , " + workerRemoved.getY() + " )"); // todo [debug]
+//        System.out.println("[WorkerRemovedEvent] Worker '" + workerRemoved.getWorker() + "' was correctly removed from position: ( " + workerRemoved.getX() + " , " + workerRemoved.getY() + " )");
 //    }
 //
 //    @Override

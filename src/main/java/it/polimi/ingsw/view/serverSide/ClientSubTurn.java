@@ -8,7 +8,6 @@ import it.polimi.ingsw.view.interfaces.Addressable;
  *
  * @author giorgio
  */
-//todo remove this class
 public enum ClientSubTurn implements Addressable {
     SELECTWORKER("SELECTWORKER"),
     BUILD("BUILD"),

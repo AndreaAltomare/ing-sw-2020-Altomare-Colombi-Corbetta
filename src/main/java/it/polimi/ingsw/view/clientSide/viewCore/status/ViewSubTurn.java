@@ -343,7 +343,6 @@ public enum ViewSubTurn implements ClientAddressable {
         else if(macroStatus == StateType.CONSTRUCTION)
             setSubTurn(BUILD, player);
         else{
-            //TODO: rimuovere controllo
             if(View.debugging)
                 System.out.println("Unknown status");
             setSubTurn(MOVE);
@@ -395,7 +394,7 @@ public enum ViewSubTurn implements ClientAddressable {
     /**
      * Method returning a string identifying this Object and the Class.
      *
-     * @return
+     * @return A string identifying this Object and the Class
      */
     @Override
     public String toString(){
@@ -406,7 +405,7 @@ public enum ViewSubTurn implements ClientAddressable {
      * Method checking if the given Addressable is the same of this.
      *
      * @param pl (the Addressable to be checked)
-     * @return
+     * @return (The given Addressable is the same of this ? true : false)
      */
     @Override
     public boolean equals(Addressable pl) {

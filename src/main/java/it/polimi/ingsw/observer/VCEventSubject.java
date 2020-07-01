@@ -115,7 +115,6 @@ public class VCEventSubject {
                     listener.update((ViewRequestDataEvent) e, playerNickname);
             }
         else {
-            // todo handle evento non valido
             System.err.println("Invalid VCEvent Object to notify!");
             synchronized (listeners) {
                 for(VCEventListener listener : listeners)

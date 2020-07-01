@@ -78,7 +78,7 @@ public class ViewTester implements ViewSender {
     private Object movedRecalled = new Object();
     private Object moved = new Object();
     private Object built = new Object();
-    private View view = new View(null, null, new GUIViewer()); // todo per Giorgio: HO AGGIUNTO new GUIViewer() PER FARLO FUNZIONARE QUANDO HO FATTO I TEST
+    private View view = new View(null, null, new GUIViewer()); // added new GUIViewer to work when we need to do some tests
 
     //####MOSSE####
     private String[][] workers = new String[2][2];
@@ -949,7 +949,7 @@ public class ViewTester implements ViewSender {
             view.update(new WorkerPlacedEvent("[Worker]\t6", 1, 2, true));
         }
 
-        //todo sistemare questa parte
+
         //Finita la fase di posizionamento invio la ServerSendDataEvent
         {
             int boardXSize = 5;

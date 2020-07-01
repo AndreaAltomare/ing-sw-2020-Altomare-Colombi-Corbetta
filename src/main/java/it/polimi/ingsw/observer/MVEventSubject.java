@@ -156,7 +156,6 @@ public class MVEventSubject {
                     listener.update((WorkerSelectedEvent) e);
             }
         else {
-            // todo handle evento non valido
             if(View.debugging)
                 System.err.println("Invalid MVEvent Object to notify!");
             ViewMessage.populateAndSend("Invalid MVEvent Object to notify!", ViewMessage.MessageType.FROM_SERVER_ERROR);
