@@ -21,8 +21,16 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test for ConstructionManagerTest.
+ *
+ * @author giorgio
+ */
 class ConstructionManagerTest {
 
+    /**
+     * Stub Class for TurnObserver
+     */
     private class MyObserver extends TurnObserver {
 
         private Worker work;
@@ -64,6 +72,9 @@ class ConstructionManagerTest {
         }
     }
 
+    /**
+     * Stub class for Move
+     */
     private static class MyMovement extends Move{
 
         private FloorDirection myFloorDirection;
@@ -90,6 +101,9 @@ class ConstructionManagerTest {
         }
     }
 
+    /**
+     * Stub class for BuildMove
+     */
     private static class MyBuildMovement extends BuildMove{
 
         private PlaceableType blockT;
@@ -133,6 +147,11 @@ class ConstructionManagerTest {
     private Worker myWorker = new Worker(null);
     private Move myMove = new MyMovement(FloorDirection.SAME, LevelDirection.SAME, new Cell(0, 0, null));
 
+    /**
+     * Checks if all the attributes have not been initialised.
+     *
+     * @return (true iif all the attributes have not been initialised).
+     */
     private boolean checkAllNull(){
         return ((obs1.popWorker()==null && obs1.popMovement()==null) && (obs2.popWorker()==null && obs2.popMovement()==null) && (obs3.popWorker()==null && obs3.popMovement()==null) && (obs4.popWorker()==null && obs4.popMovement()==null));
     }
@@ -141,6 +160,9 @@ class ConstructionManagerTest {
         return (obs.popWorker().equals(myWorker) && obs.popMovement().equals(myMove));
     }
 
+    /**
+     * Test method for notifyObservers
+     */
     @Test
     void notifyObservers(){
         //card is not used for this scope
@@ -384,6 +406,9 @@ class ConstructionManagerTest {
         //YEAH, You did it!!
     }
 
+    /**
+     * Stub Class for the Card
+     */
     public static class MyCard extends Card {
 
         private MyMove myMove;
@@ -743,6 +768,9 @@ class ConstructionManagerTest {
         }
     }
 
+    /**
+     * Test method for handle
+     */
     @Test
     void handle() {
 
@@ -883,6 +911,9 @@ class ConstructionManagerTest {
 
     }
 
+    /**
+     * Test method for getMovesLeft
+     */
     @Test
     void getMovesLeft() {
         MyCard myCard = MyCard.builder();
