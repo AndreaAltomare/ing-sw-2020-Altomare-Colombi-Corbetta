@@ -1,7 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewers.toTerminal.statusClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetNicknameExecuter;
-import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.LoginViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
@@ -14,7 +13,6 @@ public class WTerminalLoginViewer extends WTerminalStatusViewer {
 
     private LoginViewer loginViewer;
 
-    final int STARTING_SPACE = 7;
     final String FIRST_PART = "Please, insert your";
     final String SECOND_PART = "Nickname:";
 
@@ -47,12 +45,12 @@ public class WTerminalLoginViewer extends WTerminalStatusViewer {
 
 
         // upper edge of block
-        PrintFunction.printRepeatString(" ", STARTING_SPACE + 3);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE + 3);
         PrintFunction.printRepeatString("_", BLOCK_LENGTH);
         System.out.println();
 
         // head and block
-        PrintFunction.printRepeatString(" ", STARTING_SPACE - 1);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE - 1);
         System.out.print( "'O " );
 
         System.out.print("|");
@@ -61,7 +59,7 @@ public class WTerminalLoginViewer extends WTerminalStatusViewer {
         System.out.println();
 
         // chest and request's first part
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         System.out.print( "/|" );
 
         System.out.print("|");
@@ -70,7 +68,7 @@ public class WTerminalLoginViewer extends WTerminalStatusViewer {
         System.out.println();
 
         // leg, body and request's second part
-        PrintFunction.printRepeatString(" ", STARTING_SPACE - 4);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE - 4);
         System.out.print( "_/\\/ |");
 
         System.out.print("|");
@@ -79,7 +77,7 @@ public class WTerminalLoginViewer extends WTerminalStatusViewer {
         System.out.println();
 
         // other leg and block's down edge
-        PrintFunction.printRepeatString(" ", STARTING_SPACE -2);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE -2);
         System.out.print("/   ");
 
         System.out.print("|");
@@ -88,7 +86,7 @@ public class WTerminalLoginViewer extends WTerminalStatusViewer {
         System.out.println();
 
         // foot
-        PrintFunction.printRepeatString(" ",STARTING_SPACE -4);
+        PrintFunction.printRepeatString(" ",PrintFunction.STARTING_SPACE -4);
         System.out.print( "_/    ");
         if ( ((BLOCK_LENGTH - SECOND_PART.length()) %2) == 0) {
             PrintFunction.printRepeatString(" ", ((BLOCK_LENGTH - SECOND_PART.length()) /2) - 2);
@@ -104,14 +102,15 @@ public class WTerminalLoginViewer extends WTerminalStatusViewer {
      * @return the string which is read if its length is 8 or minus. its first eight char if it isn't
      */
     private String getNicknameResponse() {
+        final int maxLength = 11;
         String response;
         Scanner input = new Scanner(System.in);
 
-        System.out.print(  ">>(Max 8):");
+        System.out.printf(  ">>(Max %d):", maxLength);
 
         response = input.nextLine();
-        if (response.length() > 8) {
-            response = response.substring(0,7);
+        if (response.length() > maxLength) {
+            response = response.substring(0,maxLength);
         }
 
         return response;
@@ -124,24 +123,24 @@ public class WTerminalLoginViewer extends WTerminalStatusViewer {
      * @return boolean value ( true => correct nickname, false => wrong nickname
      */
     private boolean checkNicknameResponse(String response) {
+        final String CORRECT_MESSAGE = "Your nickname request is correctly send";
+        String wrongParameterMessage = "Nickname chosen is not valid, please change it";
         boolean approvedResponse = false;
         SetNicknameExecuter setNicknameExecuter = (SetNicknameExecuter) loginViewer.getMyExecuters().get("NickName");
 
         try {
             setNicknameExecuter.setNickname(response);
-            setNicknameExecuter.doIt();
-            System.out.println( "\n\t" +
-                                "  /" + "\n\t" +
-                                "\\/ Your Nickname is correctly set" + "\n");
             approvedResponse = true;
+            setNicknameExecuter.doIt();
+            PrintFunction.printCheck(CORRECT_MESSAGE);
         } catch (WrongParametersException e) {
-            System.out.println( "\n\t" +
-                                ">< Nickname chosen is not valid, please change it");
+            if (!e.getMessage().equals("") ) {
+                wrongParameterMessage = e.getMessage();
+            }
+            PrintFunction.printError(wrongParameterMessage);
         } catch (CannotSendEventException e) {
-            System.out.printf(" \n\t" +
-                                ">< %s" +"\n", e.toString());
-        }
-        System.out.println();
+            PrintFunction.printError(e.getErrorMessage());
+        }  System.out.println();
 
         return approvedResponse;
     }
@@ -157,11 +156,11 @@ public class WTerminalLoginViewer extends WTerminalStatusViewer {
         boolean end = false;
 
         while (!end) {
-            System.out.println();
-            System.out.println();
+            PrintFunction.printRepeatString("\n", 2);
             this.showNicknameRequest();
             nickname = this.getNicknameResponse();
             end = this.checkNicknameResponse(nickname);
+            PrintFunction.printRepeatString("\n", 2);
         }
     }
 }

@@ -73,7 +73,7 @@ public interface CellPrintFunction {
      * @return string to string at the middle of cell's row
      */
     static String cellRow2(Integer blockLevel, boolean doomed, boolean thereIsWorker, ViewWorker viewWorker, boolean isSelected) {
-        String symbolString = "";
+        String symbolString;
 
         if ( blockLevel != 0) {
             if ( doomed ) {
@@ -116,7 +116,7 @@ public interface CellPrintFunction {
      * @return string to string at the middle of cell's row
      */
     static String cellRow3(Integer blockLevel, boolean doomed, boolean thereIsWorker, ViewWorker viewWorker, boolean isSelected) {
-        String symbolString = "";
+        String symbolString;
 
         if ( blockLevel != 0) {
             if ( doomed ) {
@@ -159,7 +159,7 @@ public interface CellPrintFunction {
      * @return string to string at the middle of cell's row
      */
     static String cellRow4(Integer blockLevel, boolean doomed, boolean thereIsWorker, ViewWorker viewWorker, boolean isSelected) {
-        String symbolString = "";
+        String symbolString;
 
         if ( blockLevel != 0) {
             if ( doomed || thereIsWorker ) {

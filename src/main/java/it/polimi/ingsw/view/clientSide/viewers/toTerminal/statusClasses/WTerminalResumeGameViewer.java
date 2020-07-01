@@ -14,8 +14,6 @@ public class WTerminalResumeGameViewer extends WTerminalStatusViewer {
 
     private RequestResumingViewer requestResumingViewer;
 
-    private final int STARTING_SPACE = 7;
-
     public WTerminalResumeGameViewer( RequestResumingViewer requestResumingViewer) {
         this.requestResumingViewer = requestResumingViewer;
     }
@@ -29,11 +27,11 @@ public class WTerminalResumeGameViewer extends WTerminalStatusViewer {
 
         PrintFunction.printRepeatString("\n", 1);
         // arm's top of machinery
-        PrintFunction.printRepeatString(" ", STARTING_SPACE + MACHINERY_LENGTH + 3);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE + MACHINERY_LENGTH + 3);
         System.out.println("_");
 
         // arm's upper part of machinery
-        PrintFunction.printRepeatString(" ", STARTING_SPACE + MACHINERY_LENGTH + 2);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE + MACHINERY_LENGTH + 2);
         System.out.println( "//\\" );
 
         // machine's upper part, machinery's arm and third block's upper part
@@ -43,14 +41,14 @@ public class WTerminalResumeGameViewer extends WTerminalStatusViewer {
         System.out.println("//  \\_    __");
 
         // machinery's down part, cabin,  then arm's machinery, demolition ball and block's third level
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         System.out.print("/");
         PrintFunction.printRepeatString(" ", MACHINERY_LENGTH - 4);
         System.out.print("|_\\//   (_)");
         System.out.println(" _|__|");
 
         // machinery's down part, then arm's machinery, block's second level
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         System.out.print("\\");
         PrintFunction.printRepeatString("_", MACHINERY_LENGTH - 2);
         System.out.print("//");
@@ -58,7 +56,7 @@ public class WTerminalResumeGameViewer extends WTerminalStatusViewer {
         System.out.println(" _|__|  \"");
 
         // machinery's track, block's first level
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         System.out.print("(");
         PrintFunction.printRepeatString("_", MACHINERY_LENGTH - 1);
         System.out.print(")");
@@ -84,22 +82,22 @@ public class WTerminalResumeGameViewer extends WTerminalStatusViewer {
 
         // ask request
         System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         System.out.println(RESTART_REQUEST);
 
         PrintFunction.printRepeatString("\n", LINE_BETWEEN_STRING);
 
         // show command
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         System.out.println("1: " + RESTART_COMMAND);
         PrintFunction.printRepeatString("\n", LINE_BETWEEN_STRING);
 
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         System.out.println("2: " + CONTINUE_COMMAND);
         PrintFunction.printRepeatString("\n", LINE_BETWEEN_STRING);
 
         // read command
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         System.out.print(">>");
         try {
             command = new Scanner(System.in).nextInt();
@@ -110,12 +108,10 @@ public class WTerminalResumeGameViewer extends WTerminalStatusViewer {
                     } catch (AlreadySetException ignored) {
                     }
                     try {
-                        resumingExecuter.doIt();
                         commandSelected = true;
+                        resumingExecuter.doIt();
                     } catch (CannotSendEventException e) {
-                        PrintFunction.printRepeatString("\n", LINE_BETWEEN_STRING);
-                        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                        System.out.printf(">< " + "%s", e.toString());
+                        PrintFunction.printError(e.getErrorMessage());
                     }
                     break;
                 case 2:
@@ -124,24 +120,19 @@ public class WTerminalResumeGameViewer extends WTerminalStatusViewer {
                     } catch (AlreadySetException ignored) {
                     }
                     try {
-                        resumingExecuter.doIt();
                         commandSelected = true;
+                        resumingExecuter.doIt();
                     } catch (CannotSendEventException e) {
-                        PrintFunction.printRepeatString("\n", LINE_BETWEEN_STRING);
-                        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                        System.out.printf(">< " + "%s", e.toString());
+                        PrintFunction.printError(e.getErrorMessage());
                     }
                     break;
                 default:
-                    PrintFunction.printRepeatString("\n", LINE_BETWEEN_STRING);
-                    PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                    System.out.println(">< " + WRONG_COMMAND_MESSAGE);
+                    PrintFunction.printError(WRONG_COMMAND_MESSAGE);
             }
         } catch (InputMismatchException e) {
-            PrintFunction.printRepeatString("\n", LINE_BETWEEN_STRING);
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println(">< " + WRONG_COMMAND_MESSAGE);
+            PrintFunction.printError(WRONG_COMMAND_MESSAGE);
         }
+
 
         return  commandSelected;
 

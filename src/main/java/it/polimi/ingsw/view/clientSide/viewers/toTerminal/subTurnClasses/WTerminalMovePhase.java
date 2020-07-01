@@ -2,12 +2,11 @@ package it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.MoveWorkerExecuter;
-import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.TurnStatusChangeExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
+import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.MoveViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
-import it.polimi.ingsw.view.clientSide.viewers.toTerminal.statusClasses.WTerminalPlayingViewer;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
@@ -19,9 +18,6 @@ public class WTerminalMovePhase extends WTerminalSubTurnViewer {
 
     private MoveViewer moveViewer;
 
-    private final int STARTING_SPACE = 7;
-    private final int DIRECTION_SPACE = 15;
-
     public WTerminalMovePhase(MoveViewer moveViewer) {
         this.moveViewer = moveViewer;
     }
@@ -32,40 +28,27 @@ public class WTerminalMovePhase extends WTerminalSubTurnViewer {
      * @return
      */
     private boolean showMoveRequest() {
+        final String DIRECTION_REQUEST = "Please, select a direction to move:";
+        final String CORRECT_MESSAGE = "Your move request is correctly send";
+        final String WRONG_DIRECTION_MESSAGE = "The selected direction doesn't exist";
+        final String WRONG_VALUE_MESSAGE = "The chosen value isn't correct";
+        final String OUT_OF_BOARD_MESSAGE = "The cell in selected direction doesn't exist";
+        String wrongExecutorSet = "The move isn't correctly set";
         int directionResponse;
         ViewCell selectedCell;
         boolean correctResponse = false;
         MoveWorkerExecuter moveWorkerExecuter = (MoveWorkerExecuter) moveViewer.getMySubTurn().getExecuter();
 
         System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-        System.out.println("Please, select a direction to move:");
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
+        System.out.println(DIRECTION_REQUEST);
 
         System.out.println();
-        //first line
-        System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-        PrintFunction.printAtTheMiddle("7: North-West", DIRECTION_SPACE);
-        PrintFunction.printAtTheMiddle("8: North", DIRECTION_SPACE);
-        PrintFunction.printAtTheMiddle("9: North-Est", DIRECTION_SPACE);
-        System.out.println();
-        //second line
-        System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-        PrintFunction.printAtTheMiddle("4: West", DIRECTION_SPACE);
-        PrintFunction.printRepeatString(" ", DIRECTION_SPACE);
-        PrintFunction.printAtTheMiddle("6: Est", DIRECTION_SPACE);
-        System.out.println();
-        //third line
-        System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-        PrintFunction.printAtTheMiddle("1: South-West", DIRECTION_SPACE);
-        PrintFunction.printAtTheMiddle("2: South", DIRECTION_SPACE);
-        PrintFunction.printAtTheMiddle("3: South-Est", DIRECTION_SPACE);
-        System.out.println();
+
+        this.printDirection();
 
         System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         System.out.print(">>");
         try {
             directionResponse = new Scanner(System.in).nextInt();
@@ -73,95 +56,26 @@ public class WTerminalMovePhase extends WTerminalSubTurnViewer {
             if ( selectedCell != null ) {
                 moveWorkerExecuter.setWorkerId( ViewWorker.getSelected() );
                 moveWorkerExecuter.setCell( selectedCell );
-                moveWorkerExecuter.doIt();
                 correctResponse = true;
+                moveWorkerExecuter.doIt();
+                PrintFunction.printCheck(CORRECT_MESSAGE);
             } else {
-                System.out.println();
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.print(">< The selected direction doesn't exist\n");
+                PrintFunction.printError(WRONG_DIRECTION_MESSAGE);
             }
         } catch (InputMismatchException e) {
-            System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.print(">< The chosen value isn't correct\n");
+            PrintFunction.printError(WRONG_VALUE_MESSAGE);
         } catch (NotFoundException e) {
-            System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.print(">< The cell in selected direction doesn't exist\n");
-        } catch (WrongParametersException | CannotSendEventException e) {
-            e.printStackTrace();
+            PrintFunction.printError(OUT_OF_BOARD_MESSAGE);
+        } catch (WrongParametersException e) {
+            if (!e.getMessage().equals("")) {
+                wrongExecutorSet = e.getMessage();
+            }
+            PrintFunction.printError(wrongExecutorSet);
+        } catch (CannotSendEventException e) {
+            PrintFunction.printError(e.getErrorMessage());
         }
 
         return correctResponse;
-    }
-
-    /**
-     * Calculates the cell at chosen direction and returns it if it is possible, returns null if the direction isn't correct
-     * and trow a NotFoundException if the cell isn't on the board ( or the select worker isn't on the board )
-     * @param direction
-     * @return
-     * @throws NotFoundException
-     */
-    private ViewCell calculateNextCell(int direction ) throws NotFoundException {
-        ViewCell selectedCell = null;
-        int workerRow;
-        int workerColumn;
-
-        workerRow = ViewWorker.getSelected().getPosition().getX();
-        workerColumn = ViewWorker.getSelected().getPosition().getY();
-
-        switch (direction) {
-            case 7:
-                selectedCell = ViewBoard.getBoard().getCellAt(workerRow - 1, workerColumn - 1);
-                break;
-            case 8:
-                selectedCell = ViewBoard.getBoard().getCellAt(workerRow - 1, workerColumn );
-                break;
-            case 9:
-                selectedCell = ViewBoard.getBoard().getCellAt(workerRow - 1, workerColumn + 1);
-                break;
-            case 4:
-                selectedCell = ViewBoard.getBoard().getCellAt( workerRow , workerColumn - 1);
-                break;
-            case 6:
-                selectedCell = ViewBoard.getBoard().getCellAt( workerRow , workerColumn + 1);
-                break;
-            case 1:
-                selectedCell = ViewBoard.getBoard().getCellAt( workerRow + 1, workerColumn - 1);
-                break;
-            case 2:
-                selectedCell = ViewBoard.getBoard().getCellAt( workerRow + 1, workerColumn );
-                break;
-            case 3:
-                selectedCell = ViewBoard.getBoard().getCellAt( workerRow + 1, workerColumn + 1);
-                break;
-            case 5:
-            default:
-                ;
-        }
-
-        return selectedCell;
-
-    }
-
-    /**
-     * Tries to change subTurn in BUILD and returns true if it can, or false if it can't
-     * @return
-     */
-    private boolean toBuildPhase() {
-        boolean changePhase = false;
-        TurnStatusChangeExecuter turnStatusChangeExecuter = new TurnStatusChangeExecuter();
-
-        try {
-            turnStatusChangeExecuter.setStatusId( ViewSubTurn.BUILD );
-            turnStatusChangeExecuter.doIt();
-            changePhase = true;
-        } catch (WrongParametersException | CannotSendEventException e) {
-            e.printStackTrace();
-        }
-
-        return changePhase;
-
     }
 
     /**
@@ -170,53 +84,61 @@ public class WTerminalMovePhase extends WTerminalSubTurnViewer {
      */
     @Override
     public void show() {
+        final String COMMAND_REQUEST = "Please, select a command:";
+        final String GODS_DETAILS_COMMAND = "Print all gods' details";
+        final String MOVE_COMMAND = "Move worker";
+        final String TO_BUILD_PHASE_COMMAND = "Go to Build Phase";
+        final String EXIT_COMMAND = "Exit from the game";
+        final String WRONG_COMMAND_MESSAGE = "The chosen command doesn't exist, please change it";
+
         boolean endMove = false;
         int actionSelected;
 
-        while ( !endMove ) {
-            System.out.println();
-            System.out.println();
+        while (!endMove) {
+            PrintFunction.printRepeatString("\n", 2);
 
             try {
                 ViewBoard.getBoard().toWTerminal();
-            }catch(NullPointerException e){
+            } catch (NullPointerException e) {
                 break;  //exit from state if there isn't the board
             }
 
             System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("Please, select a command:");
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("1: Print all gods' details");
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("2: Move worker");
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("3: Go to Build Phase");
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
+            System.out.println(COMMAND_REQUEST);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
+            System.out.println("1: " + GODS_DETAILS_COMMAND);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
+            System.out.println("2: " + MOVE_COMMAND);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
+            System.out.println("3: " + TO_BUILD_PHASE_COMMAND);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
+            System.out.println("4: " + EXIT_COMMAND);
 
             System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
             System.out.print(">>");
             try {
                 actionSelected = new Scanner(System.in).nextInt();
-                switch ( actionSelected ) {
+                switch (actionSelected) {
                     case 1:
-                        this.showCardsDetails(STARTING_SPACE);
+                        this.showCardsDetails(true);
                         break;
                     case 2:
                         endMove = this.showMoveRequest();
                         break;
                     case 3:
-                        endMove = this.toBuildPhase();
+                        endMove = this.changePlayingPhase(ViewSubTurn.MOVE);
+                        break;
+                    case 4:
+                        endMove = true;
+                        Viewer.exitAll();
                         break;
                     default:
-                        System.out.println();
-                        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                        System.out.println(">< The chosen command doesn't exist, please change it");
+                        PrintFunction.printError(WRONG_COMMAND_MESSAGE);
                 }
             } catch (InputMismatchException e) {
-                System.out.println();
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.println(">< The chosen command doesn't exist, please change it");
+                PrintFunction.printError(WRONG_COMMAND_MESSAGE);
             }
         }
     }

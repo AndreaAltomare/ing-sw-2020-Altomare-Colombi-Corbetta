@@ -1,14 +1,13 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewWorker;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.*;
 
 public interface CLICellPrintFunction {
 
-    final String DOME_COLOR = ANSIStyle.BLUE.getEscape();
-    final String BLOCK_COLOR = ANSIStyle.GREY.getEscape();
-    final int SELECTION_SPACE  = 4; // see and change tryAddSelectionSymbols to know and change the value
+    String DOME_COLOR = ANSIStyle.BLUE.getEscape();
+    String BLOCK_COLOR = ANSIStyle.GREY.getEscape();
+    int SELECTION_SPACE  = 4; // see and change tryAddSelectionSymbols to know and change the value
 
     /**
      * Returns string with selection Symbols if isSelected == true,

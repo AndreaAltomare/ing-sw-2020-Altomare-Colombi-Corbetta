@@ -287,9 +287,15 @@ public class ViewBoard extends ViewObject {
 
 
     /**
-     * Method that will print the board and Players' caption
+     * Method which prints the board and Players' caption using methods of <code>BoardPrintFunction</code> and
+     * the toWTerminal(int level, boolean isSelected) of <code>ViewCell</code> to print
+     * parts of Board and symbol of <code>Symbols</code>.
      *
-     * @return a String == null
+     * Constant are using to define the most important parameter to print the Board
+     *
+     * @see BoardPrintFunction
+     * @see Symbols
+     * @return <code>null</code>
      */
     @Override
     public String toWTerminal(){
@@ -374,9 +380,16 @@ public class ViewBoard extends ViewObject {
     }
 
     /**
-     * Method that will print the board and Players' caption
+     * Method which prints the board and Players' caption using methods of <code>CLIBoardPrintFunction</code> and
+     * the toCLI(int level, boolean isSelected, int symbolSpace) of <code>ViewCell</code> to print
+     * parts of Board and the colors and symbol of <code>ANSIStyle</code> and <code>CLISymbol</code>.
      *
-     * @return a String == null
+     * Constant are using to define the most important parameter to print the Board
+     *
+     * @see CLIPrintFunction
+     * @see ANSIStyle
+     * @see CLISymbols
+     * @return <code>null</code>
      */
     @Override
     public String toCLI() {
@@ -389,7 +402,7 @@ public class ViewBoard extends ViewObject {
         final int Y_DIM = this.getYDim();
         final CLISymbols[] numberArray = { CLISymbols.NUMBER_0, CLISymbols.NUMBER_1, CLISymbols.NUMBER_2, CLISymbols.NUMBER_3, CLISymbols.NUMBER_4};
         final String SEA_COLOR = ANSIStyle.BACK_DIFFERENT_BLUE.getEscape();
-        final String NUMBER_COLOR = ANSIStyle.GREEN.getEscape();
+        final String NUMBER_COLOR = ANSIStyle.GREY.getEscape();
         final String CELL_COLOR = ANSIStyle.BACK_GREEN.getEscape();
         final String EDGE_CELL_COLOR =ANSIStyle.BACK_GREY.getEscape();
 
