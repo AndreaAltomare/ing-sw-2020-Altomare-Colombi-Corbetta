@@ -31,7 +31,7 @@ public class ResourceManager {
     private static final String CARDS_PATH = "cards/";
     private static final String SAVES_PATH = "game_saves/";
     /* Debug enabler */
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     /**
      * Get a Card's information and return its GodPower properties.
