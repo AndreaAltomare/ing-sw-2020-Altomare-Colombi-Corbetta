@@ -14,8 +14,6 @@ public class WTerminalOpponentBuildPhase extends WTerminalSubTurnViewer {
 
     private OpponentBuildViewer opponentBuildViewer;
 
-    private final int STARTING_SPACE = 7;
-
     public WTerminalOpponentBuildPhase(OpponentBuildViewer opponentBuildViewer) {
         this.opponentBuildViewer = opponentBuildViewer;
     }
@@ -26,19 +24,18 @@ public class WTerminalOpponentBuildPhase extends WTerminalSubTurnViewer {
     @Override
     public void show() {
 
-        System.out.println();
-        System.out.println();
+        final String WAITING_MESSAGE = "A player is build with his worker, please wait";
+
+        PrintFunction.printRepeatString("\n", PrintFunction.STARTING_SPACE);
         try {
             ViewBoard.getBoard().toWTerminal();
 
             System.out.println();
-            this.showCardsDetails(STARTING_SPACE);
+            this.showCardsDetails(false);
 
-            System.out.println();
-            System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("A player is build with his worker, please wait");
-            //todo: maybe add a little animation like WaitingViewer
+            PrintFunction.printRepeatString("\n", PrintFunction.STARTING_SPACE);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
+            System.out.println(WAITING_MESSAGE);
         }catch(NullPointerException e){
             // do anything exit from state if there isn't the board
         }

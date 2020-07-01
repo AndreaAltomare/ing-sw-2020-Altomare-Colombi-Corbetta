@@ -52,8 +52,6 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
      * Prints a numbered list with Gods' Symbols and gods
      */
     private void printCardList() {
-        final int SPACE_BETWEEN_CARDS = 40;
-        final int CARDS_COLUMNS = 2;
         CLIGodSymbols cliGodSymbols;
         List<ViewCard> cardList = cardSelection.getCardList();
         Integer cardNumber = 1;
@@ -76,36 +74,21 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
                 upString = upString + CLIPrintFunction.increaseLengthWithSpace(cliGodSymbols.getUpRepresentation(), cliGodSymbols.getRepresentationLength(), GOD_SYMBOL_SPACE);
                 upString = upString + CLIPrintFunction.increaseLengthWithSpace("", 0, GOD_NAME_SPACE);
                 upString = upString + this.checkRightSelect(viewCard, false);
-                System.out.print(upString);
-                if ( ((cardList.indexOf(viewCard)) % CARDS_COLUMNS) == (CARDS_COLUMNS - 1) || cardList.indexOf(viewCard) == (cardList.size() - 1) ) {
-                    System.out.println();
-                } {
-                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", SPACE_BETWEEN_CARDS);
-                }
+                System.out.println(upString);
                 // second line
                 CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
                 middleString = this.checkLeftSelect(viewCard, true) + "  ";
                 middleString = middleString + CLIPrintFunction.increaseLengthWithSpace(cliGodSymbols.getMiddleRepresentation(), cliGodSymbols.getRepresentationLength(), GOD_SYMBOL_SPACE);
                 middleString = middleString + CLIPrintFunction.increaseLengthWithSpace("", 0, GOD_NAME_SPACE);
                 middleString = middleString + this.checkRightSelect(viewCard, true);
-                System.out.print(middleString);
-                if ( ((cardList.indexOf(viewCard)) % CARDS_COLUMNS) == (CARDS_COLUMNS - 1) || cardList.indexOf(viewCard) == (cardList.size() - 1) ) {
-                    System.out.println();
-                } {
-                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", SPACE_BETWEEN_CARDS);
-                }
+                System.out.println(middleString);
                 // third line
                 CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
                 downString = this.checkLeftSelect(viewCard, false) + cardNumber.toString() + ".";
                 downString = downString + CLIPrintFunction.increaseLengthWithSpace(cliGodSymbols.getDownRepresentation(), cliGodSymbols.getRepresentationLength(), GOD_SYMBOL_SPACE);
                 downString = downString + CLIPrintFunction.increaseLengthWithSpace(viewCard.getName(), viewCard.getName().length(), GOD_NAME_SPACE);
                 downString = downString + this.checkRightSelect(viewCard, false);
-                System.out.print(downString);
-                if ( ((cardList.indexOf(viewCard)) % CARDS_COLUMNS) == (CARDS_COLUMNS - 1) || cardList.indexOf(viewCard) == (cardList.size() - 1) ) {
-                    System.out.println();
-                } {
-                    CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", SPACE_BETWEEN_CARDS);
-                }
+                System.out.println(downString);
 
                 cardNumber++;
 

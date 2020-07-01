@@ -17,8 +17,6 @@ public class WTerminalFirstPlayerChoosePhase extends WTerminalSubTurnViewer {
 
     private FirstPlayerViewer firstPlayerViewer;
 
-    private final int STARTING_SPACE = 7;
-
     public WTerminalFirstPlayerChoosePhase( FirstPlayerViewer firstPlayerViewer ) {
         this.firstPlayerViewer = firstPlayerViewer;
     }
@@ -41,7 +39,7 @@ public class WTerminalFirstPlayerChoosePhase extends WTerminalSubTurnViewer {
         int playerNumber;
 
         // ask request
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         System.out.println(FIRST_PLAYER_REQUEST);
         PrintFunction.printRepeatString("\n", SPACE_BETWEEN_LINES);
 
@@ -49,37 +47,32 @@ public class WTerminalFirstPlayerChoosePhase extends WTerminalSubTurnViewer {
         playerStringList = firstPlayerExecuter.getPlayerList();
         playerNumber = 1; // start add number to players from number 1
         for (String player : playerStringList) {
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
             System.out.printf( "%d: " + player + "\n", playerNumber );
             PrintFunction.printRepeatString("\n", SPACE_BETWEEN_LINES);
             playerNumber++;
         }
 
         // read response
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         System.out.print(">>");
         try {
             playerNumber = new Scanner(System.in).nextInt();
             if ( playerNumber > 0 && playerNumber <= playerStringList.size() ) {
                 firstPlayerExecuter.set( playerStringList.get(playerNumber - 1 ) );
                 try {
-                    firstPlayerExecuter.doIt();
                     chosen = true;
+                    firstPlayerExecuter.doIt();
                 } catch (CannotSendEventException e) {
-                    PrintFunction.printRepeatString("\n", SPACE_BETWEEN_LINES);
-                    PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                    System.out.printf(">< " + "%s", e.toString());
+                    PrintFunction.printError(e.getErrorMessage());
                 }
             } else {
-                PrintFunction.printRepeatString("\n", SPACE_BETWEEN_LINES);
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.print(">< " + WRONG_NUMBER_MESSAGE);
+                PrintFunction.printError(WRONG_NUMBER_MESSAGE);
             }
         } catch (InputMismatchException e) {
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", SPACE_BETWEEN_LINES);
-            CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE );
-            System.out.print("><" + WRONG_INPUT_TYPE_MESSAGE);
+            PrintFunction.printError(WRONG_INPUT_TYPE_MESSAGE);
         }
+
 
         return  chosen;
 
@@ -94,8 +87,6 @@ public class WTerminalFirstPlayerChoosePhase extends WTerminalSubTurnViewer {
 
         while (!chosen) {
 
-            //PrintFunction.printRepeatString("\n", 2);
-            //todo: maybe add private method to see an image
             PrintFunction.printRepeatString("\n", 2);
             chosen = this.firstPLayerRequest();
             PrintFunction.printRepeatString("\n", 2);

@@ -39,7 +39,7 @@ public interface CLIPrintFunction {
     static void printCheck(String checkMessage) {
         System.out.println();
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
-        System.out.println( ERROR_COLOR_AND_SYMBOL + checkMessage + ANSIStyle.RESET);
+        System.out.println( CORRECT_COLOR_AND_SYMBOL + checkMessage + ANSIStyle.RESET);
         System.out.println();
         try {
             Thread.sleep(MESSAGE_SLEEP_TIME);

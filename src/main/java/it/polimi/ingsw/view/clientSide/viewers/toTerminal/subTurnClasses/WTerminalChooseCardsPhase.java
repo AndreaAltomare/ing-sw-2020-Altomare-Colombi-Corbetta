@@ -5,6 +5,7 @@ import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.CardsChoosingExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.GodSymbols;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.Symbols;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.SymbolsLevel;
@@ -27,7 +28,6 @@ public class WTerminalChooseCardsPhase extends WTerminalSubTurnViewer {
     private CardSelection cardSelection;
     private List<ViewCard> selectedCards= new ArrayList<>();
 
-    private final int STARTING_SPACE = 7;
     private final int SELECTION_SPACE = Symbols.SELECTION_LEFT.getUpRepresentation().length() + 2;
     private final int GOD_SYMBOL_SPACE = GodSymbols.getMaxRepresentationLength() + 2;
     private final int GOD_NAME_SPACE = GodSymbols.getMaxNameLength() + 2;
@@ -57,7 +57,7 @@ public class WTerminalChooseCardsPhase extends WTerminalSubTurnViewer {
         int cardNumber = 1;
 
         System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         System.out.println("Card List:");
         for (ViewCard viewCard : cardSelection.getCardList()) {
 
@@ -66,7 +66,7 @@ public class WTerminalChooseCardsPhase extends WTerminalSubTurnViewer {
 
                 System.out.println();
                 // first line
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
+                PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
                 PrintFunction.printAtTheMiddle( this.checkLeftSelect(viewCard, SymbolsLevel.UP), SELECTION_SPACE );
                 System.out.print(" ");
                 PrintFunction.printAtTheMiddle( godSymbols.getUpRepresentation(), GOD_SYMBOL_SPACE );
@@ -74,7 +74,7 @@ public class WTerminalChooseCardsPhase extends WTerminalSubTurnViewer {
                 PrintFunction.printAtTheMiddle( this.checkRightSelect(viewCard, SymbolsLevel.UP), SELECTION_SPACE);
                 System.out.println();
                 // second line
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
+                PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
                 PrintFunction.printAtTheMiddle( this.checkLeftSelect(viewCard, SymbolsLevel.MIDDLE), SELECTION_SPACE );
                 System.out.print(" ");
                 PrintFunction.printAtTheMiddle( godSymbols.getMiddleRepresentation(), GOD_SYMBOL_SPACE );
@@ -82,7 +82,7 @@ public class WTerminalChooseCardsPhase extends WTerminalSubTurnViewer {
                 PrintFunction.printAtTheMiddle( this.checkRightSelect(viewCard, SymbolsLevel.MIDDLE), SELECTION_SPACE);
                 System.out.println();
                 // third line
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
+                PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
                 PrintFunction.printAtTheMiddle( this.checkLeftSelect(viewCard, SymbolsLevel.DOWN), SELECTION_SPACE );
                 System.out.printf("%d", cardNumber);
                 PrintFunction.printAtTheMiddle( godSymbols.getDownRepresentation(), GOD_SYMBOL_SPACE );
@@ -92,8 +92,7 @@ public class WTerminalChooseCardsPhase extends WTerminalSubTurnViewer {
 
                 cardNumber++;
 
-            } catch (NotFoundException e) {
-                e.printStackTrace();
+            } catch (NotFoundException | NullPointerException ignored) {
             }
 
         }
@@ -166,24 +165,25 @@ public class WTerminalChooseCardsPhase extends WTerminalSubTurnViewer {
      * @return
      */
     private int showGodRequest() {
+        final String REQUEST_MESSAGE = "Please, insert the number of god which you want to see:";
+        final String WRONG_NUMBER_MESSAGE = "The chosen number isn't in the list, please change it";
+        final String WRONG_VALUE_MESSAGE = "The chosen value isn't correct, please change it";
         int numberSelected;
 
         System.out.println();
         do {
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("Please, insert the number of god which you want to see:");
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
+            System.out.println(REQUEST_MESSAGE);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
             System.out.print(">>");
             try {
                 numberSelected = new Scanner(System.in).nextInt();
                 if ( (numberSelected <= 0 || numberSelected > cardSelection.getCardList().size()) ) {
-                    PrintFunction.printRepeatString(" ", STARTING_SPACE );
-                    System.out.println(">< The chosen number isn't in the list, please change it");
+                    PrintFunction.printError(WRONG_NUMBER_MESSAGE);
                 }
             } catch (InputMismatchException e) {
                 numberSelected = -1;
-                PrintFunction.printRepeatString(" ", STARTING_SPACE );
-                System.out.println(">< The chosen value isn't correct, please change it");
+                PrintFunction.printError(WRONG_VALUE_MESSAGE);
             }
         } while ( (numberSelected <= 0 || numberSelected > cardSelection.getCardList().size() ));
         System.out.println();
@@ -205,17 +205,15 @@ public class WTerminalChooseCardsPhase extends WTerminalSubTurnViewer {
             System.out.println();
             seeCard = cardSelection.getCardList().get(godCardNumber - 1);
             do {
-                //todo:maybe add god's symbol
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
+                PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
                 System.out.printf("Name: %s\n\n", seeCard.getName());
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
+                PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
                 System.out.printf("Epithet: %s\n\n", seeCard.getEpiteth());
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
+                PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
                 System.out.printf("Description: %s\n\n", seeCard.getDescription());
                 response = this.SelOrDeselRequest(seeCard);
             } while ( !response );
-        } catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();
+        } catch (IndexOutOfBoundsException ignored) {
         }
         System.out.println();
     }
@@ -226,22 +224,23 @@ public class WTerminalChooseCardsPhase extends WTerminalSubTurnViewer {
      * @return
      */
     private boolean SelOrDeselRequest( ViewCard viewCard) {
-        final String selectionRequest = "Do you want to select it?";
-        final String deselectionRequest = "Do you want to deselect it?";
-        final String inputChoose = ">>( 0: No/ 1: Yes ):";
+        final String SELECTION_REQUEST = "Do you want to select it?";
+        final String DESELECTION_REQUEST = "Do you want to deselect it?";
+        final String INPUT_CHOOSE = "( 0: No/ 1: Yes ):";
+        final String WRONG_VALUE_MESSAGE = "The chosen value isn't correct, please change it";
         boolean response;
         int intResponse;
 
         System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         if ( selectedCards.contains(viewCard) ) {
-            System.out.println( deselectionRequest );
+            System.out.println( DESELECTION_REQUEST );
         } else {
-            System.out.println( selectionRequest );
+            System.out.println( SELECTION_REQUEST );
         }
 
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-        System.out.print( inputChoose );
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
+        System.out.print( INPUT_CHOOSE );
         try {
             intResponse = new Scanner( System.in ).nextInt();
         } catch ( InputMismatchException e) {
@@ -257,8 +256,7 @@ public class WTerminalChooseCardsPhase extends WTerminalSubTurnViewer {
                 }
             } else {
                 response = false;
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.println( ">< The chosen value isn't correct, please change it");
+                PrintFunction.printError(WRONG_VALUE_MESSAGE);
             }
         } else {
             response = true;
@@ -270,41 +268,30 @@ public class WTerminalChooseCardsPhase extends WTerminalSubTurnViewer {
     }
 
     /**
-     * Prints a waiting message to players who can't choose
-     */
-    private void showWaitMessage() {
-        System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-        System.out.println("A player is choosing the cards, please wait");
-        System.out.println();
-        //todo: maybe to do an little animation like in CLIWaitingStatus
-    }
-
-    /**
      * Understands and shows the correct phase for each player using some private methods, then uses executur to send
      * message when there are
      */
     @Override
     public void show() {
+        final String ALL_RIGHT_MESSAGE = "The cards' list is correctly send";
+        String wrongSendSetMessage = "The card request isn't correctly set";
 
-        System.out.println();
-        System.out.println();
-        if ( true ) {//if ( viewSubTurn.isMyTurn() ) { todo:check it
-            this.showChooseInterface();
-            for (ViewCard viewCard : selectedCards) {
-                try {
-                    cardsChoosingExecuter.add(viewCard);
-                } catch (WrongParametersException e) {
-                    e.printStackTrace();
+        PrintFunction.printRepeatString("\n", 2);
+        this.showChooseInterface();
+        for (ViewCard viewCard : selectedCards) {
+            try {
+                cardsChoosingExecuter.add(viewCard);
+            } catch (WrongParametersException e) {
+                if (!e.getMessage().equals("")) {
+                    PrintFunction.printError(wrongSendSetMessage);
                 }
             }
-            try {
-                cardsChoosingExecuter.doIt();
-            } catch (CannotSendEventException e) {
-                e.printStackTrace();
-            }
-        } else {
-            this.showWaitMessage();
+        }
+        try {
+            cardsChoosingExecuter.doIt();
+            PrintFunction.printCheck(ALL_RIGHT_MESSAGE);
+        } catch (CannotSendEventException e) {
+            PrintFunction.printError(e.getErrorMessage());
         }
         System.out.println();
     }

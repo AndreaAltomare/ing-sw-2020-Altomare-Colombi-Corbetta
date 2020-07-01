@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.clientSide.viewers.toTerminal.statusClasses;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetPlayerNumberExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.NumberPlayerViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
@@ -15,7 +16,6 @@ public class WTerminalNumberPlayerViewer extends WTerminalStatusViewer {
 
     private NumberPlayerViewer numberPlayerViewer;
 
-    final int START_SPACE = 5;
     final int DISTANCE_IN_BLOCK = 2;
     final String WORDS_FIRST_BLOCK = "How many";
     final String WORDS_SECOND_BLOCK = "Players?";
@@ -41,24 +41,24 @@ public class WTerminalNumberPlayerViewer extends WTerminalStatusViewer {
     private void showFirstRequestPart(){
 
         // block's upper edge
-        PrintFunction.printRepeatString(" ", START_SPACE + 1);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE + 1);
         PrintFunction.printRepeatString("_", WORDS_FIRST_BLOCK.length() + 2*DISTANCE_IN_BLOCK);
         System.out.println();
 
         //head and arm
-        PrintFunction.printRepeatString(" ", START_SPACE - 3);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE - 3);
         System.out.print("\\O/|");
         PrintFunction.printRepeatString(" ", WORDS_FIRST_BLOCK.length() + 2*DISTANCE_IN_BLOCK);
         System.out.println("|");
 
         //request's first part
-        PrintFunction.printRepeatString(" ", START_SPACE - 2);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE - 2);
         System.out.print("\\ |");
         PrintFunction.printAtTheMiddle(WORDS_FIRST_BLOCK, WORDS_FIRST_BLOCK.length() + 2*DISTANCE_IN_BLOCK);
         System.out.println("|");
 
         // leg and block's down edge and second block's upper edge
-        PrintFunction.printRepeatString(" ", START_SPACE - 1);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE - 1);
         System.out.print("\\|");
         PrintFunction.printRepeatString("_", WORDS_FIRST_BLOCK.length() + 2*DISTANCE_IN_BLOCK);
         System.out.print("|");
@@ -81,25 +81,25 @@ public class WTerminalNumberPlayerViewer extends WTerminalStatusViewer {
 
 
         // free part of block over second request's part
-        PrintFunction.printRepeatString(" ", START_SPACE + 3);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE + 3);
         System.out.print("|");
         PrintFunction.printRepeatString(" ", WORDS_SECOND_BLOCK.length() + 2*DISTANCE_IN_BLOCK);
         System.out.println("|");
 
         // heads and second words
-        PrintFunction.printRepeatString(" ", START_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         System.out.print(" O |");
         PrintFunction.printAtTheMiddle(WORDS_SECOND_BLOCK, WORDS_SECOND_BLOCK.length() + 2*DISTANCE_IN_BLOCK);
         System.out.println("| O ");
 
         // bodies
-        PrintFunction.printRepeatString(" ", START_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         System.out.print(" |\\|");
         PrintFunction.printRepeatString("_", WORDS_SECOND_BLOCK.length() + 2*DISTANCE_IN_BLOCK);
         System.out.println("|/| ");
 
         // legs
-        PrintFunction.printRepeatString(" ", START_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         System.out.print("/ \\");
         PrintFunction.printRepeatString(" ", WORDS_SECOND_BLOCK.length() + 2*DISTANCE_IN_BLOCK + 2);
         System.out.println("/ \\");
@@ -120,7 +120,7 @@ public class WTerminalNumberPlayerViewer extends WTerminalStatusViewer {
         int response; //set -1 when the response isn't an int
         Scanner input = new Scanner( System.in );
 
-        PrintFunction.printRepeatString(" ", START_SPACE + 2 +DISTANCE_IN_BLOCK - (SPECIFIC_REQUEST.length() + 1)/2);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE + 2 + DISTANCE_IN_BLOCK - (SPECIFIC_REQUEST.length() + 1)/2);
         System.out.print( ">>" + SPECIFIC_REQUEST );
         try {
             response = input.nextInt();
@@ -139,31 +139,30 @@ public class WTerminalNumberPlayerViewer extends WTerminalStatusViewer {
      * @return boolean value ( true => correct number, false wrong number )
      */
     private boolean checkNumberOfPlayersResponse(int response ) {
+        final String CORRECT_MESSAGE = "The number of players is correctly send";
+        final String WRONG_PARAMETER_MESSAGE = "The insert value isn't an acceptable positive integer number, please change it";
+        String wrongNumberMessage = "Number of player chosen is not valid, please change it";
+
         boolean approvedResponse = false;
         SetPlayerNumberExecuter setPlayerNumberExecuter = (SetPlayerNumberExecuter) numberPlayerViewer.getMyExecuters().get("NumberPlayers");
 
         if (response < 0) {
-            System.out.println( "\n\t" +
-                                ">< The insert value isn't an acceptable positive integer number,\n" +
-                                "\t   please change it");
+            CLIPrintFunction.printError(WRONG_PARAMETER_MESSAGE);
         } else {
             try {
                 setPlayerNumberExecuter.setNumberOfPlayers( response );
-                setPlayerNumberExecuter.doIt();
-                System.out.println( "\n\t" +
-                                    "  /" + "\n\t" +
-                                    "\\/ The number of players is correctly set");
                 approvedResponse = true;
+                setPlayerNumberExecuter.doIt();
+                CLIPrintFunction.printCheck(CORRECT_MESSAGE);
             } catch (WrongParametersException e) {
-                System.out.println( "\n\t" +
-                                    ">< Number of player chosen is not valid, please change it");
-               } catch (CannotSendEventException e) {
-                System.out.printf(  "\n\t" +
-                                    ">< %s" +
-                                    "\n", e.toString());
-               }
-        }
-        System.out.println();
+                if (!e.getMessage().equals("")) {
+                    wrongNumberMessage = e.getMessage();
+                }
+                CLIPrintFunction.printError(wrongNumberMessage);
+            } catch (CannotSendEventException e) {
+                CLIPrintFunction.printError(e.getErrorMessage());
+            }
+        }System.out.println();
 
 
         return approvedResponse;
@@ -180,12 +179,12 @@ public class WTerminalNumberPlayerViewer extends WTerminalStatusViewer {
         boolean end = false;
 
         while (!end) {
-            System.out.println();
-            System.out.println();
+            PrintFunction.printRepeatString("\n", 2);
             this.showFirstRequestPart();
             this.showSecondRequestPart();
             players = this.getNumberOfPlayersResponse();
             end = this.checkNumberOfPlayersResponse(players);
+            PrintFunction.printRepeatString("\n", 2);
         }
 
     }

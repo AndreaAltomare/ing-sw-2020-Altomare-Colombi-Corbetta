@@ -137,10 +137,10 @@ public abstract class CLISubTurnViewer implements SpecificSubTurnViewer {
     }
 
     /**
-     * Tries to change subTurn in MOVE and returns true if it can, or false if it can't
+     * Tries to change subTurn and returns true if it can, or false if it can't
      * @return
      */
-    public boolean changePlayningPhase( ViewSubTurn viewSubTurn) {
+    public boolean changePlayingPhase(ViewSubTurn viewSubTurn) {
         final String CORRECT_CHANGE_PHASE_MESSAGE = "Your change turn request is correctly send";
         String wrongSetMessage = "The request isn't correctly set";
 

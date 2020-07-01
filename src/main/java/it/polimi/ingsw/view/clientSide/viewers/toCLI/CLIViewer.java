@@ -177,7 +177,6 @@ public class CLIViewer extends Viewer{
             }
         } else {
             CLIPrintFunction.printCheck(UNDO_REJECT_MESSAGE);
-            System.out.println("[CLIMessage]: time over, play continues"); //todo:remove after testing
             try {
                 Thread.sleep(750);
             } catch (InterruptedException ignored) {

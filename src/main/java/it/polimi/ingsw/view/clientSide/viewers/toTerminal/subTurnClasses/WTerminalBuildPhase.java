@@ -5,6 +5,7 @@ import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.BuildB
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.NextTurnExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.TurnStatusChangeExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
+import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.BuildViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
@@ -23,10 +24,6 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
 
     private BuildViewer buildViewer;
 
-    private final int STARTING_SPACE = 7;
-    private final int DIRECTION_SPACE = 15;
-    private final int PLACEABLE_SPACE = 7;
-
     public WTerminalBuildPhase(BuildViewer buildViewer) {
         this.buildViewer = buildViewer;
     }
@@ -39,6 +36,13 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
      * @return
      */
     private boolean showBuildRequest() {
+        final int DIRECTION_SPACE = 15;
+        final String DIRECTION_REQUEST = "Please, select a direction to build:";
+        final String CORRECT_MESSAGE = "Your built request is correctly send";
+        final String WRONG_DIRECTION_MESSAGE = "The selected direction doesn't exist";
+        final String WRONG_VALUE_MESSAGE = "The chosen value isn't correct";
+        final String OUT_OF_BOARD_MESSAGE = "The cell in selected direction doesn't exist";
+        String wrongSetExecutorMessage = "Build request isn't correct";
         int directionResponse;
         ViewCell selectedCell;
         String pLaceableToBuild;
@@ -49,34 +53,15 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
 
         if ( pLaceableToBuild != null) {
             System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("Please, select a direction to build:");
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
+            System.out.println(DIRECTION_REQUEST);
 
             System.out.println();
-            //first line
-            System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            PrintFunction.printAtTheMiddle("7: North-West", DIRECTION_SPACE);
-            PrintFunction.printAtTheMiddle("8: North", DIRECTION_SPACE);
-            PrintFunction.printAtTheMiddle("9: North-Est", DIRECTION_SPACE);
-            System.out.println();
-            //second line
-            System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            PrintFunction.printAtTheMiddle("4: West", DIRECTION_SPACE);
-            PrintFunction.printRepeatString(" ", DIRECTION_SPACE);
-            PrintFunction.printAtTheMiddle("6: Est", DIRECTION_SPACE);
-            System.out.println();
-            //third line
-            System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            PrintFunction.printAtTheMiddle("1: South-West", DIRECTION_SPACE);
-            PrintFunction.printAtTheMiddle("2: South", DIRECTION_SPACE);
-            PrintFunction.printAtTheMiddle("3: South-Est", DIRECTION_SPACE);
-            System.out.println();
+
+            this.printDirection();
 
             System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
             System.out.print(">>");
             try {
                 directionResponse = new Scanner(System.in).nextInt();
@@ -85,23 +70,23 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
                     buildBlockExecuter.setWorkerId(ViewWorker.getSelected());
                     buildBlockExecuter.setCell(selectedCell);
                     buildBlockExecuter.setPlaceable(pLaceableToBuild);
-                    buildBlockExecuter.doIt();
                     correctResponse = true;
+                    buildBlockExecuter.doIt();
+                    PrintFunction.printCheck(CORRECT_MESSAGE);
                 } else {
-                    System.out.println();
-                    PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                    System.out.print(">< The selected direction doesn't exist\n");
+                    PrintFunction.printError(WRONG_DIRECTION_MESSAGE);
                 }
             } catch (InputMismatchException e) {
-                System.out.println();
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.print(">< The chosen value isn't correct\n");
+                PrintFunction.printError(WRONG_VALUE_MESSAGE);
             } catch (NotFoundException e) {
-                System.out.println();
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.print(">< The cell in selected direction doesn't exist\n");
-            } catch (WrongParametersException | CannotSendEventException e) {
-                e.printStackTrace();
+                PrintFunction.printError(OUT_OF_BOARD_MESSAGE);
+            } catch (WrongParametersException e) {
+                if (!e.getMessage().equals("")) {
+                    wrongSetExecutorMessage = e.getMessage();
+                }
+                PrintFunction.printError(wrongSetExecutorMessage);
+            } catch (CannotSendEventException e) {
+                PrintFunction.printError(e.getErrorMessage());
             }
         }
 
@@ -114,39 +99,40 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
      * @return
      */
     private String typeBlockRequest() {
+        final int PLACEABLE_SPACE = 7;
+        final String BLOCK_TYPE_REQUEST = "Please, select what type of block you want to choose:";
+        final String WRONG_TYPE_MESSAGE = "The chosen block's type doesn't exist";
+        final String WRONG_VALUE_MESSAGE = "The chosen value isn't correct";
         String blockType = null;
         int typeSelected;
 
         System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-        System.out.println("Please, select what type of block you want to choose:");
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
+        System.out.println(BLOCK_TYPE_REQUEST);
 
-        System.out.println();
         //block: first line
         System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE + 2);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE + 2);
         PrintFunction.printAtTheMiddle( Symbols.BLOCK.getUpRepresentation() , PLACEABLE_SPACE);
         //block: second line
         System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         System.out.print("1:");
         PrintFunction.printAtTheMiddle( Symbols.BLOCK.getMiddleRepresentation() , PLACEABLE_SPACE);
 
-        System.out.println();
-
         //dome: first line
         System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE + 2);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE + 2);
         PrintFunction.printAtTheMiddle( Symbols.DOME.getUpRepresentation() , PLACEABLE_SPACE);
         //block: second line
         System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         System.out.print("2:");
         PrintFunction.printAtTheMiddle( Symbols.DOME.getMiddleRepresentation() , PLACEABLE_SPACE);
         System.out.println();
 
         System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         System.out.print(">>");
         try {
             typeSelected = new Scanner(System.in).nextInt();
@@ -158,86 +144,14 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
                     blockType = "DOME";
                     break;
                 default:
-                    System.out.println();
-                    PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                    System.out.print(">< The chosen block's type doesn't exist\n");
+                    PrintFunction.printError(WRONG_TYPE_MESSAGE);
             }
         } catch (InputMismatchException e) {
-            System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.print(">< The chosen value isn't correct\n");
+            PrintFunction.printError(WRONG_VALUE_MESSAGE);
         }
+
 
         return  blockType;
-    }
-
-    /**
-     * Calculates the cell at chosen direction and returns it if it is possible, returns null if the direction isn't correct
-     * and trow a NotFoundException if the cell isn't on the board ( or the select worker isn't on the board )
-     * @param direction
-     * @return
-     * @throws NotFoundException
-     */
-    private ViewCell calculateNextCell(int direction ) throws NotFoundException {
-        ViewCell selectedCell = null;
-        int workerRow;
-        int workerColumn;
-
-        workerRow = ViewWorker.getSelected().getPosition().getX();
-        workerColumn = ViewWorker.getSelected().getPosition().getY();
-
-        switch (direction) {
-            case 7:
-                selectedCell = ViewBoard.getBoard().getCellAt(workerRow - 1, workerColumn - 1);
-                break;
-            case 8:
-                selectedCell = ViewBoard.getBoard().getCellAt(workerRow - 1, workerColumn );
-                break;
-            case 9:
-                selectedCell = ViewBoard.getBoard().getCellAt(workerRow - 1, workerColumn + 1);
-                break;
-            case 4:
-                selectedCell = ViewBoard.getBoard().getCellAt( workerRow , workerColumn - 1);
-                break;
-            case 6:
-                selectedCell = ViewBoard.getBoard().getCellAt( workerRow , workerColumn + 1);
-                break;
-            case 1:
-                selectedCell = ViewBoard.getBoard().getCellAt( workerRow + 1, workerColumn - 1);
-                break;
-            case 2:
-                selectedCell = ViewBoard.getBoard().getCellAt( workerRow + 1, workerColumn );
-                break;
-            case 3:
-                selectedCell = ViewBoard.getBoard().getCellAt( workerRow + 1, workerColumn + 1);
-                break;
-            case 5:
-            default:
-                ;
-        }
-
-        return selectedCell;
-
-    }
-
-    /**
-     * Tries to change subTurn in MOVE and returns true if it can, or false if it can't
-     * @return
-     */
-    private boolean toMovePhase() {
-        boolean changePhase = false;
-        TurnStatusChangeExecuter turnStatusChangeExecuter = new TurnStatusChangeExecuter();
-
-        try {
-            turnStatusChangeExecuter.setStatusId( ViewSubTurn.MOVE );
-            turnStatusChangeExecuter.doIt();
-            changePhase = true;
-        } catch (WrongParametersException | CannotSendEventException e) {
-            e.printStackTrace();
-        }
-
-        return changePhase;
-
     }
 
     /**
@@ -249,13 +163,12 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
         boolean endTurn = false;
 
         try {
-            nextTurnExecuter.doIt();
             endTurn = true;
+            nextTurnExecuter.doIt();
         } catch (CannotSendEventException e) {
-            e.printStackTrace(); //todo: delete after testing
+            PrintFunction.printError(e.getErrorMessage());
         }
         PrintFunction.printRepeatString("\n", 2);
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
 
 
 
@@ -268,12 +181,18 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
      */
     @Override
     public void show() {
+        final String COMMAND_REQUEST = "Please, select a command:";
+        final String GODS_DETAILS_COMMAND = "Print all gods' details";
+        final String BUILD_COMMAND = "Build";
+        final String TO_MOVE_PHASE_COMMAND = "Go to Move Phase";
+        final String END_TURN_COMMAND = "End Turn";
+        final String EXIT_COMMAND = "Exit from the game";
+        final String WRONG_COMMAND_MESSAGE = "The chosen command doesn't exist, please change it";
         boolean endBuild = false;
         int actionSelected;
 
         while ( !endBuild ) {
-            System.out.println();
-            System.out.println();
+            PrintFunction.printRepeatString("\n", 2);
 
             try {
                 ViewBoard.getBoard().toWTerminal();
@@ -281,45 +200,46 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
                 break;  //exit from state if there isn't the board
             }
 
-            System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("Please, select a command:");
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("1: Print all gods' details");
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("2: Build");
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("3: Go to Move Phase");
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("4: End Turn");
+            PrintFunction.printRepeatString(" ", CLIPrintFunction.STARTING_SPACE);
+            System.out.println(COMMAND_REQUEST);
+            PrintFunction.printRepeatString(" ", CLIPrintFunction.STARTING_SPACE);
+            System.out.println("1: " +  GODS_DETAILS_COMMAND );
+            PrintFunction.printRepeatString(" ", CLIPrintFunction.STARTING_SPACE);
+            System.out.println("2: " + BUILD_COMMAND);
+            PrintFunction.printRepeatString( " ", CLIPrintFunction.STARTING_SPACE);
+            System.out.println("3: " + TO_MOVE_PHASE_COMMAND);
+            PrintFunction.printRepeatString(" ", CLIPrintFunction.STARTING_SPACE);
+            System.out.println("4: " + END_TURN_COMMAND);
+            PrintFunction.printRepeatString(" ", CLIPrintFunction.STARTING_SPACE);
+            System.out.println("5: " + EXIT_COMMAND);
 
             System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
+            PrintFunction.printRepeatString(" ", CLIPrintFunction.STARTING_SPACE);
             System.out.print(">>");
             try {
                 actionSelected = new Scanner(System.in).nextInt();
                 switch (actionSelected) {
                     case 1:
-                        this.showCardsDetails(STARTING_SPACE);
+                        this.showCardsDetails(true);
                         break;
                     case 2:
                         endBuild = this.showBuildRequest();
                         break;
                     case 3:
-                        endBuild = this.toMovePhase();
+                        endBuild = this.changePlayingPhase(ViewSubTurn.MOVE);
                         break;
                     case 4:
                         endBuild = this.endTurn();
                         break;
+                    case 5:
+                        endBuild = true;
+                        Viewer.exitAll();
+                        break;
                     default:
-                        System.out.println();
-                        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                        System.out.println(">< The chosen command doesn't exist, please change it");
+                        PrintFunction.printError(WRONG_COMMAND_MESSAGE);
                 }
             } catch (InputMismatchException e) {
-                System.out.println();
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.println(">< The chosen command doesn't exist, please change it");
+                PrintFunction.printError(WRONG_COMMAND_MESSAGE);
             }
         }
     }

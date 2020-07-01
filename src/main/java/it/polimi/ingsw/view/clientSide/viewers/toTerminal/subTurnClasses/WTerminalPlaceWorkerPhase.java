@@ -4,6 +4,7 @@ import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.PlaceWorkerExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.PlaceWorkerViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.statusClasses.WTerminalGamePreparationViewer;
@@ -17,8 +18,6 @@ public class WTerminalPlaceWorkerPhase extends WTerminalSubTurnViewer {
 
     private PlaceWorkerViewer placeWorkerViewer;
 
-    private final int STARTING_SPACE = 7;
-
     public WTerminalPlaceWorkerPhase(PlaceWorkerViewer placeWorkerViewer ) {
         this.placeWorkerViewer = placeWorkerViewer;
     }
@@ -29,50 +28,53 @@ public class WTerminalPlaceWorkerPhase extends WTerminalSubTurnViewer {
      * @return
      */
     private boolean placeWorkerRequest(int workerToPlace) {
+        final String REQUEST = "Please, choose the cell where place your worker:";
+        final String WRONG_VALUE_MESSAGE = "The chosen value isn't correct, please change it";
+        final String CORRECT_PLACE = "Your place request is correctly sent";
+        String outOfBoardMessage = "The cell chosen is out of board, please change it";
+
         PlaceWorkerExecuter placeWorkerExecuter = (PlaceWorkerExecuter) placeWorkerViewer.getMySubTurn().getExecuter();
         boolean placed = false;
         int row;
         int column;
 
         System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         System.out.printf("You have %d worker to place\n", workerToPlace);
         System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-        System.out.print("Please, choose the cell where place your worker\n");
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
+        System.out.println(REQUEST);
 
         try {
             System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
             System.out.print(">>Row:");
             row = new Scanner( System.in ).nextInt();
             System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
             System.out.print(">>Column:");
             column = new Scanner( System.in ).nextInt();
             if ( row < 0 || row > ViewBoard.getBoard().getXDim() || column < 0 || column > ViewBoard.getBoard().getYDim() ) {
-                System.out.println();
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.print(">< The cell chosen is out of board, please change it\n");
+                PrintFunction.printError(outOfBoardMessage);
             } else {
                 placeWorkerExecuter.clear();
                 try {
                     placeWorkerExecuter.setCell(row, column);
-                    placeWorkerExecuter.doIt();
                     placed = true;
+                    placeWorkerExecuter.doIt();
+                    PrintFunction.printCheck(CORRECT_PLACE);
                 } catch (WrongParametersException e) {
-                    System.out.println();
-                    PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                    System.out.print(">< The cell chosen is out of board, please change it\n");
+                    if (!e.getMessage().equals("")) {
+                        outOfBoardMessage = e.getMessage();
+                    }
+                    PrintFunction.printError(outOfBoardMessage);
                 } catch (CannotSendEventException e) {
-                    e.printStackTrace();
+                    PrintFunction.printError(e.getErrorMessage());
                 }
 
             }
         } catch (InputMismatchException e) {
-            System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.print(">< The chosen value isn't correct, please change it\n");
+            PrintFunction.printError(WRONG_VALUE_MESSAGE);
         }
         System.out.println();
 
@@ -90,8 +92,7 @@ public class WTerminalPlaceWorkerPhase extends WTerminalSubTurnViewer {
         int maxWorkers = 1;
 
         while ( placedNumber < maxWorkers) {
-            System.out.println();
-            System.out.println();
+            PrintFunction.printRepeatString("\n", PrintFunction.STARTING_SPACE);
 
             try {
                 ViewBoard.getBoard().toWTerminal();

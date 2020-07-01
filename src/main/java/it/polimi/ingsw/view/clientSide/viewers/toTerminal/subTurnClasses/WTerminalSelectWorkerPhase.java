@@ -4,6 +4,8 @@ import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SelectWorkerExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.SelectWorkerViewer;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.SymbolsLevel;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
@@ -19,11 +21,7 @@ import java.util.Scanner;
 
 public class WTerminalSelectWorkerPhase extends WTerminalSubTurnViewer {
 
-    private WTerminalPlayingViewer myWTerminalStatusViewer = null;
     private SelectWorkerViewer selectWorkerViewer;
-
-    private final int STARTING_SPACE = 7;
-    private final int WORKER_SPACE = 5;
 
     public WTerminalSelectWorkerPhase(SelectWorkerViewer selectWorkerViewer) {
         this.selectWorkerViewer = selectWorkerViewer;
@@ -34,12 +32,16 @@ public class WTerminalSelectWorkerPhase extends WTerminalSubTurnViewer {
      */
     @Override
     public void show() {
+        final String COMMAND_REQUEST = "Please, select a command:";
+        final String DETAILS_GODS_COMMAND = "Print all gods' details";
+        final String SELECT_WORKER_COMMAND = "Select worker";
+        final String WRONG_COMMAND_MESSAGE = "The chosen command doesn't exist, please change it";
+
         boolean selected = false;
         int actionSelected;
 
         while ( !selected ) {
-            System.out.println();
-            System.out.println();
+            PrintFunction.printRepeatString("\n", 2);
 
             try {
                 ViewBoard.getBoard().toWTerminal();
@@ -48,59 +50,30 @@ public class WTerminalSelectWorkerPhase extends WTerminalSubTurnViewer {
             }
 
             System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("Please, select a command:");
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("1: Print all gods' details");
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.println("2: Select worker");
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
+            System.out.println(COMMAND_REQUEST);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
+            System.out.println("1: " + DETAILS_GODS_COMMAND);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
+            System.out.println("2: " + SELECT_WORKER_COMMAND);
 
             System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
             System.out.print(">>");
             try {
                 actionSelected = new Scanner(System.in).nextInt();
                 switch ( actionSelected ) {
                     case 1:
-                        this.showCardsDetails();
+                        this.showCardsDetails(false);
                         break;
                     case 2:
                         selected = this.showSelectRequest();
                         break;
                     default:
-                        System.out.println();
-                        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                        System.out.println(">< The chosen command doesn't exist, please change it");
+                        PrintFunction.printError(WRONG_COMMAND_MESSAGE);
                 }
             } catch (InputMismatchException e) {
-                System.out.println();
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.println(">< The chosen command doesn't exist, please change it");
-            }
-        }
-
-    }
-
-    /**
-     * Prints the Name, Epithet and Description of all the player's God
-     */
-    private void showCardsDetails () {
-        ViewCard viewCard;
-
-        for ( ViewPlayer viewPlayer : ViewPlayer.getPlayerList() ) {
-            System.out.println();
-            System.out.println();
-            try {
-                viewCard = viewPlayer.getCard();
-                //todo:maybe add god's symbol
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Name: %s\n", viewCard.getName());
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Epithet: %s\n", viewCard.getEpiteth());
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                System.out.printf("Description: %s\n", viewCard.getDescription());
-            } catch (NotFoundException e) {
-                e.printStackTrace();
+                PrintFunction.printError(WRONG_COMMAND_MESSAGE);
             }
         }
 
@@ -111,6 +84,12 @@ public class WTerminalSelectWorkerPhase extends WTerminalSubTurnViewer {
      * @return
      */
     private boolean showSelectRequest() {
+        final String REQUEST = "Please, choose your worker:";
+        final String CORRECT_MESSAGE = "The select request is correctly sent";
+        final String WRONG_WORKER_MESSAGE = "The chosen value isn't a valid worker's number";
+        final String WRONG_VALUE_MESSAGE = "The chosen value isn't correct";
+        String wrongSetMessage = "Your worker isn't correctly set";
+
         boolean isSelected = false;
         int worker;
         int workerNumber = 1;
@@ -120,8 +99,8 @@ public class WTerminalSelectWorkerPhase extends WTerminalSubTurnViewer {
 
         System.out.println();
         System.out.println();
-        PrintFunction.printRepeatString(" ", STARTING_SPACE);
-        System.out.println("Please, choose your worker:");
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
+        System.out.println(REQUEST);
 
         try {
             if (ViewNickname.getMyNickname() != null ) {
@@ -132,26 +111,30 @@ public class WTerminalSelectWorkerPhase extends WTerminalSubTurnViewer {
                     workerNumber++;
                 }
                 System.out.println();
-                PrintFunction.printRepeatString(" ", STARTING_SPACE);
+                PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
                 System.out.print(">>");
                 worker = new Scanner( System.in ).nextInt();
                 if ( worker > 0 && worker < workerNumber) {
                     selectWorkerExecuter.setWorkerId( workerList.get( worker - 1) );
-                    selectWorkerExecuter.doIt();
                     isSelected = true;
+                    selectWorkerExecuter.doIt();
+                    PrintFunction.printCheck(CORRECT_MESSAGE);
                 } else {
-                    System.out.println();
-                    PrintFunction.printRepeatString(" ", STARTING_SPACE);
-                    System.out.print(">< The chosen value isn't  a valid worker's number");
+                    PrintFunction.printError(WRONG_WORKER_MESSAGE);
                 }
             }
-        } catch (NotFoundException | WrongParametersException | CannotSendEventException e) {
-            e.printStackTrace();
+        } catch (NotFoundException ignored) {
         } catch (InputMismatchException i) {
-            System.out.println();
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
-            System.out.print(">< The chosen value isn't correct");
+            PrintFunction.printError(WRONG_VALUE_MESSAGE);
+        } catch (WrongParametersException e) {
+            if (!e.getMessage().equals("")) {
+                wrongSetMessage = e.getMessage();
+            }
+            PrintFunction.printError(wrongSetMessage);
+        }catch (CannotSendEventException e) {
+            PrintFunction.printError(e.getErrorMessage());
         }
+        PrintFunction.printRepeatString("\n", 2);
 
         return isSelected;
 
@@ -163,23 +146,23 @@ public class WTerminalSelectWorkerPhase extends WTerminalSubTurnViewer {
      * @param workerNumber
      */
     private void printWorker( ViewWorker viewWorker, int workerNumber ) {
+        final int WORKER_SPACE = 5;
 
         try {
             System.out.println();
             //first line
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
             PrintFunction.printAtTheMiddle(viewWorker.toWTerminal(SymbolsLevel.UP), WORKER_SPACE);
             System.out.printf("Worker's number: %d\n", workerNumber);
             //second line
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
             PrintFunction.printAtTheMiddle(viewWorker.toWTerminal(SymbolsLevel.MIDDLE), WORKER_SPACE);
             System.out.println();
             //third line
-            PrintFunction.printRepeatString(" ", STARTING_SPACE);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
             PrintFunction.printAtTheMiddle(viewWorker.toWTerminal(SymbolsLevel.DOWN), WORKER_SPACE);
             System.out.printf("Worker's cell: ( Row: %d ; Columns: %d )\n", viewWorker.getPosition().getX(), viewWorker.getPosition().getY());
         } catch (NotFoundException e) {
-            e.printStackTrace();
         }
 
     }

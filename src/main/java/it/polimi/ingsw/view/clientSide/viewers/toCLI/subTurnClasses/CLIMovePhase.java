@@ -2,12 +2,10 @@ package it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.MoveWorkerExecuter;
-import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.TurnStatusChangeExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.MoveViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
@@ -130,7 +128,7 @@ public class CLIMovePhase extends CLISubTurnViewer {
                         endMove = this.showMoveRequest();
                         break;
                     case 3:
-                        endMove = this.changePlayningPhase(ViewSubTurn.MOVE);
+                        endMove = this.changePlayingPhase(ViewSubTurn.MOVE);
                         break;
                     case 4:
                         endMove = true;

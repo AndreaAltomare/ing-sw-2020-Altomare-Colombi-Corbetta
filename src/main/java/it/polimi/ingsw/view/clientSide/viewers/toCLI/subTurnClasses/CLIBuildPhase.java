@@ -3,13 +3,11 @@ package it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.BuildBlockExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.NextTurnExecuter;
-import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.TurnStatusChangeExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.BuildViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.CLISymbols;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
@@ -56,6 +54,7 @@ public class CLIBuildPhase extends CLISubTurnViewer {
             System.out.println();
             CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
             System.out.println(DIRECTION_REQUEST);
+            System.out.println();
 
             this.printDirection();
 
@@ -223,7 +222,7 @@ public class CLIBuildPhase extends CLISubTurnViewer {
                         endBuild = this.showBuildRequest();
                         break;
                     case 3:
-                        endBuild = this.changePlayningPhase(ViewSubTurn.MOVE);
+                        endBuild = this.changePlayingPhase(ViewSubTurn.MOVE);
                         break;
                     case 4:
                         endBuild = this.endTurn();
