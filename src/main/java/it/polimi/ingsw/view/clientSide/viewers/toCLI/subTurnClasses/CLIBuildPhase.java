@@ -17,10 +17,26 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/**
+ * Class that represents the <code>CLISubTurnViewer</code> Build on the CLI
+ * using methods of <code>CLIPrintFunction</code>, <code>ANSIStyle</code> and <code>CLISymbols</code>
+ *
+ * @see CLISubTurnViewer
+ * @see CLIPrintFunction
+ * @see ANSIStyle
+ * @see CLISymbols
+ * @author Marco
+ */
 public class CLIBuildPhase extends CLISubTurnViewer {
 
     private BuildViewer buildViewer;
 
+    /**
+     * Constructor to set the correctly <code>SubTurnViewer</code>
+     *
+     * @see BuildViewer
+     * @param buildViewer <code>SubTurnViewer</code> linked at this class
+     */
     public CLIBuildPhase(BuildViewer buildViewer) {
         this.buildViewer = buildViewer;
     }
@@ -28,10 +44,10 @@ public class CLIBuildPhase extends CLISubTurnViewer {
 
     /**
      * Prints the request to build using a private method to choose block's type, checks the response,
-     * notifies the construction to Viewer and returns true if it is all correct,
-     * or false if it isn't ( notifies to player when the input isn't correct)
+     * notifies the construction to Viewer and returns true if the request is correctly set,
+     * or false if it isn't. Notifies to player when the result print a message
      *
-     * @return
+     * @return true if executer is correctly set, false if it isn.t
      */
     private boolean showBuildRequest() {
         final String DIRECTION_REQUEST = "Please, select a direction to build:";
@@ -92,10 +108,10 @@ public class CLIBuildPhase extends CLISubTurnViewer {
     }
 
     /**
-     * Prints the request to choose the block's type, checks the response and returns a String representing th block's type
+     * Prints the request to choose the block's type, checks the response and returns a <code>String</code> representing block's type
      * if it is correct, or null and an error message to player if it isn't
      *
-     * @return
+     * @return <code>String</code> to define the block type if the response is correct, else false
      */
     private String typeBlockRequest() {
         final String BLOCK_TYPE_REQUEST = "Please, select what type of block you want to choose:";
@@ -151,8 +167,8 @@ public class CLIBuildPhase extends CLISubTurnViewer {
     }
 
     /**
-     * Tries to close player's turn and returns true if it can, or false if it can't
-     * @return
+     * Tries to close player's turn and notifies the result with printed message
+     * @return true
      */
     private boolean endTurn() {
 
@@ -170,7 +186,7 @@ public class CLIBuildPhase extends CLISubTurnViewer {
 
     /**
      * Prints the board and a request of command and uses some private methods to execute them as long as
-     * a construction, a change status or a endTurn is correctly executed
+     * a construction, a change status or a endTurn is correctly chosen
      */
     @Override
     public void show() {
@@ -237,6 +253,7 @@ public class CLIBuildPhase extends CLISubTurnViewer {
             }
         }
 
-     }
+    }
 
 }
+

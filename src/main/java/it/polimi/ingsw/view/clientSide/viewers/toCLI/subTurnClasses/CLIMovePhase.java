@@ -15,18 +15,34 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/**
+ * Class that represents the <code>CLISubTurnViewer</code> Move on the CLI
+ * using methods of <code>CLIPrintFunction</code> and <code>ANSIStyle</code>
+ *
+ * @see CLISubTurnViewer
+ * @see CLIPrintFunction
+ * @see ANSIStyle
+ * @author Marco
+ */
 public class CLIMovePhase extends CLISubTurnViewer {
 
     private MoveViewer moveViewer;
 
+    /**
+     * Constructor to set the correctly <code>SubTurnViewer</code>
+     *
+     * @see MoveViewer
+     * @param moveViewer <code>SubTurnViewer</code> linked at this class
+     */
     public CLIMovePhase(MoveViewer moveViewer) {
         this.moveViewer = moveViewer;
     }
 
     /**
      * Prints the request to move the worker, checks the response, notifies the movement to Viewer and returns true
-     * if it is all correct, or false if it isn't ( notifies to player when the input isn't correct)
-     * @return
+     * if the response is correctly set, or false if it isn't, notifying the result with a printed message
+     *
+     * @return true if the response is correct and correctly set, else false
      */
     private boolean showMoveRequest() {
         final String DIRECTION_REQUEST = "Please, select a direction to move:";
@@ -80,7 +96,7 @@ public class CLIMovePhase extends CLISubTurnViewer {
 
     /**
      * Prints the board and a request of command and uses some private methods to execute them as long as
-     * a movement or a change status is correctly executed
+     * a movement or a change status is correctly set
      */
     @Override
     public void show() {

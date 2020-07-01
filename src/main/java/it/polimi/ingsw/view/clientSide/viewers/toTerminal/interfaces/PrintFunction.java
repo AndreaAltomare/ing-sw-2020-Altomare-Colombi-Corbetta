@@ -1,6 +1,11 @@
 package it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces;
 
 
+/**
+ * Interface with methods to help the WTerminalStatusClasses and WTerminalSubTurnCLasses to print image o message
+ *
+ * @author Marco
+ */
 public interface PrintFunction {
 
     int MESSAGE_SLEEP_TIME = 2000; // in ns
@@ -10,7 +15,7 @@ public interface PrintFunction {
      * Prints errorMessage with error symbol, then waits a few second (MESSAGE_SLEEP_TIME / 1000)
      * so the player can read it
      *
-     * @param errorMessage
+     * @param errorMessage <code>String</code> to print
      */
     static void printError(String errorMessage) {
         System.out.println();
@@ -27,7 +32,7 @@ public interface PrintFunction {
      * Prints checkMessage with check symbol, then waits a few second (MESSAGE_SLEEP_TIME / 1000)
      * so the player can read it
      *
-     * @param checkMessage
+     * @param checkMessage <code>String</code> to print
      */
     static void printCheck(String checkMessage) {
         System.out.println();
@@ -46,8 +51,8 @@ public interface PrintFunction {
      * Methods that implements a for cycle to print on standard output
      * a chosen String for a chosen number of times
      *
-     * @param string string to print
-     * @param repeatsNumber number of times to print the chosen string
+     * @param string <code>String</code> to print
+     * @param repeatsNumber number of times to print the chosen <code>String</code>
      */
     static void printRepeatString(String string, int repeatsNumber) {
         for ( int i = 0; i < repeatsNumber; i++) {
@@ -56,8 +61,10 @@ public interface PrintFunction {
     }
 
     /**
-     * Prints on standard output a String at the middle of a chosen length of space using printRepeatString
-     * @param middleString string to print
+     * Prints on standard output a String at the middle of a chosen length of space using printRepeatString.
+     * Prints middleString if middleString.length > totalLength
+     *
+     * @param middleString <code>String</code> to print
      * @param totalLength length of space where middleString id printed
      */
     static void printAtTheMiddle(String middleString, int totalLength) {

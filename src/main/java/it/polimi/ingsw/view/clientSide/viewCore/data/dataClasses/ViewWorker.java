@@ -277,9 +277,10 @@ public class ViewWorker extends ViewObject {
 
 
     /**
-     * Method that will return a String that will represent worker's representation
-     * of level chosen or a string of space if worker'representation isn't found
+     * Method which returns a <code>String</code> that will represent worker's representation in <code>Symbols</code>
+     * of level chosen or a <code>String</code> of space if worker'representation isn't found
      *
+     * @see SymbolsLevel
      * @param representationLevel part of worker's representation Symbols
      * @return String at the correct level of worker's Symbols
      */
@@ -308,9 +309,10 @@ public class ViewWorker extends ViewObject {
     }
 
     /**
-     * Method that will return a String that will represent worker's representation chosen with the workers' color found
-     * or with default color ( nothing color ) if workers' color isn't found
+     * Method which returns a <code>String</code> which represents worker's representation chosen with the workers' CLIColor
+     * found or with default color ( nothing color ) if workers' color isn't found
      *
+     * @see CLISymbols
      * @return String of worker's representation chosen with workers' color if it is found
      */
     public String toCLI(boolean head){

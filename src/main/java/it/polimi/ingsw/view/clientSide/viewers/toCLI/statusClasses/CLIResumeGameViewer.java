@@ -12,17 +12,31 @@ import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/**
+ * Class that represents the <code>CLIStatusViewer</code> ResumeGame on the CLI
+ * using methods of <code>CLIPrintFunction</code> and <code>ANSIStyle</code>
+ *
+ * @see CLIStatusViewer
+ * @see CLIPrintFunction
+ * @see ANSIStyle
+ * @author Marco
+ */
 public class CLIResumeGameViewer extends CLIStatusViewer {
 
     private RequestResumingViewer requestResumingViewer;
 
+    /**
+     * Constructor to set correct <code>StatusViewer</code>
+     *
+     * @see RequestResumingViewer
+     * @param requestResumingViewer  <code>StatusViewer</code> linked at this class
+     */
     public CLIResumeGameViewer(RequestResumingViewer requestResumingViewer) {
         this.requestResumingViewer = requestResumingViewer;
     }
 
     /**
      * Prints a little image to represent the phase
-     * example //todo: add image
      */
     private void showRestartImage() {
         final String MACHINERY_BACK_COLOR = ANSIStyle.BACK_GREY.getEscape();
@@ -73,7 +87,8 @@ public class CLIResumeGameViewer extends CLIStatusViewer {
 
     /**
      * Prints and check the restart request: returns true and do the correct command if the command selected is correct,
-     * prints a wrong message and returns false if it isn't
+     * prints a wrong message and returns false if it isn't. Notifies the result with a message printed
+     *
      * @return true if command == 1 || command == 2, else false
      */
     private boolean restartRequest() {

@@ -4,6 +4,14 @@ import it.polimi.ingsw.view.clientSide.viewers.statusViewers.WaitingViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer;
 
+/**
+ * Class that represents the <code>WTerminalStatusViewer</code> Waiting on the Windows Terminal
+ * using methods of <code>PrintFunction</code>
+ *
+ * @see WTerminalStatusViewer
+ * @see PrintFunction
+ * @author Marco
+ */
 public class WTerminalWaitingViewer extends WTerminalStatusViewer {
 
     private WaitingViewer waitingViewer;
@@ -13,8 +21,10 @@ public class WTerminalWaitingViewer extends WTerminalStatusViewer {
     final int NUMBER_OF_TIME = 3;
 
     /**
-     * Constructor to set the correct StatusViewer
-     * @param waitingViewer
+     * Constructor to set correct <code>StatusViewer</code>
+     *
+     * @see WaitingViewer
+     * @param waitingViewer  <code>StatusViewer</code> linked at this class
      */
     public WTerminalWaitingViewer(WaitingViewer waitingViewer) {
         this.waitingViewer = waitingViewer;
@@ -22,7 +32,7 @@ public class WTerminalWaitingViewer extends WTerminalStatusViewer {
 
     /**
      * Prints a message of waiting,
-     * then prints some points at regular time intervals like a waiting animation
+     * then prints some points at regular time intervals like waiting animation
      */
     @Override
     public void show() {

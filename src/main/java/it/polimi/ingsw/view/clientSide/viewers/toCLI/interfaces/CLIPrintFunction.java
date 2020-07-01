@@ -3,6 +3,11 @@ package it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
 
+/**
+ * Interface with methods to help the CLIStatusClasses and CLISubTurnCLasses to print image o message
+ *
+ * @author Marco
+ */
 public interface CLIPrintFunction {
 
     int MESSAGE_SLEEP_TIME = 2000; // in ns
@@ -16,8 +21,8 @@ public interface CLIPrintFunction {
      * Prints errorMessage with color and symbol of ERROR_COLOR_AND_SYMBOL, then waits a few second (MESSAGE_SLEEP_TIME / 1000)
      * so the player can read it
      *
-     * @param errorMessage
-     */
+     * @param errorMessage <code>String</code> to print
+     * */
     static void printError(String errorMessage) {
         System.out.println();
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
@@ -33,7 +38,7 @@ public interface CLIPrintFunction {
      * Prints checkMessage with color and symbol of CORRECT_COLOR_AND_SYMBOL, then waits a few second (MESSAGE_SLEEP_TIME / 1000)
      * so the player can read it
      *
-     * @param checkMessage
+     * @param checkMessage <code>String</code> to print
      */
     static void printCheck(String checkMessage) {
         System.out.println();
@@ -48,11 +53,11 @@ public interface CLIPrintFunction {
 
     /**
      * Methods that implements a for cycle to print on standard output
-     * a chosen String with the chosen style for a chosen number of times
+     * a chosen <code>String</code> with the chosen style for a chosen number of times
      *
-     * @param style string to resent the style
-     * @param string string to print
-     * @param repeatsNumber number of times to print the chosen string
+     * @param style <code>String</code> to resent the style
+     * @param string <code>String</code> to print
+     * @param repeatsNumber number of times to print the chosen <code>String</code>
      */
     static void printRepeatString(String style, String string, int repeatsNumber) {
         System.out.print( style );
@@ -63,12 +68,14 @@ public interface CLIPrintFunction {
     }
 
     /**
-     * Prints on standard output a String with the chosen type at the middle of a chosen length of space using printRepeatString
+     * Method which prints on standard output a <code>String</code> with the chosen type at the middle of a chosen length
+     * of space using printRepeatString.
+     * It doesn't print anything if stringLength is more than totalLength
      *
-     * @param style string to represent the style
-     * @param middleString string to print
+     * @param style <code>String</code> to represent the style
+     * @param middleString <code>String</code> to print
      * @param stringLength length of the middleString
-     * @param totalLength length of space where middleString id printed
+     * @param totalLength length of space where middleString is printed
      */
     static void printAtTheMiddle(String style, String middleString, int stringLength, int totalLength) {
         System.out.print( style );
@@ -84,12 +91,13 @@ public interface CLIPrintFunction {
     }
 
     /**
-     * Adds spaces to string as long as string's length == final length
+     * Method which adds spaces to <code>String</code> as long as string's length == final length.
+     * If stringLength < finalLength, it returns string
      *
-     * @param string initial string
+     * @param string initial <code>String</code>
      * @param stringLength string's length
      * @param finalLength final length chosen
-     * @return string with length == finalLength
+     * @return <code>String</code> with length == finalLength, if stringLength < finalLength
      */
     static String increaseLengthWithSpace(String string, int stringLength, int finalLength) {
 

@@ -7,10 +7,18 @@ import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.GodSymbols
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.Symbols;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 
+/**
+ * Interface with methods to help to print the <code>ViewBoard</code> on Windows Terminal
+ *
+ * @see GodSymbols
+ * @see Symbols
+ * @author Marco
+ */
 public interface BoardPrintFunction {
 
     /**
-     * Returns rhe correct String of symbolNumber if cellRow == 2|3|4 ( the middle of the cell ) or an empty String if it isn't
+     * Returns rhe correct <code>String</code> of symbolNumber if cellRow == 2|3|4 ( the middle of the cell ) or an empty String if it isn't
+     *
      * @param symbolNumber Symbols which represents the number of Board's row
      * @param cellRow int Which represents the number of Cell's row (start from up with number 0)
      * @return a String which represents the part ( up, middle or down ) of symbolNumber if cellRow == 2|3|4,
@@ -38,6 +46,7 @@ public interface BoardPrintFunction {
 
     /**
      * Prints a part of Players's caption if boardRow and cellRow are correct, doesn't do anything it they aren't
+     *
      * @param boardRow number or board's row ( start from up with number 0)
      * @param cellRow number or cell's row ( start from up with number 0)
      */

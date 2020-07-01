@@ -4,15 +4,23 @@ import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewWorker;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.Symbols;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.SymbolsLevel;
 
+/**
+ * Interface with methods to create the correct <code>String</code> with the correct <code>Symbols</code> for each cell's row
+ *
+ * @see Symbols
+ * @see SymbolsLevel
+ * @author Marco
+ */
 public interface CellPrintFunction {
 
     /**
-     * Returns string with selection Symbols at the level chosen if isSelected == true,
+     * Returns <code>String</code> with selection Symbols at the level chosen if isSelected == true,
      * if it isn't the methods returns the same string in input
+     *
      * @param string original string to select
      * @param selectionLevel level of the selection Symbols
-     * @param isSelected boolean parameter that set or not the seletion
-     * @return string if isSelected == false, string between selection's level iof isSelected == false
+     * @param isSelected boolean parameter that set or not the selection
+     * @return string if isSelected == false, string between selection's level if isSelected == false
      */
     static String tryAddSelectionSymbols(String string, SymbolsLevel selectionLevel, boolean isSelected) {
         String newString = string;
@@ -37,7 +45,8 @@ public interface CellPrintFunction {
     }
 
     /**
-     * Returns the correct String symbol in this cell's row using some parameter
+     * Returns the correct String symbol in this cell's second row from up using some parameter
+     *
      * @param blockLevel level of block's build
      * @param doomed boolean parameter to know if there is a dome
      * @param thereIsWorker boolean parameter to know if there is a worker
@@ -64,7 +73,8 @@ public interface CellPrintFunction {
     }
 
     /**
-     * Returns the correct String symbol in this cell's row using some parameter
+     * Returns the correct String symbol in this cell's third row from up using some parameter
+     *
      * @param blockLevel level of block's build
      * @param doomed boolean parameter to know if there is a dome
      * @param thereIsWorker boolean parameter to know if there is a worker
@@ -107,7 +117,8 @@ public interface CellPrintFunction {
     }
 
     /**
-     * Returns the correct String symbol in this cell's row using some parameter
+     * Returns the correct String symbol in this cell's fourth row from up using some parameter
+     *
      * @param blockLevel level of block's build
      * @param doomed boolean parameter to know if there is a dome
      * @param thereIsWorker boolean parameter to know if there is a worker
@@ -150,7 +161,8 @@ public interface CellPrintFunction {
     }
 
     /**
-     * Returns the correct String symbol in this cell's row using some parameter
+     * Returns the correct String symbol in this cell's fifth row from up using some parameter
+     *
      * @param blockLevel level of block's build
      * @param doomed boolean parameter to know if there is a dome
      * @param thereIsWorker boolean parameter to know if there is a worker
@@ -187,7 +199,7 @@ public interface CellPrintFunction {
     }
 
     /**
-     * Returns the correct String symbol in this cell's row using some parameter
+     * Returns the correct String symbol in this cell's sixth row from up using some parameter
      * @param blockLevel level of block's build
      * @param doomed boolean parameter to know if there is a dome
      * @param thereIsWorker boolean parameter to know if there is a worker

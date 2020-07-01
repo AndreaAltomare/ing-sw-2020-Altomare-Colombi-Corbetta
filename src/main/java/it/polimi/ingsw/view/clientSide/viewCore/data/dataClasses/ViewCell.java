@@ -347,7 +347,10 @@ public class ViewCell extends ViewObject {
 
 
     /**
-     * Method that will return a String that will represent the different symbol in the different cell's rows
+     * Methods which returns a <code>String</code> to represent the different symbol in the different cell's rows.
+     * Uses <code>CellPrintFunction</code> to create the correct <code>String</code> of Symbol for each cell's row
+     *
+     * @see CellPrintFunction
      * @param level number of cell's row, starts from the up of cell with number 0
      * @param isSelected boolean parameter to know if the cell is selected
      * @return the correct String for each cell's row
@@ -389,8 +392,11 @@ public class ViewCell extends ViewObject {
 
 
     /**
-     * Method that will return a String of length == symbolSpace that will represent the different symbol in the different cell's rows
+     * Method which returns a <code>String</code> of length == symbolSpace to represent represent the different symbol
+     * in the different cell's rows using <code>CLICellPrintFunction</code> to create the correct <code>String</code>
+     * for each cell's row
      *
+     * @see CLICellPrintFunction
      * @param level number of cell's row, starts from the up of cell with number 0
      * @param isSelected boolean parameter to know if the cell is selected
      * @param symbolSpace length of returned string

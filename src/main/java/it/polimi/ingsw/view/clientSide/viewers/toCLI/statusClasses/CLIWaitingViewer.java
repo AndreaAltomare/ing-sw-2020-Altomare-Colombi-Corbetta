@@ -6,6 +6,15 @@ import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 
+/**
+ * Class that represents the <code>CLIStatusViewer</code> Waiting on the CLI
+ * using methods of <code>CLIPrintFunction</code> and <code>ANSIStyle</code>
+ *
+ * @see CLIStatusViewer
+ * @see CLIPrintFunction
+ * @see ANSIStyle
+ * @author Marco
+ */
 public class CLIWaitingViewer extends CLIStatusViewer {
 
     private WaitingViewer waitingViewer;
@@ -14,8 +23,10 @@ public class CLIWaitingViewer extends CLIStatusViewer {
     final int SLEEP_TIME = 1000; //in ns
 
     /**
-     * Constructor to set the correct StatusViewer
-     * @param waitingViewer
+     * Constructor to set correct <code>StatusViewer</code>
+     *
+     * @see WaitingViewer
+     * @param waitingViewer  <code>StatusViewer</code> linked at this class
      */
     public CLIWaitingViewer(WaitingViewer waitingViewer) {
         this.waitingViewer = waitingViewer;

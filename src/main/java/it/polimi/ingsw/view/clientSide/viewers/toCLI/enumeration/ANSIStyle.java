@@ -1,19 +1,18 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration;
 
+/**
+ * An Enumeration which has elements with a <code>String</code> to represent the ANSI escape
+ *
+ * @author Marco
+ */
 public enum ANSIStyle {
 
 
     //Char Style
-    BOLD_TYPE("\u001B[1m"),
-    ITALICS("\u001B[3m"),
     UNDERSCORE("\u001B[4m"),
     REVERSE("\u001B[7m"),
-    //CROSSED("\u001B[9m"),
-    //BIG_UNDERSCORE("\u001B[21m"),
-    //ANSI_FRAMED("\u001B[51m"),
 
     //Back Colors
-    //BACK_WHITE("\u001B[40m"),
     BACK_RED("\u001B[41m"),
     BACK_GREEN("\u001B[42m"),
     BACK_YELLOW("\u001B[43m"),
@@ -23,7 +22,6 @@ public enum ANSIStyle {
     BACK_GREY("\u001B[47m"),
 
     //Colors
-    //WHITE("\u001B[30m"),
     RED("\u001B[31m"),
     GREEN("\u001B[32m"),
     YELLOW("\u001B[33m"),
@@ -40,6 +38,10 @@ public enum ANSIStyle {
         this.escape = escape;
     }
 
+    /**
+     * Returns the <code>String</code> of enumeration
+     * @return <code>String</code> of ANSI escape
+     */
     public String getEscape() {
         return escape;
     }

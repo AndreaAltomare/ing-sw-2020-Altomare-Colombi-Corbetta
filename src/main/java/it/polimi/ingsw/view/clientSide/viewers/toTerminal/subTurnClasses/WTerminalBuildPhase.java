@@ -16,10 +16,25 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/**
+ * Class that represents the <code>WTerminalSubTurnViewer</code> SelectMyCart on the Windows Terminal
+ * using methods of <code>PrintFunction</code> and <code>Symbols</code>
+ *
+ * @see WTerminalSubTurnViewer
+ * @see PrintFunction
+ * @see Symbols
+ * @author Marco
+ */
 public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
 
     private BuildViewer buildViewer;
 
+    /**
+     * Constructor to set the correctly <code>SubTurnViewer</code>
+     *
+     * @see BuildViewer
+     * @param buildViewer <code>SubTurnViewer</code> linked at this class
+     */
     public WTerminalBuildPhase(BuildViewer buildViewer) {
         this.buildViewer = buildViewer;
     }
@@ -27,9 +42,10 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
 
     /**
      * Prints the request to build using a private method to choose block's type, checks the response,
-     * notifies the construction to Viewer and returns true if it is all correct,
-     * or false if it isn't ( notifies to player when the input isn't correct)
-     * @return
+     * notifies the construction to Viewer and returns true if the request is correctly set,
+     * or false if it isn't. Notifies to player when the result print a message
+     *
+     * @return true if executer is correctly set, false if it isn.t
      */
     private boolean showBuildRequest() {
         final String DIRECTION_REQUEST = "Please, select a direction to build:";
@@ -89,9 +105,10 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
     }
 
     /**
-     * Prints the request to choose the block's type, checks the response and returns a String representing th block's type
+     * Prints the request to choose the block's type, checks the response and returns a <code>String</code> representing block's type
      * if it is correct, or null and an error message to player if it isn't
-     * @return
+     *
+     * @return <code>String</code> to define the block type if the response is correct, else false
      */
     private String typeBlockRequest() {
         final int PLACEABLE_SPACE = 7;
@@ -150,8 +167,8 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
     }
 
     /**
-     * Tries to close player's turn and returns true if it can, or false if it can't
-     * @return
+     * Tries to close player's turn and notifies the result with printed message
+     * @return true
      */
     private boolean endTurn() {
         NextTurnExecuter nextTurnExecuter = new NextTurnExecuter();
@@ -172,7 +189,7 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
 
     /**
      * Prints the board and a request of command and uses some private methods to execute them as long as
-     * a construction, a change status or a endTurn is correctly executed
+     * a construction, a change status or a endTurn is correctly chosen
      */
     @Override
     public void show() {

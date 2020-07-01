@@ -4,18 +4,28 @@ import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewWorker;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.CLISymbols;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 
+/**
+ * Class that represents the <code>CLISubTurnViewer</code> Win on the CLI
+ * using methods of <code>CLIPrintFunction</code>, <code>ANSIStyle</code> and <code>CLISymbols</code>
+ *
+ * @see CLISubTurnViewer
+ * @see CLIPrintFunction
+ * @see ANSIStyle
+ * @see CLISymbols
+ * @author Marco
+ */
 public class CLIWinPhase extends CLISubTurnViewer {
 
     public CLIWinPhase() {}
 
     /**
      * Prints a little image to notify the victory to the player
-     * example //todo: ad image
      */
     @Override
     public void show() {

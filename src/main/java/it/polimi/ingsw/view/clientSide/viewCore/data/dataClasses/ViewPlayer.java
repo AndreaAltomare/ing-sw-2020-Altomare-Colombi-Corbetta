@@ -258,18 +258,19 @@ public class ViewPlayer extends ViewObject {
 
 
     /**
-     * Method that will return Player's name that will represent the ViewObject on the CLI.
+     * Method which returns <code>ViewPLayer</code>'s name like representation of ViewPLayer on the WTerminal
      *
-     * @return (representation of Object for the CLI)
+     * @return <code>ViewPLayer</code>'s name
      */
     @Override
     public String toWTerminal(){ return this.getName(); }
 
     /**
-     * Method that will return Player's name with his color ( == his workers's color ), if there is a color
-     * that will represent the ViewPlayer on the CLI.
+     * Method which returns <code>ViewPLayer</code>'s name with the same color of his workers, if there are.
+     * The returned <code>String</code> is used on CLI to represented the player
      *
-     * @return colored name ( nothing color if there isn't a color)
+     * @see ViewWorker
+     * @return <code>ViewPLayer</code>'s name with his workers' color
      */
     @Override
     public String toCLI(){

@@ -2,6 +2,11 @@ package it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration;
 
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 
+/**
+ * Enumeration used to contains the name and the three ASCII <code>String</code> with the same length to represented each god's card
+ *
+ * @author Marco
+ */
 public enum CLIGodSymbols {
 
     // Each godSymbol have and must have its up, middle and down representation at the same length
@@ -104,7 +109,7 @@ public enum CLIGodSymbols {
      * Returns upRepresentation's length
      * All representations (up, middle and down) for a single CLIGodSymbol have the same length
      *
-     * @return max value of upRepresentation's length
+     * @return value of upRepresentation's length
      */
     public int getRepresentationLength() {
         return upRepresentation.length();

@@ -3,11 +3,18 @@ package it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
 
+/**
+ * Class that represents the <code>WTerminalSubTurnViewer</code> Move on the Windows Terminal
+ * using methods of <code>PrintFunction</code>
+ *
+ * @see WTerminalSubTurnViewer
+ * @see PrintFunction
+ * @author Marco
+ */
 public class WTerminalLoosePhase extends WTerminalSubTurnViewer {
 
     /**
      * Prints a little image to notify that the player has loosen
-     * example //todo: add it
      */
     @Override
     public void show() {

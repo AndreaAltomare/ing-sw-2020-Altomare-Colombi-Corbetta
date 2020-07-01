@@ -12,18 +12,34 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/**
+ * Class that represents the <code>CLISubTurnViewer</code> PlaceWorker on the CLI
+ * using methods of <code>CLIPrintFunction</code> and <code>ANSIStyle</code>
+ *
+ * @see CLISubTurnViewer
+ * @see CLIPrintFunction
+ * @see ANSIStyle
+ * @author Marco
+ */
 public class CLIPlaceWorkerPhase extends CLISubTurnViewer {
 
     private PlaceWorkerViewer placeWorkerViewer;
 
+    /**
+     * Constructor to set the correctly <code>SubTurnViewer</code>
+     *
+     * @see PlaceWorkerViewer
+     * @param placeWorkerViewer <code>SubTurnViewer</code> linked at this class
+     */
     public CLIPlaceWorkerPhase(PlaceWorkerViewer placeWorkerViewer ) {
         this.placeWorkerViewer = placeWorkerViewer;
     }
 
     /**
-     * Prints a request to place the worker and checks it, returns true if it is correct or false if it isn't
-     * @param workerToPlace
-     * @return
+     * Prints a request to place the worker and checks it, returns true if the response is correct and correctly set or false if it isn't
+     *
+     * @param workerToPlace number of <code>ViewWorker</code> chosen
+     * @return true if the <code>ViewCell</code> is correctly chosen and set, else false
      */
     private boolean placeWorkerRequest(int workerToPlace) {
         final String REQUEST = "Please, choose the cell where place your worker:";
@@ -82,7 +98,7 @@ public class CLIPlaceWorkerPhase extends CLISubTurnViewer {
 
     /**
      * Prints the board and uses a private method to ask the cell where place worker and check his response as long as
-     * the player places all his workers
+     * the place response is correctly set
      */
     @Override
     public void show() {

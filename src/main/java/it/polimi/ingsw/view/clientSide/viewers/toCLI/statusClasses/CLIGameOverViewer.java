@@ -3,17 +3,31 @@ package it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses;
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.GameOverViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 
-//todo: maybe to eliminate
+/**
+ * Class that represents the <code>CLIStatusViewer</code> gameOver on the CLI
+ *
+ * @see CLIStatusViewer
+ * @author Marco
+ */
 public class CLIGameOverViewer extends CLIStatusViewer {
 
     private GameOverViewer gameOverViewer;
 
+    /**
+     * Constructor to set correct <code>StatusViewer</code>
+     *
+     * @see GameOverViewer
+     * @param gameOverViewer <code>StatusViewer</code> linked at this class
+     */
     public CLIGameOverViewer(GameOverViewer gameOverViewer) {
         this.gameOverViewer = gameOverViewer;
     }
 
     /**
-     * If MyCLISubTUrnViewer != null, calls the show method on myCLISubTurnViewer
+     * Methods which calls the show method on myCLISubTurnViewer if only MyCLISubTUrnViewer != null,
+     * or doesn't anything if it isn't
+     *
+     * @see CLIStatusViewer
      */
     @Override
     public void show() {

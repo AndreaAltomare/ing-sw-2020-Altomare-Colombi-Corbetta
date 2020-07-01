@@ -4,6 +4,14 @@ import it.polimi.ingsw.view.clientSide.viewers.statusViewers.ReadyViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
 
+/**
+ * Class that represents the <code>WTerminalStatusViewer</code> Ready on the Windows Terminal
+ * using methods of <code>PrintFunction</code>
+ *
+ * @see WTerminalStatusViewer
+ * @see PrintFunction
+ * @author Marco
+ */
 public class WTerminalReadyViewer extends WTerminalStatusViewer {
 
     private ReadyViewer readyViewer;
@@ -19,8 +27,10 @@ public class WTerminalReadyViewer extends WTerminalStatusViewer {
     final int PEDESTAL_LENGTH = 4 * COLUMNS_THICKNESS * COLUMNS_NUMBER;
 
     /**
-     * Constructor to set correct StatusViewer
-     * @param readyViewer
+     * Constructor to set correct <code>StatusViewer</code>
+     *
+     * @see ReadyViewer
+     * @param readyViewer  <code>StatusViewer</code> linked at this class
      */
     public WTerminalReadyViewer(ReadyViewer readyViewer) {
         this.readyViewer = readyViewer;
@@ -28,7 +38,6 @@ public class WTerminalReadyViewer extends WTerminalStatusViewer {
 
     /**
      * Method that use the private methods of this class to print the Title's image
-     * example
      */
     @Override
     public void show() {
@@ -43,7 +52,8 @@ public class WTerminalReadyViewer extends WTerminalStatusViewer {
     /**
      * Prints the a part of title String selected using the constant STARTING_SPACE and
      * PEDESTAL_LENGTH to print the string at the correct distant of terminal edge and
-     * at the middle of the pedestral
+     * at the middle of the pedestal
+     *
      * @param titlePart part of title's string to print
      */
     private void showTitlePart( String titlePart) {
@@ -60,10 +70,7 @@ public class WTerminalReadyViewer extends WTerminalStatusViewer {
     /**
      * Prints the pedestal under the title using the constant STARTING_SPACE
      * to print it at the correct distant from Terminal's edge
-     * example image
-     *      _________
-     *      \_______/
-     */
+      */
     private void showPedestal() {
 
         PrintFunction.printRepeatString(" ", STARTING_SPACE);
@@ -81,12 +88,8 @@ public class WTerminalReadyViewer extends WTerminalStatusViewer {
      * Prints the columns under the pedestal using the constants COLUMNS_HIGH and COLUMNS_THICKNESS
      * to print the correct numbers and the correct thickness of columns.
      * The lower level of the columns is different because it has the ground
-     * example image
-     *
-     *       []  []
-     *     __[]__[]__
      */
-    private void showColumns() {
+   private void showColumns() {
 
         for (int i = 0; i < (COLUMNS_HIGH - 1); i++) {
             PrintFunction.printRepeatString(" ", STARTING_SPACE + 2);

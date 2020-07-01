@@ -11,6 +11,15 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/**
+ * Class that represents the <code>CLIStatusViewer</code> NumberOfPlayer on the CLI
+ * using methods of <code>CLIPrintFunction</code> and <code>ANSIStyle</code>
+ *
+ * @see CLIStatusViewer
+ * @see CLIPrintFunction
+ * @see ANSIStyle
+ * @author Marco
+ */
 public class CLINumberPlayerViewer extends CLIStatusViewer {
 
     private NumberPlayerViewer numberPlayerViewer;
@@ -21,16 +30,17 @@ public class CLINumberPlayerViewer extends CLIStatusViewer {
 
 
     /**
-     * Constructor to set correct StatusViewer
-     * @param numberPlayerViewer
+     * Constructor to set correct <code>StatusViewer</code>
+     *
+     * @see NumberPlayerViewer
+     * @param numberPlayerViewer  <code>StatusViewer</code> linked at this class
      */
     public CLINumberPlayerViewer(NumberPlayerViewer numberPlayerViewer) {
         this.numberPlayerViewer = numberPlayerViewer;
     }
 
     /**
-     * Prints number of player request with a cute image
-     * example
+     * Method which prints number of player request with a cute image
      */
     private void showRequest() {
         final String STYLE_PLAYER_LEFT = ANSIStyle.RED.getEscape();
@@ -83,7 +93,7 @@ public class CLINumberPlayerViewer extends CLIStatusViewer {
     }
 
     /**
-     * Prints a symbol to notify where it is possible to write tre response, reads it and returns it if is a integer,
+     * Method which prints a symbol to notify where it is possible to write the response, reads it and returns it if is a integer,
      * if it isn't return -1
      *
      * @return the number of player writing or -1 if the response isn't a integer number
@@ -106,11 +116,11 @@ public class CLINumberPlayerViewer extends CLIStatusViewer {
     }
 
     /**
-     * Checks the number of payers, sends it with the correct executer, prints the result of check with
+     * Checks the number of players, sets and sends it with the correct executer, prints the result of check with
      * a message on standard output and return if the number is correct
      *
      * @param response number of player chosen
-     * @return boolean value ( true => correct number, false wrong number )
+     * @return correctly set response ? true : false
      */
     private boolean checkNumberOfPlayersResponse(int response ) {
         final String CORRECT_MESSAGE = "The number of players is correctly send";

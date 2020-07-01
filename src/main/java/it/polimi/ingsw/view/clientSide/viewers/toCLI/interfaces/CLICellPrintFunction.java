@@ -3,6 +3,12 @@ package it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewWorker;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.*;
 
+/**
+ * Interface with methods to create the correct <code>String</code> with the correct <code>CLISymbols</code> for each cell's row
+ *
+ * @see CLISymbols
+ * @author Marco
+ */
 public interface CLICellPrintFunction {
 
     String DOME_COLOR = ANSIStyle.BLUE.getEscape();
@@ -10,11 +16,11 @@ public interface CLICellPrintFunction {
     int SELECTION_SPACE  = 4; // see and change tryAddSelectionSymbols to know and change the value
 
     /**
-     * Returns string with selection Symbols if isSelected == true,
+     * Method which returns <code>String</code> with selection Symbols if isSelected == true,
      * if it isn't the methods returns the same string with 2 initial space and 2 final space in input
      *
      * @param string original string to select
-     * @param isSelected boolean parameter that set or not the seletion
+     * @param isSelected boolean parameter that set or not the selection
      * @return string if isSelected == false, string between selection's level iof isSelected == false
      */
     static String tryAddSelectionSymbols(String string, boolean isSelected) {
@@ -39,7 +45,7 @@ public interface CLICellPrintFunction {
     }
 
     /**
-     * Returns the correct String of length == symbolSpace symbol in this cell's row using some parameter
+     * Method which returns the correct <code>String</code> of length == symbolSpace symbol in first cell's row from up using some parameter
      *
      * @param blockLevel level of block's build
      * @param doomed boolean parameter to know if there is a dome
@@ -66,7 +72,7 @@ public interface CLICellPrintFunction {
     }
 
     /**
-     * Returns the correct String symbol with length == symbolSpace in this cell's row using some parameter
+     * Method which returns the correct <code>String</code> of length == symbolSpace symbol in second cell's row from up using some parameter
      *
      * @param blockLevel level of block's build
      * @param doomed boolean parameter to know if there is a dome
@@ -105,7 +111,7 @@ public interface CLICellPrintFunction {
     }
 
     /**
-     * Returns the correct String symbol with length == symbolSpace in this cell's row using some parameter
+     * Method which returns the correct <code>String</code> of length == symbolSpace symbol in third cell's row from up using some parameter
      *
      * @param blockLevel level of block's build
      * @param doomed boolean parameter to know if there is a dome
@@ -149,7 +155,7 @@ public interface CLICellPrintFunction {
     }
 
     /**
-     * Returns the correct String symbol with length == symbolSpace in this cell's row using some parameter
+     * Method which returns the correct <code>String</code> of length == symbolSpace symbol in fourth cell's row from up using some parameter
      *
      * @param blockLevel level of block's build
      * @param doomed boolean parameter to know if there is a dome
@@ -176,7 +182,7 @@ public interface CLICellPrintFunction {
     }
 
     /**
-     * Returns the correct String symbol with length == symbolSpace in this cell's row using some parameter
+     * Method which returns the correct <code>String</code> of length == symbolSpace symbol in fifth cell's row from up using some parameter
      *
      * @param blockLevel level of block's build
      * @param doomed boolean parameter to know if there is a dome

@@ -2,7 +2,6 @@ package it.polimi.ingsw.view.clientSide.viewers.toTerminal.statusClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetPlayerNumberExecuter;
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.NumberPlayerViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
@@ -11,6 +10,14 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/**
+ * Class that represents the <code>WTerminalStatusViewer</code> NumberOfPlayer on the Windows Terminal
+ * using methods of <code>PrintFunction</code>
+ *
+ * @see WTerminalStatusViewer
+ * @see PrintFunction
+ * @author Marco
+ */
 public class WTerminalNumberPlayerViewer extends WTerminalStatusViewer {
 
     private NumberPlayerViewer numberPlayerViewer;
@@ -21,8 +28,10 @@ public class WTerminalNumberPlayerViewer extends WTerminalStatusViewer {
 
 
     /**
-     * Constructor to set correct StatusViewer
-     * @param numberPlayerViewer
+     * Constructor to set correct <code>StatusViewer</code>
+     *
+     * @see NumberPlayerViewer
+     * @param numberPlayerViewer  <code>StatusViewer</code> linked at this class
      */
     public WTerminalNumberPlayerViewer(NumberPlayerViewer numberPlayerViewer) {
         this.numberPlayerViewer = numberPlayerViewer;
@@ -31,12 +40,7 @@ public class WTerminalNumberPlayerViewer extends WTerminalStatusViewer {
     /**
      * Prints request's first part to ask the number of players
      * writing it in a block with a worker ( prepares second block's upper edge too)
-     * example image
-     *       ____________
-     *   \O/|            |
-     *    \ |  Request1  |
-     *     \|____________|__
-     */
+    */
     private void showFirstRequestPart(){
 
         // block's upper edge
@@ -69,13 +73,7 @@ public class WTerminalNumberPlayerViewer extends WTerminalStatusViewer {
     /**
      * Prints request's second part to ask the number of players
      * writing it in a block with two worker
-     * example image
-     *
-     *         |            |
-     *       O |  Request2  | O
-     *       |\|____________|/|
-     *      / \              / \
-     */
+      */
     private void showSecondRequestPart() {
 
 
@@ -107,7 +105,7 @@ public class WTerminalNumberPlayerViewer extends WTerminalStatusViewer {
 
 
     /**
-     * Prints a sYmbol to notify where it is possible to write tre response, reads it and returns it if is a integer,
+     * Prints a symbol to notify where it is possible to write the response, reads it and returns it if is a integer,
      * if it isn't return -1
      *
      * @return the number of player writing or -1 if the response isn't a integer number
@@ -131,11 +129,11 @@ public class WTerminalNumberPlayerViewer extends WTerminalStatusViewer {
     }
 
     /**
-     * Checks the number of payers, sends it with the correct executer, prints the result of check with
+     * Checks the number of players, sets and sends it with the correct executer, prints the result of check with
      * a message on standard output and return if the number is correct
      *
      * @param response number of player chosen
-     * @return boolean value ( true => correct number, false wrong number )
+     * @return correctly set response ? true : false
      */
     private boolean checkNumberOfPlayersResponse(int response ) {
         final String CORRECT_MESSAGE = "The number of players is correctly send";

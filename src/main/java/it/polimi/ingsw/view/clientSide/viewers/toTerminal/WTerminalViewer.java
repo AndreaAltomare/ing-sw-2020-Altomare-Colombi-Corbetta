@@ -26,16 +26,26 @@ import it.polimi.ingsw.view.exceptions.NotFoundException;
 import java.util.Scanner;
 
 
+/**
+ * Class which extend <code>Viewer</code> and menage the Windows Tweminal interface
+ *
+ * @see Viewer
+ * @author Marco
+ */
 public class WTerminalViewer extends Viewer {
 
     private WTerminalStatusViewer wTerminalStatusViewer = null;
 
+    /**
+     * Constructor which registers this class on <code>Viewer</code> list
+     */
     public WTerminalViewer(){
         Viewer.registerViewer(this);
     }
 
     /**
-     * For all the subTurnStatus which use the board, this method checks the subTurnStatus and shows it if it shows the board
+     * For all the subTurnStatus which use the board, this method checks the subTurnStatus and shows it if it isn't player turn
+     * or if he/she must place another worker
      */
     @Override
     public void refresh() {
@@ -54,6 +64,12 @@ public class WTerminalViewer extends Viewer {
 
     }
 
+    /**
+     * Read the <code>ViewerQueuedEvent</code> and if contains a <code>StatusViewer</code> set and show it
+     *
+     * @see WTerminalStatusViewer
+     * @param queuedEvent <code>ViewerQueuedEvent</code> read ( after check that his Type == SET_TURN )
+     */
     private void prepareStatusViewer(ViewerQueuedEvent queuedEvent) {
         StatusViewer statusViewer = (StatusViewer) queuedEvent.getPayload();
         WTerminalStatusViewer wTerminalStatusViewer;
@@ -68,8 +84,10 @@ public class WTerminalViewer extends Viewer {
     }
 
     /**
-     * Checks the ViewerQueuedEvent when its type is SET_SUBTURN, then adds its WTerminalSubTurn (if there is) to WTerminalStatus (if it is correct)
-     * @param queuedEvent
+     * Checks the ViewerQueuedEvent when its type is SET_SUBTURN, then adds its CLISubTurn (if there is) to CLIStatus (if it is correct)
+     *
+     * @see WTerminalSubTurnViewer
+     * @param queuedEvent <code>ViewerQueuedEvent</code> read ( after check that his Type == SET_SUBTURN )
      */
     private void prepareSubTurnViewer(ViewerQueuedEvent queuedEvent) {
         SubTurnViewer subTurnViewer = (SubTurnViewer) queuedEvent.getPayload();
@@ -86,8 +104,10 @@ public class WTerminalViewer extends Viewer {
 
     /**
      * Sets and shows the correct WTerminalSubTurnViewer between ChooseCardsPhase and SelectMyCardsPhase using the length of
-     * cardSelection's List in queuedEvent's payload when viewStatus == GAME_PREPARATION, or it doesn't anything for other cases
-     * @param queuedEvent Event to read ( after check that his Type == CARDSELECTION )
+     * cardSelection's List, or it doesn't anything for other cases
+     *
+     * @see CardSelection
+     * @param queuedEvent <code>ViewerQueuedEvent</code> read ( after check that his Type == CARDSELECTION )
      */
     private void prepareCardsPhase(ViewerQueuedEvent queuedEvent) {
         CardSelection cardSelection;
@@ -103,6 +123,12 @@ public class WTerminalViewer extends Viewer {
         }
     }
 
+    /**
+     * Menage the undo request waiting the response for some seconds, then if player responds before time, sends
+     * an undo request with the executer, or doesn't anything if he/she isn't. Finally notifies the result with a printed message
+     *
+     * @see UndoExecuter
+     */
     private void undo() {
 
         WTerminalCheckWrite wTerminalCheckWrite = new WTerminalCheckWrite();
@@ -142,7 +168,7 @@ public class WTerminalViewer extends Viewer {
      * Sets and shows the correct representation of the message on the WTerminal using some WTerminalStatusView or WTerminalSubTurnView
      * if it is necessary
      *
-     * @param queuedEvent Event to read ( after check that its Type == MESSAGE )
+     * @param queuedEvent <code>ViewerQueuedEvent</code> read ( after check that its Type == MESSAGE )
      */
     private boolean prepareMessage(ViewerQueuedEvent queuedEvent) {
         ViewMessage viewMessage = (ViewMessage) queuedEvent.getPayload();
@@ -179,6 +205,9 @@ public class WTerminalViewer extends Viewer {
         return  end;
     }
 
+    /**
+     * Continues to read the message and calls the correct methods as long as there is an fatal error o and EXIT message
+     */
     @Override
     public void run() {
         ViewerQueuedEvent queuedEvent;
@@ -224,6 +253,11 @@ public class WTerminalViewer extends Viewer {
 
     }
 
+    /**
+     * Call the super method if the <code>ViewQueuedEvent</code> isn't a SET_SUBTURN Type and there isn't another SET_SUBTURN
+     *
+     * @param viewerQueuedEvent <code>ViewQueuedEvent</code> to add in read list
+     */
     @Override
     protected void enqueue(ViewerQueuedEvent viewerQueuedEvent) {
         if ( viewerQueuedEvent.getType() == ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN && isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN)) {

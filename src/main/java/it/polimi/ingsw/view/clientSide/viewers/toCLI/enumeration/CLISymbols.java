@@ -1,5 +1,12 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration;
 
+/**
+ * Enumeration with the representation of board's element like worker, blocks and dome, and the representation
+ * of the numbers from 0 to 4 using <code>UnicodeSymbol</code>
+ *
+ * @see UnicodeSymbol
+ * @author Marco
+ */
 public enum CLISymbols {
     // for each symbol each representations have the same length
 

@@ -5,10 +5,24 @@ import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.OpponentPlaceWorke
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
 
+/**
+ * Class that represents the <code>WTerminalSubTurnViewer</code> PLaceWorker on the Windows Terminal
+ * using methods of <code>PrintFunction</code>
+ *
+ * @see WTerminalSubTurnViewer
+ * @see PrintFunction
+ * @author Marco
+ */
 public class WTerminalOpponentPlaceWorkerPhase extends WTerminalSubTurnViewer {
 
     private OpponentPlaceWorkerViewer opponentPlaceWorkerViewer;
 
+    /**
+     * Constructor to set the correctly <code>SubTurnViewer</code>
+     *
+     * @see OpponentPlaceWorkerViewer
+     * @param opponentPlaceWorkerViewer <code>SubTurnViewer</code> linked at this class
+     */
     public WTerminalOpponentPlaceWorkerPhase(OpponentPlaceWorkerViewer opponentPlaceWorkerViewer ) {
         this.opponentPlaceWorkerViewer = opponentPlaceWorkerViewer;
     }
