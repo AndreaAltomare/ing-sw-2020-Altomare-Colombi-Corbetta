@@ -183,8 +183,6 @@ public class ViewCard extends ViewObject {
         return representation;
     }
 
-    //todo: if necessary add a toCLI
-
     /**
      * Method that will return a (Object) that will represent the ViewObject on the GUI.
      *
