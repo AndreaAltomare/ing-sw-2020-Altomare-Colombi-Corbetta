@@ -9,13 +9,22 @@ import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 
+/**
+ * Class that represents the <code>CLISubTurnViewer</code> Loose on the CLI
+ * using methods of <code>CLIPrintFunction</code>, <code>ANSIStyle</code> and <code>CLISymbols</code>
+ *
+ * @see CLISubTurnViewer
+ * @see CLIPrintFunction
+ * @see ANSIStyle
+ * @see CLISymbols
+ * @author Marco
+ */
 public class CLILoosePhase extends CLISubTurnViewer {
 
     public CLILoosePhase() {}
 
     /**
      * Prints a little image to notify that the player has loosen
-     * example //todo: add it
      */
     @Override
     public void show() {

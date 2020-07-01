@@ -3,6 +3,11 @@ package it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
+/**
+ * Class which implements <code>Runnable</code> used to simulate a press enter bottom after a chosen time
+ *
+ * @author Marco
+ */
 public class CLIStopTimeScanner implements Runnable {
 
     private CLICheckWrite cliCheckWrite;
@@ -10,8 +15,9 @@ public class CLIStopTimeScanner implements Runnable {
 
     /**
      * constructor which set the CLICheckWrite and the waiting time in second
-     * @param cliCheckWrite
-     * @param waitingInSec
+     *
+     * @param cliCheckWrite <code>CLICheckWrite</code> licked
+     * @param waitingInSec time in sec to sleep before writing
      */
     public CLIStopTimeScanner(CLICheckWrite cliCheckWrite, int waitingInSec ) {
         this.cliCheckWrite = cliCheckWrite;
@@ -33,10 +39,8 @@ public class CLIStopTimeScanner implements Runnable {
                 robot.keyRelease(KeyEvent.VK_ENTER);
             }
 
-        } catch (AWTException e) {
-            e.printStackTrace();  //todo: remove after testing
-        } catch (InterruptedException e) {
-            e.printStackTrace();    //todo: remove after testing
+        } catch (AWTException ignored) {
+        } catch (InterruptedException ignored) {
         }
     }
 }

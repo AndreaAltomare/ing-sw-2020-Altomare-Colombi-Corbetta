@@ -2,6 +2,12 @@ package it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration;
 
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 
+/**
+ * Enumeration used to contains the name and the three ASCII <code>String</code> with the same length to represented each god's card
+ *
+ * @author Marco
+ */
+
 public enum GodSymbols {
 
     // Each godSymbol have and must have its up, middle and down representation at the same length
@@ -66,6 +72,7 @@ public enum GodSymbols {
 
     /**
      * Returns the parameter called name of GodSymbol chosen
+     *
      * @return name parameter
      */
     public String getName() {
@@ -74,6 +81,7 @@ public enum GodSymbols {
 
     /**
      * Returns the parameter called upRepresentation of GodSymbol chosen
+     *
      * @return upRepresentation parameter
      */
     public String getUpRepresentation() {
@@ -82,6 +90,7 @@ public enum GodSymbols {
 
     /**
      * Returns the parameter called middleRepresentation of GodSymbol chosen
+     *
      * @return middleRepresentation parameter
      */
     public String getMiddleRepresentation() {
@@ -90,6 +99,7 @@ public enum GodSymbols {
 
     /**
      * Returns the parameter called downRepresentation of GodSymbol chosen
+     *
      * @return downRepresentation parameter
      */
     public String getDownRepresentation() {
@@ -98,6 +108,7 @@ public enum GodSymbols {
 
     /**
      * Compares name's length of all GodSymbol and return the max value
+     *
      * @return max value of name's length
      */
     public static int getMaxNameLength() {
@@ -116,6 +127,7 @@ public enum GodSymbols {
     /**
      * Compares representation's length of all GodSymbol and return the max value.
      * All representations (up, middle and down) for a single GodSymbol have the same length
+     *
      * @return max value of upRepresentation's length
      */
     public static int getMaxRepresentationLength() {
@@ -133,6 +145,7 @@ public enum GodSymbols {
     /**
      * Searches a god's (or goddess') name in the name of GodSymbol's value and if it finds it,
      * it returns the correct GodSymbols but if it doesn't found it, it trows a NotFindException
+     *
      * @param godName name of godSymbol to search
      * @return GodSymbols with name == godName
      * @throws NotFoundException exception which notify that there isn't a GodSymbols with name == godName

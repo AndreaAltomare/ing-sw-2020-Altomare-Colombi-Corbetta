@@ -11,13 +11,24 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import java.util.Scanner;
 
+/**
+ * Abstract class with some methods to menage some command used by some sub classes
+ *
+ * @author Marco
+ */
 public abstract class WTerminalSubTurnViewer implements SpecificSubTurnViewer {
 
+    /**
+     * Abstract method used by sub classes to menage the their sub status
+     */
     public abstract void show();
 
     /**
-     * Prints the Name, Epithet and Description of all the player's God
-     * @param waitingPlayer
+     * Method which prints the Name, Epithet and Description of all the player's God, then if waitingPLayer == true
+     * prints a string request and waits that the player press enter
+     *
+     * @param waitingPlayer <code>boolean</code> parameter to wait an input to continue if waitingPLayer == true, or not
+     *                      if waitingPlayer == false
      */
     protected void showCardsDetails (boolean waitingPlayer) {
         final String CONTINUE_REQUEST = "Press Enter to continue";
@@ -47,11 +58,15 @@ public abstract class WTerminalSubTurnViewer implements SpecificSubTurnViewer {
     }
 
     /**
-     * Calculates the cell at chosen direction and returns it if it is possible, returns null if the direction isn't correct
+     * Method which calculates the cell at chosen direction and returns it if it is possible,
+     * returns null if the direction isn't correct
      * and trow a NotFoundException if the cell isn't on the board ( or the select worker isn't on the board )
-     * @param direction
-     * @return
-     * @throws NotFoundException
+     *
+     * @see ViewWorker
+     * @see ViewCell
+     * @param direction <code>int</code> to represent the direction
+     * @return <code>ViewCell</code> if there is a <code>ViewWorker</code> selected and a <code>ViewCell</code> at chosen direction
+     * @throws NotFoundException if the <code>VIewCell</code> or <code>ViewWorker</code> isn't found
      */
     protected ViewCell calculateNextCell(int direction ) throws NotFoundException {
         ViewCell selectedCell = null;
@@ -97,7 +112,7 @@ public abstract class WTerminalSubTurnViewer implements SpecificSubTurnViewer {
 
 
     /**
-     * Prints the table of direction
+     * Prints the table of direction with the number which represent the direction
      */
     protected void printDirection() {
         final int DIRECTION_SPACE = 15;

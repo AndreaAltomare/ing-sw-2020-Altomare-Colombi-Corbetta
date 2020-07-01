@@ -5,11 +5,27 @@ import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.OpponentBuildViewe
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
+
+/**
+ * Class that represents the <code>CLISubTurnViewer</code> OpponentBuild on the CLI
+ * using methods of <code>CLIPrintFunction</code> and <code>ANSIStyle</code>
+ *
+ * @see CLISubTurnViewer
+ * @see CLIPrintFunction
+ * @see ANSIStyle
+ * @author Marco
+ */
 public class CLIOpponentBuildPhase extends CLISubTurnViewer {
 
     private OpponentBuildViewer opponentBuildViewer;
 
 
+    /**
+     * Constructor to set the correctly <code>SubTurnViewer</code>
+     *
+     * @see OpponentBuildViewer
+     * @param opponentBuildViewer <code>SubTurnViewer</code> linked at this class
+     */
     public CLIOpponentBuildPhase(OpponentBuildViewer opponentBuildViewer) {
         this.opponentBuildViewer = opponentBuildViewer;
     }

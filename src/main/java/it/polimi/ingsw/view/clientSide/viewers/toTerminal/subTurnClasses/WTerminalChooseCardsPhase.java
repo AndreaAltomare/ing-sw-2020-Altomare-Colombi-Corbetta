@@ -18,6 +18,17 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Class that represents the <code>WTerminalSubTurnViewer</code> FirstPlayer on the Windows Terminal
+ * using methods of <code>PrintFunction</code>, <code>GodSymbols</code>, <code>Symbols</code> and <code>SymbolsLevel</code>
+ *
+ * @see WTerminalSubTurnViewer
+ * @see PrintFunction
+ * @see GodSymbols
+ * @see Symbols
+ * @see SymbolsLevel
+ * @author Marco
+ */
 public class WTerminalChooseCardsPhase extends WTerminalSubTurnViewer {
 
     private CardsChoosingExecuter cardsChoosingExecuter;
@@ -29,6 +40,12 @@ public class WTerminalChooseCardsPhase extends WTerminalSubTurnViewer {
     private final int GOD_NAME_SPACE = GodSymbols.getMaxNameLength() + 2;
 
 
+    /**
+     * Constructor to set the correctly <code>CardSelection</code> and his executor
+     *
+     * @see CardSelection
+     * @param cardSelection <code>CardSelection</code> linked at this class
+     */
     public WTerminalChooseCardsPhase(CardSelection cardSelection) {
         this.cardSelection = cardSelection;
         this.cardsChoosingExecuter = (CardsChoosingExecuter) cardSelection.getExecuter();
@@ -41,12 +58,14 @@ public class WTerminalChooseCardsPhase extends WTerminalSubTurnViewer {
 
         while (selectedCards.size() < ViewPlayer.getNumberOfPlayers() ) {
             this.printCardList();
-            this.showCardAndSel( this.showGodRequest() );
+            this.showCardSelected( this.showGodRequest() );
         }
     }
 
     /**
      * Prints a numbered list with Gods' Symbols and gods
+     *
+     * @see GodSymbols
      */
     private void printCardList() {
         GodSymbols godSymbols;
@@ -97,7 +116,12 @@ public class WTerminalChooseCardsPhase extends WTerminalSubTurnViewer {
     }
 
     /**
-     * checks if the card id selected and returns the correct left select symbol
+     * checks if the card is selected, then returns the left selection symbol at the chosen level if it is,
+     * else a empty <code>String</code>
+     *
+     * @param viewCard <code>ViewCard</code> to control
+     * @param symbolsLevel <code>SymbolsLevel</code> parameter to add correct part of selection left Symbol
+     * @return <code>String</code> with left selection symbol at chosen level if viewCard is in selected List, else a empty <code>String</code>
      */
     private String checkLeftSelect(ViewCard viewCard, SymbolsLevel symbolsLevel) {
          String selectString = "";
@@ -127,7 +151,12 @@ public class WTerminalChooseCardsPhase extends WTerminalSubTurnViewer {
     }
 
     /**
-     * checks if the card is selected and returns the correct right select symbol
+     * checks if the card is selected, then returns the right selection symbol right at the chosen level if it is,
+     * else a empty <code>String</code>
+     *
+     * @param viewCard <code>ViewCard</code> to control
+     * @param symbolsLevel <code>SymbolsLevel</code> parameter to add correct part of selection right Symbol
+     * @return <code>String</code> with right selection symbol at chosen level if viewCard is in selected List, else a empty <code>String</code>
      */
     private String checkRightSelect(ViewCard viewCard, SymbolsLevel symbolsLevel) {
         String selectString = "";
@@ -158,7 +187,8 @@ public class WTerminalChooseCardsPhase extends WTerminalSubTurnViewer {
 
     /**
      * Shows a request to see god's description and checks it
-     * @return
+     *
+     * @return number of god selected
      */
     private int showGodRequest() {
         final String REQUEST_MESSAGE = "Please, insert the number of god which you want to see:";
@@ -190,9 +220,10 @@ public class WTerminalChooseCardsPhase extends WTerminalSubTurnViewer {
     /**
      * Shows card's specifics and the request of selection or deselection when it is deselected or not as long as
      * player's response is accepted
-     * @param godCardNumber
+     *
+     * @param godCardNumber number of the <code>ViewCard</code> chosen
      */
-    private void showCardAndSel( int godCardNumber) {
+    private void showCardSelected(int godCardNumber) {
         ViewCard seeCard;
         boolean response;
 
@@ -216,8 +247,9 @@ public class WTerminalChooseCardsPhase extends WTerminalSubTurnViewer {
 
     /**
      * Prints the request of selection or deselection and returns true if the response is correct, false if it isn't
-     * @param viewCard
-     * @return
+     *
+     * @param viewCard <code>ViewCard</code> chosen
+     * @return true if the card is correctly sel/desel, else false
      */
     private boolean SelOrDeselRequest( ViewCard viewCard) {
         final String SELECTION_REQUEST = "Do you want to select it?";
@@ -264,8 +296,7 @@ public class WTerminalChooseCardsPhase extends WTerminalSubTurnViewer {
     }
 
     /**
-     * Understands and shows the correct phase for each player using some private methods, then uses executur to send
-     * message when there are
+     * Uses private methods to menage the phase, the call the executor and notify the result of the operation with a printed message
      */
     @Override
     public void show() {

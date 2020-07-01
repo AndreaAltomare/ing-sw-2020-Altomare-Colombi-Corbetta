@@ -13,6 +13,15 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/**
+ * Class that represents the <code>WTerminalSubTurnViewer</code> SelectMyCart on the Windows Terminal
+ * using methods of <code>PrintFunction</code> and <code>GodSymbols</code>
+ *
+ * @see WTerminalSubTurnViewer
+ * @see PrintFunction
+ * @see GodSymbols
+ * @author Marco
+ */
 public class WTerminalSelectMyCardPhase extends WTerminalSubTurnViewer {
 
     private CardSelectionExecuter cardSelectionExecuter;
@@ -22,6 +31,12 @@ public class WTerminalSelectMyCardPhase extends WTerminalSubTurnViewer {
     private final int GOD_NAME_SPACE = GodSymbols.getMaxNameLength() + 2;
 
 
+    /**
+     * Constructor to set the correctly <code>CardSelection</code> and his executor
+     *
+     * @see CardSelection
+     * @param cardSelection <code>CardSelection</code> linked at this class
+     */
     public WTerminalSelectMyCardPhase(CardSelection cardSelection) {
         this.cardSelection = cardSelection;
         this.cardSelectionExecuter = (CardSelectionExecuter) cardSelection.getExecuter();
@@ -45,6 +60,8 @@ public class WTerminalSelectMyCardPhase extends WTerminalSubTurnViewer {
 
     /**
      * Prints a numbered list with Gods Symbols and god
+     *
+     * @see GodSymbols
      */
     private void printCardList() {
         GodSymbols godSymbols;
@@ -88,8 +105,10 @@ public class WTerminalSelectMyCardPhase extends WTerminalSubTurnViewer {
     }
 
     /**
-     * Shows a request to see god's description and checks it
-     * @return
+     * Shows a request to see god's description and checks it notifying with a printed message.
+     * Continues to show the request if the response isn't correct
+     *
+     * @return number of selected <code>ViewCard</code>
      */
     private int showGodRequest() {
         final String REQUEST_MESSAGE = "Please, insert the number of god which you want to see:";
@@ -120,7 +139,9 @@ public class WTerminalSelectMyCardPhase extends WTerminalSubTurnViewer {
 
     /**
      * Shows card's specifics and the request of card's selection as long as player's response is accepted
-     * @param godCardNumber
+     *
+     * @param godCardNumber number of chosen <code>ViewCard</code>
+     * @return <code>ViewCard</code> selected
      */
     private ViewCard showCardAndSel( int godCardNumber) {
         final String SELECTION_REQUEST = "Do you want to use this card?";
@@ -171,6 +192,9 @@ public class WTerminalSelectMyCardPhase extends WTerminalSubTurnViewer {
         return seeCard;
     }
 
+    /**
+     * Uses private methods to menage the phase, the call the executor and notify the result of the operation with a printed message
+     */
     @Override
     public void show() {
         final String ALL_RIGHT_MESSAGE = "Your card request is correctly send";

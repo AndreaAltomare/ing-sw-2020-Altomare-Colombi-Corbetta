@@ -5,10 +5,24 @@ import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.OpponentSelectWork
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
 
+/**
+ * Class that represents the <code>WTerminalSubTurnViewer</code> OpponentSelectWorker on the Windows Terminal
+ * using methods of <code>PrintFunction</code>
+ *
+ * @see WTerminalSubTurnViewer
+ * @see PrintFunction
+ * @author Marco
+ */
 public class WTerminalOpponentSelectWorkerPhase extends WTerminalSubTurnViewer {
 
     private OpponentSelectWorkerViewer opponentSelectWorkerViewer;
 
+    /**
+     * Constructor to set the correctly <code>SubTurnViewer</code>
+     *
+     * @see OpponentSelectWorkerViewer
+     * @param opponentSelectWorkerViewer <code>SubTurnViewer</code> linked at this class
+     */
     public WTerminalOpponentSelectWorkerPhase(OpponentSelectWorkerViewer opponentSelectWorkerViewer) {
         this.opponentSelectWorkerViewer = opponentSelectWorkerViewer;
     }

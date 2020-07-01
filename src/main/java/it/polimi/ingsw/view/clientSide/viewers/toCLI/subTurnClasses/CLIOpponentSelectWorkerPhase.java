@@ -6,10 +6,25 @@ import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 
+/**
+ * Class that represents the <code>CLISubTurnViewer</code> SelectWorker on the CLI
+ * using methods of <code>CLIPrintFunction</code> and <code>ANSIStyle</code>
+ *
+ * @see CLISubTurnViewer
+ * @see CLIPrintFunction
+ * @see ANSIStyle
+ * @author Marco
+ */
 public class CLIOpponentSelectWorkerPhase extends CLISubTurnViewer {
 
     private OpponentSelectWorkerViewer opponentSelectWorkerViewer;
 
+    /**
+     * Constructor to set the correctly <code>SubTurnViewer</code>
+     *
+     * @see OpponentSelectWorkerViewer
+     * @param opponentSelectWorkerViewer <code>SubTurnViewer</code> linked at this class
+     */
     public CLIOpponentSelectWorkerPhase(OpponentSelectWorkerViewer opponentSelectWorkerViewer) {
         this.opponentSelectWorkerViewer = opponentSelectWorkerViewer;
     }

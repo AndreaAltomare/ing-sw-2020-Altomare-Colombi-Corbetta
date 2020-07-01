@@ -10,17 +10,30 @@ import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/**
+ * Class that represents the <code>WTerminalStatusViewer</code> ResumeGame on the Windows Terminal
+ * using methods of <code>PrintFunction</code>
+ *
+ * @see WTerminalStatusViewer
+ * @see PrintFunction
+ * @author Marco
+ */
 public class WTerminalResumeGameViewer extends WTerminalStatusViewer {
 
     private RequestResumingViewer requestResumingViewer;
 
+    /**
+     * Constructor to set correct <code>StatusViewer</code>
+     *
+     * @see RequestResumingViewer
+     * @param requestResumingViewer  <code>StatusViewer</code> linked at this class
+     */
     public WTerminalResumeGameViewer( RequestResumingViewer requestResumingViewer) {
         this.requestResumingViewer = requestResumingViewer;
     }
 
     /**
      * Prints a little image to represent the phase
-     * example //todo: add image
      */
     private void showRestartImage() {
         final int MACHINERY_LENGTH = 6;
@@ -66,7 +79,8 @@ public class WTerminalResumeGameViewer extends WTerminalStatusViewer {
 
     /**
      * Prints and check the restart request: returns true and do the correct command if the command selected is correct,
-     * prints a wrong message and returns false if it isn't
+     * prints a wrong message and returns false if it isn't. Notifies the result with a message printed
+     *
      * @return true if command == 1 || command == 2, else false
      */
     private boolean restartRequest() {

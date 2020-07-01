@@ -9,6 +9,14 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 
 import java.util.Scanner;
 
+/**
+ * Class that represents the <code>WTerminalStatusViewer</code> Login on the Windows Terminal
+ * using methods of <code>PrintFunction</code>
+ *
+ * @see WTerminalStatusViewer
+ * @see PrintFunction
+ * @author Marco
+ */
 public class WTerminalLoginViewer extends WTerminalStatusViewer {
 
     private LoginViewer loginViewer;
@@ -17,8 +25,10 @@ public class WTerminalLoginViewer extends WTerminalStatusViewer {
     final String SECOND_PART = "Nickname:";
 
     /**
-     * Constructor to set correct StatusViewer
-     * @param loginViewer
+     * Constructor to set correct <code>StatusViewer</code>
+     *
+     * @see LoginViewer
+     * @param loginViewer  <code>StatusViewer</code> linked at this class
      */
     public WTerminalLoginViewer(LoginViewer loginViewer) {
         this.loginViewer = loginViewer;
@@ -26,13 +36,7 @@ public class WTerminalLoginViewer extends WTerminalStatusViewer {
 
     /**
      * Print the nickname's request using some internal constants to print it on a block moved by a human
-     * example image
-     *          ___________
-     *     'O  |          |
-     *      /|| Request |
-     *  _/\/||__________|
-     *   _/
-     */
+      */
     private void showNicknameRequest() {
 
         final int BLOCK_LENGTH; //after initialization it becomes constant
@@ -97,9 +101,10 @@ public class WTerminalLoginViewer extends WTerminalStatusViewer {
     }
 
     /**
-     * Prints a little signal to notify on standard output where it is possible to write the nickname
-     * then returns the read value if its length is 8 or minus, or its first eight char if it isn't
-     * @return the string which is read if its length is 8 or minus. its first eight char if it isn't
+     * Method which prints a little signal to notify on standard output where it is possible to write the nickname
+     * then returns the read value if its length is 11 or minus, or its first eight char if it isn't
+     *
+     * @return <code>String</code> which is read if its length is 11 or minus. its first eleventh chars if it isn't
      */
     private String getNicknameResponse() {
         final int maxLength = 11;
@@ -117,10 +122,11 @@ public class WTerminalLoginViewer extends WTerminalStatusViewer {
     }
 
     /**
-     * Checks if the string is a possible value and sends it with the correct executer,
+     * Checks if the <code>String</code> is a possible value to set in the executer,
      * then it notifies with a message on standard output if the nickname is correct or not
-     * @param response nickname chosen by player
-     * @return boolean value ( true => correct nickname, false => wrong nickname
+     *
+     * @param response <code>String</code> to represent the nickname
+     * @return response is correctly set to executer ? true : false
      */
     private boolean checkNicknameResponse(String response) {
         final String CORRECT_MESSAGE = "Your nickname request is correctly send";
@@ -147,7 +153,7 @@ public class WTerminalLoginViewer extends WTerminalStatusViewer {
 
     /**
      * Uses the private methods of this class to print the nickname's request,
-     * to read the nickname and to check it, the if the nickname is't correct
+     * to read the nickname and to check it, the if the nickname is't correctly set to executer
      * recalls all private methods in the same order
      */
     @Override

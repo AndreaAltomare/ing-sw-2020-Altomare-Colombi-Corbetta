@@ -6,6 +6,15 @@ import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 
+/**
+ * Class that represents the <code>CLIStatusViewer</code> Ready on the CLI
+ * using methods of <code>CLIPrintFunction</code> and <code>ANSIStyle</code>
+ *
+ * @see CLIStatusViewer
+ * @see CLIPrintFunction
+ * @see ANSIStyle
+ * @author Marco
+ */
 public class CLIReadyViewer extends CLIStatusViewer {
 
     private ReadyViewer readyViewer;
@@ -20,8 +29,10 @@ public class CLIReadyViewer extends CLIStatusViewer {
     final String TEMPLE_BACK_COLOR = ANSIStyle.BACK_GREY.getEscape();
 
     /**
-     * Constructor to set correct StatusViewer
-     * @param readyViewer
+     * Constructor to set correct <code>StatusViewer</code>
+     *
+     * @see ReadyViewer
+     * @param readyViewer  <code>StatusViewer</code> linked at this class
      */
     public CLIReadyViewer(ReadyViewer readyViewer) {
         this.readyViewer = readyViewer;
@@ -29,7 +40,6 @@ public class CLIReadyViewer extends CLIStatusViewer {
 
     /**
      * Method that use the private methods of this class to print the Title's image
-     * example //todo: add image
      */
     @Override
     public void show() {
@@ -44,7 +54,6 @@ public class CLIReadyViewer extends CLIStatusViewer {
 
     /**
      * Prints the Pediment of the temple
-     * example //todo: add image
      */
     private void showPediment() {
 
@@ -71,7 +80,6 @@ public class CLIReadyViewer extends CLIStatusViewer {
 
     /**
      * Prints the title under the pediment
-     * example  //todo: add image
      */
     private void showTitle() {
 
@@ -84,8 +92,6 @@ public class CLIReadyViewer extends CLIStatusViewer {
     /**
      * Prints the columns under the pedestal using the constants COLUMNS_HIGH and COLUMNS_THICKNESS
      * to print the correct numbers and the correct thickness of columns.
-     * example //todo: add image
-     *
      */
     private void showColumns() {
 
@@ -104,7 +110,6 @@ public class CLIReadyViewer extends CLIStatusViewer {
     /**
      * Prints the Staircase under the columns using the constant STARTING_SPACE and
      * PEDESTAL_LENGTH to center the StairCase.
-     * example //todo:add image
      */
     private void showStaircase() {
 

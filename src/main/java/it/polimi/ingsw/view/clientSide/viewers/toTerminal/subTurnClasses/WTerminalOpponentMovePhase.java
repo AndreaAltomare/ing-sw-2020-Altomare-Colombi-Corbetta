@@ -5,10 +5,24 @@ import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.OpponentMoveViewer
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
 
+/**
+ * Class that represents the <code>WTerminalSubTurnViewer</code> Move on the Windows Terminal
+ * using methods of <code>PrintFunction</code>
+ *
+ * @see WTerminalSubTurnViewer
+ * @see PrintFunction
+ * @author Marco
+ */
 public class WTerminalOpponentMovePhase extends WTerminalSubTurnViewer {
 
     private OpponentMoveViewer opponentMoveViewer;
 
+    /**
+     * Constructor to set the correctly <code>SubTurnViewer</code>
+     *
+     * @see OpponentMoveViewer
+     * @param opponentMoveViewer <code>SubTurnViewer</code> linked at this class
+     */
     public WTerminalOpponentMovePhase(OpponentMoveViewer opponentMoveViewer) {
         this.opponentMoveViewer = opponentMoveViewer;
     }

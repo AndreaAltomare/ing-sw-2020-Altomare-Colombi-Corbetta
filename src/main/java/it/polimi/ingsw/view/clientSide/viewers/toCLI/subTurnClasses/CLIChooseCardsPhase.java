@@ -16,6 +16,17 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Class that represents the <code>CLISubTurnViewer</code> ChooseCard on the CLI
+ * using methods of <code>CLIPrintFunction</code>, <code>ANSIStyle</code> and <code>CLIGodSymbols</code>
+ *
+ * @see CLISubTurnViewer
+ * @see CLIPrintFunction
+ * @see ANSIStyle
+ * @see CLIGodSymbols
+ * @see ViewCard
+ * @author Marco
+ */
 public class CLIChooseCardsPhase extends CLISubTurnViewer {
 
     private CardsChoosingExecuter cardsChoosingExecuter;
@@ -30,6 +41,12 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
     private final String SELECTION_WRITE_COLOR = ANSIStyle.BLUE.getEscape();
 
 
+    /**
+     * Constructor to set the correctly <code>CardSelection</code> and his executor
+     *
+     * @see CardSelection
+     * @param cardSelection <code>CardSelection</code> linked at this class
+     */
     public CLIChooseCardsPhase(CardSelection cardSelection) {
         this.cardSelection = cardSelection;
         cardsChoosingExecuter = (CardsChoosingExecuter) cardSelection.getExecuter();
@@ -42,12 +59,14 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
 
         while (selectedCards.size() < ViewPlayer.getNumberOfPlayers() ) {
             this.printCardList();
-            this.showCardAndSel( this.showGodRequest() );
+            this.showCardSelected( this.showGodRequest() );
         }
     }
 
     /**
      * Prints a numbered list with Gods' Symbols and gods
+     *
+     * @see  CLIGodSymbols
      */
     private void printCardList() {
         CLIGodSymbols cliGodSymbols;
@@ -101,9 +120,10 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
     /**
      * checks if the card is selected, then returns the selected style if it is and the selection left symbol
      * if addSelectionSymbol == true or a string with space if it isn't. Returns a string of space without color if the card isn't selected
-     * @param viewCard
-     * @param addSelectionSymbol
-     * @return
+     *
+     * @param viewCard <code>ViewCard</code> to control
+     * @param addSelectionSymbol <code>boolean</code> parameter to add or not the selection symbol
+     * @return <code>String</code> with left selection color and symbol if addSelectionSymbol == true or with space if it isn't
      */
     private String checkLeftSelect(ViewCard viewCard, boolean addSelectionSymbol) {
         String selectString = CLIPrintFunction.increaseLengthWithSpace(" ", 1, SELECTION_SPACE);
@@ -122,11 +142,12 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
     }
 
     /**
-     * checks if the card is selected and returns ANSIStyle.RESET with a space string or a string with right selected symbol
-     * if the card is selected and addSelectionSymbol == true
-     * @param viewCard
-     * @param addSelectionSymbol
-     * @return
+     * checks if the card is selected, then returns the selected style if it is and the selection right symbol
+     * if addSelectionSymbol == true or a string with space if it isn't. Returns a string of space without color if the card isn't selected
+     *
+     * @param viewCard <code>ViewCard</code> to control
+     * @param addSelectionSymbol <code>boolean</code> parameter to add or not the selection symbol
+     * @return <code>String</code> with right selection color and symbol if addSelectionSymbol == true or with space if it isn't
      */
     private String checkRightSelect(ViewCard viewCard, boolean addSelectionSymbol) {
         String selectString = CLIPrintFunction.increaseLengthWithSpace(" ", 1, SELECTION_SPACE);
@@ -147,6 +168,7 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
 
     /**
      * Shows a request to see god's description and checks it
+     *
      * @return number of god selected
      */
     private int showGodRequest() {
@@ -179,9 +201,10 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
     /**
      * Shows card's specifics and the request of selection or deselection when it is deselected or not as long as
      * player's response is accepted
-     * @param godCardNumber
+     *
+     * @param godCardNumber number of the <code>ViewCard</code> chosen
      */
-    private void showCardAndSel( int godCardNumber) {
+    private void showCardSelected(int godCardNumber) {
         final String WRITE_PART_STYLE = ANSIStyle.BLUE.getEscape() + ANSIStyle.BACK_GREY.getEscape();
 
         ViewCard seeCard;
@@ -207,8 +230,9 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
 
     /**
      * Prints the request of selection or deselection and returns true if the response is correct, false if it isn't
-     * @param viewCard
-     * @return
+     *
+     * @param viewCard <code>ViewCard</code> chosen
+     * @return true if the card is correctly sel/desel, else false
      */
     private boolean SelOrDeselRequest( ViewCard viewCard) {
         final String SELECTION_REQUEST = "Do you want to select it?";
@@ -255,8 +279,7 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
     }
 
     /**
-     * Understands and shows the correct phase for each player using some private methods, then uses executur to send
-     * message when there are
+     * Uses private methods to menage the phase, the call the executor and notify the result of the operation with a printed message
      */
     @Override
     public void show() {

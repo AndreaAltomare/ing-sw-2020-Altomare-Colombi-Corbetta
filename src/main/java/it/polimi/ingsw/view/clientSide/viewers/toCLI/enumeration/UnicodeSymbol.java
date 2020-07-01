@@ -1,5 +1,10 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration;
 
+/**
+ * Enumeration with Unicode escape used on CLI
+ *
+ * @autor Marco
+ */
 public enum UnicodeSymbol {
 
     //Signal
@@ -30,6 +35,10 @@ public enum UnicodeSymbol {
         this.escape = escape;
     }
 
+    /**
+     * Method which returns the escape of the <code>String</code>
+     * @return a <code>String</code> of unicode escape
+     */
     public String getEscape() {
         return escape;
     }

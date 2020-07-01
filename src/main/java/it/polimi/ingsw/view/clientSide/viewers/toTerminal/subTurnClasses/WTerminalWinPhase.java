@@ -4,11 +4,18 @@ import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
 
+/**
+ * Class that represents the <code>WTerminalSubTurnViewer</code> Win on the Windows Terminal
+ * using methods of <code>PrintFunction</code>
+ *
+ * @see WTerminalSubTurnViewer
+ * @see PrintFunction
+ * @author Marco
+ */
 public class WTerminalWinPhase extends WTerminalSubTurnViewer {
 
     /**
      * Prints a little image to notify the victory to the player
-     * example //todo: ad image
      */
     @Override
     public void show() {

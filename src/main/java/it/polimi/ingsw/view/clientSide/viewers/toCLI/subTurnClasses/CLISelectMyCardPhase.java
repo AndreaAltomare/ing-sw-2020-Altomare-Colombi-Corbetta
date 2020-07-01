@@ -15,6 +15,17 @@ import it.polimi.ingsw.view.exceptions.WrongParametersException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/**
+ * Class that represents the <code>CLISubTurnViewer</code> SelectCard on the CLI
+ * using methods of <code>CLIPrintFunction</code>, <code>ANSIStyle</code> and <code>CLIGodSymbols</code>
+ *
+ * @see CLISubTurnViewer
+ * @see CLIPrintFunction
+ * @see ANSIStyle
+ * @see CLIGodSymbols
+ * @see ViewCard
+ * @author Marco
+ */
 public class CLISelectMyCardPhase extends CLISubTurnViewer {
 
     private CardSelectionExecuter cardSelectionExecuter;
@@ -24,7 +35,12 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
     private final int GOD_NAME_SPACE = GodSymbols.getMaxNameLength() + 2;
 
 
-
+    /**
+     * Constructor to set the correctly <code>CardSelection</code> and his executor
+     *
+     * @see CardSelection
+     * @param cardSelection <code>CardSelection</code> linked at this class
+     */
     public CLISelectMyCardPhase(CardSelection cardSelection) {
         this.cardSelection = cardSelection;
         cardSelectionExecuter = (CardSelectionExecuter) cardSelection.getExecuter();
@@ -48,6 +64,8 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
 
     /**
      * Prints a numbered list with Gods Symbols and god
+     *
+     * @see CLIGodSymbols
      */
     private void printCardList() {
         CLIGodSymbols cliGodSymbols;
@@ -95,8 +113,10 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
     }
 
     /**
-     * Shows a request to see god's description and checks it
-     * @return
+     * Shows a request to see god's description and checks it notifying with a printed message.
+     * Continues to show the request if the response isn't correct
+     *
+     * @return number of selected <code>ViewCard</code>
      */
     private int showGodRequest() {
         final String REQUEST_MESSAGE = "Please, insert the number of god which you want to see:";
@@ -128,7 +148,9 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
 
     /**
      * Shows card's specifics and the request of card's selection as long as player's response is accepted
-     * @param godCardNumber
+     *
+     * @param godCardNumber number of chosen <code>ViewCard</code>
+     * @return <code>ViewCard</code> selected
      */
     private ViewCard showCardAndSel( int godCardNumber) {
         final String WRITE_PART_STYLE = ANSIStyle.BLUE.getEscape() + ANSIStyle.BACK_GREY.getEscape();
@@ -179,6 +201,9 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
         return seeCard;
     }
 
+    /**
+     * Uses private methods to menage the phase, the call the executor and notify the result of the operation with a printed message
+     */
     @Override
     public void show() {
         final String ALL_RIGHT_MESSAGE = "Your card request is correctly send";

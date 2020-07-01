@@ -10,10 +10,24 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Class that represents the <code>WTerminalSubTurnViewer</code> FirstPlayer on the Windows Terminal
+ * using methods of <code>PrintFunction</code>
+ *
+ * @see WTerminalSubTurnViewer
+ * @see PrintFunction
+ * @author Marco
+ */
 public class WTerminalFirstPlayerChoosePhase extends WTerminalSubTurnViewer {
 
     private FirstPlayerViewer firstPlayerViewer;
 
+    /**
+     * Constructor to set the correctly <code>SubTurnViewer</code>
+     *
+     * @see FirstPlayerViewer
+     * @param firstPlayerViewer <code>SubTurnViewer</code> linked at this class
+     */
     public WTerminalFirstPlayerChoosePhase( FirstPlayerViewer firstPlayerViewer ) {
         this.firstPlayerViewer = firstPlayerViewer;
     }
@@ -22,7 +36,8 @@ public class WTerminalFirstPlayerChoosePhase extends WTerminalSubTurnViewer {
      * prints the request to choose the first player and check the response. Uses the executer of firstPlayerViewer
      * to sets and sends chosen player's name and returns true if the response is correct, or prints an error message
      * and returns false if it isn't
-     * @return correct response ? true : false
+     *
+     * @return correct response and set ? true : false
      */
     private boolean firstPLayerRequest() {
         final String FIRST_PLAYER_REQUEST = "Choose the starting player:";
@@ -76,7 +91,7 @@ public class WTerminalFirstPlayerChoosePhase extends WTerminalSubTurnViewer {
     }
 
     /**
-     * Uses some private methods to (maybe print a first player choose image and ) write and read the fist player request
+     * Uses some private methods to write and read the fist player request
      */
     @Override
     public void show() {

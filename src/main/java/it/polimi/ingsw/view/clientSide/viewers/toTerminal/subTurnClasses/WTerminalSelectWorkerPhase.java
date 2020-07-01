@@ -15,16 +15,32 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Class that represents the <code>WTerminalSubTurnViewer</code> SelectWorker on the Windows Terminal
+ * using methods of <code>PrintFunction</code> and <code>SymbolsLevel</code>
+ *
+ * @see WTerminalSubTurnViewer
+ * @see PrintFunction
+ * @see SymbolsLevel
+ * @author Marco
+ */
 public class WTerminalSelectWorkerPhase extends WTerminalSubTurnViewer {
 
     private SelectWorkerViewer selectWorkerViewer;
 
+    /**
+     * Constructor to set the correctly <code>SubTurnViewer</code>
+     *
+     * @see SelectWorkerViewer
+     * @param selectWorkerViewer <code>SubTurnViewer</code> linked at this class
+     */
     public WTerminalSelectWorkerPhase(SelectWorkerViewer selectWorkerViewer) {
         this.selectWorkerViewer = selectWorkerViewer;
     }
 
     /**
-     * Prints the board and the possible command and uses some private methods to execute them
+     * Prints the board and the possible command and uses some private methods to execute them as long as
+     * a response of <code>ViewWorker</code> is correctly set
      */
     @Override
     public void show() {
@@ -76,8 +92,10 @@ public class WTerminalSelectWorkerPhase extends WTerminalSubTurnViewer {
     }
 
     /**
-     * Prints and check the request to select the worker and returns true if the response is correct, or false if it isn't
-     * @return
+     * Prints and check the request to select the <code>ViewWorker</code> and returns true if it is correctly set,
+     * or false if it isn't notifying the result with a printed message
+     *
+     * @return true if s <code>ViewWorker</code> is correctly set, else false
      */
     private boolean showSelectRequest() {
         final String REQUEST = "Please, choose your worker:";
@@ -138,8 +156,9 @@ public class WTerminalSelectWorkerPhase extends WTerminalSubTurnViewer {
 
     /**
      * Prints an image of worker, his number and his position
-     * @param viewWorker
-     * @param workerNumber
+     *
+     * @param viewWorker <code>ViewWorker</code> to print
+     * @param workerNumber number of the viewWorker
      */
     private void printWorker( ViewWorker viewWorker, int workerNumber ) {
         final int WORKER_SPACE = 5;

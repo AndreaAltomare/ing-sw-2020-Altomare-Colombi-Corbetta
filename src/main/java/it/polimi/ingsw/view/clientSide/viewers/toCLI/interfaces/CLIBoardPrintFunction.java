@@ -8,6 +8,14 @@ import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.CLIGodSymbols;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.CLISymbols;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 
+/**
+ * Interface with methods to help to print the <code>ViewBoard</code> on CLI
+ *
+ * @see ANSIStyle
+ * @see CLISymbols
+ * @see CLIGodSymbols
+ * @author Marco
+ */
 public interface CLIBoardPrintFunction {
 
 
@@ -15,7 +23,8 @@ public interface CLIBoardPrintFunction {
     int SPACE_FOR_STRING = 15;
 
     /**
-     * Returns rhe correct String of symbolNumber if cellRow == 2|3|4 ( the middle of the cell ) or an empty String if it isn't
+     * Method which returns the correct String of symbolNumber if cellRow == 2|3|4 ( the middle of the cell ) or an empty String if it isn't
+     *
      * @param CLISymbolNumber Symbols which represents the number of Board's row
      * @param cellRow int which represents the number of Cell's row (start from up with number 0)
      * @return a String which represents the part ( up, middle or down ) of symbolNumber if cellRow == 2|3|4,
@@ -42,7 +51,7 @@ public interface CLIBoardPrintFunction {
     }
 
     /**
-     * Prints a part of Players's caption at cell's high if boardRow and cellRow are correct, doesn't do anything it they aren't
+     * Method which prints a part of Players's caption at cell's high if boardRow and cellRow are correct, doesn't do anything it they aren't
      *
      * @param boardRow number or board's row ( start from up with number 0)
      * @param cellRow number or cell's row ( start from up with number 0)
