@@ -2,14 +2,10 @@ package it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SelectWorkerExecuter;
-import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.SelectWorkerViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.SymbolsLevel;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
-import it.polimi.ingsw.view.clientSide.viewers.toTerminal.statusClasses.WTerminalPlayingViewer;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
@@ -162,7 +158,7 @@ public class WTerminalSelectWorkerPhase extends WTerminalSubTurnViewer {
             PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
             PrintFunction.printAtTheMiddle(viewWorker.toWTerminal(SymbolsLevel.DOWN), WORKER_SPACE);
             System.out.printf("Worker's cell: ( Row: %d ; Columns: %d )\n", viewWorker.getPosition().getX(), viewWorker.getPosition().getY());
-        } catch (NotFoundException e) {
+        } catch (NotFoundException ignored) {
         }
 
     }

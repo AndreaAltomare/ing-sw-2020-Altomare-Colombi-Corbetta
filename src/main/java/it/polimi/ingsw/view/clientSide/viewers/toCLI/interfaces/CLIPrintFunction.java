@@ -1,6 +1,5 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces;
 
-import com.sun.org.apache.bcel.internal.generic.StackProducer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
 

@@ -1,9 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewers.toTerminal.statusClasses;
 
-import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.WaitingViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer;
 

@@ -2,15 +2,12 @@ package it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewCard;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.CardSelectionExecuter;
-import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.CLIGodSymbols;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.GodSymbols;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses.CLIGamePreparationViewer;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
@@ -54,7 +51,7 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
      */
     private void printCardList() {
         CLIGodSymbols cliGodSymbols;
-        Integer cardNumber = 1;
+        int cardNumber = 1;
         String upString;
         String middleString;
         String downString;
@@ -76,7 +73,7 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
                 System.out.println(upString);
                 // second line
                 CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
-                middleString = cardNumber.toString() + ".";
+                middleString = cardNumber + ".";
                 middleString = middleString + CLIPrintFunction.increaseLengthWithSpace(cliGodSymbols.getMiddleRepresentation(), cliGodSymbols.getRepresentationLength(), GOD_SYMBOL_SPACE);
                 middleString = middleString + CLIPrintFunction.increaseLengthWithSpace(viewCard.getName(), viewCard.getName().length(), GOD_NAME_SPACE);
                 System.out.println(middleString);
@@ -175,7 +172,7 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
                     correctResponse = true;
                 }
             } while ( !correctResponse );
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException ignored) {
         }
         System.out.println();
 

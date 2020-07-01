@@ -1,6 +1,5 @@
 package it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses;
 
-import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
 

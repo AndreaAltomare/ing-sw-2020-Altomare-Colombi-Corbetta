@@ -1,14 +1,9 @@
 package it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
-import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewCard;
-import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
-import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.OpponentBuildViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
-import it.polimi.ingsw.view.clientSide.viewers.toTerminal.statusClasses.WTerminalPlayingViewer;
-import it.polimi.ingsw.view.exceptions.NotFoundException;
 
 public class WTerminalOpponentBuildPhase extends WTerminalSubTurnViewer {
 

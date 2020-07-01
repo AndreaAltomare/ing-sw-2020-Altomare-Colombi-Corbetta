@@ -11,14 +11,12 @@ import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.*;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.CLICheckWrite;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.CLIStopTimeScanner;
-import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.EmptyQueueException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
@@ -157,7 +155,6 @@ public class CLIViewer extends Viewer{
         final String UNDO_REJECT_MESSAGE = "The play continues";
         int waitingTime = 5; // in sec
         Thread stopScannerThread = new Thread( new CLIStopTimeScanner(cliCheckWrite, waitingTime));
-        String input;
 
         ViewBoard.getBoard().toCLI();       // print the board to see last move1
 
@@ -167,7 +164,7 @@ public class CLIViewer extends Viewer{
         System.out.printf("Press ENTER bottom in %d second to undo your move:\n", waitingTime);
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
         System.out.print( CLIPrintFunction.WRITE_MARK );
-        input = new Scanner(System.in).nextLine();
+        new Scanner(System.in).nextLine();
         if ( cliCheckWrite.firstToWrite() ) {
             try {
                 UndoExecuter.undoIt();
@@ -223,7 +220,7 @@ public class CLIViewer extends Viewer{
                         ;
                 }
 
-            } catch (EmptyQueueException e) {
+            } catch (EmptyQueueException ignored) {
                 ;
             }
         }

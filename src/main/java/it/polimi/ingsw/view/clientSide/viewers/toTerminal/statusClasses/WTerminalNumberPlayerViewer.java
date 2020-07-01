@@ -1,7 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewers.toTerminal.statusClasses;
 
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.SetPlayerNumberExecuter;
-import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewers.statusViewers.NumberPlayerViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalStatusViewer;
@@ -147,20 +146,20 @@ public class WTerminalNumberPlayerViewer extends WTerminalStatusViewer {
         SetPlayerNumberExecuter setPlayerNumberExecuter = (SetPlayerNumberExecuter) numberPlayerViewer.getMyExecuters().get("NumberPlayers");
 
         if (response < 0) {
-            CLIPrintFunction.printError(WRONG_PARAMETER_MESSAGE);
+           PrintFunction.printError(WRONG_PARAMETER_MESSAGE);
         } else {
             try {
                 setPlayerNumberExecuter.setNumberOfPlayers( response );
                 approvedResponse = true;
                 setPlayerNumberExecuter.doIt();
-                CLIPrintFunction.printCheck(CORRECT_MESSAGE);
+                PrintFunction.printCheck(CORRECT_MESSAGE);
             } catch (WrongParametersException e) {
                 if (!e.getMessage().equals("")) {
                     wrongNumberMessage = e.getMessage();
                 }
-                CLIPrintFunction.printError(wrongNumberMessage);
+                PrintFunction.printError(wrongNumberMessage);
             } catch (CannotSendEventException e) {
-                CLIPrintFunction.printError(e.getErrorMessage());
+                PrintFunction.printError(e.getErrorMessage());
             }
         }System.out.println();
 

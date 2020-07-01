@@ -3,16 +3,12 @@ package it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.*;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.BuildBlockExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.NextTurnExecuter;
-import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.TurnStatusChangeExecuter;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.subTurnViewers.BuildViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.Symbols;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.WTerminalSubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.PrintFunction;
-import it.polimi.ingsw.view.clientSide.viewers.toTerminal.statusClasses.WTerminalPlayingViewer;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
@@ -36,7 +32,6 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
      * @return
      */
     private boolean showBuildRequest() {
-        final int DIRECTION_SPACE = 15;
         final String DIRECTION_REQUEST = "Please, select a direction to build:";
         final String CORRECT_MESSAGE = "Your built request is correctly send";
         final String WRONG_DIRECTION_MESSAGE = "The selected direction doesn't exist";
@@ -200,21 +195,21 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
                 break;  //exit from state if there isn't the board
             }
 
-            PrintFunction.printRepeatString(" ", CLIPrintFunction.STARTING_SPACE);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
             System.out.println(COMMAND_REQUEST);
-            PrintFunction.printRepeatString(" ", CLIPrintFunction.STARTING_SPACE);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
             System.out.println("1: " +  GODS_DETAILS_COMMAND );
-            PrintFunction.printRepeatString(" ", CLIPrintFunction.STARTING_SPACE);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
             System.out.println("2: " + BUILD_COMMAND);
-            PrintFunction.printRepeatString( " ", CLIPrintFunction.STARTING_SPACE);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
             System.out.println("3: " + TO_MOVE_PHASE_COMMAND);
-            PrintFunction.printRepeatString(" ", CLIPrintFunction.STARTING_SPACE);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
             System.out.println("4: " + END_TURN_COMMAND);
-            PrintFunction.printRepeatString(" ", CLIPrintFunction.STARTING_SPACE);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
             System.out.println("5: " + EXIT_COMMAND);
 
             System.out.println();
-            PrintFunction.printRepeatString(" ", CLIPrintFunction.STARTING_SPACE);
+            PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
             System.out.print(">>");
             try {
                 actionSelected = new Scanner(System.in).nextInt();

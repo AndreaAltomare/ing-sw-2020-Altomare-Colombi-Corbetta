@@ -1,7 +1,5 @@
 package it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces;
 
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 
 public interface PrintFunction {
 

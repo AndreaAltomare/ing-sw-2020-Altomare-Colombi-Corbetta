@@ -3,12 +3,10 @@ package it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewCard;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.CardsChoosingExecuter;
-import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.*;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.statusClasses.CLIGamePreparationViewer;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 import it.polimi.ingsw.view.exceptions.WrongParametersException;
@@ -54,7 +52,7 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
     private void printCardList() {
         CLIGodSymbols cliGodSymbols;
         List<ViewCard> cardList = cardSelection.getCardList();
-        Integer cardNumber = 1;
+        int cardNumber = 1;
         String upString;
         String middleString;
         String downString;
@@ -84,7 +82,7 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
                 System.out.println(middleString);
                 // third line
                 CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
-                downString = this.checkLeftSelect(viewCard, false) + cardNumber.toString() + ".";
+                downString = this.checkLeftSelect(viewCard, false) + cardNumber + ".";
                 downString = downString + CLIPrintFunction.increaseLengthWithSpace(cliGodSymbols.getDownRepresentation(), cliGodSymbols.getRepresentationLength(), GOD_SYMBOL_SPACE);
                 downString = downString + CLIPrintFunction.increaseLengthWithSpace(viewCard.getName(), viewCard.getName().length(), GOD_NAME_SPACE);
                 downString = downString + this.checkRightSelect(viewCard, false);

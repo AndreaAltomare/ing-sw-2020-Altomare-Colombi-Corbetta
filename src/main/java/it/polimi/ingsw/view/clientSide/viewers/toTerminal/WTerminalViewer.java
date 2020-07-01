@@ -110,7 +110,6 @@ public class WTerminalViewer extends Viewer {
         final String UNDO_REJECT_MESSAGE = "The play continues";
         int waitingTime = 5; // in sec
         Thread stopScannerThread = new Thread( new WTerminalStopTimeScanner(wTerminalCheckWrite, waitingTime));
-        String input;
 
         ViewBoard.getBoard().toWTerminal();       // print the board to see last move1
 
@@ -119,7 +118,7 @@ public class WTerminalViewer extends Viewer {
         System.out.printf("Press ENTER bottom in %d second to undo your move:\n", waitingTime);
         PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         System.out.print( ">>" );
-        input = new Scanner(System.in).nextLine();
+        new Scanner(System.in).nextLine();
         if ( wTerminalCheckWrite.firstToWrite() ) {
             try {
                 UndoExecuter.undoIt();
@@ -216,8 +215,7 @@ public class WTerminalViewer extends Viewer {
                         ;
                 }
 
-            } catch (EmptyQueueException e) {
-                ;
+            } catch (EmptyQueueException ignored) {
             }
         }
 

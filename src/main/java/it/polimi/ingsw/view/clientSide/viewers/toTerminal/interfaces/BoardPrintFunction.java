@@ -3,7 +3,6 @@ package it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewCard;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewWorker;
-import it.polimi.ingsw.view.clientSide.viewers.toTerminal.WTerminalViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.GodSymbols;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.enumeration.Symbols;
 import it.polimi.ingsw.view.exceptions.NotFoundException;

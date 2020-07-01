@@ -1,7 +1,6 @@
 package it.polimi.ingsw.view.clientSide.viewers.toTerminal.statusClasses;
 
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toTerminal.TerminalViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces.TerminalStatusViewer;
 import it.polimi.ingsw.view.exceptions.CheckQueueException;
 

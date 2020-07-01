@@ -157,17 +157,15 @@ public class CLIBuildPhase extends CLISubTurnViewer {
     private boolean endTurn() {
 
         NextTurnExecuter nextTurnExecuter = new NextTurnExecuter();
-        boolean endTurn = false;
 
         try {
-            endTurn = true;
             nextTurnExecuter.doIt();
         } catch (CannotSendEventException e) {
             CLIPrintFunction.printError(e.getErrorMessage());
         }
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, "\n", 2);
 
-        return endTurn;
+        return true;
     }
 
     /**

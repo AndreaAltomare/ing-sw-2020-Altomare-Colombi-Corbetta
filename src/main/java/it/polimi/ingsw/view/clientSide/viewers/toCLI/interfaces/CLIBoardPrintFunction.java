@@ -3,7 +3,6 @@ package it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewCard;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewWorker;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.CLIGodSymbols;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.CLISymbols;
@@ -12,8 +11,8 @@ import it.polimi.ingsw.view.exceptions.NotFoundException;
 public interface CLIBoardPrintFunction {
 
 
-    final int DISTANCE_FROM_BOARD = 5;
-    final int SPACE_FOR_STRING = 15;
+    int DISTANCE_FROM_BOARD = 5;
+    int SPACE_FOR_STRING = 15;
 
     /**
      * Returns rhe correct String of symbolNumber if cellRow == 2|3|4 ( the middle of the cell ) or an empty String if it isn't

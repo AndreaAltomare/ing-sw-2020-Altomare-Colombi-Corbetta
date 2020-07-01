@@ -35,33 +35,56 @@ public enum CLISymbols {
 
                                             },
 
-    SELECTION_LEFT( "   /",
-            ">>( ",
-            "   \\"),
 
-    SELECTION_RIGHT("\\   ",
-            " )<<",
-            "/   "),
+    NUMBER_0(UnicodeSymbol.HIGH_BLOCK_4.getEscape() + UnicodeSymbol.HIGH_BLOCK_4.getEscape() + UnicodeSymbol.HIGH_BLOCK_4.getEscape(),
+            UnicodeSymbol.HIGH_BLOCK_8.getEscape() + " " + UnicodeSymbol.HIGH_BLOCK_8.getEscape(),
+            UnicodeSymbol.HIGH_BLOCK_8.getEscape() + UnicodeSymbol.HIGH_BLOCK_4.getEscape() + UnicodeSymbol.HIGH_BLOCK_8.getEscape())
+            {
 
-    NUMBER_0(   " _ ",
-            "| |",
-            "|_|"),
+                @Override
+                public int getLength() { return 3;}
 
-    NUMBER_1(   " . ",
-            "/| ",
-            "_|_"),
+            },
 
-    NUMBER_2(   " _ ",
-            " _|",
-            "|_ "),
+    NUMBER_1( " " + UnicodeSymbol.HIGH_BLOCK_4.getEscape() + " ",
+            " " + UnicodeSymbol.HIGH_BLOCK_8.getEscape() + " ",
+            " " + UnicodeSymbol.HIGH_BLOCK_8.getEscape() + " ")
+            {
 
-    NUMBER_3(   " _ ",
-            " _|",
-            " _|"),
+                @Override
+                public int getLength() { return 3;}
 
-    NUMBER_4(   "   ",
-            "|_|",
-            "  |");
+            },
+
+    NUMBER_2(UnicodeSymbol.HIGH_BLOCK_4.getEscape() + UnicodeSymbol.HIGH_BLOCK_4.getEscape() + UnicodeSymbol.HIGH_BLOCK_4.getEscape(),
+            UnicodeSymbol.HIGH_BLOCK_4.getEscape() + UnicodeSymbol.HIGH_BLOCK_4.getEscape() + UnicodeSymbol.HIGH_BLOCK_8.getEscape(),
+            UnicodeSymbol.HIGH_BLOCK_8.getEscape() + UnicodeSymbol.HIGH_BLOCK_4.getEscape() + UnicodeSymbol.HIGH_BLOCK_4.getEscape())
+            {
+
+                @Override
+                public int getLength() { return 3;}
+
+            },
+
+    NUMBER_3(UnicodeSymbol.HIGH_BLOCK_4.getEscape() + UnicodeSymbol.HIGH_BLOCK_4.getEscape() + UnicodeSymbol.HIGH_BLOCK_4.getEscape(),
+            UnicodeSymbol.HIGH_BLOCK_4.getEscape() + UnicodeSymbol.HIGH_BLOCK_4.getEscape() + UnicodeSymbol.HIGH_BLOCK_8.getEscape(),
+            UnicodeSymbol.HIGH_BLOCK_4.getEscape() + UnicodeSymbol.HIGH_BLOCK_4.getEscape() + UnicodeSymbol.HIGH_BLOCK_8.getEscape())
+            {
+
+                @Override
+                public int getLength() { return 3;}
+
+            },
+
+    NUMBER_4(UnicodeSymbol.HIGH_BLOCK_4.getEscape() + " " + UnicodeSymbol.HIGH_BLOCK_4.getEscape(),
+            UnicodeSymbol.HIGH_BLOCK_8.getEscape() + UnicodeSymbol.HIGH_BLOCK_4.getEscape() + UnicodeSymbol.HIGH_BLOCK_8.getEscape(),
+            " " + " " + UnicodeSymbol.HIGH_BLOCK_8.getEscape())
+            {
+
+                @Override
+                public int getLength() { return 3;}
+
+            };
 
     private String upRepresentation;
     private String middleRepresentation;
