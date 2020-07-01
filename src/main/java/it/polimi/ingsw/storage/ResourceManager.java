@@ -25,11 +25,13 @@ import java.util.concurrent.Executors;
  */
 public class ResourceManager {
     private static ExecutorService executor = Executors.newFixedThreadPool(10); // for async heavy I/O interaction
-    private static String PARENT_DIRECTORY_PATH;
-    private static final String CONNECTION_RESOURCES_PATH = "/connection_settings/";
-    private static final String GAME_RESOURCES_PATH = "/game_resources/";
-    private static final String CARDS_PATH = "/cards/";
-    private static final String SAVES_PATH = "/game_saves/";
+    private static String PARENT_DIRECTORY_PATH = "";
+    private static final String CONNECTION_RESOURCES_PATH = "connection_settings/";
+    private static final String GAME_RESOURCES_PATH = "game_resources/";
+    private static final String CARDS_PATH = "cards/";
+    private static final String SAVES_PATH = "game_saves/";
+    /* Debug enabler */
+    private static final boolean DEBUG = true;
 
     /**
      * Get a Card's information and return its GodPower properties.
@@ -179,7 +181,12 @@ public class ResourceManager {
      */
     public static void initializeResources(Class mainClass) throws URISyntaxException, IOException {
         /* Application path */
-        PARENT_DIRECTORY_PATH = new File(mainClass.getProtectionDomain().getCodeSource().getLocation().toURI()).getCanonicalFile().getParent();
+        if(!DEBUG) {
+            PARENT_DIRECTORY_PATH = new File(mainClass.getProtectionDomain().getCodeSource().getLocation().toURI()).getCanonicalFile().getParent();
+            PARENT_DIRECTORY_PATH = PARENT_DIRECTORY_PATH + "/";
+        }
+        else
+            PARENT_DIRECTORY_PATH = "";
         /* No other information needed */
     }
 }

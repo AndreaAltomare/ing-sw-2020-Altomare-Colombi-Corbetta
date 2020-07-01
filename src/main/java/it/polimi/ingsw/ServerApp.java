@@ -52,7 +52,13 @@ public class ServerApp {
         }
 
         if(defaultSettings) {
-            connectionSettings = ResourceManager.serverConnectionSettings();
+            connectionSettings = null;
+            try {
+                connectionSettings = ResourceManager.serverConnectionSettings();
+            }
+            catch (Exception ex) {
+                System.out.println("Bad configuration format.\nServer is going to be initialized with default connection settings.\n\n");
+            }
             if (connectionSettings != null)
                 port = connectionSettings.getPort();
         }
@@ -66,6 +72,7 @@ public class ServerApp {
         }
         catch (IOException ex) {
             System.err.println("Impossible to initialize the Server: " + ex.getMessage() + "!");
+            System.exit(1);
         }
     }
 }
