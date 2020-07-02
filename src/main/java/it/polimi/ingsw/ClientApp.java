@@ -62,7 +62,7 @@ public class ClientApp {
 
         List<String> argsList = Arrays.asList(args);
 
-        /* GET CUSTOMS CONNECTION SETTINGS */
+        /* GET CUSTOM CONNECTION SETTINGS */
         if(argsList.contains(IP_ARG) && argsList.contains(PORT_ARG)) {
             try {
                 // GET IP
