@@ -48,7 +48,7 @@ public class WTerminalResumeGameViewer extends WTerminalStatusViewer {
         System.out.println( "//\\" );
 
         // machine's upper part, machinery's arm and third block's upper part
-        System.out.print(" ");
+        PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE + 1);
         PrintFunction.printRepeatString("_", MACHINERY_LENGTH - 2);
         PrintFunction.printRepeatString(" ", 2);
         System.out.println("//  \\_    __");

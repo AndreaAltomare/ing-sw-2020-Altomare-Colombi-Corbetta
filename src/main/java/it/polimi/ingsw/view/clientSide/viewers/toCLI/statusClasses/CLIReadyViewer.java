@@ -24,7 +24,7 @@ public class CLIReadyViewer extends CLIStatusViewer {
     final String TITLE = "SANTORINI";
     final int COLUMNS_NUMBER = 4;
     final int PEDIMENT_LENGTH = 2 * COLUMNS_THICKNESS * COLUMNS_NUMBER;
-    final String TITLE_COLOR = ANSIStyle.BLUE.getEscape();
+    final String TITLE_COLOR = ANSIStyle.GREEN.getEscape();
     final String TEMPLE_COLOR = ANSIStyle.GREY.getEscape();
     final String TEMPLE_BACK_COLOR = ANSIStyle.BACK_GREY.getEscape();
 

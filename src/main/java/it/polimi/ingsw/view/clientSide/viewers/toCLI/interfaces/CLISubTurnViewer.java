@@ -31,7 +31,7 @@ public abstract class CLISubTurnViewer implements SpecificSubTurnViewer {
      *                      if waitingPlayer == false
      */
     protected void showCardsDetails (boolean waitingPlayer) {
-        final String CONTINUE_REQUEST = "Press Enter to continue";
+        final String CONTINUE_REQUEST = "Press Enter to continue:";
         String detailsStyle;
         ViewCard viewCard;
         ViewWorker[] workers;

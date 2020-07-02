@@ -124,7 +124,7 @@ public interface BoardPrintFunction {
                                 ;
                         }
                     } catch (NotFoundException | NullPointerException e) {
-                        PrintFunction.printRepeatString("", SPACE_FOR_STRING);
+                        PrintFunction.printRepeatString(" ", SPACE_FOR_STRING);
                     }
                     break;
                 default:

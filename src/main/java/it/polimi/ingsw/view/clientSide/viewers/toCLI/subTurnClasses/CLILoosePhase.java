@@ -32,7 +32,7 @@ public class CLILoosePhase extends CLISubTurnViewer {
         final String BLOCK_COLOR = ANSIStyle.GREY.getEscape();
         final String DROP_COLOR = ANSIStyle.DIFFERENT_BLUE.getEscape();
         final String FIELD_BACK_COLOR = ANSIStyle.BACK_GREEN.getEscape();
-        final String WRITE_COLOR = ANSIStyle.GREY.getEscape();
+        final String WRITE_COLOR = ANSIStyle.BLUE.getEscape();
         final String WRITE_STRING = "SORRY, YOU HAVE LOOSEN";
         final int TOWER_SPACE = 5;
         final int MAN_SPACE = WRITE_STRING.length() - 2*TOWER_SPACE;

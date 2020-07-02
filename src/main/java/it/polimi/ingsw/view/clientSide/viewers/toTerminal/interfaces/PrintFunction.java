@@ -8,12 +8,10 @@ package it.polimi.ingsw.view.clientSide.viewers.toTerminal.interfaces;
  */
 public interface PrintFunction {
 
-    int MESSAGE_SLEEP_TIME = 2000; // in ns
     int STARTING_SPACE = 7;
 
     /**
-     * Prints errorMessage with error symbol, then waits a few second (MESSAGE_SLEEP_TIME / 1000)
-     * so the player can read it
+     * Prints errorMessage with error symbol
      *
      * @param errorMessage <code>String</code> to print
      */
@@ -22,29 +20,20 @@ public interface PrintFunction {
         PrintFunction.printRepeatString(" ", STARTING_SPACE);
         System.out.println( "><" +  errorMessage);
         System.out.println();
-        try {
-            Thread.sleep(MESSAGE_SLEEP_TIME);
-        } catch (InterruptedException ignored) {
-        }
     }
 
     /**
-     * Prints checkMessage with check symbol, then waits a few second (MESSAGE_SLEEP_TIME / 1000)
-     * so the player can read it
+     * Prints checkMessage with check symbol
      *
      * @param checkMessage <code>String</code> to print
      */
     static void printCheck(String checkMessage) {
         System.out.println();
-        PrintFunction.printRepeatString("", STARTING_SPACE + 2);
+        PrintFunction.printRepeatString(" ", STARTING_SPACE + 2);
         System.out.println("/");
         PrintFunction.printRepeatString(" ", STARTING_SPACE);
         System.out.println( "\\/ " + checkMessage );
         System.out.println();
-        try {
-            Thread.sleep(MESSAGE_SLEEP_TIME);
-        } catch (InterruptedException ignored) {
-        }
     }
 
     /**

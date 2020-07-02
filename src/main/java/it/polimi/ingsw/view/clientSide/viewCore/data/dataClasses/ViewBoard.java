@@ -373,7 +373,6 @@ public class ViewBoard extends ViewObject {
 
 
         System.out.println();
-        System.out.println();
 
 
         return null;
@@ -500,7 +499,6 @@ public class ViewBoard extends ViewObject {
             System.out.println();
         }
 
-        System.out.println();
         System.out.println();
 
 

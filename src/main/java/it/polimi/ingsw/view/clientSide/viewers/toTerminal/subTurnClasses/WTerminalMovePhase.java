@@ -143,7 +143,7 @@ public class WTerminalMovePhase extends WTerminalSubTurnViewer {
                         endMove = this.showMoveRequest();
                         break;
                     case 3:
-                        endMove = this.changePlayingPhase(ViewSubTurn.MOVE);
+                        endMove = this.changePlayingPhase(ViewSubTurn.BUILD);
                         break;
                     case 4:
                         endMove = true;

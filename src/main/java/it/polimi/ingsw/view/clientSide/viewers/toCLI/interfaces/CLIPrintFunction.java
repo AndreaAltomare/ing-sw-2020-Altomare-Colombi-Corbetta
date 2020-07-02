@@ -10,7 +10,6 @@ import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.UnicodeSymbol;
  */
 public interface CLIPrintFunction {
 
-    int MESSAGE_SLEEP_TIME = 2000; // in ns
     int STARTING_SPACE = 7;
     String ERROR_COLOR_AND_SYMBOL = ANSIStyle.RED.getEscape() + UnicodeSymbol.X_MARK.getEscape();
     String CORRECT_COLOR_AND_SYMBOL = ANSIStyle.GREEN.getEscape() + UnicodeSymbol.CHECK_MARK.getEscape();
@@ -18,8 +17,7 @@ public interface CLIPrintFunction {
 
 
     /**
-     * Prints errorMessage with color and symbol of ERROR_COLOR_AND_SYMBOL, then waits a few second (MESSAGE_SLEEP_TIME / 1000)
-     * so the player can read it
+     * Prints errorMessage with color and symbol of ERROR_COLOR_AND_SYMBOL
      *
      * @param errorMessage <code>String</code> to print
      * */
@@ -28,15 +26,10 @@ public interface CLIPrintFunction {
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
         System.out.println( ERROR_COLOR_AND_SYMBOL + errorMessage + ANSIStyle.RESET);
         System.out.println();
-        try {
-            Thread.sleep(MESSAGE_SLEEP_TIME);
-        } catch (InterruptedException ignored) {
-        }
     }
 
     /**
-     * Prints checkMessage with color and symbol of CORRECT_COLOR_AND_SYMBOL, then waits a few second (MESSAGE_SLEEP_TIME / 1000)
-     * so the player can read it
+     * Prints checkMessage with color and symbol of CORRECT_COLOR_AND_SYMBOL
      *
      * @param checkMessage <code>String</code> to print
      */
@@ -45,10 +38,6 @@ public interface CLIPrintFunction {
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", STARTING_SPACE);
         System.out.println( CORRECT_COLOR_AND_SYMBOL + checkMessage + ANSIStyle.RESET);
         System.out.println();
-        try {
-            Thread.sleep(MESSAGE_SLEEP_TIME);
-        } catch (InterruptedException ignored) {
-        }
     }
 
     /**
@@ -70,7 +59,7 @@ public interface CLIPrintFunction {
     /**
      * Method which prints on standard output a <code>String</code> with the chosen type at the middle of a chosen length
      * of space using printRepeatString.
-     * It doesn't print anything if stringLength is more than totalLength
+     * It prints middleString with style if stringLength is more than totalLength
      *
      * @param style <code>String</code> to represent the style
      * @param middleString <code>String</code> to print
@@ -80,12 +69,18 @@ public interface CLIPrintFunction {
     static void printAtTheMiddle(String style, String middleString, int stringLength, int totalLength) {
         System.out.print( style );
         if ( ((totalLength - stringLength) % 2 ) == 0) {
-            CLIPrintFunction.printRepeatString(""," ", (totalLength - stringLength) / 2);
+            for ( int i = 0; i < ((totalLength - stringLength) / 2); i++) {
+                System.out.print(" ");
+            }
         } else {
-            CLIPrintFunction.printRepeatString(""," ", ((totalLength - stringLength) / 2) + 1);
+            for ( int i = 0; i < (((totalLength - stringLength) / 2) + 1); i++) {
+                System.out.print(" ");
+            }
         }
         System.out.print(middleString);
-        CLIPrintFunction.printRepeatString(""," ", (totalLength - stringLength) / 2);
+        for ( int i = 0; i < ((totalLength - stringLength) / 2); i++) {
+            System.out.print(" ");
+        }
         System.out.print(ANSIStyle.RESET );
 
     }

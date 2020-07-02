@@ -31,11 +31,11 @@ public abstract class WTerminalSubTurnViewer implements SpecificSubTurnViewer {
      *                      if waitingPlayer == false
      */
     protected void showCardsDetails (boolean waitingPlayer) {
-        final String CONTINUE_REQUEST = "Press Enter to continue";
+        final String CONTINUE_REQUEST = "Press Enter to continue:";
         ViewCard viewCard;
 
         for (ViewPlayer viewPlayer : ViewPlayer.getPlayerList()) {
-            PrintFunction.printRepeatString("\n", PrintFunction.STARTING_SPACE);
+            PrintFunction.printRepeatString("\n", 2);
             try {
                 viewCard = viewPlayer.getCard();
                 PrintFunction.printRepeatString(" ", CLIPrintFunction.STARTING_SPACE);
@@ -45,11 +45,11 @@ public abstract class WTerminalSubTurnViewer implements SpecificSubTurnViewer {
                 PrintFunction.printRepeatString(" ", CLIPrintFunction.STARTING_SPACE);
                 System.out.printf("Description: %s\n", viewCard.getDescription());
             } catch (NotFoundException e) {
-                e.printStackTrace();
             }
         }
 
         if (waitingPlayer) {
+            System.out.println();
             PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
             System.out.print(CONTINUE_REQUEST);
             new Scanner(System.in).nextLine();

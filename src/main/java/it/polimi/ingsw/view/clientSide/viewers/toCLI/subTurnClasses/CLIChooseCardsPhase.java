@@ -38,7 +38,7 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
     private final int GOD_NAME_SPACE = CLIGodSymbols.getMaxNameLength() + 2;
     private final String SELECTION_COLOR = ANSIStyle.GREY.getEscape();
     private final String SELECTION_BACK_COLOR = ANSIStyle.BACK_GREY.getEscape();
-    private final String SELECTION_WRITE_COLOR = ANSIStyle.BLUE.getEscape();
+    private final String SELECTION_WRITE_COLOR = ANSIStyle.GREEN.getEscape();
 
 
     /**
@@ -205,7 +205,7 @@ public class CLIChooseCardsPhase extends CLISubTurnViewer {
      * @param godCardNumber number of the <code>ViewCard</code> chosen
      */
     private void showCardSelected(int godCardNumber) {
-        final String WRITE_PART_STYLE = ANSIStyle.BLUE.getEscape() + ANSIStyle.BACK_GREY.getEscape();
+        final String WRITE_PART_STYLE = ANSIStyle.GREEN.getEscape() + ANSIStyle.BACK_GREY.getEscape();
 
         ViewCard seeCard;
         boolean response;

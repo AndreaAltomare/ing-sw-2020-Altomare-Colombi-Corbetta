@@ -43,7 +43,7 @@ public class CLILoginViewer extends CLIStatusViewer {
         final String DROP_COLOR = ANSIStyle.DIFFERENT_BLUE.getEscape();
         final String HUMAN_COLOR = ANSIStyle.RESET;
         final String BLOCK_BACK_COLOR = ANSIStyle.BACK_GREY.getEscape();
-        final String REQUEST_COLOR = ANSIStyle.BLUE.getEscape();
+        final String REQUEST_COLOR = ANSIStyle.GREEN.getEscape();
         final int BLOCK_LENGTH; //after initialization it becomes constant
 
         if ( FIRST_PART.length() > SECOND_PART.length() ) {

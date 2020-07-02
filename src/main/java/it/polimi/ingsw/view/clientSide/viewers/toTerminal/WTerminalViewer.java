@@ -189,6 +189,9 @@ public class WTerminalViewer extends Viewer {
                     if ( this.wTerminalStatusViewer != null && !this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN) && !this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS)) {
                         wTerminalStatusViewer.show();
                     }
+                    if (viewMessage.getPayload().equals("Socket closed")) {
+                        end = true;
+                    }
                     break;
                 case FATAL_ERROR_MESSAGE:
                     PrintFunction.printError("FATAL ERROR: " + viewMessage.getPayload());

@@ -152,6 +152,9 @@ public class CLIViewer extends Viewer{
                     if ( this.cliStatusViewer != null && !this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN) && !this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS)) {
                         cliStatusViewer.show();
                     }
+                    if (viewMessage.getPayload().equals("Socket closed")) {
+                        end = true;
+                    }
                     break;
                 case FATAL_ERROR_MESSAGE:
                     CLIPrintFunction.printError("FATAL ERROR: " + viewMessage.getPayload());

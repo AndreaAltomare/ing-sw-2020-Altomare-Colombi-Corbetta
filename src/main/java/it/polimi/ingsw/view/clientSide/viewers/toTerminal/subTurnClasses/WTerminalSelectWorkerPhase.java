@@ -76,7 +76,7 @@ public class WTerminalSelectWorkerPhase extends WTerminalSubTurnViewer {
                 actionSelected = new Scanner(System.in).nextInt();
                 switch ( actionSelected ) {
                     case 1:
-                        this.showCardsDetails(false);
+                        this.showCardsDetails(true);
                         break;
                     case 2:
                         selected = this.showSelectRequest();

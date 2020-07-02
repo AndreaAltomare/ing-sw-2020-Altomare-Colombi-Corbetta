@@ -153,7 +153,7 @@ public class CLISelectMyCardPhase extends CLISubTurnViewer {
      * @return <code>ViewCard</code> selected
      */
     private ViewCard showCardAndSel( int godCardNumber) {
-        final String WRITE_PART_STYLE = ANSIStyle.BLUE.getEscape() + ANSIStyle.BACK_GREY.getEscape();
+        final String WRITE_PART_STYLE = ANSIStyle.GREEN.getEscape() + ANSIStyle.BACK_GREY.getEscape();
         final String SELECTION_REQUEST = "Do you want to use this card?";
         final String INPUT_CHOOSE = "( 0: No/ 1: Yes ):";
         final String WRONG_VALUE_MESSAGE = "The chosen value isn't correct, please change it";

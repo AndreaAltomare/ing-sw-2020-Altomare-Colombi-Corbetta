@@ -144,7 +144,7 @@ public class CLIMovePhase extends CLISubTurnViewer {
                         endMove = this.showMoveRequest();
                         break;
                     case 3:
-                        endMove = this.changePlayingPhase(ViewSubTurn.MOVE);
+                        endMove = this.changePlayingPhase(ViewSubTurn.BUILD);
                         break;
                     case 4:
                         endMove = true;

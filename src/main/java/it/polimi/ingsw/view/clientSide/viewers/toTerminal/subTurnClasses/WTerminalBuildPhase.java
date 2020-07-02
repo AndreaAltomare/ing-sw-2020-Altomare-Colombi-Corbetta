@@ -123,7 +123,6 @@ public class WTerminalBuildPhase extends WTerminalSubTurnViewer {
         System.out.println(BLOCK_TYPE_REQUEST);
 
         //block: first line
-        System.out.println();
         PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE + 2);
         PrintFunction.printAtTheMiddle( Symbols.BLOCK.getUpRepresentation() , PLACEABLE_SPACE);
         //block: second line
