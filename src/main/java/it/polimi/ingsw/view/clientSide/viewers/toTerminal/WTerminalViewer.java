@@ -58,6 +58,7 @@ public class WTerminalViewer extends Viewer {
                 wTerminalStatusViewer.show();
             }
             if (!ViewSubTurn.getActual().isMyTurn()) {
+                wTerminalStatusViewer.setMyWTerminalSubTurnViewer(ViewSubTurn.getActual().getSubViewer().toWTerminal());
                 wTerminalStatusViewer.show();
             }
         }
@@ -189,7 +190,7 @@ public class WTerminalViewer extends Viewer {
                     if ( this.wTerminalStatusViewer != null && !this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN) && !this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS)) {
                         wTerminalStatusViewer.show();
                     }
-                    if (viewMessage.getPayload().equals("Socket closed")) {
+                    if (viewMessage.getPayload().equals("Socket closed")||viewMessage.getPayload().equals("Connection refused")) {
                         end = true;
                     }
                     break;

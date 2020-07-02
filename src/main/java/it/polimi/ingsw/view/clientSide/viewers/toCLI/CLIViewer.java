@@ -1,9 +1,11 @@
 package it.polimi.ingsw.view.clientSide.viewers.toCLI;
 
+import it.polimi.ingsw.view.clientSide.View;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.UndoExecuter;
+import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
@@ -46,6 +48,8 @@ public class CLIViewer extends Viewer{
      */
     @Override
     public void refresh() {
+        if(View.debugging)
+            System.out.print("REFRESHING");
 
         if ( cliStatusViewer != null) {
             try {
@@ -55,6 +59,9 @@ public class CLIViewer extends Viewer{
                 cliStatusViewer.show();
             }
             if (!ViewSubTurn.getActual().isMyTurn()) {
+                if(View.debugging)
+                    System.out.print("SHOWING");
+                cliStatusViewer.setMyCLISubTurnViewer(ViewSubTurn.getActual().getSubViewer().toCLI());
                 cliStatusViewer.show();
             }
         }
@@ -152,7 +159,7 @@ public class CLIViewer extends Viewer{
                     if ( this.cliStatusViewer != null && !this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN) && !this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_STATUS)) {
                         cliStatusViewer.show();
                     }
-                    if (viewMessage.getPayload().equals("Socket closed")) {
+                    if (viewMessage.getPayload().equals("Socket closed")||viewMessage.getPayload().equals("Connection refused")) {
                         end = true;
                     }
                     break;
