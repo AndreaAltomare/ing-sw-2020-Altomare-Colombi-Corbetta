@@ -228,9 +228,9 @@ class IslandBoardTest {
     /**
      * Board Test on IslandBoard
      * Check if getAdjacentCells can return the correct List when the Cell is or not of the Board
-     * Method used:     contains( Object )          of  List<T>
-     *                  isEmpty()                   of  List<T>
-     *                  size()                      of  List<T>
+     * Method used:     contains( Object )          of  List
+     *                  isEmpty()                   of  List
+     *                  size()                      of  List
      *
      * Black Box and White Box
      */
