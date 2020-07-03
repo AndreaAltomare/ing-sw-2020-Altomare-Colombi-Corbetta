@@ -1,0 +1,74 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: MoveChecker</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.model.card.move</a> ]
+</div>
+
+<h1>Coverage Summary for Class: MoveChecker (it.polimi.ingsw.model.card.move)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">MoveChecker</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.model.card.move;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.model.card.Card;
+<i>4</i>&nbsp;import it.polimi.ingsw.model.board.Cell;
+<i>5</i>&nbsp;import it.polimi.ingsw.model.move.Move;
+<i>6</i>&nbsp;import it.polimi.ingsw.model.player.worker.Worker;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;/**
+<i>9</i>&nbsp; * Functional interface.
+<i>10</i>&nbsp; * Provides an operation for checking a Movement move.
+<i>11</i>&nbsp; *
+<i>12</i>&nbsp; * @author AndreaAltomare
+<i>13</i>&nbsp; */
+<i>14</i>&nbsp;public interface MoveChecker {
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    /**
+<i>17</i>&nbsp;     * Checks a Movement move.
+<i>18</i>&nbsp;     *
+<i>19</i>&nbsp;     * @param move Move to check
+<i>20</i>&nbsp;     * @param worker Worker which made the move
+<i>21</i>&nbsp;     * @param startingPosition Initial position (Cell) of the Worker which made the move
+<i>22</i>&nbsp;     * @param movesLeft Number of Movement-type moves left
+<i>23</i>&nbsp;     * @param parentCard Card providing the effect by which check the move
+<i>24</i>&nbsp;     * @return True if the move is legal
+<i>25</i>&nbsp;     */
+<i>26</i>&nbsp;    boolean checkMove(Move move, Worker worker, Cell startingPosition, int movesLeft, Card parentCard);
+<i>27</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 21:53</div>
+</div>
+</body>
+</html>

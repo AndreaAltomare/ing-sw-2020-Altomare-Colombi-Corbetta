@@ -1,0 +1,70 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: WinChecker</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.model.card.win</a> ]
+</div>
+
+<h1>Coverage Summary for Class: WinChecker (it.polimi.ingsw.model.card.win)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">WinChecker</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.model.card.win;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.model.move.Move;
+<i>4</i>&nbsp;import it.polimi.ingsw.model.player.worker.Worker;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;/**
+<i>7</i>&nbsp; * Functional interface.
+<i>8</i>&nbsp; * Provides an operation to check for a Win condition
+<i>9</i>&nbsp; * after a move was executed.
+<i>10</i>&nbsp; *
+<i>11</i>&nbsp; * @author AndreaAltomare
+<i>12</i>&nbsp; */
+<i>13</i>&nbsp;public interface WinChecker {
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    /**
+<i>16</i>&nbsp;     * Checks for a Win condition.
+<i>17</i>&nbsp;     *
+<i>18</i>&nbsp;     * @param move Executed move
+<i>19</i>&nbsp;     * @param worker Worker which made the move
+<i>20</i>&nbsp;     * @return True if there is a Win condition
+<i>21</i>&nbsp;     */
+<i>22</i>&nbsp;    boolean checkWin(Move move, Worker worker);
+<i>23</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 21:53</div>
+</div>
+</body>
+</html>

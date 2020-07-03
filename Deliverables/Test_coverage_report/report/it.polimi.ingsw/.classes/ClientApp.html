@@ -1,0 +1,220 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ClientApp</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ClientApp (it.polimi.ingsw)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ClientApp</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 52)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.connection.ConnectionSettings;
+<i>4</i>&nbsp;import it.polimi.ingsw.connection.client.ClientConnection;
+<i>5</i>&nbsp;import it.polimi.ingsw.storage.ResourceManager;
+<i>6</i>&nbsp;import it.polimi.ingsw.view.clientSide.View;
+<i>7</i>&nbsp;import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
+<i>8</i>&nbsp;import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
+<i>9</i>&nbsp;import it.polimi.ingsw.view.clientSide.viewers.toCLI.CLIViewer;
+<i>10</i>&nbsp;import it.polimi.ingsw.view.clientSide.viewers.toGUI.GUIViewer;
+<i>11</i>&nbsp;import it.polimi.ingsw.view.clientSide.viewers.toTerminal.WTerminalViewer;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;import java.io.IOException;
+<i>14</i>&nbsp;import java.net.URISyntaxException;
+<i>15</i>&nbsp;import java.util.Arrays;
+<i>16</i>&nbsp;import java.util.List;
+<i>17</i>&nbsp;import java.util.Scanner;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;/**
+<i>20</i>&nbsp; * Client-side Application.
+<i>21</i>&nbsp; *
+<i>22</i>&nbsp; * @see &lt;a href=&quot;https://github.com/emanueledelsozzo/ingsoft-prova-finale-2020/blob/master/ese_Socket_Serialization/TrisDistributedMVC/src/main/java/it/polimi/ingsw/ClientApp.java&quot;&gt;github.com/emanueledelsozzo/.../ClientApp.java&lt;/a&gt;
+<i>23</i>&nbsp; * @author AndreaAltomare
+<i>24</i>&nbsp; */
+<b class="nc"><i>25</i>&nbsp;public class ClientApp {</b>
+<i>26</i>&nbsp;    /* Arguments constants */
+<i>27</i>&nbsp;    private static final String IP_ARG = &quot;-ip&quot;;
+<i>28</i>&nbsp;    private static final String PORT_ARG = &quot;-port&quot;;
+<i>29</i>&nbsp;    private static final String GUI_ARG = &quot;--gui&quot;;
+<i>30</i>&nbsp;    private static final String CLI_ARG = &quot;--cli&quot;;
+<i>31</i>&nbsp;    private static final String TERMINAL_ARG = &quot;--terminal&quot;;
+<i>32</i>&nbsp;    private static final String BAD_ARGS = &quot;Bad arguments.&quot;;
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    /**
+<i>35</i>&nbsp;     * Starts Client-side application.
+<i>36</i>&nbsp;     *
+<i>37</i>&nbsp;     * @param args (main() arguments)
+<i>38</i>&nbsp;     */
+<i>39</i>&nbsp;    public static void main(String[] args) {
+<b class="nc"><i>40</i>&nbsp;        final Scanner input = new Scanner(System.in); // user STDIN [UNIQUE!] reference</b>
+<i>41</i>&nbsp;        View view;
+<i>42</i>&nbsp;        ClientConnection client;
+<i>43</i>&nbsp;        ConnectionSettings connectionSettings;
+<b class="nc"><i>44</i>&nbsp;        final String DEFAULT_IP = &quot;127.0.0.1&quot;;</b>
+<b class="nc"><i>45</i>&nbsp;        final int DEFAULT_PORT = 9999; // default port</b>
+<b class="nc"><i>46</i>&nbsp;        String ip = DEFAULT_IP;</b>
+<b class="nc"><i>47</i>&nbsp;        int port = DEFAULT_PORT;</b>
+<i>48</i>&nbsp;        Viewer viewer;
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;        /* Initialize information to properly work with resources */
+<i>51</i>&nbsp;        try {
+<b class="nc"><i>52</i>&nbsp;            ResourceManager.initializeResources(ClientApp.class);</b>
+<i>53</i>&nbsp;        }
+<b class="nc"><i>54</i>&nbsp;        catch (URISyntaxException ex) {</b>
+<b class="nc"><i>55</i>&nbsp;            System.out.println(&quot;Something went wrong when analyzing the application path.\nApplication is closing...&quot;);</b>
+<b class="nc"><i>56</i>&nbsp;            System.exit(1);</b>
+<i>57</i>&nbsp;        }
+<b class="nc"><i>58</i>&nbsp;        catch (IOException ex) {</b>
+<b class="nc"><i>59</i>&nbsp;            System.out.println(&quot;Something went wrong when getting the canonical path for the application.\nApplication is closing...&quot;);</b>
+<b class="nc"><i>60</i>&nbsp;            System.exit(1);</b>
+<b class="nc"><i>61</i>&nbsp;        }</b>
+<i>62</i>&nbsp;
+<b class="nc"><i>63</i>&nbsp;        List&lt;String&gt; argsList = Arrays.asList(args);</b>
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;        /* GET CUSTOM CONNECTION SETTINGS */
+<b class="nc"><i>66</i>&nbsp;        if(argsList.contains(IP_ARG) &amp;&amp; argsList.contains(PORT_ARG)) {</b>
+<i>67</i>&nbsp;            try {
+<i>68</i>&nbsp;                // GET IP
+<b class="nc"><i>69</i>&nbsp;                int ipArgIndex = argsList.indexOf(IP_ARG) + 1;</b>
+<b class="nc"><i>70</i>&nbsp;                ip = argsList.get(ipArgIndex);</b>
+<i>71</i>&nbsp;                // GET PORT
+<b class="nc"><i>72</i>&nbsp;                int portArgIndex = argsList.indexOf(PORT_ARG) + 1;</b>
+<b class="nc"><i>73</i>&nbsp;                port = Integer.parseInt(argsList.get(portArgIndex));</b>
+<i>74</i>&nbsp;            }
+<b class="nc"><i>75</i>&nbsp;            catch(Exception ex) {</b>
+<i>76</i>&nbsp;                //if(View.debugging)
+<b class="nc"><i>77</i>&nbsp;                System.out.println(BAD_ARGS);</b>
+<b class="nc"><i>78</i>&nbsp;                return;</b>
+<b class="nc"><i>79</i>&nbsp;            }</b>
+<i>80</i>&nbsp;        }
+<i>81</i>&nbsp;        else {
+<i>82</i>&nbsp;            /* Retrieve connection configuration settings */
+<b class="nc"><i>83</i>&nbsp;            connectionSettings = null;</b>
+<i>84</i>&nbsp;            try {
+<b class="nc"><i>85</i>&nbsp;                connectionSettings = ResourceManager.clientConnectionSettings();</b>
+<i>86</i>&nbsp;            }
+<b class="nc"><i>87</i>&nbsp;            catch (Exception ex) {</b>
+<b class="nc"><i>88</i>&nbsp;                System.out.println(&quot;Bad configuration format.\nClient is going to be initialized with default connection settings.\n\n&quot;);</b>
+<b class="nc"><i>89</i>&nbsp;            }</b>
+<b class="nc"><i>90</i>&nbsp;            if (connectionSettings != null) {</b>
+<b class="nc"><i>91</i>&nbsp;                ip = connectionSettings.getIp();</b>
+<b class="nc"><i>92</i>&nbsp;                port = connectionSettings.getPort();</b>
+<i>93</i>&nbsp;            }
+<i>94</i>&nbsp;        }
+<i>95</i>&nbsp;
+<i>96</i>&nbsp;
+<i>97</i>&nbsp;        /* GET VIEWER SETTINGS */
+<b class="nc"><i>98</i>&nbsp;        viewer = getViewer(argsList);</b>
+<b class="nc"><i>99</i>&nbsp;        if(viewer == null) {</b>
+<b class="nc"><i>100</i>&nbsp;            ViewMessage.populateAndSend(BAD_ARGS, ViewMessage.MessageType.FROM_SERVER_ERROR);</b>
+<i>101</i>&nbsp;            //if(View.debugging)
+<b class="nc"><i>102</i>&nbsp;            System.out.println(BAD_ARGS);</b>
+<b class="nc"><i>103</i>&nbsp;            return;</b>
+<i>104</i>&nbsp;        }
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;
+<i>107</i>&nbsp;        /* Instantiate View and ClientConnection (Connection-Layer) */
+<b class="nc"><i>108</i>&nbsp;        client = new ClientConnection(ip, port);</b>
+<b class="nc"><i>109</i>&nbsp;        view = new View(input, client, viewer);</b>
+<i>110</i>&nbsp;        /* Add observers */
+<b class="nc"><i>111</i>&nbsp;        client.addMVEventsListener(view);</b>
+<b class="nc"><i>112</i>&nbsp;        view.addObserver(client);</b>
+<i>113</i>&nbsp;        /* Run View */
+<b class="nc"><i>114</i>&nbsp;        view.run();</b>
+<b class="nc"><i>115</i>&nbsp;    }</b>
+<i>116</i>&nbsp;
+<i>117</i>&nbsp;    /**
+<i>118</i>&nbsp;     * Gets the Viewer the User asked for through program args.
+<i>119</i>&nbsp;     *
+<i>120</i>&nbsp;     * @param arguments List of arguments
+<i>121</i>&nbsp;     * @return A specific Viewer
+<i>122</i>&nbsp;     */
+<i>123</i>&nbsp;    private static Viewer getViewer(List&lt;String&gt; arguments) {
+<b class="nc"><i>124</i>&nbsp;        if(!(arguments.contains(CLI_ARG) || arguments.contains(TERMINAL_ARG)))</b>
+<b class="nc"><i>125</i>&nbsp;            return new GUIViewer();</b>
+<b class="nc"><i>126</i>&nbsp;        else if(arguments.contains(GUI_ARG))</b>
+<b class="nc"><i>127</i>&nbsp;            return new GUIViewer();</b>
+<b class="nc"><i>128</i>&nbsp;        else if(arguments.contains(CLI_ARG))</b>
+<b class="nc"><i>129</i>&nbsp;            return new CLIViewer();</b>
+<b class="nc"><i>130</i>&nbsp;        else if(arguments.contains(TERMINAL_ARG)) {</b>
+<i>131</i>&nbsp;            //return new TerminalViewer();
+<b class="nc"><i>132</i>&nbsp;            return  new WTerminalViewer();</b>
+<i>133</i>&nbsp;        }
+<i>134</i>&nbsp;        else
+<b class="nc"><i>135</i>&nbsp;            return null;</b>
+<i>136</i>&nbsp;    }
+<i>137</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 21:53</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,231 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Move</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.model.move</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Move (it.polimi.ingsw.model.move)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Move</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (13/ 13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (50/ 50)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.model.move;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.model.board.Cell;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;/**
+<i>6</i>&nbsp; * This class represent properties for a type-agnostic
+<i>7</i>&nbsp; * move (both Movement and Construction type).
+<i>8</i>&nbsp; *
+<i>9</i>&nbsp; * @author AndreaAltomare
+<i>10</i>&nbsp; */
+<i>11</i>&nbsp;public class Move {
+<i>12</i>&nbsp;    protected FloorDirection floorDirection;
+<i>13</i>&nbsp;    protected LevelDirection levelDirection;
+<i>14</i>&nbsp;    protected int levelDepth; // depth of level UP/DOWN
+<i>15</i>&nbsp;    protected Cell selectedCell; // Cell where the Player wants to move
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    /**
+<i>18</i>&nbsp;     * Constructs a new Movement move ({@code Move}).
+<i>19</i>&nbsp;     *
+<i>20</i>&nbsp;     * @param currentPosition Current position of the Worker which made the move
+<i>21</i>&nbsp;     * @param selectedCell Selected position to move to
+<i>22</i>&nbsp;     */
+<b class="fc"><i>23</i>&nbsp;    public Move(Cell currentPosition, Cell selectedCell) {</b>
+<b class="fc"><i>24</i>&nbsp;        this.floorDirection = Move.calculateFloorDirection(currentPosition, selectedCell);</b>
+<b class="fc"><i>25</i>&nbsp;        this.levelDirection = Move.calculateLevelDirection(currentPosition, selectedCell);</b>
+<b class="fc"><i>26</i>&nbsp;        this.levelDepth = Move.calculateLevelDepth(currentPosition,selectedCell);</b>
+<b class="fc"><i>27</i>&nbsp;        this.selectedCell = selectedCell;</b>
+<b class="fc"><i>28</i>&nbsp;    }</b>
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    /**
+<i>31</i>&nbsp;     * Constructor used when restoring game data.
+<i>32</i>&nbsp;     *
+<i>33</i>&nbsp;     * @param floorDirection Floor cardinal direction
+<i>34</i>&nbsp;     * @param levelDirection Level direction (up/down)
+<i>35</i>&nbsp;     * @param levelDepth Level depth
+<i>36</i>&nbsp;     * @param selectedCell Selected cell to move to
+<i>37</i>&nbsp;     */
+<b class="fc"><i>38</i>&nbsp;    public Move(FloorDirection floorDirection, LevelDirection levelDirection, int levelDepth, Cell selectedCell) {</b>
+<b class="fc"><i>39</i>&nbsp;        this.floorDirection = floorDirection;</b>
+<b class="fc"><i>40</i>&nbsp;        this.levelDirection = levelDirection;</b>
+<b class="fc"><i>41</i>&nbsp;        this.levelDepth = levelDepth;</b>
+<b class="fc"><i>42</i>&nbsp;        this.selectedCell = selectedCell;</b>
+<b class="fc"><i>43</i>&nbsp;    }</b>
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    /**
+<i>46</i>&nbsp;     * Class method: Given two Cells, calculate the Cardinal direction between them.
+<i>47</i>&nbsp;     *
+<i>48</i>&nbsp;     * @param currentCell (Cell from which calculate the Cardinal direction)
+<i>49</i>&nbsp;     * @param nextCell (Cell by which calculate the Cardinal direction starting from the currentCell)
+<i>50</i>&nbsp;     * @return Floor direction (calculated direction)
+<i>51</i>&nbsp;     */
+<i>52</i>&nbsp;    private static FloorDirection calculateFloorDirection(Cell currentCell, Cell nextCell) {
+<i>53</i>&nbsp;        FloorDirection direction;
+<i>54</i>&nbsp;
+<b class="fc"><i>55</i>&nbsp;        if(nextCell.getX() &lt; currentCell.getX() &amp;&amp; nextCell.getY() == currentCell.getY())</b>
+<b class="fc"><i>56</i>&nbsp;            direction = FloorDirection.NORTH;</b>
+<b class="fc"><i>57</i>&nbsp;        else if(nextCell.getX() &gt; currentCell.getX() &amp;&amp; nextCell.getY() == currentCell.getY())</b>
+<b class="fc"><i>58</i>&nbsp;            direction = FloorDirection.SOUTH;</b>
+<b class="fc"><i>59</i>&nbsp;        else if(nextCell.getX() == currentCell.getX() &amp;&amp; nextCell.getY() &gt; currentCell.getY())</b>
+<b class="fc"><i>60</i>&nbsp;            direction = FloorDirection.EAST;</b>
+<b class="fc"><i>61</i>&nbsp;        else if(nextCell.getX() == currentCell.getX() &amp;&amp; nextCell.getY() &lt; currentCell.getY())</b>
+<b class="fc"><i>62</i>&nbsp;            direction = FloorDirection.WEST;</b>
+<b class="fc"><i>63</i>&nbsp;        else if(nextCell.getX() &lt; currentCell.getX() &amp;&amp; nextCell.getY() &gt; currentCell.getY())</b>
+<b class="fc"><i>64</i>&nbsp;            direction = FloorDirection.NORTH_EAST;</b>
+<b class="fc"><i>65</i>&nbsp;        else if(nextCell.getX() &lt; currentCell.getX() &amp;&amp; nextCell.getY() &lt; currentCell.getY())</b>
+<b class="fc"><i>66</i>&nbsp;            direction = FloorDirection.NORTH_WEST;</b>
+<b class="fc"><i>67</i>&nbsp;        else if(nextCell.getX() &gt; currentCell.getX() &amp;&amp; nextCell.getY() &gt; currentCell.getY())</b>
+<b class="fc"><i>68</i>&nbsp;            direction = FloorDirection.SOUTH_EAST;</b>
+<b class="fc"><i>69</i>&nbsp;        else if(nextCell.getX() &gt; currentCell.getX() &amp;&amp; nextCell.getY() &lt; currentCell.getY())</b>
+<b class="fc"><i>70</i>&nbsp;            direction = FloorDirection.SOUTH_WEST;</b>
+<i>71</i>&nbsp;        else
+<b class="fc"><i>72</i>&nbsp;            direction = FloorDirection.NONE;</b>
+<i>73</i>&nbsp;
+<b class="fc"><i>74</i>&nbsp;        return direction;</b>
+<i>75</i>&nbsp;    }
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;    /**
+<i>78</i>&nbsp;     * Class method: Given two Cells, calculate the Level direction between them.
+<i>79</i>&nbsp;     *
+<i>80</i>&nbsp;     * @param currentCell (Cell from which calculate the Level direction)
+<i>81</i>&nbsp;     * @param nextCell (Cell by which calculate the Level direction starting from the currentCell)
+<i>82</i>&nbsp;     * @return Level direction (calculated direction)
+<i>83</i>&nbsp;     */
+<i>84</i>&nbsp;    private static LevelDirection calculateLevelDirection(Cell currentCell, Cell nextCell) {
+<i>85</i>&nbsp;        LevelDirection direction;
+<i>86</i>&nbsp;        int levelDepth;
+<i>87</i>&nbsp;
+<b class="fc"><i>88</i>&nbsp;        levelDepth = calculateLevelDepth(currentCell, nextCell);</b>
+<i>89</i>&nbsp;
+<b class="fc"><i>90</i>&nbsp;        if(levelDepth &gt; 0)</b>
+<b class="fc"><i>91</i>&nbsp;            direction = LevelDirection.UP;</b>
+<b class="fc"><i>92</i>&nbsp;        else if(levelDepth == 0)</b>
+<b class="fc"><i>93</i>&nbsp;            direction = LevelDirection.SAME;</b>
+<i>94</i>&nbsp;        else
+<b class="fc"><i>95</i>&nbsp;            direction = LevelDirection.DOWN;</b>
+<i>96</i>&nbsp;
+<b class="fc"><i>97</i>&nbsp;        return direction;</b>
+<i>98</i>&nbsp;    }
+<i>99</i>&nbsp;
+<i>100</i>&nbsp;    /**
+<i>101</i>&nbsp;     * Class method: Given two Cells, calculate the Level depth between them.
+<i>102</i>&nbsp;     *
+<i>103</i>&nbsp;     * @param currentCell (Cell from which calculate the Level depth)
+<i>104</i>&nbsp;     * @param nextCell (Cell by which calculate the Level depth starting from the currentCell)
+<i>105</i>&nbsp;     * @return level depth (calculated)
+<i>106</i>&nbsp;     */
+<i>107</i>&nbsp;    private static int calculateLevelDepth(Cell currentCell, Cell nextCell) {
+<b class="fc"><i>108</i>&nbsp;        return nextCell.getLevel() - currentCell.getLevel();</b>
+<i>109</i>&nbsp;    }
+<i>110</i>&nbsp;
+<i>111</i>&nbsp;    public FloorDirection getFloorDirection() {
+<b class="fc"><i>112</i>&nbsp;        return floorDirection;</b>
+<i>113</i>&nbsp;    }
+<i>114</i>&nbsp;
+<i>115</i>&nbsp;    public LevelDirection getLevelDirection() {
+<b class="fc"><i>116</i>&nbsp;        return levelDirection;</b>
+<i>117</i>&nbsp;    }
+<i>118</i>&nbsp;
+<i>119</i>&nbsp;    public Cell getSelectedCell() {
+<b class="fc"><i>120</i>&nbsp;        return selectedCell;</b>
+<i>121</i>&nbsp;    }
+<i>122</i>&nbsp;
+<i>123</i>&nbsp;
+<i>124</i>&nbsp;
+<i>125</i>&nbsp;
+<i>126</i>&nbsp;
+<i>127</i>&nbsp;
+<i>128</i>&nbsp;    /* ##### METHODS USED WHEN RESTORING DATA ##### */
+<i>129</i>&nbsp;    public void setFloorDirection(FloorDirection floorDirection) {
+<b class="fc"><i>130</i>&nbsp;        this.floorDirection = floorDirection;</b>
+<b class="fc"><i>131</i>&nbsp;    }</b>
+<i>132</i>&nbsp;
+<i>133</i>&nbsp;    public void setLevelDirection(LevelDirection levelDirection) {
+<b class="fc"><i>134</i>&nbsp;        this.levelDirection = levelDirection;</b>
+<b class="fc"><i>135</i>&nbsp;    }</b>
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;    public void setLevelDepth(int levelDepth) {
+<b class="fc"><i>138</i>&nbsp;        this.levelDepth = levelDepth;</b>
+<b class="fc"><i>139</i>&nbsp;    }</b>
+<i>140</i>&nbsp;
+<i>141</i>&nbsp;    public void setSelectedCell(Cell selectedCell) {
+<b class="fc"><i>142</i>&nbsp;        this.selectedCell = selectedCell;</b>
+<b class="fc"><i>143</i>&nbsp;    }</b>
+<i>144</i>&nbsp;
+<i>145</i>&nbsp;    public int getLevelDepth() {
+<b class="fc"><i>146</i>&nbsp;        return levelDepth;</b>
+<i>147</i>&nbsp;    }
+<i>148</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 21:53</div>
+</div>
+</body>
+</html>

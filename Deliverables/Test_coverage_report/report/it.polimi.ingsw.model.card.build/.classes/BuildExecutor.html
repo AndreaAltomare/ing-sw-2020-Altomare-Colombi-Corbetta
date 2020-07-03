@@ -1,0 +1,71 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: BuildExecutor</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.model.card.build</a> ]
+</div>
+
+<h1>Coverage Summary for Class: BuildExecutor (it.polimi.ingsw.model.card.build)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">BuildExecutor</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.model.card.build;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.model.move.BuildMove;
+<i>4</i>&nbsp;import it.polimi.ingsw.model.exceptions.OutOfBoardException;
+<i>5</i>&nbsp;import it.polimi.ingsw.model.player.worker.Worker;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;/**
+<i>8</i>&nbsp; * Functional interface.
+<i>9</i>&nbsp; * Provides an operation for executing a Construction move.
+<i>10</i>&nbsp; *
+<i>11</i>&nbsp; * @author AndreaAltomare
+<i>12</i>&nbsp; */
+<i>13</i>&nbsp;public interface BuildExecutor {
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    /**
+<i>16</i>&nbsp;     * Executes a Construction move.
+<i>17</i>&nbsp;     *
+<i>18</i>&nbsp;     * @param move Move to execute
+<i>19</i>&nbsp;     * @param worker Worker which made the move
+<i>20</i>&nbsp;     * @return True if the move was actually executed
+<i>21</i>&nbsp;     * @throws OutOfBoardException Exception thrown when trying to build out of the bounds of the Board
+<i>22</i>&nbsp;     */
+<i>23</i>&nbsp;    boolean executeBuild(BuildMove move, Worker worker) throws OutOfBoardException;
+<i>24</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 21:53</div>
+</div>
+</body>
+</html>

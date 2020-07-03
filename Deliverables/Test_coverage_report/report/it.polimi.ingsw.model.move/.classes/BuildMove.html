@@ -1,0 +1,135 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: BuildMove</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.model.move</a> ]
+</div>
+
+<h1>Coverage Summary for Class: BuildMove (it.polimi.ingsw.model.move)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BuildMove</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/ 9)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.model.move;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.model.board.Cell;
+<i>4</i>&nbsp;import it.polimi.ingsw.model.board.placeables.PlaceableType;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;/**
+<i>7</i>&nbsp; * This class extends Move class in order to specify
+<i>8</i>&nbsp; * information useful when a Construction move occurs.
+<i>9</i>&nbsp; *
+<i>10</i>&nbsp; * @author AndreaAltomare
+<i>11</i>&nbsp; */
+<i>12</i>&nbsp;public class BuildMove extends Move {
+<i>13</i>&nbsp;    private PlaceableType blockType;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    /**
+<i>16</i>&nbsp;     * Constructs a new Construction move ({@code BuildMove}).
+<i>17</i>&nbsp;     *
+<i>18</i>&nbsp;     * @param currentPosition Current position of the Worker which made the move
+<i>19</i>&nbsp;     * @param selectedCell Selected position to build to
+<i>20</i>&nbsp;     * @param blockType Type of the block to build
+<i>21</i>&nbsp;     */
+<i>22</i>&nbsp;    public BuildMove(Cell currentPosition, Cell selectedCell, PlaceableType blockType) {
+<b class="fc"><i>23</i>&nbsp;        super(currentPosition, selectedCell);</b>
+<b class="fc"><i>24</i>&nbsp;        this.blockType = blockType;</b>
+<b class="fc"><i>25</i>&nbsp;    }</b>
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    /**
+<i>28</i>&nbsp;     * Constructor used when restoring game data.
+<i>29</i>&nbsp;     *
+<i>30</i>&nbsp;     * @param floorDirection Floor cardinal direction
+<i>31</i>&nbsp;     * @param levelDirection Level direction (up/down)
+<i>32</i>&nbsp;     * @param levelDepth Level depth
+<i>33</i>&nbsp;     * @param selectedCell Selected cell to move to
+<i>34</i>&nbsp;     * @param blockType Type of block to build
+<i>35</i>&nbsp;     */
+<i>36</i>&nbsp;    public BuildMove(FloorDirection floorDirection, LevelDirection levelDirection, int levelDepth, Cell selectedCell, PlaceableType blockType) {
+<b class="fc"><i>37</i>&nbsp;        super(floorDirection, levelDirection, levelDepth, selectedCell);</b>
+<b class="fc"><i>38</i>&nbsp;        this.blockType = blockType;</b>
+<b class="fc"><i>39</i>&nbsp;    }</b>
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;    public PlaceableType getBlockType() {
+<b class="fc"><i>42</i>&nbsp;        return blockType;</b>
+<i>43</i>&nbsp;    }
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    /* ##### METHOD USED WHEN RESTORING DATA ##### */
+<i>49</i>&nbsp;    public void setBlockType(PlaceableType blockType) {
+<b class="fc"><i>50</i>&nbsp;        this.blockType = blockType;</b>
+<b class="fc"><i>51</i>&nbsp;    }</b>
+<i>52</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 21:53</div>
+</div>
+</body>
+</html>

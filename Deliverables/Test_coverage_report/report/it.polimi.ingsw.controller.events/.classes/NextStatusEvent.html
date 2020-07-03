@@ -1,0 +1,113 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: NextStatusEvent</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.controller.events</a> ]
+</div>
+
+<h1>Coverage Summary for Class: NextStatusEvent (it.polimi.ingsw.controller.events)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">NextStatusEvent</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 5)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.controller.events;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.EventObject;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;/**
+<i>6</i>&nbsp; * Event: The application has moved into the next status.
+<i>7</i>&nbsp; * [MVEvent]
+<i>8</i>&nbsp; */
+<i>9</i>&nbsp;public class NextStatusEvent extends EventObject {
+<i>10</i>&nbsp;    private String message; // Message accompanying the event
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;    /**
+<i>13</i>&nbsp;     * Constructs a NextStatusEvent to inform the View about the event occurred.
+<i>14</i>&nbsp;     *
+<i>15</i>&nbsp;     * @param message Custom message
+<i>16</i>&nbsp;     */
+<i>17</i>&nbsp;    public NextStatusEvent(String message) {
+<b class="nc"><i>18</i>&nbsp;        super(new Object());</b>
+<b class="nc"><i>19</i>&nbsp;        this.message = message;</b>
+<b class="nc"><i>20</i>&nbsp;    }</b>
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    public String getMessage() {
+<b class="nc"><i>23</i>&nbsp;        return message;</b>
+<i>24</i>&nbsp;    }
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    @Override
+<i>27</i>&nbsp;    public String toString() {
+<b class="nc"><i>28</i>&nbsp;        return message;</b>
+<i>29</i>&nbsp;    }
+<i>30</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 21:53</div>
+</div>
+</body>
+</html>

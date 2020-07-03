@@ -1,0 +1,643 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Cell</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.model.board</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Cell (it.polimi.ingsw.model.board)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Cell</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (30/ 30)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    98,9%
+  </span>
+  <span class="absValue">
+    (90/ 91)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Cell$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/ 2)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">Cell$2</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">Cell$PossibleStatus</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (6/ 10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    76,5%
+  </span>
+  <span class="absValue">
+    (13/ 17)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    88,4%
+  </span>
+  <span class="absValue">
+    (38/ 43)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    94,6%
+  </span>
+  <span class="absValue">
+    (105/ 111)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.model.board;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.model.player.worker.Worker;
+<i>4</i>&nbsp;import it.polimi.ingsw.model.board.placeables.Block;
+<i>5</i>&nbsp;import it.polimi.ingsw.model.board.placeables.Dome;
+<i>6</i>&nbsp;import it.polimi.ingsw.model.board.placeables.Placeable;
+<i>7</i>&nbsp;import it.polimi.ingsw.model.board.placeables.PlaceableType;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import java.util.ArrayDeque;
+<i>10</i>&nbsp;import java.util.Deque;
+<i>11</i>&nbsp;import java.util.NoSuchElementException;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;/**
+<i>14</i>&nbsp; * This Class is ued to represent the Cells on the board.
+<i>15</i>&nbsp; *
+<i>16</i>&nbsp; * @author giorgio
+<i>17</i>&nbsp; */
+<i>18</i>&nbsp;public class Cell {
+<i>19</i>&nbsp;
+<b class="fc"><i>20</i>&nbsp;    private final int maxBlockHeighth = 3;</b>
+<i>21</i>&nbsp;
+<b class="fc"><i>22</i>&nbsp;    private Deque&lt;Placeable&gt; building = new ArrayDeque&lt;&gt;();</b>
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    private final int x;
+<i>25</i>&nbsp;    private final int y;
+<i>26</i>&nbsp;    private final Board board;
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    /**
+<i>29</i>&nbsp;     * Enum used to catch the status of the actual Cell.
+<i>30</i>&nbsp;     */
+<b class="fc"><i>31</i>&nbsp;    public enum PossibleStatus {</b>
+<i>32</i>&nbsp;        /**
+<i>33</i>&nbsp;         * Used to characterise a Cell that will be reachable but is blocked by opponent&#39;s rules.
+<i>34</i>&nbsp;         */
+<b class="fc"><i>35</i>&nbsp;        BLOCKED(true, true),</b>
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;        /**
+<i>38</i>&nbsp;         * Used to characterise a Cell that is reachable.
+<i>39</i>&nbsp;         */
+<b class="fc"><i>40</i>&nbsp;        REACHABLE(true, false),</b>
+<i>41</i>&nbsp;        /**
+<i>42</i>&nbsp;         * Used to characterise a Cell that has not been checked yet.
+<i>43</i>&nbsp;         */
+<b class="fc"><i>44</i>&nbsp;        UNCHECKED(false, false),</b>
+<i>45</i>&nbsp;        /**
+<i>46</i>&nbsp;         * Used to characterise a Cell that is not reachable.
+<i>47</i>&nbsp;         */
+<b class="fc"><i>48</i>&nbsp;        UNREACHABLE(false, false),</b>
+<i>49</i>&nbsp;        /**
+<i>50</i>&nbsp;         * Used to characterise a Cell not reachable and blocked (yep, it&#39;s redundant, BTW it&#39;ll be somehow useful).
+<i>51</i>&nbsp;         */
+<b class="fc"><i>52</i>&nbsp;        UNREACHBLOCKED(false, true);</b>
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;        /**
+<i>55</i>&nbsp;         * Boolean that contains the info weather the cell is reachable or not.
+<i>56</i>&nbsp;         */
+<i>57</i>&nbsp;        private final boolean reachable;
+<i>58</i>&nbsp;        /**
+<i>59</i>&nbsp;         * Boolean that contains the info weather the cell is blocked or not.
+<i>60</i>&nbsp;         */
+<i>61</i>&nbsp;        private final boolean blocked;
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;        /**
+<i>64</i>&nbsp;         * Enum Constructor
+<i>65</i>&nbsp;         *
+<i>66</i>&nbsp;         * @param reachable (is ths status reachable?)
+<i>67</i>&nbsp;         * @param blocked (is this status blocked?)
+<i>68</i>&nbsp;         */
+<b class="fc"><i>69</i>&nbsp;        PossibleStatus(boolean reachable, boolean blocked) {</b>
+<b class="fc"><i>70</i>&nbsp;            this.reachable = reachable;</b>
+<b class="fc"><i>71</i>&nbsp;            this.blocked = blocked;</b>
+<b class="fc"><i>72</i>&nbsp;        }</b>
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;        /**
+<i>75</i>&nbsp;         * Method that returns the reachability of the Cell.
+<i>76</i>&nbsp;         *
+<i>77</i>&nbsp;         * @return reachable
+<i>78</i>&nbsp;         */
+<i>79</i>&nbsp;        public boolean isReachable() {
+<b class="nc"><i>80</i>&nbsp;            return reachable;</b>
+<i>81</i>&nbsp;        }
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;        /**
+<i>84</i>&nbsp;         * Method that returns the bocked status of the Cell.
+<i>85</i>&nbsp;         *
+<i>86</i>&nbsp;         * @return blocked
+<i>87</i>&nbsp;         */
+<i>88</i>&nbsp;        public boolean isBloked() {
+<b class="nc"><i>89</i>&nbsp;            return blocked;</b>
+<i>90</i>&nbsp;        }
+<i>91</i>&nbsp;
+<i>92</i>&nbsp;        /**
+<i>93</i>&nbsp;         * Method that initialise the status to default value (UNCHECKED)
+<i>94</i>&nbsp;         *
+<i>95</i>&nbsp;         * @return (UNCHECKED)
+<i>96</i>&nbsp;         */
+<i>97</i>&nbsp;        public static PossibleStatus clear() {
+<b class="fc"><i>98</i>&nbsp;            return UNCHECKED;</b>
+<i>99</i>&nbsp;        }
+<i>100</i>&nbsp;
+<i>101</i>&nbsp;        /**
+<i>102</i>&nbsp;         * Method that sets the status of the Cell to be reachable
+<i>103</i>&nbsp;         *
+<i>104</i>&nbsp;         * @return (new status reachable)
+<i>105</i>&nbsp;         */
+<i>106</i>&nbsp;        public PossibleStatus setReachable(){
+<b class="fc"><i>107</i>&nbsp;            return blocked ? BLOCKED : REACHABLE;</b>
+<i>108</i>&nbsp;        }
+<i>109</i>&nbsp;
+<i>110</i>&nbsp;        /**
+<i>111</i>&nbsp;         * Method that sets the status of the Cell to be blocked
+<i>112</i>&nbsp;         *
+<i>113</i>&nbsp;         * @return (new status reachable)
+<i>114</i>&nbsp;         */
+<i>115</i>&nbsp;        public PossibleStatus setBlocked(){
+<b class="fc"><i>116</i>&nbsp;            return reachable ? BLOCKED : UNREACHBLOCKED;</b>
+<i>117</i>&nbsp;        }
+<i>118</i>&nbsp;
+<i>119</i>&nbsp;        /**
+<i>120</i>&nbsp;         * Method that sets the status of the Cell to be not reachable
+<i>121</i>&nbsp;         *
+<i>122</i>&nbsp;         * @return (new status reachable)
+<i>123</i>&nbsp;         */
+<i>124</i>&nbsp;        public PossibleStatus setNotReachable(){
+<b class="nc"><i>125</i>&nbsp;            return blocked ? UNREACHBLOCKED : UNREACHABLE;</b>
+<i>126</i>&nbsp;        }
+<i>127</i>&nbsp;
+<i>128</i>&nbsp;        /**
+<i>129</i>&nbsp;         * Method that sets the status of the Cell to be not blocked
+<i>130</i>&nbsp;         *
+<i>131</i>&nbsp;         * @return (new status reachable)
+<i>132</i>&nbsp;         */
+<i>133</i>&nbsp;        public PossibleStatus setNotBlocked(){
+<b class="nc"><i>134</i>&nbsp;            return reachable ? REACHABLE : UNREACHABLE;</b>
+<i>135</i>&nbsp;        }
+<i>136</i>&nbsp;    }
+<i>137</i>&nbsp;
+<i>138</i>&nbsp;    private PossibleStatus status;
+<i>139</i>&nbsp;
+<i>140</i>&nbsp;    /**
+<i>141</i>&nbsp;     * Class constructor.
+<i>142</i>&nbsp;     *  @param x (x coordinate of the Cell)
+<i>143</i>&nbsp;     * @param y (y coordinate of the cell)
+<i>144</i>&nbsp;     * @param board (the board in which the Cell is)
+<i>145</i>&nbsp;     */
+<b class="fc"><i>146</i>&nbsp;    public Cell(int x, int y, Board board){</b>
+<b class="fc"><i>147</i>&nbsp;        this.x = x;</b>
+<b class="fc"><i>148</i>&nbsp;        this.y = y;</b>
+<b class="fc"><i>149</i>&nbsp;        this.board = board;</b>
+<b class="fc"><i>150</i>&nbsp;        status = PossibleStatus.clear();</b>
+<b class="fc"><i>151</i>&nbsp;    }</b>
+<i>152</i>&nbsp;
+<i>153</i>&nbsp;
+<i>154</i>&nbsp;    /**
+<i>155</i>&nbsp;     * Method that returns the x-coordinate of this
+<i>156</i>&nbsp;     *
+<i>157</i>&nbsp;     * @return (the x-coordinate of the cell)
+<i>158</i>&nbsp;     */
+<i>159</i>&nbsp;    public int getX(){
+<b class="fc"><i>160</i>&nbsp;        return x;</b>
+<i>161</i>&nbsp;    }
+<i>162</i>&nbsp;
+<i>163</i>&nbsp;    /**
+<i>164</i>&nbsp;     * Method that returns the y-coordinate of this
+<i>165</i>&nbsp;     *
+<i>166</i>&nbsp;     * @return (the y-coordinate of the cell)
+<i>167</i>&nbsp;     */
+<i>168</i>&nbsp;    public int getY(){
+<b class="fc"><i>169</i>&nbsp;        return y;</b>
+<i>170</i>&nbsp;    }
+<i>171</i>&nbsp;
+<i>172</i>&nbsp;    /**
+<i>173</i>&nbsp;     * Overriden method that checks weather an object is equal to this.
+<i>174</i>&nbsp;     *
+<i>175</i>&nbsp;     * @param obj (The Cell to be compared to this)
+<i>176</i>&nbsp;     * @return  (this==other?true:false)
+<i>177</i>&nbsp;     */
+<i>178</i>&nbsp;    @Override
+<i>179</i>&nbsp;    public boolean equals(Object obj){
+<b class="fc"><i>180</i>&nbsp;        if(obj == null) return false;</b>
+<b class="fc"><i>181</i>&nbsp;        if(obj instanceof Cell)</b>
+<b class="fc"><i>182</i>&nbsp;            return ((((Cell)obj).getX() == this.x) &amp;&amp; (((Cell)obj).getY() == this.y));</b>
+<b class="fc"><i>183</i>&nbsp;        return false;</b>
+<i>184</i>&nbsp;    }
+<i>185</i>&nbsp;
+<i>186</i>&nbsp;    /**
+<i>187</i>&nbsp;     * Method that returns the top element on the Cell
+<i>188</i>&nbsp;     *
+<i>189</i>&nbsp;     * @return (The Placeable on the top of the Cell)
+<i>190</i>&nbsp;     */
+<i>191</i>&nbsp;    public Placeable getTop(){
+<b class="fc"><i>192</i>&nbsp;        return building.peekLast();</b>
+<i>193</i>&nbsp;    }
+<i>194</i>&nbsp;
+<i>195</i>&nbsp;    /**
+<i>196</i>&nbsp;     * Method that does the same things of the getTop() but doesn&#39;t return null.
+<i>197</i>&nbsp;     * If it doesn&#39;t exist it returns a new Placeable
+<i>198</i>&nbsp;     *
+<i>199</i>&nbsp;     * @return (The Placeable on top of the building on the Cell, else a new placeable)
+<i>200</i>&nbsp;     */
+<i>201</i>&nbsp;    private Placeable getTopNotNull(){
+<b class="fc"><i>202</i>&nbsp;        Placeable ret = this.getTop();</b>
+<b class="fc"><i>203</i>&nbsp;        if(ret == null){</b>
+<b class="fc"><i>204</i>&nbsp;            ret = new Placeable() {</b>
+<i>205</i>&nbsp;                @Override
+<i>206</i>&nbsp;                public boolean place(Cell destination) {
+<b class="nc"><i>207</i>&nbsp;                    return false;</b>
+<i>208</i>&nbsp;                }
+<i>209</i>&nbsp;            };
+<i>210</i>&nbsp;        }
+<b class="fc"><i>211</i>&nbsp;        return ret;</b>
+<i>212</i>&nbsp;    }
+<i>213</i>&nbsp;
+<i>214</i>&nbsp;    /**
+<i>215</i>&nbsp;     * Method that returns the height of the buildings on the Cell.
+<i>216</i>&nbsp;     *
+<i>217</i>&nbsp;     * @return (the heigth of the building on this Cell)
+<i>218</i>&nbsp;     */
+<i>219</i>&nbsp;    public int getHeigth(){
+<b class="fc"><i>220</i>&nbsp;        return building.size();</b>
+<i>221</i>&nbsp;    }
+<i>222</i>&nbsp;
+<i>223</i>&nbsp;    /**
+<i>224</i>&nbsp;     * Method that returns the height of the Blocks of the building on the Cell.
+<i>225</i>&nbsp;     *
+<i>226</i>&nbsp;     * @return (the heigth of the Blocks of the building on this Cell)
+<i>227</i>&nbsp;     */
+<i>228</i>&nbsp;    public int getLevel(){
+<b class="fc"><i>229</i>&nbsp;        int h = getHeigth();</b>
+<b class="fc"><i>230</i>&nbsp;        if(isFree())</b>
+<b class="fc"><i>231</i>&nbsp;            return h;</b>
+<b class="fc"><i>232</i>&nbsp;        return h-1;</b>
+<i>233</i>&nbsp;    }
+<i>234</i>&nbsp;
+<i>235</i>&nbsp;    /**
+<i>236</i>&nbsp;     * Method that returns the Placeable on the level of the building on this Cell.
+<i>237</i>&nbsp;     *
+<i>238</i>&nbsp;     * @param level (The level of the building to be returned)
+<i>239</i>&nbsp;     * @return (The Placeable on the level of the building on this cell)
+<i>240</i>&nbsp;     */
+<i>241</i>&nbsp;    public Placeable getPlaceableAt(int level){
+<i>242</i>&nbsp;        try {
+<b class="fc"><i>243</i>&nbsp;            return (Placeable) (building.toArray()[level]);</b>
+<b class="fc"><i>244</i>&nbsp;        }catch (ArrayIndexOutOfBoundsException e){</b>
+<b class="fc"><i>245</i>&nbsp;            return null;</b>
+<i>246</i>&nbsp;        }
+<i>247</i>&nbsp;    }
+<i>248</i>&nbsp;
+<i>249</i>&nbsp;    /**
+<i>250</i>&nbsp;     * Method that returns true iif there is a Dome on this Cell
+<i>251</i>&nbsp;     *
+<i>252</i>&nbsp;     * @return (Is there a Dome on this Cell? true:false)
+<i>253</i>&nbsp;     */
+<i>254</i>&nbsp;    public boolean isDomed(){
+<b class="fc"><i>255</i>&nbsp;        return this.getTopNotNull().isDome();</b>
+<i>256</i>&nbsp;    }
+<i>257</i>&nbsp;
+<i>258</i>&nbsp;    /**
+<i>259</i>&nbsp;     * Method that checks if there is a worker on this Cell
+<i>260</i>&nbsp;     *
+<i>261</i>&nbsp;     * @return (is there a Worker on this? true:false)
+<i>262</i>&nbsp;     */
+<i>263</i>&nbsp;    public boolean isOccupied(){
+<b class="fc"><i>264</i>&nbsp;        Placeable r = this.getTopNotNull();</b>
+<b class="fc"><i>265</i>&nbsp;        return (r.isWorker());</b>
+<i>266</i>&nbsp;    }
+<i>267</i>&nbsp;
+<i>268</i>&nbsp;    /**
+<i>269</i>&nbsp;     * Method that checks if there isn&#39;t a worker or a Dome on this Cell
+<i>270</i>&nbsp;     *
+<i>271</i>&nbsp;     * @return (Is there a Dome or a Worker on it? false: true)
+<i>272</i>&nbsp;     */
+<i>273</i>&nbsp;    public boolean isFree(){
+<b class="fc"><i>274</i>&nbsp;        Placeable r = this.getTopNotNull();</b>
+<b class="fc"><i>275</i>&nbsp;        return !(r.isDome()||r.isWorker());</b>
+<i>276</i>&nbsp;    }
+<i>277</i>&nbsp;
+<i>278</i>&nbsp;    /**
+<i>279</i>&nbsp;     * Method that eliminate the Placeable on the top  of the building
+<i>280</i>&nbsp;     *
+<i>281</i>&nbsp;     * @return (did it remove the top Placeable? true: false)
+<i>282</i>&nbsp;     */
+<i>283</i>&nbsp;    public boolean removePlaceable(){
+<i>284</i>&nbsp;        try{
+<b class="fc"><i>285</i>&nbsp;            building.removeLast();</b>
+<b class="fc"><i>286</i>&nbsp;            return true;</b>
+<b class="fc"><i>287</i>&nbsp;        }catch(NoSuchElementException e){</b>
+<b class="fc"><i>288</i>&nbsp;            return false;</b>
+<i>289</i>&nbsp;        }
+<i>290</i>&nbsp;    }
+<i>291</i>&nbsp;
+<i>292</i>&nbsp;    /**
+<i>293</i>&nbsp;     * Method that removes the level of the building on this Cell.
+<i>294</i>&nbsp;     *
+<i>295</i>&nbsp;     * @param level (the level of the building to be removed)
+<i>296</i>&nbsp;     * @return (true iif it has succesfully removed the Placeable on level)
+<i>297</i>&nbsp;     */
+<i>298</i>&nbsp;    public boolean removePlaceable(int level){
+<b class="fc"><i>299</i>&nbsp;        return building.remove(this.getPlaceableAt(level));</b>
+<i>300</i>&nbsp;    }
+<i>301</i>&nbsp;
+<i>302</i>&nbsp;    /**
+<i>303</i>&nbsp;     * Method that puts on the top of the building of this Cell the passed Placeable.
+<i>304</i>&nbsp;     * It also checks weather it&#39;s possible or not doing so.
+<i>305</i>&nbsp;     *
+<i>306</i>&nbsp;     * @param placeable (the placeable to be put on the top of the building)
+<i>307</i>&nbsp;     * @return (true iif placeable can be put on the top of this Cell)
+<i>308</i>&nbsp;     */
+<i>309</i>&nbsp;    public boolean placeOn(Placeable placeable){
+<i>310</i>&nbsp;        //check if it can build on it
+<b class="fc"><i>311</i>&nbsp;        if (this.isFree()) {</b>
+<i>312</i>&nbsp;            //if placeable is a Block
+<b class="fc"><i>313</i>&nbsp;            if (placeable.isBlock())</b>
+<i>314</i>&nbsp;                //If this.building has reached the max height of Blocks
+<b class="fc"><i>315</i>&nbsp;                if (this.getLevel() &gt;= maxBlockHeighth)</b>
+<b class="fc"><i>316</i>&nbsp;                    return false;</b>
+<i>317</i>&nbsp;        }else   //If this is not free
+<b class="fc"><i>318</i>&nbsp;            return false;</b>
+<i>319</i>&nbsp;
+<b class="fc"><i>320</i>&nbsp;        building.addLast(placeable);</b>
+<b class="fc"><i>321</i>&nbsp;        return true;</b>
+<i>322</i>&nbsp;    }
+<i>323</i>&nbsp;
+<i>324</i>&nbsp;    /**
+<i>325</i>&nbsp;     * Method intended to be used to build blocks on the Cell.
+<i>326</i>&nbsp;     * This is useful because it adds Blocks from the bottom  of the constructionn, so it can be usefut, for example, for Zeus.
+<i>327</i>&nbsp;     *
+<i>328</i>&nbsp;     * @return true iif it has built the block on the Cell.
+<i>329</i>&nbsp;     */
+<i>330</i>&nbsp;    public boolean buildBlock(){
+<b class="fc"><i>331</i>&nbsp;        if(canBuildBlock()) {</b>
+<b class="fc"><i>332</i>&nbsp;            building.addFirst(new Block(this));</b>
+<b class="fc"><i>333</i>&nbsp;            return true;</b>
+<i>334</i>&nbsp;        }
+<b class="fc"><i>335</i>&nbsp;        return false;</b>
+<i>336</i>&nbsp;    }
+<i>337</i>&nbsp;
+<i>338</i>&nbsp;    /**
+<i>339</i>&nbsp;     * Method intended to check weather the building of a block on this Cell brings this Cell to an unconsistent state.
+<i>340</i>&nbsp;     *
+<i>341</i>&nbsp;     * @return true iif it can build the block on the Cell.
+<i>342</i>&nbsp;     */
+<i>343</i>&nbsp;    public boolean canBuildBlock(){
+<i>344</i>&nbsp;        //Check if this has a Dome
+<b class="fc"><i>345</i>&nbsp;        if(this.isDomed())</b>
+<b class="fc"><i>346</i>&nbsp;            return false;</b>
+<i>347</i>&nbsp;        //If this.building has reached the max height of Blocks
+<b class="fc"><i>348</i>&nbsp;        return this.getLevel() &lt; maxBlockHeighth;</b>
+<i>349</i>&nbsp;    }
+<i>350</i>&nbsp;
+<i>351</i>&nbsp;    /**
+<i>352</i>&nbsp;     * Method intended to check weather the building of a dome on this Cell brings this Cell to an unconsistent state.
+<i>353</i>&nbsp;     *
+<i>354</i>&nbsp;     * @return true iif it can build the dome on the Cell.
+<i>355</i>&nbsp;     */
+<i>356</i>&nbsp;    public boolean canBuildDome(){
+<b class="fc"><i>357</i>&nbsp;        return this.isFree();</b>
+<i>358</i>&nbsp;    }
+<i>359</i>&nbsp;
+<i>360</i>&nbsp;    /**
+<i>361</i>&nbsp;     * Method intended to build the Dome on this.builidng
+<i>362</i>&nbsp;     *
+<i>363</i>&nbsp;     * @return true iif it has bilt the Dome on this.building
+<i>364</i>&nbsp;     */
+<i>365</i>&nbsp;    public boolean buildDome(){
+<b class="fc"><i>366</i>&nbsp;        if(canBuildDome()){</b>
+<b class="fc"><i>367</i>&nbsp;            building.addLast(new Dome(this));</b>
+<b class="fc"><i>368</i>&nbsp;            return true;</b>
+<i>369</i>&nbsp;        }
+<b class="fc"><i>370</i>&nbsp;        return false;</b>
+<i>371</i>&nbsp;    }
+<i>372</i>&nbsp;
+<i>373</i>&nbsp;    /**
+<i>374</i>&nbsp;     * Getter method for the status.
+<i>375</i>&nbsp;     *
+<i>376</i>&nbsp;     * @return (the actual status)
+<i>377</i>&nbsp;     */
+<i>378</i>&nbsp;    public PossibleStatus getStatus() {
+<b class="fc"><i>379</i>&nbsp;        return status;</b>
+<i>380</i>&nbsp;    }
+<i>381</i>&nbsp;
+<i>382</i>&nbsp;    /**
+<i>383</i>&nbsp;     * Setter method for the status
+<i>384</i>&nbsp;     *
+<i>385</i>&nbsp;     * @param status (the status to which we want to set the status)
+<i>386</i>&nbsp;     */
+<i>387</i>&nbsp;    public void setStatus(PossibleStatus status){
+<b class="fc"><i>388</i>&nbsp;        this.status = status;</b>
+<b class="fc"><i>389</i>&nbsp;    }</b>
+<i>390</i>&nbsp;
+<i>391</i>&nbsp;    /**
+<i>392</i>&nbsp;     * Method to impost the default status
+<i>393</i>&nbsp;     */
+<i>394</i>&nbsp;    public void clearStatus(){
+<b class="fc"><i>395</i>&nbsp;        this.status = PossibleStatus.clear();</b>
+<b class="fc"><i>396</i>&nbsp;    }</b>
+<i>397</i>&nbsp;
+<i>398</i>&nbsp;    /**
+<i>399</i>&nbsp;     * Method to make the status reachable
+<i>400</i>&nbsp;     */
+<i>401</i>&nbsp;    public void setReachableStatus(){
+<b class="fc"><i>402</i>&nbsp;        this.status = this.status.setReachable();</b>
+<b class="fc"><i>403</i>&nbsp;    }</b>
+<i>404</i>&nbsp;
+<i>405</i>&nbsp;    /**
+<i>406</i>&nbsp;     * Method to make the status blocked
+<i>407</i>&nbsp;     */
+<i>408</i>&nbsp;    public void setBlockedStatus(){
+<b class="fc"><i>409</i>&nbsp;        this.status = this.status.setBlocked();</b>
+<b class="fc"><i>410</i>&nbsp;    }</b>
+<i>411</i>&nbsp;
+<i>412</i>&nbsp;    /**
+<i>413</i>&nbsp;     * Method that checks whether the representation is still consistent.
+<i>414</i>&nbsp;     *
+<i>415</i>&nbsp;     * @return (true iif the representation is consistent).
+<i>416</i>&nbsp;     */
+<i>417</i>&nbsp;    public boolean repOk(){
+<b class="fc"><i>418</i>&nbsp;        int len = getLevel();</b>
+<i>419</i>&nbsp;        //Each level is a Block (at least the last one can be a Dome or a worker)
+<b class="fc"><i>420</i>&nbsp;        for(int i = 0; i &lt; len; i++)</b>
+<b class="fc"><i>421</i>&nbsp;            if ((!getPlaceableAt(i).isBlock() &amp;&amp; i != len - 1)) {</b>
+<i>422</i>&nbsp;                assert true : &quot;Error in rapresentation&quot;;
+<b class="nc"><i>423</i>&nbsp;                return false;</b>
+<i>424</i>&nbsp;            }
+<b class="fc"><i>425</i>&nbsp;        return true;</b>
+<i>426</i>&nbsp;    }
+<i>427</i>&nbsp;
+<i>428</i>&nbsp;    /**
+<i>429</i>&nbsp;     * Method that returns theboard of this Cell
+<i>430</i>&nbsp;     *
+<i>431</i>&nbsp;     * @return (the board of this Cell)
+<i>432</i>&nbsp;     */
+<i>433</i>&nbsp;    public Board getBoard() {
+<b class="fc"><i>434</i>&nbsp;        return board;</b>
+<i>435</i>&nbsp;    }
+<i>436</i>&nbsp;
+<i>437</i>&nbsp;    /**
+<i>438</i>&nbsp;     * Method that returns the worker on the Cell (or null if there is none)
+<i>439</i>&nbsp;     *
+<i>440</i>&nbsp;     * @return (the worker on this cell)
+<i>441</i>&nbsp;     */
+<i>442</i>&nbsp;    public Worker getWorker(){
+<b class="fc"><i>443</i>&nbsp;        Placeable ret = getTop();</b>
+<b class="fc"><i>444</i>&nbsp;        if(ret == null)</b>
+<b class="fc"><i>445</i>&nbsp;            return null;</b>
+<b class="fc"><i>446</i>&nbsp;        if(ret.isWorker())</b>
+<b class="fc"><i>447</i>&nbsp;            return (Worker) ret;</b>
+<i>448</i>&nbsp;        else
+<b class="fc"><i>449</i>&nbsp;            return null;</b>
+<i>450</i>&nbsp;    }
+<i>451</i>&nbsp;
+<i>452</i>&nbsp;    /**
+<i>453</i>&nbsp;     * Method that removes the worker on this
+<i>454</i>&nbsp;     *
+<i>455</i>&nbsp;     * @return (the worker on this -if any-)
+<i>456</i>&nbsp;     */
+<i>457</i>&nbsp;    public Worker removeWorker(){
+<b class="fc"><i>458</i>&nbsp;        Worker ret = getWorker();</b>
+<b class="fc"><i>459</i>&nbsp;        if((ret != null)&amp;&amp;(ret.isWorker()))</b>
+<b class="fc"><i>460</i>&nbsp;            building.removeLast();</b>
+<b class="fc"><i>461</i>&nbsp;        return ret;</b>
+<i>462</i>&nbsp;    }
+<i>463</i>&nbsp;
+<i>464</i>&nbsp;    /**
+<i>465</i>&nbsp;     * Method that removes Worker arg from building, if there is arg worker on it
+<i>466</i>&nbsp;     *
+<i>467</i>&nbsp;     * @param arg (The Worker to be removed)
+<i>468</i>&nbsp;     */
+<i>469</i>&nbsp;    public void removeThisWorker(Worker arg){
+<b class="fc"><i>470</i>&nbsp;        Worker ret = getWorker();</b>
+<b class="fc"><i>471</i>&nbsp;        if(ret == null)</b>
+<b class="fc"><i>472</i>&nbsp;            return;</b>
+<i>473</i>&nbsp;
+<b class="fc"><i>474</i>&nbsp;        if(ret.equals(arg))</b>
+<b class="fc"><i>475</i>&nbsp;            building.removeLast();</b>
+<b class="fc"><i>476</i>&nbsp;    }</b>
+<i>477</i>&nbsp;
+<i>478</i>&nbsp;    /**
+<i>479</i>&nbsp;     * Given a type of Placeable, place it onto the Cell.
+<i>480</i>&nbsp;     *
+<i>481</i>&nbsp;     * @param placeableType Type of the Placeable
+<i>482</i>&nbsp;     * @return (Placeable was correctly placed ? true : false)
+<i>483</i>&nbsp;     * @author AndreaAltomare
+<i>484</i>&nbsp;     */
+<i>485</i>&nbsp;    public boolean place(PlaceableType placeableType) {
+<b class="fc"><i>486</i>&nbsp;        switch(placeableType) {</b>
+<i>487</i>&nbsp;            case BLOCK:
+<b class="fc"><i>488</i>&nbsp;                return this.buildBlock();</b>
+<i>489</i>&nbsp;            case DOME:
+<b class="fc"><i>490</i>&nbsp;                return this.buildDome();</b>
+<i>491</i>&nbsp;            default:
+<b class="fc"><i>492</i>&nbsp;                return false;</b>
+<i>493</i>&nbsp;        }
+<i>494</i>&nbsp;    }
+<i>495</i>&nbsp;
+<i>496</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 21:53</div>
+</div>
+</body>
+</html>

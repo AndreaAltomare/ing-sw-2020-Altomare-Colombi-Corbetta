@@ -1,0 +1,220 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Board</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.model.board</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Board (it.polimi.ingsw.model.board)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Board</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93,3%
+  </span>
+  <span class="absValue">
+    (42/ 45)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.model.board;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.model.player.Player;
+<i>4</i>&nbsp;import it.polimi.ingsw.model.player.worker.Worker;
+<i>5</i>&nbsp;import it.polimi.ingsw.model.exceptions.OutOfBoardException;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import java.security.InvalidParameterException;
+<i>8</i>&nbsp;import java.util.ArrayList;
+<i>9</i>&nbsp;import java.util.List;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;/**
+<i>12</i>&nbsp; * Class to abstractly model the Board
+<i>13</i>&nbsp; *
+<i>14</i>&nbsp; * @author giorgio
+<i>15</i>&nbsp; */
+<b class="fc"><i>16</i>&nbsp;public abstract class Board {</b>
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    /**
+<i>20</i>&nbsp;     * Method that returns the Cell at the passed position.
+<i>21</i>&nbsp;     *
+<i>22</i>&nbsp;     * @param x (the x coordinate of the searched Cell)
+<i>23</i>&nbsp;     * @param y (the y coordinate of the searched Cell)
+<i>24</i>&nbsp;     * @return  (the searched Cell)
+<i>25</i>&nbsp;     * @throws OutOfBoardException (if the searched Cell is out of board Bounds)
+<i>26</i>&nbsp;     */
+<i>27</i>&nbsp;    public abstract Cell getCellAt(int x, int y) throws OutOfBoardException;
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    /**
+<i>30</i>&nbsp;     * Method that returns the x dimension of the board
+<i>31</i>&nbsp;     *
+<i>32</i>&nbsp;     * @return (the x dimension of the board)
+<i>33</i>&nbsp;     */
+<i>34</i>&nbsp;    public abstract int getXDim();
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    /**
+<i>37</i>&nbsp;     * Method that returns the y dimension of the board
+<i>38</i>&nbsp;     *
+<i>39</i>&nbsp;     * @return (the y dimension of the board)
+<i>40</i>&nbsp;     */
+<i>41</i>&nbsp;    public abstract int getYDim();
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    /**
+<i>44</i>&nbsp;     * Method that returns the adjacent Cell to the one given.
+<i>45</i>&nbsp;     *
+<i>46</i>&nbsp;     * @param cell (Cell to check the adjacent)
+<i>47</i>&nbsp;     * @return (list of all the adjacent Cells)
+<i>48</i>&nbsp;     */
+<i>49</i>&nbsp;    public List&lt;Cell&gt; getAdjacentCells(Cell cell){
+<b class="fc"><i>50</i>&nbsp;        int x = cell.getX();</b>
+<b class="fc"><i>51</i>&nbsp;        int y = cell.getY();</b>
+<b class="fc"><i>52</i>&nbsp;        if(cell.getBoard()!=this)</b>
+<b class="fc"><i>53</i>&nbsp;            throw new InvalidParameterException(&quot;getAdjacentCell has been called with a Cell of another Board&quot;);</b>
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;        //&quot;A little bug fixed, a great feaure lost&quot;
+<i>56</i>&nbsp;        /*try {
+<i>57</i>&nbsp;            this.getCellAt(x, y);
+<i>58</i>&nbsp;        } catch (OutOfBoardException e) {
+<i>59</i>&nbsp;            throw new InvalidParameterException(&quot;getAdjacentCell has been called with a Cell out of Board&quot;);
+<i>60</i>&nbsp;        }*/
+<i>61</i>&nbsp;
+<b class="fc"><i>62</i>&nbsp;        List&lt;Cell&gt; ret = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>63</i>&nbsp;        for(int i=-1; i&lt;2; i++)</b>
+<b class="fc"><i>64</i>&nbsp;            for(int j=-1; j&lt;2; j++){</b>
+<b class="fc"><i>65</i>&nbsp;                if(i==j&amp;&amp; i==0) continue;</b>
+<i>66</i>&nbsp;                try {
+<b class="fc"><i>67</i>&nbsp;                    ret.add(this.getCellAt(x+i, y+j));</b>
+<b class="fc"><i>68</i>&nbsp;                } catch (OutOfBoardException ignored){</b>
+<i>69</i>&nbsp;
+<b class="fc"><i>70</i>&nbsp;                }</b>
+<i>71</i>&nbsp;            }
+<b class="fc"><i>72</i>&nbsp;        return ret;</b>
+<i>73</i>&nbsp;    }
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    /**
+<i>76</i>&nbsp;     * Method that removes all the workers relative to the given player from the Board.
+<i>77</i>&nbsp;     *
+<i>78</i>&nbsp;     * @param player (the Player which Workers have to be removed).
+<i>79</i>&nbsp;     */
+<i>80</i>&nbsp;    public void removeWorkers(Player player){
+<b class="fc"><i>81</i>&nbsp;        int xDim = getXDim();</b>
+<b class="fc"><i>82</i>&nbsp;        int yDim = getYDim();</b>
+<i>83</i>&nbsp;        
+<b class="fc"><i>84</i>&nbsp;        for(int i = 0; i&lt;xDim; i++){</b>
+<b class="fc"><i>85</i>&nbsp;            for(int j = 0; j&lt;yDim; j++){</b>
+<i>86</i>&nbsp;                try {
+<b class="fc"><i>87</i>&nbsp;                    Cell cell = getCellAt(i, j);</b>
+<b class="fc"><i>88</i>&nbsp;                    Worker worker = cell.getWorker();</b>
+<b class="fc"><i>89</i>&nbsp;                    if(worker != null &amp;&amp; worker.getOwner().equals(player))</b>
+<b class="fc"><i>90</i>&nbsp;                        cell.removeWorker();</b>
+<b class="nc"><i>91</i>&nbsp;                } catch (OutOfBoardException ignore) {</b>
+<b class="fc"><i>92</i>&nbsp;                }</b>
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;            }
+<i>95</i>&nbsp;        }
+<b class="fc"><i>96</i>&nbsp;    }</b>
+<i>97</i>&nbsp;
+<i>98</i>&nbsp;    /**
+<i>99</i>&nbsp;     * method that clears the status of all the Cell of the Board.
+<i>100</i>&nbsp;     * @see Cell
+<i>101</i>&nbsp;     */
+<i>102</i>&nbsp;    void clearCells(){
+<b class="fc"><i>103</i>&nbsp;        int xDim = getXDim();</b>
+<b class="fc"><i>104</i>&nbsp;        int yDim = getYDim();</b>
+<b class="fc"><i>105</i>&nbsp;        for(int x=0; x&lt;xDim; x++)</b>
+<b class="fc"><i>106</i>&nbsp;            for(int y=0; y&lt;yDim; y++) {</b>
+<i>107</i>&nbsp;                try {
+<b class="fc"><i>108</i>&nbsp;                    getCellAt(x, y).clearStatus();</b>
+<b class="nc"><i>109</i>&nbsp;                } catch (OutOfBoardException ignore) {</b>
+<b class="fc"><i>110</i>&nbsp;                }</b>
+<i>111</i>&nbsp;            }
+<b class="fc"><i>112</i>&nbsp;    }</b>
+<i>113</i>&nbsp;
+<i>114</i>&nbsp;
+<i>115</i>&nbsp;    /**
+<i>116</i>&nbsp;     * method that removes all the Workers and the Placeables from the Board.
+<i>117</i>&nbsp;     */
+<i>118</i>&nbsp;    public void clear(){
+<b class="fc"><i>119</i>&nbsp;        int xDim = getXDim();</b>
+<b class="fc"><i>120</i>&nbsp;        int yDim = getYDim();</b>
+<b class="fc"><i>121</i>&nbsp;        for(int y=0; y&lt;yDim; y++){</b>
+<b class="fc"><i>122</i>&nbsp;            for(int x=0; x&lt;xDim; x++){</b>
+<i>123</i>&nbsp;                try {
+<b class="fc"><i>124</i>&nbsp;                    Cell cell = getCellAt(x, y);</b>
+<b class="fc"><i>125</i>&nbsp;                    cell.removeWorker();</b>
+<b class="fc"><i>126</i>&nbsp;                    if(cell.isDomed()){</b>
+<b class="fc"><i>127</i>&nbsp;                        cell.removePlaceable();</b>
+<i>128</i>&nbsp;                    }
+<b class="fc"><i>129</i>&nbsp;                    while(cell.getHeigth()&gt;0){</b>
+<b class="fc"><i>130</i>&nbsp;                        cell.removePlaceable();</b>
+<i>131</i>&nbsp;                    }
+<b class="nc"><i>132</i>&nbsp;                } catch (OutOfBoardException ignore) {</b>
+<b class="fc"><i>133</i>&nbsp;                }</b>
+<i>134</i>&nbsp;            }
+<i>135</i>&nbsp;        }
+<b class="fc"><i>136</i>&nbsp;    }</b>
+<i>137</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 21:53</div>
+</div>
+</body>
+</html>

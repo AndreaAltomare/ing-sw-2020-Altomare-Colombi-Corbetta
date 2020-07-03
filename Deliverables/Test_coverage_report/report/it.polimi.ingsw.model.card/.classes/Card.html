@@ -1,0 +1,225 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Card</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.model.card</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Card (it.polimi.ingsw.model.card)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Card</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (16/ 16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (37/ 37)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.model.card;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.model.card.adversaryMove.AdversaryMove;
+<i>4</i>&nbsp;import it.polimi.ingsw.model.card.adversaryMove.AdversaryMoveChecker;
+<i>5</i>&nbsp;import it.polimi.ingsw.model.card.build.BuildChecker;
+<i>6</i>&nbsp;import it.polimi.ingsw.model.card.build.BuildExecutor;
+<i>7</i>&nbsp;import it.polimi.ingsw.model.card.build.MyConstruction;
+<i>8</i>&nbsp;import it.polimi.ingsw.model.card.move.MoveChecker;
+<i>9</i>&nbsp;import it.polimi.ingsw.model.card.move.MoveExecutor;
+<i>10</i>&nbsp;import it.polimi.ingsw.model.card.move.MyMove;
+<i>11</i>&nbsp;import it.polimi.ingsw.model.card.win.MyVictory;
+<i>12</i>&nbsp;import it.polimi.ingsw.model.card.win.WinChecker;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import java.util.List;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;/**
+<i>17</i>&nbsp; * Class representing game Cards with their powers.
+<i>18</i>&nbsp; *
+<i>19</i>&nbsp; * @author AndreaAltomare
+<i>20</i>&nbsp; */
+<i>21</i>&nbsp;public class Card {
+<i>22</i>&nbsp;    private GodPower godPower; // effects of the card
+<i>23</i>&nbsp;    private String name;
+<i>24</i>&nbsp;    private String epithet;
+<i>25</i>&nbsp;    private String description;
+<i>26</i>&nbsp;    private MyMove myMove;
+<i>27</i>&nbsp;    private MyConstruction myConstruction;
+<i>28</i>&nbsp;    private MyVictory myVictory;
+<i>29</i>&nbsp;    private AdversaryMove adversaryMove;
+<i>30</i>&nbsp;    private boolean movementExecuted; // tells if at least one movement was executed
+<i>31</i>&nbsp;    private boolean constructionExecuted; // tells if at least one construction was executed
+<i>32</i>&nbsp;    private boolean turnCompleted; // tells if at least a regular turn cycle is completed
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    /**
+<i>35</i>&nbsp;     * Constructs a Card object containing all the fundamental information
+<i>36</i>&nbsp;     * about a chosen Card and its associated God&#39;s power.
+<i>37</i>&nbsp;     *
+<i>38</i>&nbsp;     * @param godPower Associated God&#39;s power
+<i>39</i>&nbsp;     * @param moveCheckers Checkers for Movement moves
+<i>40</i>&nbsp;     * @param moveExecutor Executor for Movement moves
+<i>41</i>&nbsp;     * @param buildCheckers Checkers for Construction moves
+<i>42</i>&nbsp;     * @param buildExecutor Executor for Construction moves
+<i>43</i>&nbsp;     * @param winCheckers Win-condition checkers for moves
+<i>44</i>&nbsp;     * @param adversaryMoveCheckers Checkers for Adversaries&#39; Movement moves
+<i>45</i>&nbsp;     */
+<b class="fc"><i>46</i>&nbsp;    public Card(GodPower godPower, List&lt;MoveChecker&gt; moveCheckers, MoveExecutor moveExecutor, List&lt;BuildChecker&gt; buildCheckers, BuildExecutor buildExecutor, List&lt;WinChecker&gt; winCheckers, List&lt;AdversaryMoveChecker&gt; adversaryMoveCheckers) {</b>
+<b class="fc"><i>47</i>&nbsp;        this.godPower = godPower;</b>
+<b class="fc"><i>48</i>&nbsp;        this.name = godPower.getName();</b>
+<b class="fc"><i>49</i>&nbsp;        this.epithet = godPower.getEpithet();</b>
+<b class="fc"><i>50</i>&nbsp;        this.description = godPower.getDescription();</b>
+<b class="fc"><i>51</i>&nbsp;        this.myMove = new MyMove(this, godPower, moveCheckers, moveExecutor);</b>
+<b class="fc"><i>52</i>&nbsp;        this.myConstruction = new MyConstruction(this, godPower, buildCheckers, buildExecutor);</b>
+<b class="fc"><i>53</i>&nbsp;        this.myVictory = new MyVictory(this, godPower, winCheckers);</b>
+<b class="fc"><i>54</i>&nbsp;        this.adversaryMove = new AdversaryMove(this, godPower, adversaryMoveCheckers);</b>
+<b class="fc"><i>55</i>&nbsp;        this.movementExecuted = false;</b>
+<b class="fc"><i>56</i>&nbsp;        this.constructionExecuted = false;</b>
+<b class="fc"><i>57</i>&nbsp;        this.turnCompleted = false;</b>
+<b class="fc"><i>58</i>&nbsp;    }</b>
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;    /**
+<i>61</i>&nbsp;     * This method reset conditions when a new Turn starts
+<i>62</i>&nbsp;     */
+<i>63</i>&nbsp;    public void resetForStart() {
+<i>64</i>&nbsp;        /* Reset the number of Moves Left */
+<b class="fc"><i>65</i>&nbsp;        myMove.resetMovesLeft();</b>
+<b class="fc"><i>66</i>&nbsp;        myMove.resetOpponentForcedMove();</b>
+<b class="fc"><i>67</i>&nbsp;        myConstruction.resetConstructionLeft();</b>
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;        /* Reset Movement and Construction executed */
+<b class="fc"><i>70</i>&nbsp;        movementExecuted = false;</b>
+<b class="fc"><i>71</i>&nbsp;        constructionExecuted = false;</b>
+<b class="fc"><i>72</i>&nbsp;        turnCompleted = false;</b>
+<b class="fc"><i>73</i>&nbsp;    }</b>
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    public MyMove getMyMove() {
+<b class="fc"><i>76</i>&nbsp;        return myMove;</b>
+<i>77</i>&nbsp;    }
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    public MyConstruction getMyConstruction() {
+<b class="fc"><i>80</i>&nbsp;        return myConstruction;</b>
+<i>81</i>&nbsp;    }
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;    public MyVictory getMyVictory() {
+<b class="fc"><i>84</i>&nbsp;        return myVictory;</b>
+<i>85</i>&nbsp;    }
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;    public AdversaryMove getAdversaryMove() {
+<b class="fc"><i>88</i>&nbsp;        return adversaryMove;</b>
+<i>89</i>&nbsp;    }
+<i>90</i>&nbsp;
+<i>91</i>&nbsp;    /**
+<i>92</i>&nbsp;     *
+<i>93</i>&nbsp;     * @return True iff Player has executed at least one Movement during the new Turn
+<i>94</i>&nbsp;     */
+<i>95</i>&nbsp;    public boolean hasExecutedMovement() {
+<b class="fc"><i>96</i>&nbsp;        return movementExecuted;</b>
+<i>97</i>&nbsp;    }
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;    public void setMovementExecuted(boolean movementExecuted) {
+<b class="fc"><i>100</i>&nbsp;        this.movementExecuted = movementExecuted;</b>
+<b class="fc"><i>101</i>&nbsp;    }</b>
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;    /**
+<i>104</i>&nbsp;     *
+<i>105</i>&nbsp;     * @return True iff Player has executed at least one Construction during the new Turn
+<i>106</i>&nbsp;     */
+<i>107</i>&nbsp;    public boolean hasExecutedConstruction() {
+<b class="fc"><i>108</i>&nbsp;        return constructionExecuted;</b>
+<i>109</i>&nbsp;    }
+<i>110</i>&nbsp;
+<i>111</i>&nbsp;    public void setConstructionExecuted(boolean constructionExecuted) {
+<b class="fc"><i>112</i>&nbsp;        this.constructionExecuted = constructionExecuted;</b>
+<b class="fc"><i>113</i>&nbsp;    }</b>
+<i>114</i>&nbsp;
+<i>115</i>&nbsp;    /**
+<i>116</i>&nbsp;     *
+<i>117</i>&nbsp;     * @return True iff Player has executed at least one Movement and one Construction in succession during the new Turn (so that the Turn is completed)
+<i>118</i>&nbsp;     */
+<i>119</i>&nbsp;    public boolean isTurnCompleted() {
+<b class="fc"><i>120</i>&nbsp;        return turnCompleted;</b>
+<i>121</i>&nbsp;    }
+<i>122</i>&nbsp;
+<i>123</i>&nbsp;    public void setTurnCompleted(boolean turnCompleted) {
+<b class="fc"><i>124</i>&nbsp;        this.turnCompleted = turnCompleted;</b>
+<b class="fc"><i>125</i>&nbsp;    }</b>
+<i>126</i>&nbsp;
+<i>127</i>&nbsp;    public GodPower getGodPower() {
+<b class="fc"><i>128</i>&nbsp;        return godPower;</b>
+<i>129</i>&nbsp;    }
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;    public String getName() {
+<b class="fc"><i>132</i>&nbsp;        return name;</b>
+<i>133</i>&nbsp;    }
+<i>134</i>&nbsp;
+<i>135</i>&nbsp;    public String getEpithet() {
+<b class="fc"><i>136</i>&nbsp;        return epithet;</b>
+<i>137</i>&nbsp;    }
+<i>138</i>&nbsp;
+<i>139</i>&nbsp;    public String getDescription() {
+<b class="fc"><i>140</i>&nbsp;        return description;</b>
+<i>141</i>&nbsp;    }
+<i>142</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 21:53</div>
+</div>
+</body>
+</html>

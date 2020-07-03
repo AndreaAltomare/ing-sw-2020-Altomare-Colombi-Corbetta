@@ -1,0 +1,202 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: VCEventListener</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.observer</a> ]
+</div>
+
+<h1>Coverage Summary for Class: VCEventListener (it.polimi.ingsw.observer)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">VCEventListener</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.observer;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.view.events.*;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;/**
+<i>6</i>&nbsp; * Listener interface for View-generated events.
+<i>7</i>&nbsp; *
+<i>8</i>&nbsp; * VCEvent (Events form Client)
+<i>9</i>&nbsp; *
+<i>10</i>&nbsp; * @author AndreaAltomare
+<i>11</i>&nbsp; */
+<i>12</i>&nbsp;public interface VCEventListener {
+<i>13</i>&nbsp;    /* Client general listener */
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    /**
+<i>16</i>&nbsp;     * Updates listener with a submitted nickname.
+<i>17</i>&nbsp;     *
+<i>18</i>&nbsp;     * @param submittedNickname Event: A nickname was submitted
+<i>19</i>&nbsp;     */
+<i>20</i>&nbsp;    public void update(SetNicknameEvent submittedNickname); // handled by Server connection first
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    /**
+<i>23</i>&nbsp;     * Updates listener with a number of Players for the upcoming game.
+<i>24</i>&nbsp;     *
+<i>25</i>&nbsp;     * @param playersNumber Event: A number of Players was submitted
+<i>26</i>&nbsp;     */
+<i>27</i>&nbsp;    public void update(SetPlayersNumberEvent playersNumber); // handled by Server connection first
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    /**
+<i>30</i>&nbsp;     * Updates listener with a response about the resuming of the Game.
+<i>31</i>&nbsp;     *
+<i>32</i>&nbsp;     * @param gameResumingResponse Event: Response on the game resuming
+<i>33</i>&nbsp;     * @param playerNickname Player who generated the event
+<i>34</i>&nbsp;     */
+<i>35</i>&nbsp;    public void update(GameResumingResponseEvent gameResumingResponse, String playerNickname);
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    /**
+<i>38</i>&nbsp;     * Updates listener about a Player quit.
+<i>39</i>&nbsp;     *
+<i>40</i>&nbsp;     * @param quit Event: A Player quit the game
+<i>41</i>&nbsp;     * @param playerNickname Player who generated the event
+<i>42</i>&nbsp;     */
+<i>43</i>&nbsp;    public void update(QuitEvent quit, String playerNickname);
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    /**
+<i>46</i>&nbsp;     * Updates listener with a data request from the Client.
+<i>47</i>&nbsp;     *
+<i>48</i>&nbsp;     * @param dataRequest Event: Data request from the Client
+<i>49</i>&nbsp;     * @param playerNickname Player who generated the event
+<i>50</i>&nbsp;     */
+<i>51</i>&nbsp;    public void update(ViewRequestDataEvent dataRequest, String playerNickname); // Game match general data
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    /* Game preparation listener */
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    /**
+<i>56</i>&nbsp;     * Updates listener with a Card selection by a Player.
+<i>57</i>&nbsp;     *
+<i>58</i>&nbsp;     * @param card Event: Card selection
+<i>59</i>&nbsp;     * @param playerNickname Player selected the Card
+<i>60</i>&nbsp;     */
+<i>61</i>&nbsp;    public void update(CardSelectionEvent card, String playerNickname);
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    /**
+<i>64</i>&nbsp;     * Updates listener with a Card choosing by the Challenger Player.
+<i>65</i>&nbsp;     *
+<i>66</i>&nbsp;     * @param chosenCards Event: Chosen Card
+<i>67</i>&nbsp;     * @param playerNickname Player chose the Cards
+<i>68</i>&nbsp;     */
+<i>69</i>&nbsp;    public void update(CardsChoosingEvent chosenCards, String playerNickname);
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    /**
+<i>72</i>&nbsp;     * Updates listener about the chose of Start Player by The Challenger.
+<i>73</i>&nbsp;     *
+<i>74</i>&nbsp;     * @param startPlayer Event: Start Player was chosen
+<i>75</i>&nbsp;     * @param playerNickname Player chose the Start Player
+<i>76</i>&nbsp;     */
+<i>77</i>&nbsp;    public void update(SetStartPlayerEvent startPlayer, String playerNickname);
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;    /**
+<i>80</i>&nbsp;     * Updates listener with a Worker placement.
+<i>81</i>&nbsp;     *
+<i>82</i>&nbsp;     * @param workerToPlace Event: Worker placement
+<i>83</i>&nbsp;     * @param playerNickname Player who placed the Workers
+<i>84</i>&nbsp;     */
+<i>85</i>&nbsp;    public void update(PlaceWorkerEvent workerToPlace, String playerNickname);
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;    /* Move listener */
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;    /**
+<i>90</i>&nbsp;     * Updates listener about the selection of a Worker.
+<i>91</i>&nbsp;     *
+<i>92</i>&nbsp;     * @param selectedWorker Event: Worker selection
+<i>93</i>&nbsp;     * @param playerNickname Player who made the move
+<i>94</i>&nbsp;     */
+<i>95</i>&nbsp;    public void update(SelectWorkerEvent selectedWorker, String playerNickname);
+<i>96</i>&nbsp;
+<i>97</i>&nbsp;    /**
+<i>98</i>&nbsp;     * Updates listener about the movement of a Worker.
+<i>99</i>&nbsp;     *
+<i>100</i>&nbsp;     * @param move Event: Worker movement
+<i>101</i>&nbsp;     * @param playerNickname Player who made the move
+<i>102</i>&nbsp;     */
+<i>103</i>&nbsp;    public void update(MoveWorkerEvent move, String playerNickname);
+<i>104</i>&nbsp;
+<i>105</i>&nbsp;    /**
+<i>106</i>&nbsp;     * Updates listener about the construction of a block.
+<i>107</i>&nbsp;     *
+<i>108</i>&nbsp;     * @param build Event: Block construction
+<i>109</i>&nbsp;     * @param playerNickname Player who made the move
+<i>110</i>&nbsp;     */
+<i>111</i>&nbsp;    public void update(BuildBlockEvent build, String playerNickname);
+<i>112</i>&nbsp;
+<i>113</i>&nbsp;    /**
+<i>114</i>&nbsp;     * Updates listener about the removal of a Worker.
+<i>115</i>&nbsp;     *
+<i>116</i>&nbsp;     * @param workerToRemove Event: Worker removal
+<i>117</i>&nbsp;     * @param playerNickname Player who made the move
+<i>118</i>&nbsp;     */
+<i>119</i>&nbsp;    public void update(RemoveWorkerEvent workerToRemove, String playerNickname);
+<i>120</i>&nbsp;
+<i>121</i>&nbsp;    /**
+<i>122</i>&nbsp;     * Updates listener about the removal of a block.
+<i>123</i>&nbsp;     *
+<i>124</i>&nbsp;     * @param blockToRemove Event: Block removal
+<i>125</i>&nbsp;     * @param playerNickname Player who made the move
+<i>126</i>&nbsp;     */
+<i>127</i>&nbsp;    public void update(RemoveBlockEvent blockToRemove, String playerNickname);
+<i>128</i>&nbsp;
+<i>129</i>&nbsp;    /**
+<i>130</i>&nbsp;     * Updates listener with a request of action-undo from a Player.
+<i>131</i>&nbsp;     *
+<i>132</i>&nbsp;     * @param undoAction Event: Undo action
+<i>133</i>&nbsp;     * @param playerNickname Player who requested the Undo
+<i>134</i>&nbsp;     */
+<i>135</i>&nbsp;    public void update(UndoActionEvent undoAction, String playerNickname);
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;    /* Turn status change listener */
+<i>138</i>&nbsp;
+<i>139</i>&nbsp;    /**
+<i>140</i>&nbsp;     * Updates listener with a request of Turn status change.
+<i>141</i>&nbsp;     *
+<i>142</i>&nbsp;     * @param turnStatus Event: Turn status change request
+<i>143</i>&nbsp;     * @param playerNickname Player who requested the Turn change
+<i>144</i>&nbsp;     */
+<i>145</i>&nbsp;    public void update(TurnStatusChangeEvent turnStatus, String playerNickname);
+<i>146</i>&nbsp;
+<i>147</i>&nbsp;    /* Generic update method */
+<i>148</i>&nbsp;
+<i>149</i>&nbsp;    /**
+<i>150</i>&nbsp;     * Updates listener with a (generic) unspecified Event.
+<i>151</i>&nbsp;     *
+<i>152</i>&nbsp;     * @param o Generic and unspecified Event
+<i>153</i>&nbsp;     */
+<i>154</i>&nbsp;    public void update(Object o);
+<i>155</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 21:53</div>
+</div>
+</body>
+</html>

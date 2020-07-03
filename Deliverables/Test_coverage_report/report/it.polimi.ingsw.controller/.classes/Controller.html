@@ -1,0 +1,1809 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Controller</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.controller</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Controller (it.polimi.ingsw.controller)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Controller</td>
+<td class="coverageStat">
+  <span class="percent">
+    44,8%
+  </span>
+  <span class="absValue">
+    (30/ 67)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    45,8%
+  </span>
+  <span class="absValue">
+    (204/ 445)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Controller$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (4/ 10)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    46,4%
+  </span>
+  <span class="absValue">
+    (32/ 69)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    45,7%
+  </span>
+  <span class="absValue">
+    (208/ 455)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.controller;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.connection.utility.ServerResetException;
+<i>4</i>&nbsp;import it.polimi.ingsw.controller.events.*;
+<i>5</i>&nbsp;import it.polimi.ingsw.controller.undo.UndoManager;
+<i>6</i>&nbsp;import it.polimi.ingsw.model.Model;
+<i>7</i>&nbsp;import it.polimi.ingsw.model.card.CardInfo;
+<i>8</i>&nbsp;import it.polimi.ingsw.model.exceptions.LoseException;
+<i>9</i>&nbsp;import it.polimi.ingsw.model.move.MoveOutcomeType;
+<i>10</i>&nbsp;import it.polimi.ingsw.model.persistence.GameState;
+<i>11</i>&nbsp;import it.polimi.ingsw.model.persistence.players.PlayerData;
+<i>12</i>&nbsp;import it.polimi.ingsw.model.player.Player;
+<i>13</i>&nbsp;import it.polimi.ingsw.model.player.turn.StateType;
+<i>14</i>&nbsp;import it.polimi.ingsw.observer.Observable;
+<i>15</i>&nbsp;import it.polimi.ingsw.observer.VCEventListener;
+<i>16</i>&nbsp;import it.polimi.ingsw.storage.ResourceManager;
+<i>17</i>&nbsp;import it.polimi.ingsw.view.events.*;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;import java.util.*;
+<i>20</i>&nbsp;import java.util.concurrent.ExecutorService;
+<i>21</i>&nbsp;import java.util.concurrent.Executors;
+<i>22</i>&nbsp;import java.util.stream.Collectors;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;/**
+<i>25</i>&nbsp; * Game Controller.
+<i>26</i>&nbsp; * This class is the core of the software system.
+<i>27</i>&nbsp; * It communicates with the Model and the View(s)
+<i>28</i>&nbsp; * to let the game evolve properly.
+<i>29</i>&nbsp; *
+<i>30</i>&nbsp; * Controller class listens for events being send
+<i>31</i>&nbsp; * from the View(s), updates Model, then notifies
+<i>32</i>&nbsp; * View(s) about any event which occurred.
+<i>33</i>&nbsp; *
+<i>34</i>&nbsp; * @author AndreaAltomare
+<i>35</i>&nbsp; */
+<b class="fc"><i>36</i>&nbsp;public class Controller extends Observable&lt;Object&gt; implements VCEventListener, Runnable {</b>
+<i>37</i>&nbsp;    /* Members for Controller-Model interaction */
+<i>38</i>&nbsp;    private Model model; // Object reference to the Game Model
+<i>39</i>&nbsp;    /* Members for generic game info */
+<i>40</i>&nbsp;    private List&lt;String&gt; players; // these are JUST NICKNAMES (used to make interaction through Observer Pattern simpler)
+<i>41</i>&nbsp;    private List&lt;String&gt; cardsInGame; // Cards used for this game match
+<i>42</i>&nbsp;    /* Members for concurrency handling */
+<b class="fc"><i>43</i>&nbsp;    private ExecutorService executor = Executors.newFixedThreadPool(10); // for async operations</b>
+<i>44</i>&nbsp;    private volatile String genericResponse; // String used for generic response from client
+<i>45</i>&nbsp;    private volatile boolean clientResponded; // used to control generic responses from Players
+<i>46</i>&nbsp;    private volatile boolean challengerHasChosen; // Marked as volatile because it is accessed by different threads
+<i>47</i>&nbsp;    private final Object clientLock; // lock used for responses from Client(s)
+<i>48</i>&nbsp;    private final Object challengerLock; // lock used for responses from Challenger
+<i>49</i>&nbsp;    private volatile String startPlayer; // the Start Player for this game
+<i>50</i>&nbsp;    private volatile boolean resumeGame; // if the game needs to be resumed
+<i>51</i>&nbsp;    private volatile boolean undoRequested; // tells if an Undo action has been requested
+<i>52</i>&nbsp;    /* Miscellaneous */
+<i>53</i>&nbsp;    private volatile int workersPlaced;
+<i>54</i>&nbsp;    private UndoManager undoManager;
+<i>55</i>&nbsp;    private volatile boolean gameWasQuit;
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;    /**
+<i>58</i>&nbsp;     * Constructor for Controller class.
+<i>59</i>&nbsp;     * An instance of Model is passed to let the Controller
+<i>60</i>&nbsp;     * interact with the Model.
+<i>61</i>&nbsp;     *
+<i>62</i>&nbsp;     * @param model (Model instance)
+<i>63</i>&nbsp;     * @param players List of players
+<i>64</i>&nbsp;     */
+<b class="fc"><i>65</i>&nbsp;    public Controller(Model model, List&lt;String&gt; players) {</b>
+<b class="fc"><i>66</i>&nbsp;        this.model = model;</b>
+<b class="fc"><i>67</i>&nbsp;        this.players = new ArrayList&lt;&gt;(players);</b>
+<b class="fc"><i>68</i>&nbsp;        this.clientResponded = false;</b>
+<b class="fc"><i>69</i>&nbsp;        this.challengerHasChosen = false;</b>
+<b class="fc"><i>70</i>&nbsp;        this.clientLock = new Object();</b>
+<b class="fc"><i>71</i>&nbsp;        this.challengerLock = new Object();</b>
+<b class="fc"><i>72</i>&nbsp;        this.workersPlaced = 0;</b>
+<b class="fc"><i>73</i>&nbsp;        this.gameWasQuit = false;</b>
+<b class="fc"><i>74</i>&nbsp;        this.resumeGame = false;</b>
+<b class="fc"><i>75</i>&nbsp;        this.undoRequested = false;</b>
+<b class="fc"><i>76</i>&nbsp;        this.undoManager = new UndoManager(clientLock);</b>
+<b class="fc"><i>77</i>&nbsp;    }</b>
+<i>78</i>&nbsp;
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;    /* ##################################### MAIN LOGIC ##################################### */
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;
+<i>85</i>&nbsp;
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;    /**
+<i>88</i>&nbsp;     * {@code Run()} method for Controller class, to let the game flow
+<i>89</i>&nbsp;     * be controlled in a separated thread from the one into which
+<i>90</i>&nbsp;     * run the connection Socket.
+<i>91</i>&nbsp;     *
+<i>92</i>&nbsp;     * This method is run when a new game needs to start.
+<i>93</i>&nbsp;     */
+<i>94</i>&nbsp;    @Override
+<i>95</i>&nbsp;    public void run() {
+<i>96</i>&nbsp;        /* 0- Initialize the Model and Send to the Client general info for this game */
+<b class="nc"><i>97</i>&nbsp;        System.out.println(&quot;\n##### Running Controller... #####\n&quot;); // Server control message</b>
+<b class="nc"><i>98</i>&nbsp;        model.initialize(this, players);</b>
+<b class="nc"><i>99</i>&nbsp;        notify(new ServerSendDataEvent(model.getBoardXSize(), model.getBoardYSize(), players, model.getWorkersToPlayers()));</b>
+<i>100</i>&nbsp;
+<i>101</i>&nbsp;        /* 1- Select the -Challenger- Player */
+<b class="nc"><i>102</i>&nbsp;        System.out.println(&quot;##### Game Preparation phase #####&quot;); // Server control message</b>
+<b class="nc"><i>103</i>&nbsp;        setChallenger();</b>
+<b class="nc"><i>104</i>&nbsp;        System.out.println(&quot; - Challenger Player set: &#39;&quot; + model.challenger() + &quot;&#39;&quot;); // Server control message</b>
+<i>105</i>&nbsp;        //notify(new MessageEvent(&quot;The Challenger Player has been chosen. It&#39;s: &quot; + model.challenger())); // notify players that the Challenger has been chosen
+<i>106</i>&nbsp;
+<i>107</i>&nbsp;        /* --- CHECK FOR GAME SAVINGS --- */
+<b class="nc"><i>108</i>&nbsp;        checkForSavings();</b>
+<i>109</i>&nbsp;
+<i>110</i>&nbsp;        /* --- PREPARE A NEW GAME ONLY IF A PREVIOUSLY SAVED GAME WAS NOT RESUMED --- */
+<b class="nc"><i>111</i>&nbsp;        if(!resumeGame) {</b>
+<b class="nc"><i>112</i>&nbsp;            System.out.println(&quot;[SERVER] No game saving loaded.\nPreparing a new game...&quot;);</b>
+<i>113</i>&nbsp;
+<i>114</i>&nbsp;            //prepareGame(3); // [debug and simulation for testing]
+<i>115</i>&nbsp;
+<i>116</i>&nbsp;            /* 2- Challenger choose the Cards for this game match */
+<b class="nc"><i>117</i>&nbsp;            notify(new NextStatusEvent(&quot;Game preparation&quot;));</b>
+<b class="nc"><i>118</i>&nbsp;            List&lt;CardInfo&gt; cardInfoList = ResourceManager.getCardsInformation();</b>
+<b class="nc"><i>119</i>&nbsp;            challengerChoosesCards(cardInfoList);</b>
+<b class="nc"><i>120</i>&nbsp;            printCardsInGame(cardsInGame);</b>
+<i>121</i>&nbsp;
+<i>122</i>&nbsp;            /* 3- In &quot;clockwise&quot; order, every Player choose a Card (among the Cards chosen by the Challenger) */
+<b class="nc"><i>123</i>&nbsp;            List&lt;CardInfo&gt; cardsToChoose = cardInfoList.stream().filter(c -&gt; cardsInGame.contains(c.getName())).collect(Collectors.toList());</b>
+<b class="nc"><i>124</i>&nbsp;            playersChooseCards(cardsToChoose);</b>
+<b class="nc"><i>125</i>&nbsp;            registerTurnObservers();</b>
+<i>126</i>&nbsp;            //System.out.println(&quot;&quot;); // Server control message   ---&gt;   in playersChooseCards(...) method
+<i>127</i>&nbsp;
+<i>128</i>&nbsp;            /* 4- Ask the Challenger for the Start Player */
+<b class="nc"><i>129</i>&nbsp;            challengerChoosesStartPlayer();</b>
+<b class="nc"><i>130</i>&nbsp;            System.out.println(&quot; - Challenger Player has chosen Start Player: &#39;&quot; + model.startPlayer() + &quot;&#39;&quot;); // Server control message</b>
+<i>131</i>&nbsp;            //notify(new MessageEvent(&quot;Other players are placing their workers. Wait...&quot;)); // notify other Players
+<i>132</i>&nbsp;
+<i>133</i>&nbsp;            /* 5- Sort the list of Players */
+<b class="nc"><i>134</i>&nbsp;            sortPlayers();</b>
+<i>135</i>&nbsp;
+<i>136</i>&nbsp;            /* 6- In &quot;clockwise&quot; order, starting from Start Player, every Player places his/her Workers on the Board */
+<b class="nc"><i>137</i>&nbsp;            playersPlaceWorkers();</b>
+<b class="nc"><i>138</i>&nbsp;            clearOperations();</b>
+<i>139</i>&nbsp;
+<i>140</i>&nbsp;            /* 7- Send general game info data to all Views so the game can start */
+<b class="nc"><i>141</i>&nbsp;            System.out.println(&quot; - Notifying Players that the game is starting...&quot;); // Server control message</b>
+<b class="nc"><i>142</i>&nbsp;            notify(new ServerSendDataEvent(model.getBoardXSize(), model.getBoardYSize(), players, model.getWorkersToPlayers()));</b>
+<i>143</i>&nbsp;
+<i>144</i>&nbsp;            /* 8- Game preparation phase is over. The game match can start */
+<b class="nc"><i>145</i>&nbsp;            notify(new NextStatusEvent(&quot;The game has started!&quot;));</b>
+<b class="nc"><i>146</i>&nbsp;            startGame();</b>
+<b class="nc"><i>147</i>&nbsp;            saveGame(); // save newly started game</b>
+<b class="nc"><i>148</i>&nbsp;            System.out.println(&quot;\n##### Game started #####\n&quot;); // Server control message</b>
+<b class="nc"><i>149</i>&nbsp;            System.out.println(&quot;### It&#39;s &quot; + model.startPlayer() + &quot;&#39;s turn.&quot;);</b>
+<i>150</i>&nbsp;
+<i>151</i>&nbsp;            //simulateGame(5); // [debug and simulation for testing]
+<i>152</i>&nbsp;        }
+<b class="nc"><i>153</i>&nbsp;    }</b>
+<i>154</i>&nbsp;
+<i>155</i>&nbsp;
+<i>156</i>&nbsp;
+<i>157</i>&nbsp;
+<i>158</i>&nbsp;
+<i>159</i>&nbsp;
+<i>160</i>&nbsp;
+<i>161</i>&nbsp;
+<i>162</i>&nbsp;
+<i>163</i>&nbsp;
+<i>164</i>&nbsp;
+<i>165</i>&nbsp;
+<i>166</i>&nbsp;    /* ############################## FIRST LEVEL METHOD LOGIC ############################## */
+<i>167</i>&nbsp;
+<i>168</i>&nbsp;
+<i>169</i>&nbsp;
+<i>170</i>&nbsp;
+<i>171</i>&nbsp;    /**
+<i>172</i>&nbsp;     * This method initialize observers for Players&#39; Turns.
+<i>173</i>&nbsp;     */
+<i>174</i>&nbsp;    private void registerTurnObservers() {
+<b class="nc"><i>175</i>&nbsp;        model.registerTurnObservers();</b>
+<b class="nc"><i>176</i>&nbsp;    }</b>
+<i>177</i>&nbsp;
+<i>178</i>&nbsp;    /**
+<i>179</i>&nbsp;     * Clear some Model properties
+<i>180</i>&nbsp;     * to remain in a consistent state
+<i>181</i>&nbsp;     * if a new game starts.
+<i>182</i>&nbsp;     */
+<i>183</i>&nbsp;    private void clearOperations() {
+<b class="nc"><i>184</i>&nbsp;        model.clearOperations();</b>
+<b class="nc"><i>185</i>&nbsp;    }</b>
+<i>186</i>&nbsp;
+<i>187</i>&nbsp;    /**
+<i>188</i>&nbsp;     * This method encapsulates the logic for the Workers placement by every Player.
+<i>189</i>&nbsp;     */
+<i>190</i>&nbsp;    private void playersPlaceWorkers() {
+<b class="nc"><i>191</i>&nbsp;        for(int i = 0; i &lt; players.size(); i++) {</b>
+<b class="nc"><i>192</i>&nbsp;            setClientResponded(false);</b>
+<b class="nc"><i>193</i>&nbsp;            setWorkersPlaced(0);</b>
+<b class="nc"><i>194</i>&nbsp;            while(!clientResponded) {</b>
+<i>195</i>&nbsp;                // 6.1- Ask the Player to place his/her Worker
+<b class="nc"><i>196</i>&nbsp;                notify(new RequirePlaceWorkersEvent(players.get(i)));</b>
+<i>197</i>&nbsp;                // 6.2- Wait for response
+<b class="nc"><i>198</i>&nbsp;                waitForPlayerResponse();</b>
+<i>199</i>&nbsp;                // 6.3- Validation of Worker placement is done in the update method.
+<i>200</i>&nbsp;            }
+<i>201</i>&nbsp;        }
+<b class="nc"><i>202</i>&nbsp;    }</b>
+<i>203</i>&nbsp;
+<i>204</i>&nbsp;    /**
+<i>205</i>&nbsp;     * Sort the list of Players based on the Start Player.
+<i>206</i>&nbsp;     */
+<i>207</i>&nbsp;    private void sortPlayers() {
+<b class="nc"><i>208</i>&nbsp;        players.remove(model.startPlayer());</b>
+<b class="nc"><i>209</i>&nbsp;        players.add(0, model.startPlayer());</b>
+<b class="nc"><i>210</i>&nbsp;    }</b>
+<i>211</i>&nbsp;
+<i>212</i>&nbsp;    /**
+<i>213</i>&nbsp;     * This method encapsulates the logic for the choice of the Start Player by the Challenger.
+<i>214</i>&nbsp;     */
+<i>215</i>&nbsp;    private void challengerChoosesStartPlayer() {
+<b class="nc"><i>216</i>&nbsp;        challengerHasChosen = false;</b>
+<b class="nc"><i>217</i>&nbsp;        while(!challengerHasChosen) {</b>
+<i>218</i>&nbsp;            // 4.1- Send to the Challenger a request
+<b class="nc"><i>219</i>&nbsp;            notify(new RequireStartPlayerEvent(players, model.challenger()));</b>
+<i>220</i>&nbsp;            // 4.2- Waits until Challenger hasn&#39;t chosen the Start Player for this game
+<b class="nc"><i>221</i>&nbsp;            waitForChallengerResponse();</b>
+<i>222</i>&nbsp;            // 4.3- Check if the choice is valid
+<b class="nc"><i>223</i>&nbsp;            challengerHasChosen = checkValidStartPlayer();</b>
+<i>224</i>&nbsp;        }
+<b class="nc"><i>225</i>&nbsp;    }</b>
+<i>226</i>&nbsp;
+<i>227</i>&nbsp;    /**
+<i>228</i>&nbsp;     * This method encapsulates the logic for the choice of Cards by the Players.
+<i>229</i>&nbsp;     *
+<i>230</i>&nbsp;     * @param cardsToChoose (Cards among the Players can choose (chosen previously by the Challenger))
+<i>231</i>&nbsp;     */
+<i>232</i>&nbsp;    private void playersChooseCards(List&lt;CardInfo&gt; cardsToChoose) {
+<i>233</i>&nbsp;        // 3.2- Notify every Player in &quot;clockwise&quot; order
+<b class="nc"><i>234</i>&nbsp;        for(int i = 1; i &lt; players.size(); i++) { // for cycle starts by 1 (one) because Player n. 0 is the Challenger</b>
+<b class="nc"><i>235</i>&nbsp;            clientResponded = false;</b>
+<b class="nc"><i>236</i>&nbsp;            cardsToChoose = requestPlayerForCardChoice(cardsToChoose, players.get(i));</b>
+<i>237</i>&nbsp;        }
+<i>238</i>&nbsp;        // 3.3- Set the last Card to the Challenger
+<b class="nc"><i>239</i>&nbsp;        setLastCard(cardsToChoose);</b>
+<b class="nc"><i>240</i>&nbsp;    }</b>
+<i>241</i>&nbsp;
+<i>242</i>&nbsp;    /**
+<i>243</i>&nbsp;     * This method encapsulates the logic for the choice of the Cards in this game by the Challenger.
+<i>244</i>&nbsp;     *
+<i>245</i>&nbsp;     * @param cardInfoList (Cards among Challenger can choose)
+<i>246</i>&nbsp;     */
+<i>247</i>&nbsp;    private void challengerChoosesCards(List&lt;CardInfo&gt; cardInfoList) {
+<b class="nc"><i>248</i>&nbsp;        List&lt;String&gt; possibleCards = cardInfoList.stream().map(c -&gt; c.getName()).collect(Collectors.toList()); // get just Cards&#39; name</b>
+<i>249</i>&nbsp;
+<b class="nc"><i>250</i>&nbsp;        challengerHasChosen = false;</b>
+<b class="nc"><i>251</i>&nbsp;        while(!challengerHasChosen) {</b>
+<i>252</i>&nbsp;            // 2.2- Broadcast Card&#39;s information
+<b class="nc"><i>253</i>&nbsp;            notify(new CardsInformationEvent(cardInfoList, model.challenger(), &quot;&quot;));</b>
+<i>254</i>&nbsp;            // 2.3- Waits until Challenger hasn&#39;t chosen the Cards for this game
+<b class="nc"><i>255</i>&nbsp;            waitForChallengerResponse();</b>
+<i>256</i>&nbsp;            // 2.4- The number of chosen Cards needs to be equal to the number of the Players in the game (and Cards chosen must be valid)
+<b class="nc"><i>257</i>&nbsp;            challengerHasChosen = checkValidChosenCards(possibleCards);</b>
+<i>258</i>&nbsp;        }
+<b class="nc"><i>259</i>&nbsp;    }</b>
+<i>260</i>&nbsp;
+<i>261</i>&nbsp;    /**
+<i>262</i>&nbsp;     * Set the Challenger Player for this game.
+<i>263</i>&nbsp;     */
+<i>264</i>&nbsp;    private void setChallenger() {
+<b class="nc"><i>265</i>&nbsp;        String challenger = players.get(0); // Choose the Challenger (this can be done in any possible way)</b>
+<b class="nc"><i>266</i>&nbsp;        model.setChallenger(challenger); // set Challenger into the Game Model</b>
+<b class="nc"><i>267</i>&nbsp;    }</b>
+<i>268</i>&nbsp;
+<i>269</i>&nbsp;    /**
+<i>270</i>&nbsp;     * Prints Cards chosen for this game.
+<i>271</i>&nbsp;     * (Server-side control message)
+<i>272</i>&nbsp;     *
+<i>273</i>&nbsp;     * @param cardsInGame (List of cards in game)
+<i>274</i>&nbsp;     */
+<i>275</i>&nbsp;    private void printCardsInGame(List&lt;String&gt; cardsInGame) {
+<b class="nc"><i>276</i>&nbsp;        int i = 1;</b>
+<b class="nc"><i>277</i>&nbsp;        System.out.println(&quot; - Challenger has chosen Cards for this game: &quot;); // Server control message</b>
+<b class="nc"><i>278</i>&nbsp;        for(String card : cardsInGame) {</b>
+<b class="nc"><i>279</i>&nbsp;            System.out.println(&quot;    &quot; + i + &quot;. &quot; + card);</b>
+<b class="nc"><i>280</i>&nbsp;            i++;</b>
+<b class="nc"><i>281</i>&nbsp;        }</b>
+<b class="nc"><i>282</i>&nbsp;    }</b>
+<i>283</i>&nbsp;
+<i>284</i>&nbsp;
+<i>285</i>&nbsp;
+<i>286</i>&nbsp;
+<i>287</i>&nbsp;    /* ############################## SECOND LEVEL METHOD LOGIC ############################## */
+<i>288</i>&nbsp;
+<i>289</i>&nbsp;
+<i>290</i>&nbsp;
+<i>291</i>&nbsp;
+<i>292</i>&nbsp;    /**
+<i>293</i>&nbsp;     * Checks if the Cards chosen by the Challenger are valid.
+<i>294</i>&nbsp;     *
+<i>295</i>&nbsp;     * @param possibleCards (Possible Cards among which the Challenger can choose)
+<i>296</i>&nbsp;     * @return (Cards chosen are valid ? true : false)
+<i>297</i>&nbsp;     */
+<i>298</i>&nbsp;    private boolean checkValidChosenCards(List&lt;String&gt; possibleCards) {
+<b class="nc"><i>299</i>&nbsp;        boolean chosenCardsAreValid = true;</b>
+<i>300</i>&nbsp;
+<b class="nc"><i>301</i>&nbsp;        if (cardsInGame.size() != players.size()) {</b>
+<b class="nc"><i>302</i>&nbsp;            notify(new ErrorMessageEvent(&quot;You must choose a number of cards equal to the number of players in this game!&quot;), model.challenger());</b>
+<b class="nc"><i>303</i>&nbsp;            setChallengerHasChosen(false); // SYNCHRONOUSLY set the attribute to false</b>
+<b class="nc"><i>304</i>&nbsp;            chosenCardsAreValid = false;</b>
+<i>305</i>&nbsp;        }
+<b class="nc"><i>306</i>&nbsp;        else if (!(possibleCards.containsAll(cardsInGame)) || !itemsAllDifferent(cardsInGame)) {</b>
+<b class="nc"><i>307</i>&nbsp;            notify(new ErrorMessageEvent(&quot;Your choice is invalid! Please, try again.&quot;), model.challenger());</b>
+<b class="nc"><i>308</i>&nbsp;            setChallengerHasChosen(false); // SYNCHRONOUSLY set the attribute to false</b>
+<b class="nc"><i>309</i>&nbsp;            chosenCardsAreValid = false;</b>
+<i>310</i>&nbsp;        }
+<i>311</i>&nbsp;        else {
+<b class="nc"><i>312</i>&nbsp;            model.setCardsInGame(cardsInGame);</b>
+<i>313</i>&nbsp;            //notify(new MessageEvent(&quot;Your choice has been registered!&quot;), model.challenger());
+<i>314</i>&nbsp;        }
+<i>315</i>&nbsp;
+<b class="nc"><i>316</i>&nbsp;        return chosenCardsAreValid;</b>
+<i>317</i>&nbsp;    }
+<i>318</i>&nbsp;
+<i>319</i>&nbsp;    /**
+<i>320</i>&nbsp;     * Sets the last Card left to the Challenger.
+<i>321</i>&nbsp;     *
+<i>322</i>&nbsp;     * @param cardsToChoose (Cards among which the Player can choose)
+<i>323</i>&nbsp;     */
+<i>324</i>&nbsp;    private void setLastCard(List&lt;CardInfo&gt; cardsToChoose) {
+<b class="nc"><i>325</i>&nbsp;        List&lt;String&gt; lastCardList = cardsToChoose.stream().map(c -&gt; c.getName()).collect(Collectors.toList());</b>
+<b class="nc"><i>326</i>&nbsp;        String lastCard = lastCardList.get(0);</b>
+<b class="nc"><i>327</i>&nbsp;        model.setPlayerCard(lastCard, model.challenger());</b>
+<b class="nc"><i>328</i>&nbsp;        notify(new CardSelectedEvent(lastCard, model.challenger(), true)); // ANSWER FROM THE CONTROLLER (Notify the View)</b>
+<b class="nc"><i>329</i>&nbsp;        cardsToChoose.removeIf(c -&gt; c.getName().equals(lastCard));</b>
+<b class="nc"><i>330</i>&nbsp;        System.out.println(&quot; - Player &#39;&quot; + model.challenger() + &quot;&#39; was set with the last Card left: &#39;&quot; + lastCard + &quot;&#39;&quot;); // Server control message</b>
+<b class="nc"><i>331</i>&nbsp;    }</b>
+<i>332</i>&nbsp;
+<i>333</i>&nbsp;    /**
+<i>334</i>&nbsp;     * Checks if the Start Player chosen by the Challenger is valid.
+<i>335</i>&nbsp;     *
+<i>336</i>&nbsp;     * @return (Start Player chosen is valid ? true : false)
+<i>337</i>&nbsp;     */
+<i>338</i>&nbsp;    private boolean checkValidStartPlayer() {
+<b class="nc"><i>339</i>&nbsp;        synchronized (startPlayer) {</b>
+<b class="nc"><i>340</i>&nbsp;            if (!players.contains(startPlayer)) {</b>
+<b class="nc"><i>341</i>&nbsp;                notify(new ErrorMessageEvent(&quot;Your choice is invalid! Please, try again.&quot;), model.challenger());</b>
+<b class="nc"><i>342</i>&nbsp;                setChallengerHasChosen(false); // SYNCHRONOUSLY set the attribute to false</b>
+<b class="nc"><i>343</i>&nbsp;                return false;</b>
+<i>344</i>&nbsp;            }
+<i>345</i>&nbsp;            else {
+<b class="nc"><i>346</i>&nbsp;                model.setStartPlayer(startPlayer);</b>
+<i>347</i>&nbsp;                //notify(new MessageEvent(model.startPlayer() + &quot; will be the Start Player for this game!&quot;));
+<b class="nc"><i>348</i>&nbsp;                return true;</b>
+<i>349</i>&nbsp;            }
+<b class="nc"><i>350</i>&nbsp;        }</b>
+<i>351</i>&nbsp;    }
+<i>352</i>&nbsp;
+<i>353</i>&nbsp;    /**
+<i>354</i>&nbsp;     * (Synchronized) Waits for a response from the Challenger.
+<i>355</i>&nbsp;     */
+<i>356</i>&nbsp;    private void waitForChallengerResponse() {
+<b class="nc"><i>357</i>&nbsp;        synchronized (challengerLock) {</b>
+<b class="nc"><i>358</i>&nbsp;            while (!challengerHasChosen) { // works like a wait</b>
+<i>359</i>&nbsp;                try {
+<b class="nc"><i>360</i>&nbsp;                    challengerLock.wait();</b>
+<i>361</i>&nbsp;                }
+<b class="nc"><i>362</i>&nbsp;                catch (InterruptedException ex) {</b>
+<b class="nc"><i>363</i>&nbsp;                    ex.printStackTrace();</b>
+<b class="nc"><i>364</i>&nbsp;                }</b>
+<i>365</i>&nbsp;            }
+<b class="nc"><i>366</i>&nbsp;        }</b>
+<b class="nc"><i>367</i>&nbsp;    }</b>
+<i>368</i>&nbsp;
+<i>369</i>&nbsp;    /**
+<i>370</i>&nbsp;     * (Synchronized) Waits for a response from a Player.
+<i>371</i>&nbsp;     */
+<i>372</i>&nbsp;    private void waitForPlayerResponse() {
+<b class="nc"><i>373</i>&nbsp;        synchronized (clientLock) {</b>
+<b class="nc"><i>374</i>&nbsp;            while (!clientResponded) {</b>
+<i>375</i>&nbsp;                try {
+<b class="nc"><i>376</i>&nbsp;                    clientLock.wait();</b>
+<b class="nc"><i>377</i>&nbsp;                } catch (InterruptedException ex) {</b>
+<b class="nc"><i>378</i>&nbsp;                    ex.printStackTrace();</b>
+<b class="nc"><i>379</i>&nbsp;                }</b>
+<i>380</i>&nbsp;            }
+<b class="nc"><i>381</i>&nbsp;        }</b>
+<b class="nc"><i>382</i>&nbsp;    }</b>
+<i>383</i>&nbsp;
+<i>384</i>&nbsp;    /**
+<i>385</i>&nbsp;     * Ask a given Player for a Card choice.
+<i>386</i>&nbsp;     * Perform some checks to verify the choice
+<i>387</i>&nbsp;     * made is valid.
+<i>388</i>&nbsp;     *
+<i>389</i>&nbsp;     * @param cardsToChoose (Cards among which the Player can choose)
+<i>390</i>&nbsp;     * @param playerNickname (Player&#39;s nickname)
+<i>391</i>&nbsp;     * @return An updated version of cardsToChoose List
+<i>392</i>&nbsp;     */
+<i>393</i>&nbsp;    private List&lt;CardInfo&gt; requestPlayerForCardChoice(List&lt;CardInfo&gt; cardsToChoose, String playerNickname) {
+<b class="nc"><i>394</i>&nbsp;        List&lt;String&gt; validCards = cardsToChoose.stream().map(c -&gt; c.getName()).collect(Collectors.toList());// cards that can be chosen as a response from the Player</b>
+<b class="nc"><i>395</i>&nbsp;        while (!clientResponded) {</b>
+<i>396</i>&nbsp;            // 3.2.1- Send messages to the Player
+<b class="nc"><i>397</i>&nbsp;            notify(new CardsInformationEvent(cardsToChoose, model.challenger(), playerNickname)); // send Cards information to the Player</b>
+<i>398</i>&nbsp;            // 3.2.2- Wait for the response
+<b class="nc"><i>399</i>&nbsp;            waitForPlayerResponse();</b>
+<i>400</i>&nbsp;            // 3.2.3- Check for the correctness of the choice made
+<b class="nc"><i>401</i>&nbsp;            cardsToChoose = checkValidSelectedCards(cardsToChoose, playerNickname, validCards);</b>
+<i>402</i>&nbsp;        }
+<i>403</i>&nbsp;
+<b class="nc"><i>404</i>&nbsp;        return cardsToChoose;</b>
+<i>405</i>&nbsp;    }
+<i>406</i>&nbsp;
+<i>407</i>&nbsp;
+<i>408</i>&nbsp;
+<i>409</i>&nbsp;
+<i>410</i>&nbsp;    /* ############################## THIRD LEVEL METHOD LOGIC ############################## */
+<i>411</i>&nbsp;
+<i>412</i>&nbsp;
+<i>413</i>&nbsp;
+<i>414</i>&nbsp;
+<i>415</i>&nbsp;    /**
+<i>416</i>&nbsp;     * Checks if Cards SELECTED by a Player are valid.
+<i>417</i>&nbsp;     *
+<i>418</i>&nbsp;     * @param cardsToChoose (Cards among which the Player can choose)
+<i>419</i>&nbsp;     * @param playerNickname (Player&#39;s nickname)
+<i>420</i>&nbsp;     * @param validCards (List of String representing valid Cards which can be chosen)
+<i>421</i>&nbsp;     * @return An updated version of cardsToChoose List
+<i>422</i>&nbsp;     */
+<i>423</i>&nbsp;    private List&lt;CardInfo&gt; checkValidSelectedCards(List&lt;CardInfo&gt; cardsToChoose, String playerNickname, List&lt;String&gt; validCards) {
+<b class="nc"><i>424</i>&nbsp;        synchronized (genericResponse) {</b>
+<b class="nc"><i>425</i>&nbsp;            if (!(validCards.contains(genericResponse))) {</b>
+<b class="nc"><i>426</i>&nbsp;                notify(new ErrorMessageEvent(&quot;Your choice is invalid! Please, try again.&quot;), playerNickname);</b>
+<b class="nc"><i>427</i>&nbsp;                setClientResponded(false); // SYNCHRONOUSLY set the attribute to false</b>
+<i>428</i>&nbsp;            }
+<i>429</i>&nbsp;            else {
+<b class="nc"><i>430</i>&nbsp;                model.setPlayerCard(genericResponse, playerNickname);</b>
+<b class="nc"><i>431</i>&nbsp;                notify(new CardSelectedEvent(genericResponse, playerNickname, true)); // ANSWER FROM THE CONTROLLER (Notify the View)</b>
+<b class="nc"><i>432</i>&nbsp;                cardsToChoose.removeIf(c -&gt; c.getName().equals(genericResponse));</b>
+<b class="nc"><i>433</i>&nbsp;                System.out.println(&quot; - Player &#39;&quot; + playerNickname + &quot;&#39; has selected his/her Card: &#39;&quot; + genericResponse + &quot;&#39;&quot;); // Server control message</b>
+<i>434</i>&nbsp;            }
+<b class="nc"><i>435</i>&nbsp;        }</b>
+<i>436</i>&nbsp;
+<b class="nc"><i>437</i>&nbsp;        return cardsToChoose;</b>
+<i>438</i>&nbsp;    }
+<i>439</i>&nbsp;
+<i>440</i>&nbsp;    /**
+<i>441</i>&nbsp;     * Tells if all items in a provided List are different.
+<i>442</i>&nbsp;     *
+<i>443</i>&nbsp;     * @param cardsInGame (List of items)
+<i>444</i>&nbsp;     * @return (All items in a provided List are different ? true : false)
+<i>445</i>&nbsp;     */
+<i>446</i>&nbsp;    private boolean itemsAllDifferent(List&lt;String&gt; cardsInGame) {
+<b class="nc"><i>447</i>&nbsp;        boolean cardUnique = false;</b>
+<b class="nc"><i>448</i>&nbsp;        Set&lt;String&gt; cardsSet = new HashSet&lt;&gt;(cardsInGame.size());</b>
+<i>449</i>&nbsp;
+<b class="nc"><i>450</i>&nbsp;        for(String card : cardsInGame) {</b>
+<b class="nc"><i>451</i>&nbsp;            cardUnique = cardsSet.add(card);</b>
+<i>452</i>&nbsp;
+<b class="nc"><i>453</i>&nbsp;            if(!cardUnique)</b>
+<b class="nc"><i>454</i>&nbsp;                return false;</b>
+<b class="nc"><i>455</i>&nbsp;        }</b>
+<i>456</i>&nbsp;
+<b class="nc"><i>457</i>&nbsp;        return true;</b>
+<i>458</i>&nbsp;    }
+<i>459</i>&nbsp;
+<i>460</i>&nbsp;
+<i>461</i>&nbsp;
+<i>462</i>&nbsp;
+<i>463</i>&nbsp;
+<i>464</i>&nbsp;
+<i>465</i>&nbsp;
+<i>466</i>&nbsp;
+<i>467</i>&nbsp;
+<i>468</i>&nbsp;    /* ############### UPDATE METHODS FOR VCEvents LISTENER (OBSERVER PATTERN) ############## */
+<i>469</i>&nbsp;
+<i>470</i>&nbsp;
+<i>471</i>&nbsp;
+<i>472</i>&nbsp;
+<i>473</i>&nbsp;
+<i>474</i>&nbsp;
+<i>475</i>&nbsp;
+<i>476</i>&nbsp;    /* Client general listener */
+<i>477</i>&nbsp;
+<i>478</i>&nbsp;    /**
+<i>479</i>&nbsp;     * Computes a SetNicknameEvent.
+<i>480</i>&nbsp;     * In this case, no action is taken since
+<i>481</i>&nbsp;     * the Player&#39;s nickname is set in Login phase.
+<i>482</i>&nbsp;     *
+<i>483</i>&nbsp;     * @param submittedNickname Event: Submitted nickname
+<i>484</i>&nbsp;     */
+<i>485</i>&nbsp;    @Override
+<i>486</i>&nbsp;    public synchronized void update(SetNicknameEvent submittedNickname) {
+<b class="fc"><i>487</i>&nbsp;        System.err.println(&quot;ERROR: Unexpected SetNicknameEvent received: &#39;&quot; + submittedNickname + &quot;&#39;&quot;);</b>
+<b class="fc"><i>488</i>&nbsp;        notify(new ErrorMessageEvent(&quot;Bad Request: Server cannot process your request!&quot;), submittedNickname.getNickname());</b>
+<b class="fc"><i>489</i>&nbsp;    }</b>
+<i>490</i>&nbsp;
+<i>491</i>&nbsp;    /**
+<i>492</i>&nbsp;     * Computes a SetPlayerNumberEvent.
+<i>493</i>&nbsp;     * In this case, no action is taken since
+<i>494</i>&nbsp;     * the number of Players for the game is set
+<i>495</i>&nbsp;     * in Login phase.
+<i>496</i>&nbsp;     *
+<i>497</i>&nbsp;     * @param playersNumber Event: Number of Players
+<i>498</i>&nbsp;     */
+<i>499</i>&nbsp;    @Override
+<i>500</i>&nbsp;    public synchronized void update(SetPlayersNumberEvent playersNumber) {
+<b class="fc"><i>501</i>&nbsp;        System.err.println(&quot;ERROR: Unexpected SetPlayersNumberEvent received!&quot;);</b>
+<i>502</i>&nbsp;        //notify(new ErrorMessageEvent(&quot;Bad Request: Server cannot process your request!&quot;));
+<b class="fc"><i>503</i>&nbsp;    }</b>
+<i>504</i>&nbsp;
+<i>505</i>&nbsp;    /**
+<i>506</i>&nbsp;     * Computes a GameResumingResponseEvent.
+<i>507</i>&nbsp;     * This method is reserved for the Challenger Player.
+<i>508</i>&nbsp;     *
+<i>509</i>&nbsp;     * @param gameResumingResponse Event: Response from Challenger about resuming a previously saved Game
+<i>510</i>&nbsp;     * @param playerNickname Player who sent the Event
+<i>511</i>&nbsp;     */
+<i>512</i>&nbsp;    public synchronized void update(GameResumingResponseEvent gameResumingResponse, String playerNickname) {
+<b class="fc"><i>513</i>&nbsp;        if(!model.hasGameStarted() &amp;&amp; playerNickname.equals(model.challenger())) {</b>
+<b class="fc"><i>514</i>&nbsp;            System.out.println(&quot;[GameResumingResponseEvent] received from Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>515</i>&nbsp;            if (playerNickname.equals(model.challenger())) {</b>
+<b class="fc"><i>516</i>&nbsp;                synchronized (challengerLock) {</b>
+<b class="fc"><i>517</i>&nbsp;                    this.resumeGame = gameResumingResponse.isWantToResumeGame();</b>
+<b class="fc"><i>518</i>&nbsp;                    challengerHasChosen = true;</b>
+<b class="fc"><i>519</i>&nbsp;                    challengerLock.notifyAll();</b>
+<b class="fc"><i>520</i>&nbsp;                }</b>
+<i>521</i>&nbsp;            }
+<i>522</i>&nbsp;        }
+<i>523</i>&nbsp;        else {
+<b class="fc"><i>524</i>&nbsp;            System.out.println(&quot;!INVALID! [GameResumingResponseEvent] received from Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>525</i>&nbsp;            notify(new ErrorMessageEvent(&quot;Game has already started! You can no longer resume any previous game.&quot;), playerNickname);</b>
+<i>526</i>&nbsp;        }
+<b class="fc"><i>527</i>&nbsp;    }</b>
+<i>528</i>&nbsp;
+<i>529</i>&nbsp;    /**
+<i>530</i>&nbsp;     * Computes a QuitEvent.
+<i>531</i>&nbsp;     * Calls operations for game quitting.
+<i>532</i>&nbsp;     *
+<i>533</i>&nbsp;     * @param quit Event: Quit the game
+<i>534</i>&nbsp;     * @param playerNickname Player who quit
+<i>535</i>&nbsp;     */
+<i>536</i>&nbsp;    @Override
+<i>537</i>&nbsp;    public synchronized void update(QuitEvent quit, String playerNickname) {
+<b class="fc"><i>538</i>&nbsp;        System.out.println(&quot;[QuitEvent] received from Player &quot; + playerNickname + &quot;: quitting...&quot;);</b>
+<b class="fc"><i>539</i>&nbsp;        gameWasQuit = true;</b>
+<b class="fc"><i>540</i>&nbsp;        this.stopGame();</b>
+<b class="fc"><i>541</i>&nbsp;        notify(new GameOverEvent(&quot;A player quit. This game can no longer continue.&quot;));</b>
+<i>542</i>&nbsp;        //resetGame();
+<b class="fc"><i>543</i>&nbsp;    }</b>
+<i>544</i>&nbsp;
+<i>545</i>&nbsp;    /* Not actually necessary for Distributed-MVC Pattern */
+<i>546</i>&nbsp;    @Override
+<i>547</i>&nbsp;    public synchronized void update(ViewRequestDataEvent dataRequest, String playerNickname) {
+<b class="fc"><i>548</i>&nbsp;        System.err.println(&quot;ERROR: Unexpected ViewRequestDataEvent received!&quot;);</b>
+<b class="fc"><i>549</i>&nbsp;        notify(new ErrorMessageEvent(&quot;Bad Request: Server cannot process your request!&quot;), playerNickname);</b>
+<b class="fc"><i>550</i>&nbsp;    }</b>
+<i>551</i>&nbsp;
+<i>552</i>&nbsp;
+<i>553</i>&nbsp;    /* Game preparation listener */
+<i>554</i>&nbsp;
+<i>555</i>&nbsp;    /**
+<i>556</i>&nbsp;     * Computes a CardsChoosingEvent.
+<i>557</i>&nbsp;     * This method is reserved for the Challenger Player.
+<i>558</i>&nbsp;     *
+<i>559</i>&nbsp;     * @param chosenCards Event: CardsChoosingEvent received for the Player
+<i>560</i>&nbsp;     * @param playerNickname Player&#39;s nickname
+<i>561</i>&nbsp;     */
+<i>562</i>&nbsp;    @Override
+<i>563</i>&nbsp;    public synchronized void update(CardsChoosingEvent chosenCards, String playerNickname) {
+<b class="fc"><i>564</i>&nbsp;        if(!model.hasGameStarted()) {</b>
+<b class="fc"><i>565</i>&nbsp;            System.out.println(&quot;[CardsChoosingEvent] received from Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>566</i>&nbsp;            if (playerNickname.equals(model.challenger())) {</b>
+<b class="fc"><i>567</i>&nbsp;                synchronized (challengerLock) {</b>
+<b class="fc"><i>568</i>&nbsp;                    cardsInGame = chosenCards.getCards();</b>
+<b class="fc"><i>569</i>&nbsp;                    challengerHasChosen = true;</b>
+<b class="fc"><i>570</i>&nbsp;                    challengerLock.notifyAll();</b>
+<b class="fc"><i>571</i>&nbsp;                }</b>
+<i>572</i>&nbsp;            }
+<i>573</i>&nbsp;        }
+<i>574</i>&nbsp;        else {
+<b class="fc"><i>575</i>&nbsp;            System.out.println(&quot;!INVALID! [CardsChoosingEvent] received from Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>576</i>&nbsp;            notify(new ErrorMessageEvent(&quot;Game has already started! You cannot choose Cards for this game.&quot;), playerNickname);</b>
+<i>577</i>&nbsp;        }
+<b class="fc"><i>578</i>&nbsp;    }</b>
+<i>579</i>&nbsp;
+<i>580</i>&nbsp;    /**
+<i>581</i>&nbsp;     * Computes a CardSelectionEvent.
+<i>582</i>&nbsp;     * Calls operations for Card selection and assignment.
+<i>583</i>&nbsp;     *
+<i>584</i>&nbsp;     * @param card Event: Selected Card
+<i>585</i>&nbsp;     * @param playerNickname Player who selected the Card
+<i>586</i>&nbsp;     */
+<i>587</i>&nbsp;    @Override
+<i>588</i>&nbsp;    public synchronized void update(CardSelectionEvent card, String playerNickname) {
+<b class="fc"><i>589</i>&nbsp;        if(!model.hasGameStarted()) {</b>
+<b class="fc"><i>590</i>&nbsp;            System.out.println(&quot;[CardSelectionEvent] received from Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>591</i>&nbsp;            synchronized (clientLock) {</b>
+<b class="fc"><i>592</i>&nbsp;                genericResponse = card.getCardName();</b>
+<b class="fc"><i>593</i>&nbsp;                clientResponded = true;</b>
+<b class="fc"><i>594</i>&nbsp;                clientLock.notifyAll();</b>
+<b class="fc"><i>595</i>&nbsp;            }</b>
+<i>596</i>&nbsp;        }
+<i>597</i>&nbsp;        else {
+<b class="fc"><i>598</i>&nbsp;            System.out.println(&quot;!INVALID! [CardsSelectionEvent] received from Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>599</i>&nbsp;            notify(new ErrorMessageEvent(&quot;Game has already started! You can no longer select a Card for this game.&quot;), playerNickname);</b>
+<i>600</i>&nbsp;        }
+<b class="fc"><i>601</i>&nbsp;    }</b>
+<i>602</i>&nbsp;
+<i>603</i>&nbsp;    /**
+<i>604</i>&nbsp;     * Computes a SetStartPlayerEvent.
+<i>605</i>&nbsp;     * This method is reserved for the Challenger Player.
+<i>606</i>&nbsp;     *
+<i>607</i>&nbsp;     * @param startPlayer Event: SetStartPlayerEvent received for the Player
+<i>608</i>&nbsp;     * @param playerNickname Player&#39;s nickname
+<i>609</i>&nbsp;     */
+<i>610</i>&nbsp;    @Override
+<i>611</i>&nbsp;    public synchronized void update(SetStartPlayerEvent startPlayer, String playerNickname) {
+<b class="fc"><i>612</i>&nbsp;        if(!model.hasGameStarted()) {</b>
+<b class="fc"><i>613</i>&nbsp;            System.out.println(&quot;[SetStartPlayerEvent] received from Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>614</i>&nbsp;            if (playerNickname.equals(model.challenger())) {</b>
+<b class="fc"><i>615</i>&nbsp;                synchronized (challengerLock) {</b>
+<b class="fc"><i>616</i>&nbsp;                    this.startPlayer = startPlayer.getStartPlayer();</b>
+<b class="fc"><i>617</i>&nbsp;                    challengerHasChosen = true;</b>
+<b class="fc"><i>618</i>&nbsp;                    challengerLock.notifyAll();</b>
+<b class="fc"><i>619</i>&nbsp;                }</b>
+<i>620</i>&nbsp;            }
+<i>621</i>&nbsp;        }
+<i>622</i>&nbsp;        else {
+<b class="fc"><i>623</i>&nbsp;            System.out.println(&quot;!INVALID! [SetStartPlayerEvent] received from Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>624</i>&nbsp;            notify(new ErrorMessageEvent(&quot;Game has already started! You cannot choose the Start Player for this game.&quot;), playerNickname);</b>
+<i>625</i>&nbsp;        }
+<b class="fc"><i>626</i>&nbsp;    }</b>
+<i>627</i>&nbsp;
+<i>628</i>&nbsp;    /**
+<i>629</i>&nbsp;     * Computes a PlaceWorkerEvent.
+<i>630</i>&nbsp;     * Calls operations Worker placement.
+<i>631</i>&nbsp;     *
+<i>632</i>&nbsp;     * @param workerToPlace Event: Worker placement
+<i>633</i>&nbsp;     * @param playerNickname Player who place the Worker
+<i>634</i>&nbsp;     */
+<i>635</i>&nbsp;    @Override
+<i>636</i>&nbsp;    public synchronized void update(PlaceWorkerEvent workerToPlace, String playerNickname) {
+<b class="fc"><i>637</i>&nbsp;        if(!model.hasGameStarted()) {</b>
+<b class="fc"><i>638</i>&nbsp;            System.out.println(&quot;[PlaceWorkerEvent] received from Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>639</i>&nbsp;            synchronized (clientLock) {</b>
+<b class="fc"><i>640</i>&nbsp;                WorkerPlacedEvent workerPlaced = model.placeWorker(workerToPlace.getX(), workerToPlace.getY(), playerNickname);</b>
+<b class="fc"><i>641</i>&nbsp;                if (workerPlaced != null) {</b>
+<b class="fc"><i>642</i>&nbsp;                    workersPlaced++;</b>
+<b class="fc"><i>643</i>&nbsp;                    notify(workerPlaced); // broadcast notification of a worker placed event</b>
+<b class="fc"><i>644</i>&nbsp;                    System.out.println(&quot; - Player &#39;&quot; + playerNickname + &quot;&#39; placed a Worker in position: ( &quot; + workerToPlace.getX() + &quot; , &quot; + workerToPlace.getY() + &quot; )&quot;); // Server control message</b>
+<i>645</i>&nbsp;                } else {
+<b class="fc"><i>646</i>&nbsp;                    notify(new ErrorMessageEvent(&quot;Your choice is invalid! Try to place your worker again.&quot;), playerNickname);</b>
+<i>647</i>&nbsp;                }
+<i>648</i>&nbsp;
+<b class="fc"><i>649</i>&nbsp;                if (workersPlaced == model.WORKERS_PER_PLAYER) {</b>
+<b class="fc"><i>650</i>&nbsp;                    clientResponded = true;</b>
+<b class="fc"><i>651</i>&nbsp;                    clientLock.notifyAll();</b>
+<i>652</i>&nbsp;                }
+<b class="fc"><i>653</i>&nbsp;            }</b>
+<i>654</i>&nbsp;        }
+<i>655</i>&nbsp;        else {
+<b class="fc"><i>656</i>&nbsp;            System.out.println(&quot;!INVALID! [PlaceWorkerEvent] received from Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>657</i>&nbsp;            notify(new ErrorMessageEvent(&quot;Game has already started! Your Workers have already been placed.&quot;), playerNickname);</b>
+<i>658</i>&nbsp;        }
+<b class="fc"><i>659</i>&nbsp;    }</b>
+<i>660</i>&nbsp;
+<i>661</i>&nbsp;
+<i>662</i>&nbsp;    /* Move listener */
+<i>663</i>&nbsp;
+<i>664</i>&nbsp;    /**
+<i>665</i>&nbsp;     * Computes a SelectWorkerEvent.
+<i>666</i>&nbsp;     * Calls operations for Worker selection.
+<i>667</i>&nbsp;     *
+<i>668</i>&nbsp;     * @param selectedWorker Event: Worker selection
+<i>669</i>&nbsp;     * @param playerNickname Player who selected the Worker
+<i>670</i>&nbsp;     */
+<i>671</i>&nbsp;    @Override
+<i>672</i>&nbsp;    public synchronized void update(SelectWorkerEvent selectedWorker, String playerNickname) {
+<b class="fc"><i>673</i>&nbsp;        if(model.hasGameStarted()) {</b>
+<b class="fc"><i>674</i>&nbsp;            System.out.println(&quot;[SelectWorkerEvent] received form Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>675</i>&nbsp;            WorkerSelectedEvent workerSelected = null;</b>
+<b class="fc"><i>676</i>&nbsp;            if(!undoManager.isActive())</b>
+<b class="fc"><i>677</i>&nbsp;                workerSelected = model.selectWorker(selectedWorker.getWorkerId(), playerNickname);</b>
+<b class="fc"><i>678</i>&nbsp;            if (workerSelected != null)</b>
+<b class="fc"><i>679</i>&nbsp;                notify(workerSelected); // ANSWER FROM THE CONTROLLER (Notify the View)</b>
+<b class="fc"><i>680</i>&nbsp;            if(workerSelected != null &amp;&amp; workerSelected.success())</b>
+<b class="fc"><i>681</i>&nbsp;                System.out.println(&quot;- Worker &quot; + selectedWorker.getWorkerId() + &quot; has been correctly selected.&quot;);</b>
+<i>682</i>&nbsp;            else
+<b class="fc"><i>683</i>&nbsp;                System.out.println(&quot;- Worker &quot; + selectedWorker.getWorkerId() + &quot; NOT selected.&quot;);</b>
+<b class="fc"><i>684</i>&nbsp;        }</b>
+<i>685</i>&nbsp;        else {
+<b class="fc"><i>686</i>&nbsp;            System.out.println(&quot;!INVALID! [SelectWorkerEvent] received from Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>687</i>&nbsp;            notify(new ErrorMessageEvent(&quot;Game has not started yet! Hold on...&quot;), playerNickname);</b>
+<i>688</i>&nbsp;        }
+<b class="fc"><i>689</i>&nbsp;    }</b>
+<i>690</i>&nbsp;
+<i>691</i>&nbsp;    /**
+<i>692</i>&nbsp;     * Computes a MoveWorkerEvent.
+<i>693</i>&nbsp;     * Calls operations for Worker movement.
+<i>694</i>&nbsp;     *
+<i>695</i>&nbsp;     * @param move Event: Worker movement
+<i>696</i>&nbsp;     * @param playerNickname Player who moved the Worker
+<i>697</i>&nbsp;     */
+<i>698</i>&nbsp;    @Override
+<i>699</i>&nbsp;    public synchronized void update(MoveWorkerEvent move, String playerNickname) {
+<b class="fc"><i>700</i>&nbsp;        if(model.hasGameStarted()) {</b>
+<b class="fc"><i>701</i>&nbsp;            System.out.println(&quot;[MoveWorkerEvent] received form Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>702</i>&nbsp;            List&lt;WorkerMovedEvent&gt; workersMoved = null;</b>
+<b class="fc"><i>703</i>&nbsp;            if(!undoManager.isActive() &amp;&amp; model.getPlayingPlayerState() == StateType.MOVEMENT)</b>
+<b class="fc"><i>704</i>&nbsp;                workersMoved = model.moveWorker(move.getWorkerId(), move.getX(), move.getY(), playerNickname);</b>
+<b class="fc"><i>705</i>&nbsp;            if (workersMoved != null) {</b>
+<b class="fc"><i>706</i>&nbsp;                notifyWorkersMoved(workersMoved);</b>
+<b class="fc"><i>707</i>&nbsp;                postExecutionOperations(playerNickname, model.getMainWorkerMoved().getMoveOutcome());</b>
+<i>708</i>&nbsp;            }
+<b class="fc"><i>709</i>&nbsp;        }</b>
+<i>710</i>&nbsp;        else {
+<b class="fc"><i>711</i>&nbsp;            System.out.println(&quot;!INVALID! [MoveWorkerEvent] received from Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>712</i>&nbsp;            notify(new ErrorMessageEvent(&quot;Game has not started yet! Hold on...&quot;), playerNickname);</b>
+<i>713</i>&nbsp;        }
+<b class="fc"><i>714</i>&nbsp;    }</b>
+<i>715</i>&nbsp;
+<i>716</i>&nbsp;    /**
+<i>717</i>&nbsp;     * Computes a BuildBlockEvent.
+<i>718</i>&nbsp;     * Calls operations for building a block.
+<i>719</i>&nbsp;     *
+<i>720</i>&nbsp;     * @param build Event: Block building
+<i>721</i>&nbsp;     * @param playerNickname Player who build the block
+<i>722</i>&nbsp;     */
+<i>723</i>&nbsp;    @Override
+<i>724</i>&nbsp;    public synchronized void update(BuildBlockEvent build, String playerNickname) {
+<b class="fc"><i>725</i>&nbsp;        if(model.hasGameStarted()) {</b>
+<b class="fc"><i>726</i>&nbsp;            System.out.println(&quot;[BuildBlockEvent] received form Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>727</i>&nbsp;            BlockBuiltEvent blockBuilt = null;</b>
+<b class="fc"><i>728</i>&nbsp;            if(!undoManager.isActive() &amp;&amp; model.getPlayingPlayerState() == StateType.CONSTRUCTION)</b>
+<b class="fc"><i>729</i>&nbsp;                blockBuilt = model.buildBlock(build.getWorkerId(), build.getX(), build.getY(), build.getBlockType(), playerNickname);</b>
+<b class="fc"><i>730</i>&nbsp;            if (blockBuilt != null) {</b>
+<b class="fc"><i>731</i>&nbsp;                notify(blockBuilt); // ANSWER FROM THE CONTROLLER (Notify the View)</b>
+<b class="fc"><i>732</i>&nbsp;                postExecutionOperations(playerNickname, blockBuilt.getMoveOutcome());</b>
+<i>733</i>&nbsp;            }
+<b class="fc"><i>734</i>&nbsp;        }</b>
+<i>735</i>&nbsp;        else {
+<b class="fc"><i>736</i>&nbsp;            System.out.println(&quot;!INVALID! [BuildBlockEvent] received from Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>737</i>&nbsp;            notify(new ErrorMessageEvent(&quot;Game has not started yet! Hold on...&quot;), playerNickname);</b>
+<i>738</i>&nbsp;        }
+<b class="fc"><i>739</i>&nbsp;    }</b>
+<i>740</i>&nbsp;
+<i>741</i>&nbsp;    /**
+<i>742</i>&nbsp;     * Computes a RemoveWorkerEvent.
+<i>743</i>&nbsp;     * Calls operations for removing a Worker.
+<i>744</i>&nbsp;     *
+<i>745</i>&nbsp;     * [This method is not actually working with
+<i>746</i>&nbsp;     * the current set of rules.]
+<i>747</i>&nbsp;     *
+<i>748</i>&nbsp;     * @param workerToRemove Event: Worker removal
+<i>749</i>&nbsp;     * @param playerNickname Player who removed the Worker
+<i>750</i>&nbsp;     */
+<i>751</i>&nbsp;    @Override
+<i>752</i>&nbsp;    public synchronized void update(RemoveWorkerEvent workerToRemove, String playerNickname) {
+<b class="fc"><i>753</i>&nbsp;        if(model.hasGameStarted()) {</b>
+<b class="fc"><i>754</i>&nbsp;            System.out.println(&quot;[RemoveWorkerEvent] received form Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>755</i>&nbsp;            WorkerRemovedEvent workerRemoved = null;</b>
+<b class="fc"><i>756</i>&nbsp;            if(!undoManager.isActive())</b>
+<b class="fc"><i>757</i>&nbsp;                workerRemoved = model.removeWorker(workerToRemove.getWorkerId(), workerToRemove.getX(), workerToRemove.getY(), playerNickname);</b>
+<b class="fc"><i>758</i>&nbsp;            if (workerRemoved != null)</b>
+<b class="fc"><i>759</i>&nbsp;                notify(workerRemoved); // ANSWER FROM THE CONTROLLER (Notify the View)</b>
+<b class="fc"><i>760</i>&nbsp;        }</b>
+<i>761</i>&nbsp;        else {
+<b class="fc"><i>762</i>&nbsp;            System.out.println(&quot;!INVALID! [RemoveWorkerEvent] received from Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>763</i>&nbsp;            notify(new ErrorMessageEvent(&quot;Game has not started yet! Hold on...&quot;), playerNickname);</b>
+<i>764</i>&nbsp;        }
+<b class="fc"><i>765</i>&nbsp;    }</b>
+<i>766</i>&nbsp;
+<i>767</i>&nbsp;    /**
+<i>768</i>&nbsp;     * Computes a RemoveBlockEvent.
+<i>769</i>&nbsp;     * Calls operations for removing a block.
+<i>770</i>&nbsp;     *
+<i>771</i>&nbsp;     * [This method is not actually working with
+<i>772</i>&nbsp;     * the current set of rules.]
+<i>773</i>&nbsp;     *
+<i>774</i>&nbsp;     * @param blockToRemove Event: Block removal
+<i>775</i>&nbsp;     * @param playerNickname Player who removed the block
+<i>776</i>&nbsp;     */
+<i>777</i>&nbsp;    @Override
+<i>778</i>&nbsp;    public synchronized void update(RemoveBlockEvent blockToRemove, String playerNickname) {
+<b class="fc"><i>779</i>&nbsp;        if(model.hasGameStarted()) {</b>
+<b class="fc"><i>780</i>&nbsp;            System.out.println(&quot;[RemoveBlockEvent] received form Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>781</i>&nbsp;            BlockRemovedEvent blockRemoved = null;</b>
+<b class="fc"><i>782</i>&nbsp;            if(!undoManager.isActive())</b>
+<b class="fc"><i>783</i>&nbsp;                blockRemoved = model.removeBlock(blockToRemove.getWorkerId(), blockToRemove.getX(), blockToRemove.getY(), playerNickname);</b>
+<b class="fc"><i>784</i>&nbsp;            if (blockRemoved != null)</b>
+<b class="fc"><i>785</i>&nbsp;                notify(blockRemoved); // ANSWER FROM THE CONTROLLER (Notify the View)</b>
+<b class="fc"><i>786</i>&nbsp;        }</b>
+<i>787</i>&nbsp;        else {
+<b class="fc"><i>788</i>&nbsp;            System.out.println(&quot;!INVALID! [RemoveBlockEvent] received from Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>789</i>&nbsp;            notify(new ErrorMessageEvent(&quot;Game has not started yet! Hold on...&quot;), playerNickname);</b>
+<i>790</i>&nbsp;        }
+<b class="fc"><i>791</i>&nbsp;    }</b>
+<i>792</i>&nbsp;
+<i>793</i>&nbsp;    /**
+<i>794</i>&nbsp;     * Computes an UndoActionEvent.
+<i>795</i>&nbsp;     * Calls operations for handling an undo
+<i>796</i>&nbsp;     * requested by a Player.
+<i>797</i>&nbsp;     *
+<i>798</i>&nbsp;     * @param undoAction Event: Undo action
+<i>799</i>&nbsp;     * @param playerNickname Player who requested to undo his/her last action
+<i>800</i>&nbsp;     */
+<i>801</i>&nbsp;    @Override
+<i>802</i>&nbsp;    public void update(UndoActionEvent undoAction, String playerNickname) {
+<b class="fc"><i>803</i>&nbsp;        if (model.hasGameStarted()) {</b>
+<b class="fc"><i>804</i>&nbsp;            if (model.getPlayingPlayer().equals(playerNickname) &amp;&amp; undoManager.isActive()) {</b>
+<b class="nc"><i>805</i>&nbsp;                System.out.println(&quot;[UndoActionEvent] received form Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="nc"><i>806</i>&nbsp;                synchronized (clientLock) {</b>
+<b class="nc"><i>807</i>&nbsp;                    this.undoRequested = true;</b>
+<b class="nc"><i>808</i>&nbsp;                    clientResponded = true;</b>
+<b class="nc"><i>809</i>&nbsp;                    undoManager.undoReceived();</b>
+<i>810</i>&nbsp;                    //clientLock.notifyAll();
+<b class="nc"><i>811</i>&nbsp;                }</b>
+<i>812</i>&nbsp;            } else {
+<b class="fc"><i>813</i>&nbsp;                System.out.println(&quot;!INVALID! [UndoActionEvent] received from Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>814</i>&nbsp;                notify(new ErrorMessageEvent(&quot;Cannot undo any action now...&quot;), playerNickname);</b>
+<i>815</i>&nbsp;            }
+<i>816</i>&nbsp;        } else {
+<b class="fc"><i>817</i>&nbsp;            System.out.println(&quot;!INVALID! [UndoActionEvent] received from Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>818</i>&nbsp;            notify(new ErrorMessageEvent(&quot;Game has not started yet! Hold on...&quot;), playerNickname);</b>
+<i>819</i>&nbsp;        }
+<b class="fc"><i>820</i>&nbsp;    }</b>
+<i>821</i>&nbsp;
+<i>822</i>&nbsp;
+<i>823</i>&nbsp;    /* Turn status change listener */
+<i>824</i>&nbsp;
+<i>825</i>&nbsp;    /**
+<i>826</i>&nbsp;     * Computes a TurnStatusChangeEvent.
+<i>827</i>&nbsp;     * Calls operations for changing the Turn state of a Player.
+<i>828</i>&nbsp;     *
+<i>829</i>&nbsp;     * @param turnStatus Event: Turn change
+<i>830</i>&nbsp;     * @param playerNickname Player who wants to change his/her Turn state
+<i>831</i>&nbsp;     */
+<i>832</i>&nbsp;    @Override
+<i>833</i>&nbsp;    public synchronized void update(TurnStatusChangeEvent turnStatus, String playerNickname) {
+<b class="fc"><i>834</i>&nbsp;        if(model.hasGameStarted()) {</b>
+<b class="fc"><i>835</i>&nbsp;            System.out.println(&quot;[TurnStatusChangeEvent] received form Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>836</i>&nbsp;            TurnStatusChangedEvent turnStatusChanged = null;</b>
+<b class="fc"><i>837</i>&nbsp;            if(!undoManager.isActive())</b>
+<b class="fc"><i>838</i>&nbsp;                turnStatusChanged = model.changeTurnStatus(turnStatus.getTurnStatus(), playerNickname);</b>
+<b class="fc"><i>839</i>&nbsp;            if (turnStatusChanged != null) {</b>
+<b class="fc"><i>840</i>&nbsp;                notify(turnStatusChanged); // ANSWER FROM THE CONTROLLER (Notify the View)</b>
+<b class="fc"><i>841</i>&nbsp;                checkForSwitching(playerNickname);</b>
+<b class="fc"><i>842</i>&nbsp;                if(turnStatusChanged.success() &amp;&amp; turnStatusChanged.getState() == StateType.NONE)</b>
+<b class="nc"><i>843</i>&nbsp;                    saveGame();</b>
+<i>844</i>&nbsp;            }
+<b class="fc"><i>845</i>&nbsp;            if(turnStatusChanged != null &amp;&amp; turnStatusChanged.success())</b>
+<b class="fc"><i>846</i>&nbsp;                System.out.println(&quot;- &quot; + playerNickname + &quot;&#39;s Turn has been correctly changed: &quot; + turnStatusChanged.getState());</b>
+<i>847</i>&nbsp;            else
+<b class="fc"><i>848</i>&nbsp;                System.out.println(&quot;- &quot; + playerNickname + &quot;&#39;s Turn NOT changed.&quot;);</b>
+<b class="fc"><i>849</i>&nbsp;        }</b>
+<i>850</i>&nbsp;        else {
+<b class="fc"><i>851</i>&nbsp;            System.out.println(&quot;!INVALID! [TurnStatusChangeEvent] received from Player: &#39;&quot; + playerNickname + &quot;&#39;&quot;); // Server control message</b>
+<b class="fc"><i>852</i>&nbsp;            notify(new ErrorMessageEvent(&quot;Game has not started yet! Hold on...&quot;), playerNickname);</b>
+<i>853</i>&nbsp;        }
+<b class="fc"><i>854</i>&nbsp;    }</b>
+<i>855</i>&nbsp;
+<i>856</i>&nbsp;
+<i>857</i>&nbsp;    /* Generic update method */
+<i>858</i>&nbsp;
+<i>859</i>&nbsp;    /**
+<i>860</i>&nbsp;     * Computes a generic Event received by View(s).
+<i>861</i>&nbsp;     *
+<i>862</i>&nbsp;     * [This method is not actually called anytime
+<i>863</i>&nbsp;     * because View is not supposed to ever generate it.
+<i>864</i>&nbsp;     * So Receiving this kind of generic Event means an
+<i>865</i>&nbsp;     * error occurred in the View.]
+<i>866</i>&nbsp;     *
+<i>867</i>&nbsp;     * @param o Event: Generic Object representing an Event
+<i>868</i>&nbsp;     */
+<i>869</i>&nbsp;    @Override
+<i>870</i>&nbsp;    public synchronized void update(Object o) {
+<b class="fc"><i>871</i>&nbsp;        System.err.println(&quot;ERROR: Unexpected [Generic] VCEvent received!&quot;);</b>
+<i>872</i>&nbsp;        //notify(new ErrorMessageEvent(&quot;Bad Request: Server cannot process your request!&quot;));
+<b class="fc"><i>873</i>&nbsp;    }</b>
+<i>874</i>&nbsp;
+<i>875</i>&nbsp;
+<i>876</i>&nbsp;
+<i>877</i>&nbsp;
+<i>878</i>&nbsp;
+<i>879</i>&nbsp;
+<i>880</i>&nbsp;
+<i>881</i>&nbsp;
+<i>882</i>&nbsp;
+<i>883</i>&nbsp;    /* ########################### AUXILIARY AND SUPPORT METHODS ############################ */
+<i>884</i>&nbsp;
+<i>885</i>&nbsp;
+<i>886</i>&nbsp;    /**
+<i>887</i>&nbsp;     * Notify View about all Workers&#39; Movements happened in this turn.
+<i>888</i>&nbsp;     *
+<i>889</i>&nbsp;     * @param workersMoved List of Workers moved
+<i>890</i>&nbsp;     */
+<i>891</i>&nbsp;    private void notifyWorkersMoved(List&lt;WorkerMovedEvent&gt; workersMoved) {
+<b class="fc"><i>892</i>&nbsp;        workersMoved.forEach(this::notify);</b>
+<b class="fc"><i>893</i>&nbsp;    }</b>
+<i>894</i>&nbsp;
+<i>895</i>&nbsp;    /**
+<i>896</i>&nbsp;     * Executes operations after a Movement or a Construction.
+<i>897</i>&nbsp;     *
+<i>898</i>&nbsp;     * Checks for a possible Undo requested by the Player who
+<i>899</i>&nbsp;     * made the last move, then (if necessary) proceeds with
+<i>900</i>&nbsp;     * eventual Turn state switching and game saving.
+<i>901</i>&nbsp;     *
+<i>902</i>&nbsp;     * @param playerNickname Player who made the last move
+<i>903</i>&nbsp;     * @param moveOutcome Move&#39;s outcome
+<i>904</i>&nbsp;     */
+<i>905</i>&nbsp;    private void postExecutionOperations(String playerNickname, MoveOutcomeType moveOutcome) {
+<b class="fc"><i>906</i>&nbsp;        executor.submit(new Runnable() {</b>
+<i>907</i>&nbsp;            @Override
+<i>908</i>&nbsp;            public void run() {
+<b class="fc"><i>909</i>&nbsp;                if (moveSucceeded(moveOutcome)) {</b>
+<b class="nc"><i>910</i>&nbsp;                    System.out.println(&quot;- Move succeeded.&quot;);</b>
+<b class="nc"><i>911</i>&nbsp;                    checkUndo();</b>
+<b class="nc"><i>912</i>&nbsp;                    if (undoRequested)</b>
+<b class="nc"><i>913</i>&nbsp;                        undoHandler();</b>
+<i>914</i>&nbsp;                    else {
+<b class="nc"><i>915</i>&nbsp;                        checkForSwitching(playerNickname);</b>
+<b class="nc"><i>916</i>&nbsp;                        saveGame();</b>
+<i>917</i>&nbsp;                    }
+<i>918</i>&nbsp;                }else{
+<b class="fc"><i>919</i>&nbsp;                    System.out.println(&quot;- Move NOT executed.&quot;);</b>
+<i>920</i>&nbsp;                }
+<b class="fc"><i>921</i>&nbsp;            }</b>
+<i>922</i>&nbsp;        });
+<b class="fc"><i>923</i>&nbsp;    }</b>
+<i>924</i>&nbsp;
+<i>925</i>&nbsp;
+<i>926</i>&nbsp;    /**
+<i>927</i>&nbsp;     * Tells if a move&#39;s outcome is positive or negative
+<i>928</i>&nbsp;     * (i.e. if it succeeded or not).
+<i>929</i>&nbsp;     *
+<i>930</i>&nbsp;     * @param moveOutcome Move&#39;s outcome to check
+<i>931</i>&nbsp;     * @return (Move succeeded ? true : false)
+<i>932</i>&nbsp;     */
+<i>933</i>&nbsp;    private boolean moveSucceeded(MoveOutcomeType moveOutcome) {
+<b class="fc"><i>934</i>&nbsp;        return (moveOutcome == MoveOutcomeType.EXECUTED || moveOutcome == MoveOutcomeType.TURN_SWITCHED || moveOutcome == MoveOutcomeType.TURN_OVER || moveOutcome == MoveOutcomeType.LOSS || moveOutcome == MoveOutcomeType.WIN);</b>
+<i>935</i>&nbsp;    }
+<i>936</i>&nbsp;
+<i>937</i>&nbsp;
+<i>938</i>&nbsp;    /**
+<i>939</i>&nbsp;     * Handles Undo when one is requested.
+<i>940</i>&nbsp;     */
+<i>941</i>&nbsp;    private void undoHandler() {
+<i>942</i>&nbsp;        /* Print log */
+<b class="nc"><i>943</i>&nbsp;        System.out.println(&quot;--- Previously action is being undo...&quot;);</b>
+<i>944</i>&nbsp;        /* Restore Game State in Model */
+<b class="nc"><i>945</i>&nbsp;        model.restoreGameState();</b>
+<i>946</i>&nbsp;        /* Register Turn Observers */
+<b class="nc"><i>947</i>&nbsp;        registerTurnObservers();</b>
+<i>948</i>&nbsp;        /* Notify Players about action undo */
+<b class="nc"><i>949</i>&nbsp;        notify(new UndoOkEvent(model.getLastBoardState(), model.getPlayingPlayer(), model.getPlayingPlayerState()));</b>
+<i>950</i>&nbsp;        /* Done */
+<b class="nc"><i>951</i>&nbsp;        System.out.println(&quot;--- Action was undone.&quot;);</b>
+<b class="nc"><i>952</i>&nbsp;    }</b>
+<i>953</i>&nbsp;
+<i>954</i>&nbsp;
+<i>955</i>&nbsp;    /**
+<i>956</i>&nbsp;     * Check for an Undo request by a Player
+<i>957</i>&nbsp;     * by waiting for it.
+<i>958</i>&nbsp;     *
+<i>959</i>&nbsp;     * @return True if an Undo is requested
+<i>960</i>&nbsp;     */
+<i>961</i>&nbsp;    private boolean checkUndo() {
+<b class="nc"><i>962</i>&nbsp;        undoRequested = false;</b>
+<i>963</i>&nbsp;
+<b class="nc"><i>964</i>&nbsp;        executor.submit(undoManager);</b>
+<b class="nc"><i>965</i>&nbsp;        waitForUndo();</b>
+<b class="nc"><i>966</i>&nbsp;        undoManager.setActive(false); // disable UndoManager</b>
+<i>967</i>&nbsp;
+<b class="nc"><i>968</i>&nbsp;        return undoRequested;</b>
+<i>969</i>&nbsp;    }
+<i>970</i>&nbsp;
+<i>971</i>&nbsp;
+<i>972</i>&nbsp;    /**
+<i>973</i>&nbsp;     * (Synchronized) Waits for an Undo-Action from a Player.
+<i>974</i>&nbsp;     */
+<i>975</i>&nbsp;    private void waitForUndo() {
+<b class="nc"><i>976</i>&nbsp;        synchronized (clientLock) {</b>
+<b class="nc"><i>977</i>&nbsp;            clientResponded = false;</b>
+<b class="nc"><i>978</i>&nbsp;            while (!clientResponded) { // works like a wait</b>
+<i>979</i>&nbsp;                try {
+<b class="nc"><i>980</i>&nbsp;                    clientLock.wait();</b>
+<i>981</i>&nbsp;                }
+<b class="nc"><i>982</i>&nbsp;                catch (InterruptedException ex) {</b>
+<b class="nc"><i>983</i>&nbsp;                    ex.printStackTrace();</b>
+<b class="nc"><i>984</i>&nbsp;                }</b>
+<b class="nc"><i>985</i>&nbsp;                clientResponded = true; // Need this because clientLock can be released even without receiving any UndoActionEvent</b>
+<i>986</i>&nbsp;            }
+<b class="nc"><i>987</i>&nbsp;        }</b>
+<b class="nc"><i>988</i>&nbsp;    }</b>
+<i>989</i>&nbsp;
+<i>990</i>&nbsp;
+<i>991</i>&nbsp;    /**
+<i>992</i>&nbsp;     * Check for game savings.
+<i>993</i>&nbsp;     */
+<i>994</i>&nbsp;    public void checkForSavings() {
+<b class="nc"><i>995</i>&nbsp;        GameState gameLoaded = loadGame();</b>
+<i>996</i>&nbsp;
+<b class="nc"><i>997</i>&nbsp;        if(gameLoaded == null) {</b>
+<b class="nc"><i>998</i>&nbsp;            System.out.println(&quot;[SERVER] No game saving found.&quot;);</b>
+<i>999</i>&nbsp;        }
+<i>1000</i>&nbsp;        else {
+<i>1001</i>&nbsp;            /* 0- Check if last game was ongoing */
+<b class="nc"><i>1002</i>&nbsp;            resumeGame = checkGameOngoing(gameLoaded);</b>
+<b class="nc"><i>1003</i>&nbsp;            if(!resumeGame)</b>
+<b class="nc"><i>1004</i>&nbsp;                return;</b>
+<i>1005</i>&nbsp;
+<i>1006</i>&nbsp;            /* 1- Check if all (last) playing players are online now */
+<b class="nc"><i>1007</i>&nbsp;            List&lt;String&gt; playingPlayers = getPlayingPlayers(gameLoaded);</b>
+<b class="nc"><i>1008</i>&nbsp;            resumeGame = checkForOnlinePlayers(playingPlayers);</b>
+<b class="nc"><i>1009</i>&nbsp;            if(!resumeGame)</b>
+<b class="nc"><i>1010</i>&nbsp;                return;</b>
+<i>1011</i>&nbsp;
+<i>1012</i>&nbsp;            /* 2- Notify the Challenger about the possibility to restore a saved Game */
+<b class="nc"><i>1013</i>&nbsp;            askChallengerToRestoreGame();</b>
+<i>1014</i>&nbsp;
+<i>1015</i>&nbsp;            /* 3- If Challenger wants to resume the Game, resume it */
+<b class="nc"><i>1016</i>&nbsp;            if(resumeGame) {</b>
+<b class="nc"><i>1017</i>&nbsp;                System.out.println(&quot;[SERVER] A saved game is being loaded.&quot;);</b>
+<b class="nc"><i>1018</i>&nbsp;                resumeSavedGame(gameLoaded);</b>
+<i>1019</i>&nbsp;            }
+<i>1020</i>&nbsp;        }
+<b class="nc"><i>1021</i>&nbsp;    }</b>
+<i>1022</i>&nbsp;
+<i>1023</i>&nbsp;    /**
+<i>1024</i>&nbsp;     * Resumes a Game form the Game state passed
+<i>1025</i>&nbsp;     * as argument.
+<i>1026</i>&nbsp;     *
+<i>1027</i>&nbsp;     * @param gameState Game state
+<i>1028</i>&nbsp;     */
+<i>1029</i>&nbsp;    private void resumeSavedGame(GameState gameState) {
+<i>1030</i>&nbsp;        /* Restore Game State in Model */
+<b class="nc"><i>1031</i>&nbsp;        model.restoreGameState();</b>
+<i>1032</i>&nbsp;        /* Notify Players in game */
+<b class="nc"><i>1033</i>&nbsp;        notify(new MessageEvent(&quot;A previously saved game was resumed! The game can start.&quot;));</b>
+<i>1034</i>&nbsp;        /* Remove non-playing Players */
+<b class="nc"><i>1035</i>&nbsp;        removeNonPlayingPlayers(gameState);</b>
+<i>1036</i>&nbsp;        /* Register Turn Observers */
+<b class="nc"><i>1037</i>&nbsp;        registerTurnObservers();</b>
+<i>1038</i>&nbsp;        /* Notify Players about resumed game */
+<b class="nc"><i>1039</i>&nbsp;        System.out.println(&quot; - Notifying Players that the game is starting...&quot;); // Server control message</b>
+<b class="nc"><i>1040</i>&nbsp;        notify(new GameResumingEvent(gameState));</b>
+<i>1041</i>&nbsp;        /* Start resumed game */
+<b class="nc"><i>1042</i>&nbsp;        startResumedGame();</b>
+<b class="nc"><i>1043</i>&nbsp;    }</b>
+<i>1044</i>&nbsp;
+<i>1045</i>&nbsp;    /**
+<i>1046</i>&nbsp;     * Starts a resumed game.
+<i>1047</i>&nbsp;     */
+<i>1048</i>&nbsp;    private void startResumedGame() {
+<i>1049</i>&nbsp;        /* Preliminary action */
+<i>1050</i>&nbsp;        //model.sortPlayers(players); // sort the players&#39; list before stating
+<b class="nc"><i>1051</i>&nbsp;        Player playingPlayer = model.getPlayingPlayerReference();</b>
+<b class="nc"><i>1052</i>&nbsp;        notify(new NextStatusEvent(&quot;The game has started!&quot;));</b>
+<i>1053</i>&nbsp;        /* Notify about the Turn changed */
+<b class="nc"><i>1054</i>&nbsp;        notify(new TurnStatusChangedEvent(playingPlayer.getNickname(), playingPlayer.getTurnType(), true));</b>
+<i>1055</i>&nbsp;        //startGame(); //no need for this
+<i>1056</i>&nbsp;        /* Game has started */
+<b class="nc"><i>1057</i>&nbsp;        System.out.println(&quot;\n##### Game started #####\n&quot;); // Server control message</b>
+<b class="nc"><i>1058</i>&nbsp;        System.out.println(&quot;### It&#39;s &quot; + model.getPlayingPlayer() + &quot;&#39;s turn.&quot;);</b>
+<b class="nc"><i>1059</i>&nbsp;    }</b>
+<i>1060</i>&nbsp;
+<i>1061</i>&nbsp;    /**
+<i>1062</i>&nbsp;     * Remove non-playing Players from the Player List
+<i>1063</i>&nbsp;     * into the Model when a previously saved game is resumed.
+<i>1064</i>&nbsp;     *
+<i>1065</i>&nbsp;     * @param gameState Game state
+<i>1066</i>&nbsp;     */
+<i>1067</i>&nbsp;    private void removeNonPlayingPlayers(GameState gameState) {
+<b class="nc"><i>1068</i>&nbsp;        List&lt;String&gt; playersInGame = new ArrayList&lt;&gt;(model.players());</b>
+<b class="nc"><i>1069</i>&nbsp;        List&lt;String&gt; playersSaved = new ArrayList&lt;&gt;(gameState.getPlayers().getData().keySet());</b>
+<i>1070</i>&nbsp;        /* Remove all non-playing players from the game */
+<b class="nc"><i>1071</i>&nbsp;        for(String nickname : playersInGame)</b>
+<b class="nc"><i>1072</i>&nbsp;            if(!playersSaved.contains(nickname))</b>
+<b class="nc"><i>1073</i>&nbsp;                model.removePlayer(nickname);</b>
+<b class="nc"><i>1074</i>&nbsp;    }</b>
+<i>1075</i>&nbsp;
+<i>1076</i>&nbsp;    /**
+<i>1077</i>&nbsp;     * Notifies challenger about the possibility to
+<i>1078</i>&nbsp;     * resume a previously saved game; then waits
+<i>1079</i>&nbsp;     * for a response.
+<i>1080</i>&nbsp;     */
+<i>1081</i>&nbsp;    private void askChallengerToRestoreGame() {
+<b class="nc"><i>1082</i>&nbsp;        challengerHasChosen = false;</b>
+<b class="nc"><i>1083</i>&nbsp;        while(!challengerHasChosen) {</b>
+<i>1084</i>&nbsp;            // Send to the Challenger a request
+<b class="nc"><i>1085</i>&nbsp;            notify(new GameResumingEvent(), model.challenger());</b>
+<i>1086</i>&nbsp;            // Waits until Challenger has mad a choice
+<b class="nc"><i>1087</i>&nbsp;            waitForChallengerResponse();</b>
+<i>1088</i>&nbsp;        }
+<b class="nc"><i>1089</i>&nbsp;    }</b>
+<i>1090</i>&nbsp;
+<i>1091</i>&nbsp;    /**
+<i>1092</i>&nbsp;     * Gets a list of last playing Players&#39; nicknames.
+<i>1093</i>&nbsp;     *
+<i>1094</i>&nbsp;     * @param gameState State of the Game
+<i>1095</i>&nbsp;     * @return List of Players&#39; nicknames
+<i>1096</i>&nbsp;     */
+<i>1097</i>&nbsp;    private List&lt;String&gt; getPlayingPlayers(GameState gameState) {
+<b class="nc"><i>1098</i>&nbsp;        Map&lt;String, PlayerData&gt; playersMap = gameState.getPlayers().getData();</b>
+<b class="nc"><i>1099</i>&nbsp;        List&lt;PlayerData&gt; playersData = new ArrayList&lt;&gt;(3);</b>
+<i>1100</i>&nbsp;
+<b class="nc"><i>1101</i>&nbsp;        playersMap.forEach((key, value) -&gt; playersData.add(value));</b>
+<b class="nc"><i>1102</i>&nbsp;        return playersData.stream().map(PlayerData::getNickname).collect(Collectors.toList());</b>
+<i>1103</i>&nbsp;    }
+<i>1104</i>&nbsp;
+<i>1105</i>&nbsp;    /**
+<i>1106</i>&nbsp;     * Tells if current online Players are the same
+<i>1107</i>&nbsp;     * into the list of Players provided.
+<i>1108</i>&nbsp;     *
+<i>1109</i>&nbsp;     * @param playingPlayers List of Players (nicknames)
+<i>1110</i>&nbsp;     * @return (Current online Players are the same into the list of Players provided ? true : false)
+<i>1111</i>&nbsp;     */
+<i>1112</i>&nbsp;    private boolean checkForOnlinePlayers(List&lt;String&gt; playingPlayers) {
+<b class="nc"><i>1113</i>&nbsp;        return this.players.containsAll(playingPlayers);</b>
+<i>1114</i>&nbsp;    }
+<i>1115</i>&nbsp;
+<i>1116</i>&nbsp;    /**
+<i>1117</i>&nbsp;     *
+<i>1118</i>&nbsp;     * @param gameState State of the Game
+<i>1119</i>&nbsp;     * @return (The game was ongoing ? true : false)
+<i>1120</i>&nbsp;     */
+<i>1121</i>&nbsp;    private boolean checkGameOngoing(GameState gameState) {
+<b class="nc"><i>1122</i>&nbsp;        return gameState.isGameStarted();</b>
+<i>1123</i>&nbsp;    }
+<i>1124</i>&nbsp;
+<i>1125</i>&nbsp;
+<i>1126</i>&nbsp;    /**
+<i>1127</i>&nbsp;     * Starts the game.
+<i>1128</i>&nbsp;     */
+<i>1129</i>&nbsp;    private void startGame() {
+<b class="nc"><i>1130</i>&nbsp;        model.sortPlayers(players); // sort the players&#39; list before stating</b>
+<i>1131</i>&nbsp;        try {
+<b class="nc"><i>1132</i>&nbsp;            model.startGame(); // start the game</b>
+<b class="nc"><i>1133</i>&nbsp;            model.setGameStarted(true);</b>
+<b class="nc"><i>1134</i>&nbsp;            String playingPlayer = model.getPlayingPlayer();</b>
+<i>1135</i>&nbsp;            //notify(new TurnStatusChangedEvent(playingPlayer, StateType.MOVEMENT, true), playingPlayer);
+<b class="nc"><i>1136</i>&nbsp;            notify(new TurnStatusChangedEvent(playingPlayer, StateType.MOVEMENT, true));</b>
+<i>1137</i>&nbsp;        }
+<b class="nc"><i>1138</i>&nbsp;        catch (LoseException ex) {</b>
+<b class="nc"><i>1139</i>&nbsp;            System.err.println(&quot;An error has occurred during the starting of the game!&quot;);</b>
+<b class="nc"><i>1140</i>&nbsp;            model.setGameStarted(false);</b>
+<b class="nc"><i>1141</i>&nbsp;        }</b>
+<b class="nc"><i>1142</i>&nbsp;    }</b>
+<i>1143</i>&nbsp;
+<i>1144</i>&nbsp;    /**
+<i>1145</i>&nbsp;     * Stops the game.
+<i>1146</i>&nbsp;     */
+<i>1147</i>&nbsp;    private void stopGame() {
+<i>1148</i>&nbsp;        /* 0- Stop timer(s) */
+<b class="fc"><i>1149</i>&nbsp;        undoManager.stop();</b>
+<i>1150</i>&nbsp;        /* 1- Stop the game */
+<b class="fc"><i>1151</i>&nbsp;        model.stopGame();</b>
+<i>1152</i>&nbsp;        /* 2- Save the match */
+<i>1153</i>&nbsp;        //saveGame(); // no need for this, since the game state is saved every move.
+<b class="fc"><i>1154</i>&nbsp;    }</b>
+<i>1155</i>&nbsp;
+<i>1156</i>&nbsp;    /**
+<i>1157</i>&nbsp;     * Saves the game.
+<i>1158</i>&nbsp;     */
+<i>1159</i>&nbsp;    private void saveGame() {
+<b class="nc"><i>1160</i>&nbsp;        if(!gameWasQuit) {</b>
+<b class="nc"><i>1161</i>&nbsp;            System.out.println(&quot;[SERVER] The game is being saved...&quot;);</b>
+<i>1162</i>&nbsp;            /* 1- Get game state from Model */
+<b class="nc"><i>1163</i>&nbsp;            GameState gameState = model.createGameState();</b>
+<i>1164</i>&nbsp;            /* 2- Save game state */
+<b class="nc"><i>1165</i>&nbsp;            ResourceManager.saveGameState(gameState);</b>
+<i>1166</i>&nbsp;        }
+<b class="nc"><i>1167</i>&nbsp;    }</b>
+<i>1168</i>&nbsp;
+<i>1169</i>&nbsp;    /**
+<i>1170</i>&nbsp;     * Loads a saved game.
+<i>1171</i>&nbsp;     *
+<i>1172</i>&nbsp;     * @return A reference to the loaded game saving
+<i>1173</i>&nbsp;     */
+<i>1174</i>&nbsp;    private GameState loadGame() {
+<i>1175</i>&nbsp;        /* 1- Load game state */
+<b class="nc"><i>1176</i>&nbsp;        GameState gameState = ResourceManager.loadGameState();</b>
+<i>1177</i>&nbsp;        /* 2- Restore game state to the Model */
+<b class="nc"><i>1178</i>&nbsp;        if(gameState != null)</b>
+<b class="nc"><i>1179</i>&nbsp;            model.setGameState(gameState);</b>
+<i>1180</i>&nbsp;        else
+<b class="nc"><i>1181</i>&nbsp;            System.out.println(&quot;[SERVER] No game saving found.&quot;);</b>
+<i>1182</i>&nbsp;
+<b class="nc"><i>1183</i>&nbsp;        return gameState;</b>
+<i>1184</i>&nbsp;    }
+<i>1185</i>&nbsp;
+<i>1186</i>&nbsp;    public synchronized void setChallengerHasChosen(boolean challengerHasChosen) {
+<b class="nc"><i>1187</i>&nbsp;        this.challengerHasChosen = challengerHasChosen;</b>
+<b class="nc"><i>1188</i>&nbsp;    }</b>
+<i>1189</i>&nbsp;
+<i>1190</i>&nbsp;    public synchronized void setClientResponded(Boolean clientResponded) {
+<b class="nc"><i>1191</i>&nbsp;        this.clientResponded = clientResponded;</b>
+<b class="nc"><i>1192</i>&nbsp;    }</b>
+<i>1193</i>&nbsp;
+<i>1194</i>&nbsp;    public synchronized void setWorkersPlaced(int workersPlaced) {
+<b class="nc"><i>1195</i>&nbsp;        this.workersPlaced = workersPlaced;</b>
+<b class="nc"><i>1196</i>&nbsp;    }</b>
+<i>1197</i>&nbsp;
+<i>1198</i>&nbsp;    /**
+<i>1199</i>&nbsp;     * After the execution of a move, this method checks
+<i>1200</i>&nbsp;     * if any switching-player condition is triggered.
+<i>1201</i>&nbsp;     *
+<i>1202</i>&nbsp;     * @param playerNickname Player who just made the move
+<i>1203</i>&nbsp;     */
+<i>1204</i>&nbsp;    private void checkForSwitching(String playerNickname) {
+<i>1205</i>&nbsp;        /* After the Player notification, if the player&#39;s turn is over (or other triggering conditions), switch the playing Player */
+<b class="fc"><i>1206</i>&nbsp;        if (model.getMoveOutcome() == MoveOutcomeType.TURN_SWITCHED)</b>
+<b class="fc"><i>1207</i>&nbsp;            notify(new TurnStatusChangedEvent(playerNickname, StateType.CONSTRUCTION, true));</b>
+<b class="fc"><i>1208</i>&nbsp;        else if (model.getMoveOutcome() == MoveOutcomeType.TURN_OVER)</b>
+<b class="fc"><i>1209</i>&nbsp;            model.switchPlayer();</b>
+<b class="fc"><i>1210</i>&nbsp;        else if (model.getMoveOutcome() == MoveOutcomeType.LOSS) {</b>
+<b class="fc"><i>1211</i>&nbsp;            model.handlePlayerLoss(playerNickname);</b>
+<b class="fc"><i>1212</i>&nbsp;            model.switchPlayer();</b>
+<b class="fc"><i>1213</i>&nbsp;        } else if (model.getMoveOutcome() == MoveOutcomeType.WIN) {</b>
+<b class="fc"><i>1214</i>&nbsp;            model.handlePlayerWin(playerNickname);</b>
+<i>1215</i>&nbsp;        }
+<b class="fc"><i>1216</i>&nbsp;    }</b>
+<i>1217</i>&nbsp;
+<i>1218</i>&nbsp;    /**
+<i>1219</i>&nbsp;     * Method used to let the Model easily send notification to Players.
+<i>1220</i>&nbsp;     *
+<i>1221</i>&nbsp;     * @param o (Object to be notified)
+<i>1222</i>&nbsp;     */
+<i>1223</i>&nbsp;    public void notifyFromModel(Object o) {
+<b class="fc"><i>1224</i>&nbsp;        notify(o);</b>
+<b class="fc"><i>1225</i>&nbsp;    }</b>
+<i>1226</i>&nbsp;
+<i>1227</i>&nbsp;    /**
+<i>1228</i>&nbsp;     * Method used to let the Model easily send notification to a specific Player.
+<i>1229</i>&nbsp;     *
+<i>1230</i>&nbsp;     * @param o (Object to be notified)
+<i>1231</i>&nbsp;     * @param playerNickname (Player&#39;s nickname)
+<i>1232</i>&nbsp;     */
+<i>1233</i>&nbsp;    public void notifyFromModel(Object o, String playerNickname) {
+<b class="fc"><i>1234</i>&nbsp;        notify(o, playerNickname);</b>
+<b class="fc"><i>1235</i>&nbsp;    }</b>
+<i>1236</i>&nbsp;
+<i>1237</i>&nbsp;    public void gameOver() {
+<b class="fc"><i>1238</i>&nbsp;        printControlMessage(&quot;\n##### Game Over #####\n&quot;);</b>
+<b class="fc"><i>1239</i>&nbsp;        List&lt;String&gt; players = model.players();</b>
+<b class="fc"><i>1240</i>&nbsp;        players.forEach(this::gameOverMessage);</b>
+<i>1241</i>&nbsp;        //resetGame();
+<b class="fc"><i>1242</i>&nbsp;    }</b>
+<i>1243</i>&nbsp;
+<i>1244</i>&nbsp;    /**
+<i>1245</i>&nbsp;     * Notify a given Player that the Game is Over.
+<i>1246</i>&nbsp;     *
+<i>1247</i>&nbsp;     * @param nickname (Player&#39;s nickname)
+<i>1248</i>&nbsp;     */
+<i>1249</i>&nbsp;    public void gameOverMessage(String nickname) {
+<b class="fc"><i>1250</i>&nbsp;        notify(new GameOverEvent(&quot;Game Over!&quot;), nickname);</b>
+<b class="fc"><i>1251</i>&nbsp;    }</b>
+<i>1252</i>&nbsp;
+<i>1253</i>&nbsp;    /**
+<i>1254</i>&nbsp;     * Resets the game.
+<i>1255</i>&nbsp;     * (To Server)
+<i>1256</i>&nbsp;     */
+<i>1257</i>&nbsp;    private void resetGame() {
+<b class="nc"><i>1258</i>&nbsp;        (new Thread(() -&gt; {</b>
+<b class="nc"><i>1259</i>&nbsp;            throw new ServerResetException(); // disconnect all the Players and reset the Server for a new game.</b>
+<b class="nc"><i>1260</i>&nbsp;        })).start();</b>
+<b class="nc"><i>1261</i>&nbsp;    }</b>
+<i>1262</i>&nbsp;
+<i>1263</i>&nbsp;    /**
+<i>1264</i>&nbsp;     * Notifies a Player that he/she is being disconnected.
+<i>1265</i>&nbsp;     *
+<i>1266</i>&nbsp;     * @param nickname Player&#39;s nickname
+<i>1267</i>&nbsp;     */
+<i>1268</i>&nbsp;    public void disconnectPlayer(String nickname) {
+<b class="fc"><i>1269</i>&nbsp;        notify(new ServerQuitEvent(&quot;You are being disconnected from the game...&quot;), nickname);</b>
+<b class="fc"><i>1270</i>&nbsp;    }</b>
+<i>1271</i>&nbsp;
+<i>1272</i>&nbsp;    /**
+<i>1273</i>&nbsp;     * Print a control message.
+<i>1274</i>&nbsp;     * (Server-side).
+<i>1275</i>&nbsp;     *
+<i>1276</i>&nbsp;     * @param message (Message to print)
+<i>1277</i>&nbsp;     */
+<i>1278</i>&nbsp;    public void printControlMessage(String message) {
+<b class="fc"><i>1279</i>&nbsp;        System.out.println(message); // Server control message</b>
+<b class="fc"><i>1280</i>&nbsp;    }</b>
+<i>1281</i>&nbsp;
+<i>1282</i>&nbsp;
+<i>1283</i>&nbsp;
+<i>1284</i>&nbsp;
+<i>1285</i>&nbsp;
+<i>1286</i>&nbsp;
+<i>1287</i>&nbsp;
+<i>1288</i>&nbsp;
+<i>1289</i>&nbsp;    /* ######################### CODE FOR GAME SIMULATION [INTEGRATION TESTING] ######################### */
+<i>1290</i>&nbsp;//    /* ######################### GAME PREPARATION SIMULATION ########################## */
+<i>1291</i>&nbsp;//
+<i>1292</i>&nbsp;//    /* Method for integration testing [Game Preparation phase] */
+<i>1293</i>&nbsp;//    private void prepareGame(int nPlayer) {
+<i>1294</i>&nbsp;//        // prepare cards
+<i>1295</i>&nbsp;//        cardsInGame = new ArrayList&lt;&gt;(nPlayer);
+<i>1296</i>&nbsp;//        cardsInGame.add(&quot;Pan&quot;);
+<i>1297</i>&nbsp;//        cardsInGame.add(&quot;Apollo&quot;);
+<i>1298</i>&nbsp;//        if(nPlayer == 3)
+<i>1299</i>&nbsp;//            cardsInGame.add(&quot;Minotaur&quot;);
+<i>1300</i>&nbsp;//        model.setCardsInGame(cardsInGame);
+<i>1301</i>&nbsp;//        // set cards
+<i>1302</i>&nbsp;//        model.setPlayerCard(&quot;Pan&quot;, &quot;giorgio&quot;);
+<i>1303</i>&nbsp;//        model.setPlayerCard(&quot;Apollo&quot;, &quot;andrea&quot;);
+<i>1304</i>&nbsp;//        if(nPlayer == 3)
+<i>1305</i>&nbsp;//            model.setPlayerCard(&quot;Minotaur&quot;, &quot;marco&quot;);
+<i>1306</i>&nbsp;//        registerTurnObservers();
+<i>1307</i>&nbsp;//        // set start player
+<i>1308</i>&nbsp;//        model.setStartPlayer(&quot;andrea&quot;);
+<i>1309</i>&nbsp;//        // sort players
+<i>1310</i>&nbsp;//        sortPlayers();
+<i>1311</i>&nbsp;//        // place workers
+<i>1312</i>&nbsp;//        model.placeWorker(0, 0, &quot;andrea&quot;); // worker&#39;s starting position
+<i>1313</i>&nbsp;//        model.placeWorker(4, 4, &quot;andrea&quot;); // worker&#39;s starting position
+<i>1314</i>&nbsp;//        model.placeWorker(0, 1, &quot;giorgio&quot;); // worker&#39;s starting position
+<i>1315</i>&nbsp;//        model.placeWorker(3, 3, &quot;giorgio&quot;); // worker&#39;s starting position
+<i>1316</i>&nbsp;//        if(nPlayer == 3) {
+<i>1317</i>&nbsp;//            model.placeWorker(3, 2, &quot;marco&quot;); // worker&#39;s starting position
+<i>1318</i>&nbsp;//            model.placeWorker(1, 3, &quot;marco&quot;); // worker&#39;s starting position
+<i>1319</i>&nbsp;//        }
+<i>1320</i>&nbsp;//    }
+<i>1321</i>&nbsp;//
+<i>1322</i>&nbsp;//    /* Method for integration testing [Playing phase]*/
+<i>1323</i>&nbsp;//    private void simulateGame(int suite) {
+<i>1324</i>&nbsp;//        // game simulation
+<i>1325</i>&nbsp;//        String andrea = &quot;andrea&quot;;
+<i>1326</i>&nbsp;//        String giorgio = &quot;giorgio&quot;;
+<i>1327</i>&nbsp;//        String marco = &quot;marco&quot;;
+<i>1328</i>&nbsp;//        String worker0 = &quot;[Worker]\t0&quot;;
+<i>1329</i>&nbsp;//        String worker1 = &quot;[Worker]\t1&quot;;
+<i>1330</i>&nbsp;//        String worker2 = &quot;[Worker]\t2&quot;;
+<i>1331</i>&nbsp;//        String worker3 = &quot;[Worker]\t3&quot;;
+<i>1332</i>&nbsp;//        String worker4 = &quot;[Worker]\t4&quot;;
+<i>1333</i>&nbsp;//        String worker5 = &quot;[Worker]\t5&quot;;
+<i>1334</i>&nbsp;//
+<i>1335</i>&nbsp;//        switch(suite) {
+<i>1336</i>&nbsp;//            /* 2-Players Game: a Player wins */
+<i>1337</i>&nbsp;//            case 1:
+<i>1338</i>&nbsp;//                model.selectWorker(worker0, andrea);
+<i>1339</i>&nbsp;//                model.moveWorker(worker0, 1, 1, andrea);
+<i>1340</i>&nbsp;//                model.buildBlock(worker0, 0, 1, PlaceableType.BLOCK, andrea);
+<i>1341</i>&nbsp;//                model.switchPlayer();
+<i>1342</i>&nbsp;//
+<i>1343</i>&nbsp;//                model.selectWorker(worker2, giorgio);
+<i>1344</i>&nbsp;//                model.moveWorker(worker2, 0, 3, giorgio);
+<i>1345</i>&nbsp;//                model.buildBlock(worker2, 0, 4, PlaceableType.BLOCK, giorgio);
+<i>1346</i>&nbsp;//                model.switchPlayer();
+<i>1347</i>&nbsp;//
+<i>1348</i>&nbsp;//                model.selectWorker(worker0, andrea);
+<i>1349</i>&nbsp;//                model.moveWorker(worker0, 1, 2, andrea);
+<i>1350</i>&nbsp;//                model.buildBlock(worker0, 1, 1, PlaceableType.BLOCK, andrea);
+<i>1351</i>&nbsp;//                model.switchPlayer();
+<i>1352</i>&nbsp;//
+<i>1353</i>&nbsp;//                model.selectWorker(worker3, giorgio);
+<i>1354</i>&nbsp;//                model.moveWorker(worker3, 3, 4, giorgio);
+<i>1355</i>&nbsp;//                model.buildBlock(worker3, 2, 4, PlaceableType.BLOCK, giorgio);
+<i>1356</i>&nbsp;//                model.switchPlayer();
+<i>1357</i>&nbsp;//
+<i>1358</i>&nbsp;//                model.selectWorker(worker0, andrea);
+<i>1359</i>&nbsp;//                model.moveWorker(worker0, 0, 2, andrea);
+<i>1360</i>&nbsp;//                model.buildBlock(worker0, 1, 1, PlaceableType.BLOCK, andrea);
+<i>1361</i>&nbsp;//                model.switchPlayer();
+<i>1362</i>&nbsp;//
+<i>1363</i>&nbsp;//                model.selectWorker(worker2, giorgio);
+<i>1364</i>&nbsp;//                model.moveWorker(worker2, 1, 2, giorgio);
+<i>1365</i>&nbsp;//                model.buildBlock(worker2, 1, 1, PlaceableType.BLOCK, giorgio);
+<i>1366</i>&nbsp;//                model.switchPlayer();
+<i>1367</i>&nbsp;//
+<i>1368</i>&nbsp;//                model.selectWorker(worker0, andrea);
+<i>1369</i>&nbsp;//                model.moveWorker(worker0, 0, 1, andrea);
+<i>1370</i>&nbsp;//                model.buildBlock(worker0, 1, 1, PlaceableType.DOME, andrea);
+<i>1371</i>&nbsp;//                model.switchPlayer();
+<i>1372</i>&nbsp;//
+<i>1373</i>&nbsp;//                model.selectWorker(worker2, giorgio);
+<i>1374</i>&nbsp;//                model.moveWorker(worker2, 0, 3, giorgio);
+<i>1375</i>&nbsp;//                model.buildBlock(worker2, 0, 2, PlaceableType.BLOCK, giorgio);
+<i>1376</i>&nbsp;//                model.switchPlayer();
+<i>1377</i>&nbsp;//
+<i>1378</i>&nbsp;//                model.selectWorker(worker0, andrea);
+<i>1379</i>&nbsp;//                model.moveWorker(worker0, 1, 2, andrea);
+<i>1380</i>&nbsp;//                model.buildBlock(worker0, 0, 2, PlaceableType.BLOCK, andrea);
+<i>1381</i>&nbsp;//                model.switchPlayer();
+<i>1382</i>&nbsp;//
+<i>1383</i>&nbsp;//                model.selectWorker(worker2, giorgio);
+<i>1384</i>&nbsp;//                model.moveWorker(worker2, 1, 3, giorgio);
+<i>1385</i>&nbsp;//                model.buildBlock(worker2, 0, 2, PlaceableType.BLOCK, giorgio);
+<i>1386</i>&nbsp;//                model.switchPlayer();
+<i>1387</i>&nbsp;//
+<i>1388</i>&nbsp;//                model.selectWorker(worker0, andrea);
+<i>1389</i>&nbsp;//                model.moveWorker(worker0, 0, 1, andrea);
+<i>1390</i>&nbsp;//                model.buildBlock(worker0, 0, 0, PlaceableType.BLOCK, andrea);
+<i>1391</i>&nbsp;//                model.switchPlayer();
+<i>1392</i>&nbsp;//
+<i>1393</i>&nbsp;//                model.selectWorker(worker3, giorgio);
+<i>1394</i>&nbsp;//                model.moveWorker(worker3, 2, 3, giorgio);
+<i>1395</i>&nbsp;//                model.buildBlock(worker3, 2, 2, PlaceableType.BLOCK, giorgio);
+<i>1396</i>&nbsp;//                model.switchPlayer();
+<i>1397</i>&nbsp;//
+<i>1398</i>&nbsp;//                model.selectWorker(worker0, andrea);
+<i>1399</i>&nbsp;//                model.moveWorker(worker0, 0, 0, andrea);
+<i>1400</i>&nbsp;//                model.buildBlock(worker0, 0, 1, PlaceableType.BLOCK, andrea);
+<i>1401</i>&nbsp;//                model.switchPlayer();
+<i>1402</i>&nbsp;//
+<i>1403</i>&nbsp;//                model.selectWorker(worker3, giorgio);
+<i>1404</i>&nbsp;//                model.moveWorker(worker3, 2, 2, giorgio);
+<i>1405</i>&nbsp;//                model.buildBlock(worker3, 2, 3, PlaceableType.BLOCK, giorgio);
+<i>1406</i>&nbsp;//                model.switchPlayer();
+<i>1407</i>&nbsp;//
+<i>1408</i>&nbsp;//                model.selectWorker(worker0, andrea);
+<i>1409</i>&nbsp;//                model.moveWorker(worker0, 0, 1, andrea);
+<i>1410</i>&nbsp;//                model.buildBlock(worker0, 0, 0, PlaceableType.BLOCK, andrea);
+<i>1411</i>&nbsp;//                model.switchPlayer();
+<i>1412</i>&nbsp;//
+<i>1413</i>&nbsp;//                model.selectWorker(worker3, giorgio);
+<i>1414</i>&nbsp;//                model.moveWorker(worker3, 2, 3, giorgio);
+<i>1415</i>&nbsp;//                model.buildBlock(worker3, 2, 4, PlaceableType.BLOCK, giorgio);
+<i>1416</i>&nbsp;//                model.switchPlayer();
+<i>1417</i>&nbsp;//
+<i>1418</i>&nbsp;//                model.selectWorker(worker1, andrea);
+<i>1419</i>&nbsp;//                model.moveWorker(worker1, 4, 3, andrea);
+<i>1420</i>&nbsp;//                model.buildBlock(worker1, 4, 4, PlaceableType.BLOCK, andrea);
+<i>1421</i>&nbsp;//                model.switchPlayer();
+<i>1422</i>&nbsp;//
+<i>1423</i>&nbsp;//                model.selectWorker(worker3, giorgio);
+<i>1424</i>&nbsp;//                model.moveWorker(worker3, 2, 4, giorgio);
+<i>1425</i>&nbsp;//                model.buildBlock(worker3, 2, 3, PlaceableType.BLOCK, giorgio);
+<i>1426</i>&nbsp;//                model.switchPlayer();
+<i>1427</i>&nbsp;//
+<i>1428</i>&nbsp;//                // win
+<i>1429</i>&nbsp;////                model.selectWorker(worker0, andrea);
+<i>1430</i>&nbsp;////                model.moveWorker(worker0, 0, 2, andrea);
+<i>1431</i>&nbsp;//                break;
+<i>1432</i>&nbsp;//
+<i>1433</i>&nbsp;//            /* 2-Players Game: a Player loses when starting its Turn (both of its Workers cannot make any Movement) */
+<i>1434</i>&nbsp;//            case 2:
+<i>1435</i>&nbsp;//                model.selectWorker(worker0, andrea);
+<i>1436</i>&nbsp;//                model.moveWorker(worker0, 1, 0, andrea);
+<i>1437</i>&nbsp;//                model.buildBlock(worker0, 0, 1, PlaceableType.BLOCK, andrea);
+<i>1438</i>&nbsp;//                model.switchPlayer();
+<i>1439</i>&nbsp;//
+<i>1440</i>&nbsp;//                model.selectWorker(worker2, giorgio);
+<i>1441</i>&nbsp;//                model.moveWorker(worker2, 1, 2, giorgio);
+<i>1442</i>&nbsp;//                model.buildBlock(worker2, 0, 1, PlaceableType.BLOCK, giorgio);
+<i>1443</i>&nbsp;//                model.switchPlayer();
+<i>1444</i>&nbsp;//
+<i>1445</i>&nbsp;//                model.selectWorker(worker0, andrea);
+<i>1446</i>&nbsp;//                model.moveWorker(worker0, 0, 0, andrea);
+<i>1447</i>&nbsp;//                model.buildBlock(worker0, 1, 1, PlaceableType.BLOCK, andrea);
+<i>1448</i>&nbsp;//                model.switchPlayer();
+<i>1449</i>&nbsp;//
+<i>1450</i>&nbsp;//                model.selectWorker(worker2, giorgio);
+<i>1451</i>&nbsp;//                model.moveWorker(worker2, 2, 1, giorgio);
+<i>1452</i>&nbsp;//                model.buildBlock(worker2, 1, 0, PlaceableType.BLOCK, giorgio);
+<i>1453</i>&nbsp;//                model.switchPlayer();
+<i>1454</i>&nbsp;//
+<i>1455</i>&nbsp;//                model.selectWorker(worker0, andrea);
+<i>1456</i>&nbsp;//                model.moveWorker(worker0, 1, 1, andrea);
+<i>1457</i>&nbsp;//                model.buildBlock(worker0, 1, 0, PlaceableType.BLOCK, andrea);
+<i>1458</i>&nbsp;//                model.switchPlayer();
+<i>1459</i>&nbsp;//
+<i>1460</i>&nbsp;//                model.selectWorker(worker3, giorgio);
+<i>1461</i>&nbsp;//                model.moveWorker(worker3, 4, 3, giorgio);
+<i>1462</i>&nbsp;//                model.buildBlock(worker3, 3, 4, PlaceableType.BLOCK, giorgio);
+<i>1463</i>&nbsp;//                model.switchPlayer();
+<i>1464</i>&nbsp;//
+<i>1465</i>&nbsp;//                // at this point worker0 shall lose
+<i>1466</i>&nbsp;//                model.selectWorker(worker0, andrea);
+<i>1467</i>&nbsp;//                model.moveWorker(worker0, 0, 0, andrea);
+<i>1468</i>&nbsp;//                model.buildBlock(worker0, 1, 1, PlaceableType.BLOCK, andrea);
+<i>1469</i>&nbsp;//                model.switchPlayer();
+<i>1470</i>&nbsp;//
+<i>1471</i>&nbsp;//                model.selectWorker(worker3, giorgio);
+<i>1472</i>&nbsp;//                model.moveWorker(worker3, 3, 4, giorgio);
+<i>1473</i>&nbsp;//                model.buildBlock(worker3, 4, 3, PlaceableType.BLOCK, giorgio);
+<i>1474</i>&nbsp;//                model.switchPlayer(); // here check if worker0 has lost (when switching player)
+<i>1475</i>&nbsp;//
+<i>1476</i>&nbsp;//                model.selectWorker(worker0, andrea); // check that a selection of worker0 is now denied (worker has lost)
+<i>1477</i>&nbsp;//                model.selectWorker(worker1, andrea);
+<i>1478</i>&nbsp;//                model.moveWorker(worker1, 4, 3, andrea);
+<i>1479</i>&nbsp;//                model.buildBlock(worker1, 3, 3, PlaceableType.BLOCK, andrea);
+<i>1480</i>&nbsp;//                model.switchPlayer();
+<i>1481</i>&nbsp;//
+<i>1482</i>&nbsp;//                model.selectWorker(worker3, giorgio);
+<i>1483</i>&nbsp;//                model.moveWorker(worker3, 2, 4, giorgio);
+<i>1484</i>&nbsp;//                model.buildBlock(worker3, 3, 3, PlaceableType.BLOCK, giorgio);
+<i>1485</i>&nbsp;//                model.switchPlayer();
+<i>1486</i>&nbsp;//
+<i>1487</i>&nbsp;//                model.selectWorker(worker1, andrea);
+<i>1488</i>&nbsp;//                model.moveWorker(worker1, 4, 4, andrea);
+<i>1489</i>&nbsp;//                model.buildBlock(worker1, 4, 3, PlaceableType.BLOCK, andrea);
+<i>1490</i>&nbsp;//                model.switchPlayer();
+<i>1491</i>&nbsp;//
+<i>1492</i>&nbsp;//                // at this point worker1 shall lose
+<i>1493</i>&nbsp;//                model.selectWorker(worker3, giorgio);
+<i>1494</i>&nbsp;//                model.moveWorker(worker3, 2, 3, giorgio);
+<i>1495</i>&nbsp;//                model.buildBlock(worker3, 3, 4, PlaceableType.BLOCK, giorgio);
+<i>1496</i>&nbsp;//                model.switchPlayer(); // by this point, when trying to switch the player, &#39;andrea&#39; should lose and &#39;giorgio&#39; should be declared the winner.
+<i>1497</i>&nbsp;//                break;
+<i>1498</i>&nbsp;//
+<i>1499</i>&nbsp;//            /* 2-Players Game: a Player loses when changing its Turn from Construction to Movement
+<i>1500</i>&nbsp;//             * (cannot make any Movement within the already chosen Worker).
+<i>1501</i>&nbsp;//             */
+<i>1502</i>&nbsp;//            case 3:
+<i>1503</i>&nbsp;//                model.selectWorker(worker0, andrea);
+<i>1504</i>&nbsp;//                model.changeTurnStatus(StateType.CONSTRUCTION, andrea);
+<i>1505</i>&nbsp;//                model.buildBlock(worker0, 1, 0, PlaceableType.BLOCK, andrea);
+<i>1506</i>&nbsp;//                model.changeTurnStatus(StateType.MOVEMENT, andrea);
+<i>1507</i>&nbsp;//                model.moveWorker(worker0, 0, 1, andrea);
+<i>1508</i>&nbsp;//                model.buildBlock(worker0, 1, 1, PlaceableType.BLOCK, andrea);
+<i>1509</i>&nbsp;//                model.switchPlayer(); // check if everything is ok by this point
+<i>1510</i>&nbsp;//
+<i>1511</i>&nbsp;//                model.selectWorker(worker2, giorgio);
+<i>1512</i>&nbsp;//                model.moveWorker(worker2, 1, 2, giorgio);
+<i>1513</i>&nbsp;//                model.buildBlock(worker2, 0, 2, PlaceableType.DOME, giorgio); // check if the DOME is correctly built
+<i>1514</i>&nbsp;//                model.switchPlayer();
+<i>1515</i>&nbsp;//
+<i>1516</i>&nbsp;//                model.selectWorker(worker0, andrea);
+<i>1517</i>&nbsp;//                model.moveWorker(worker0, 0, 0, andrea);
+<i>1518</i>&nbsp;//                model.buildBlock(worker0, 1, 0, PlaceableType.BLOCK, andrea);
+<i>1519</i>&nbsp;//                model.switchPlayer();
+<i>1520</i>&nbsp;//
+<i>1521</i>&nbsp;//                model.selectWorker(worker2, giorgio);
+<i>1522</i>&nbsp;//                model.moveWorker(worker2, 1, 1, giorgio);
+<i>1523</i>&nbsp;//                model.buildBlock(worker2, 0, 1, PlaceableType.BLOCK, giorgio);
+<i>1524</i>&nbsp;//                model.switchPlayer();
+<i>1525</i>&nbsp;//
+<i>1526</i>&nbsp;//                // at this point worker0 shall lose
+<i>1527</i>&nbsp;//                model.selectWorker(worker0, andrea);
+<i>1528</i>&nbsp;//                model.changeTurnStatus(StateType.CONSTRUCTION, andrea);
+<i>1529</i>&nbsp;//                model.buildBlock(worker0, 0, 1, PlaceableType.BLOCK, andrea);
+<i>1530</i>&nbsp;////                model.changeTurnStatus(StateType.MOVEMENT, andrea); // by this point, when trying to switch the Turn Type, &#39;andrea&#39; should lose and &#39;giorgio&#39; should be declared the winner.
+<i>1531</i>&nbsp;////                model.moveWorker(worker0, 0, 1, andrea);
+<i>1532</i>&nbsp;////                model.buildBlock(worker0, 1, 1, PlaceableType.BLOCK, andrea);
+<i>1533</i>&nbsp;////                model.switchPlayer();
+<i>1534</i>&nbsp;//                break;
+<i>1535</i>&nbsp;//
+<i>1536</i>&nbsp;//            /* 2-Players Game: a Player loses when changing its Turn from Movement to Construction
+<i>1537</i>&nbsp;//             * (cannot make any Construction within the already chosen Worker).
+<i>1538</i>&nbsp;//             */
+<i>1539</i>&nbsp;//            case 4:
+<i>1540</i>&nbsp;//                model.selectWorker(worker0, andrea);
+<i>1541</i>&nbsp;//                model.moveWorker(worker0, 1, 0, andrea);
+<i>1542</i>&nbsp;//                model.buildBlock(worker0, 0, 1, PlaceableType.BLOCK, andrea);
+<i>1543</i>&nbsp;//                model.switchPlayer();
+<i>1544</i>&nbsp;//
+<i>1545</i>&nbsp;//                model.selectWorker(worker2, giorgio);
+<i>1546</i>&nbsp;//                model.moveWorker(worker2, 0, 2, giorgio);
+<i>1547</i>&nbsp;//                model.buildBlock(worker2, 0, 1, PlaceableType.DOME, giorgio);
+<i>1548</i>&nbsp;//                model.switchPlayer();
+<i>1549</i>&nbsp;//
+<i>1550</i>&nbsp;//                model.selectWorker(worker0, andrea);
+<i>1551</i>&nbsp;//                model.moveWorker(worker0, 1, 1, andrea);
+<i>1552</i>&nbsp;//                model.buildBlock(worker0, 1, 2, PlaceableType.BLOCK, andrea);
+<i>1553</i>&nbsp;//                model.switchPlayer();
+<i>1554</i>&nbsp;//
+<i>1555</i>&nbsp;//                model.selectWorker(worker2, giorgio);
+<i>1556</i>&nbsp;//                model.moveWorker(worker2, 1, 2, giorgio);
+<i>1557</i>&nbsp;//                model.buildBlock(worker2, 1, 3, PlaceableType.DOME, giorgio);
+<i>1558</i>&nbsp;//                model.switchPlayer();
+<i>1559</i>&nbsp;//
+<i>1560</i>&nbsp;//                model.selectWorker(worker1, andrea);
+<i>1561</i>&nbsp;//                model.moveWorker(worker1, 3, 3, andrea); // here: check if Apollo&#39;s power works correctly.
+<i>1562</i>&nbsp;//                model.buildBlock(worker1, 3, 4, PlaceableType.BLOCK, andrea);
+<i>1563</i>&nbsp;//                model.switchPlayer();
+<i>1564</i>&nbsp;//
+<i>1565</i>&nbsp;//                model.selectWorker(worker2, giorgio);
+<i>1566</i>&nbsp;//                model.moveWorker(worker2, 0, 3, giorgio);
+<i>1567</i>&nbsp;//                model.buildBlock(worker2, 1, 2, PlaceableType.DOME, giorgio);
+<i>1568</i>&nbsp;//                model.switchPlayer();
+<i>1569</i>&nbsp;//
+<i>1570</i>&nbsp;//                model.selectWorker(worker1, andrea);
+<i>1571</i>&nbsp;//                model.moveWorker(worker1, 4, 3, andrea);
+<i>1572</i>&nbsp;//                model.buildBlock(worker1, 4, 2, PlaceableType.BLOCK, andrea);
+<i>1573</i>&nbsp;//                model.switchPlayer();
+<i>1574</i>&nbsp;//
+<i>1575</i>&nbsp;//                model.selectWorker(worker2, giorgio);
+<i>1576</i>&nbsp;//                model.moveWorker(worker2, 0, 2, giorgio);
+<i>1577</i>&nbsp;//                model.buildBlock(worker2, 0, 3, PlaceableType.DOME, giorgio);
+<i>1578</i>&nbsp;//                model.switchPlayer();
+<i>1579</i>&nbsp;//
+<i>1580</i>&nbsp;//                // at this point worker0 shall lose
+<i>1581</i>&nbsp;//                model.selectWorker(worker0, andrea);
+<i>1582</i>&nbsp;////                model.moveWorker(worker0, 0, 2, andrea); // after done the Movement, worker0 cannot Build, so Player &#39;andrea&#39; lose the game.
+<i>1583</i>&nbsp;////                model.buildBlock(worker0, 1, 2, PlaceableType.BLOCK, andrea);
+<i>1584</i>&nbsp;////                model.switchPlayer();
+<i>1585</i>&nbsp;//                break;
+<i>1586</i>&nbsp;//
+<i>1587</i>&nbsp;//            /* 3-Players Game:
+<i>1588</i>&nbsp;//             *     - Complete match (Turn flow)
+<i>1589</i>&nbsp;//             *     - A Player loses (Workers removal)
+<i>1590</i>&nbsp;//             *     - A Player wins
+<i>1591</i>&nbsp;//             */
+<i>1592</i>&nbsp;//            case 5:
+<i>1593</i>&nbsp;//                model.selectWorker(worker0, andrea);
+<i>1594</i>&nbsp;//                model.moveWorker(worker0, 1, 0, andrea);
+<i>1595</i>&nbsp;//                model.buildBlock(worker0, 0, 1, PlaceableType.BLOCK, andrea);
+<i>1596</i>&nbsp;//                model.switchPlayer(); // check which player is being chosen
+<i>1597</i>&nbsp;//
+<i>1598</i>&nbsp;//                model.selectWorker(worker4, marco);
+<i>1599</i>&nbsp;//                model.moveWorker(worker4, 2, 1, marco);
+<i>1600</i>&nbsp;//                model.buildBlock(worker4, 2, 0, PlaceableType.BLOCK, marco);
+<i>1601</i>&nbsp;//                model.switchPlayer(); // check if Player n. 3 is correctly chosen by this point
+<i>1602</i>&nbsp;//
+<i>1603</i>&nbsp;//                model.selectWorker(worker2, giorgio);
+<i>1604</i>&nbsp;//                model.moveWorker(worker2, 0, 2, giorgio);
+<i>1605</i>&nbsp;//                model.buildBlock(worker2, 0, 1, PlaceableType.DOME, giorgio);
+<i>1606</i>&nbsp;//                model.switchPlayer();
+<i>1607</i>&nbsp;//
+<i>1608</i>&nbsp;//                model.selectWorker(worker0, andrea);
+<i>1609</i>&nbsp;//                model.moveWorker(worker0, 1, 1, andrea);
+<i>1610</i>&nbsp;//                model.buildBlock(worker0, 1, 2, PlaceableType.BLOCK, andrea);
+<i>1611</i>&nbsp;//                model.switchPlayer();
+<i>1612</i>&nbsp;//
+<i>1613</i>&nbsp;//                model.selectWorker(worker4, marco);
+<i>1614</i>&nbsp;//                model.moveWorker(worker4, 2, 2, marco);
+<i>1615</i>&nbsp;//                model.buildBlock(worker4, 2, 1, PlaceableType.BLOCK, marco);
+<i>1616</i>&nbsp;//                model.switchPlayer();
+<i>1617</i>&nbsp;//
+<i>1618</i>&nbsp;//                model.selectWorker(worker2, giorgio);
+<i>1619</i>&nbsp;//                model.moveWorker(worker2, 1, 2, giorgio);
+<i>1620</i>&nbsp;//                model.buildBlock(worker2, 1, 3, PlaceableType.DOME, giorgio);
+<i>1621</i>&nbsp;//                model.switchPlayer();
+<i>1622</i>&nbsp;//
+<i>1623</i>&nbsp;//                model.selectWorker(worker1, andrea);
+<i>1624</i>&nbsp;//                model.moveWorker(worker1, 3, 3, andrea); // here: check if Apollo&#39;s power works correctly.
+<i>1625</i>&nbsp;//                model.buildBlock(worker1, 3, 4, PlaceableType.BLOCK, andrea);
+<i>1626</i>&nbsp;//                model.switchPlayer();
+<i>1627</i>&nbsp;//
+<i>1628</i>&nbsp;//                model.selectWorker(worker4, marco);
+<i>1629</i>&nbsp;//                model.moveWorker(worker4, 2, 3, marco);
+<i>1630</i>&nbsp;//                model.buildBlock(worker4, 2, 2, PlaceableType.BLOCK, marco);
+<i>1631</i>&nbsp;//                model.switchPlayer();
+<i>1632</i>&nbsp;//
+<i>1633</i>&nbsp;//                model.selectWorker(worker2, giorgio);
+<i>1634</i>&nbsp;//                model.moveWorker(worker2, 0, 3, giorgio);
+<i>1635</i>&nbsp;//                model.buildBlock(worker2, 1, 2, PlaceableType.DOME, giorgio);
+<i>1636</i>&nbsp;//                model.switchPlayer();
+<i>1637</i>&nbsp;//
+<i>1638</i>&nbsp;//                model.selectWorker(worker1, andrea);
+<i>1639</i>&nbsp;//                model.moveWorker(worker1, 4, 3, andrea);
+<i>1640</i>&nbsp;//                model.buildBlock(worker1, 4, 2, PlaceableType.BLOCK, andrea);
+<i>1641</i>&nbsp;//                model.switchPlayer();
+<i>1642</i>&nbsp;//
+<i>1643</i>&nbsp;//                model.selectWorker(worker4, marco);
+<i>1644</i>&nbsp;//                model.moveWorker(worker4, 3, 2, marco);
+<i>1645</i>&nbsp;//                model.buildBlock(worker4, 2, 2, PlaceableType.BLOCK, marco);
+<i>1646</i>&nbsp;//                model.switchPlayer();
+<i>1647</i>&nbsp;//
+<i>1648</i>&nbsp;//                model.selectWorker(worker2, giorgio);
+<i>1649</i>&nbsp;//                model.moveWorker(worker2, 0, 2, giorgio);
+<i>1650</i>&nbsp;//                model.buildBlock(worker2, 0, 3, PlaceableType.DOME, giorgio);
+<i>1651</i>&nbsp;//                model.switchPlayer();
+<i>1652</i>&nbsp;//
+<i>1653</i>&nbsp;//                // at this point worker0 shall lose
+<i>1654</i>&nbsp;//                model.selectWorker(worker0, andrea);
+<i>1655</i>&nbsp;//                model.moveWorker(worker0, 0, 2, andrea); // after done the Movement, worker0 cannot Build, so Player &#39;andrea&#39; lose the game.
+<i>1656</i>&nbsp;//                checkForSwitching(andrea);
+<i>1657</i>&nbsp;//
+<i>1658</i>&nbsp;//                // by this point, check if the selection of the next playing worker is correct.
+<i>1659</i>&nbsp;//                model.selectWorker(worker4, marco); // check if cells where andreas&#39;s workers where placed are now free. ( 0 , 2 ) and ( 4 , 3 )
+<i>1660</i>&nbsp;//                model.moveWorker(worker4, 2, 1, marco);
+<i>1661</i>&nbsp;//                model.buildBlock(worker4, 2, 2, PlaceableType.BLOCK, marco);
+<i>1662</i>&nbsp;//                model.switchPlayer(); // check if next player is chosen correctly
+<i>1663</i>&nbsp;//
+<i>1664</i>&nbsp;//                model.selectWorker(worker3, giorgio);
+<i>1665</i>&nbsp;//                model.moveWorker(worker3, 4, 3, giorgio);
+<i>1666</i>&nbsp;//                model.buildBlock(worker3, 4, 4, PlaceableType.BLOCK, giorgio);
+<i>1667</i>&nbsp;//                model.switchPlayer(); // again: check if next worker is selected correctly.
+<i>1668</i>&nbsp;//
+<i>1669</i>&nbsp;//                model.selectWorker(worker4, marco);
+<i>1670</i>&nbsp;//                model.moveWorker(worker4, 2, 0, marco);
+<i>1671</i>&nbsp;//                model.buildBlock(worker4, 2, 1, PlaceableType.BLOCK, marco);
+<i>1672</i>&nbsp;//                model.switchPlayer();
+<i>1673</i>&nbsp;//
+<i>1674</i>&nbsp;//                model.selectWorker(worker3, giorgio);
+<i>1675</i>&nbsp;//                model.moveWorker(worker3, 4, 2, giorgio);
+<i>1676</i>&nbsp;//                model.buildBlock(worker3, 4, 3, PlaceableType.BLOCK, giorgio);
+<i>1677</i>&nbsp;//                model.switchPlayer();
+<i>1678</i>&nbsp;//
+<i>1679</i>&nbsp;//                model.selectWorker(worker4, marco);
+<i>1680</i>&nbsp;//                model.moveWorker(worker4, 2, 1, marco);
+<i>1681</i>&nbsp;//                model.buildBlock(worker4, 3, 1, PlaceableType.BLOCK, marco);
+<i>1682</i>&nbsp;//                model.switchPlayer();
+<i>1683</i>&nbsp;//
+<i>1684</i>&nbsp;//                model.selectWorker(worker3, giorgio);
+<i>1685</i>&nbsp;//                model.moveWorker(worker3, 4, 1, giorgio);
+<i>1686</i>&nbsp;//                model.buildBlock(worker3, 3, 1, PlaceableType.BLOCK, giorgio);
+<i>1687</i>&nbsp;//                model.switchPlayer();
+<i>1688</i>&nbsp;//
+<i>1689</i>&nbsp;//                // win
+<i>1690</i>&nbsp;//                model.selectWorker(worker4, marco);
+<i>1691</i>&nbsp;////                model.moveWorker(worker4, 2, 2, marco); // at this point Player &#39;marco&#39; shall win
+<i>1692</i>&nbsp;////                model.buildBlock(worker4, 3, 1, PlaceableType.BLOCK, marco);
+<i>1693</i>&nbsp;////                model.switchPlayer();
+<i>1694</i>&nbsp;//                break;
+<i>1695</i>&nbsp;//
+<i>1696</i>&nbsp;//            default:
+<i>1697</i>&nbsp;//                break;
+<i>1698</i>&nbsp;//        }
+<i>1699</i>&nbsp;//    }
+<i>1700</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 21:53</div>
+</div>
+</body>
+</html>

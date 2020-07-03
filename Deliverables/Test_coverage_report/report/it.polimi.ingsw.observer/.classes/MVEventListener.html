@@ -1,0 +1,258 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: MVEventListener</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.observer</a> ]
+</div>
+
+<h1>Coverage Summary for Class: MVEventListener (it.polimi.ingsw.observer)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">MVEventListener</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.observer;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.controller.events.*;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;/**
+<i>6</i>&nbsp; * Listener interface for Controller-generated events.
+<i>7</i>&nbsp; *
+<i>8</i>&nbsp; * MVEvent (Events form Server)
+<i>9</i>&nbsp; *
+<i>10</i>&nbsp; * @author Giorgio Corbetta
+<i>11</i>&nbsp; */
+<i>12</i>&nbsp;public interface MVEventListener {
+<i>13</i>&nbsp;    /* Server general listener */
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    /**
+<i>16</i>&nbsp;     * Updates listener that the next
+<i>17</i>&nbsp;     * Game status was reached.
+<i>18</i>&nbsp;     *
+<i>19</i>&nbsp;     * @param nextStatus Event: Next Game status reached
+<i>20</i>&nbsp;     */
+<i>21</i>&nbsp;    public void update(NextStatusEvent nextStatus);
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    /**
+<i>24</i>&nbsp;     * Updates listener with
+<i>25</i>&nbsp;     * important Game info.
+<i>26</i>&nbsp;     *
+<i>27</i>&nbsp;     * @param serverSentData Event: Game info
+<i>28</i>&nbsp;     */
+<i>29</i>&nbsp;    public void update(ServerSendDataEvent serverSentData); // Game match general data (to respond to viewRequestData, receive data from Server)
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    /**
+<i>32</i>&nbsp;     * Updates listener informing it that
+<i>33</i>&nbsp;     * the submitted nickname is invalid.
+<i>34</i>&nbsp;     *
+<i>35</i>&nbsp;     * @param invalidNickname Event: Submitted nickname invalid
+<i>36</i>&nbsp;     */
+<i>37</i>&nbsp;    public void update(InvalidNicknameEvent invalidNickname);
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    /**
+<i>40</i>&nbsp;     * Updates listener asking for the number
+<i>41</i>&nbsp;     * of players for the upcoming Game.
+<i>42</i>&nbsp;     *
+<i>43</i>&nbsp;     * @param requirePlayersNumber Event: Require players number
+<i>44</i>&nbsp;     */
+<i>45</i>&nbsp;    public void update(RequirePlayersNumberEvent requirePlayersNumber);
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    /**
+<i>48</i>&nbsp;     * Updates listener informing it
+<i>49</i>&nbsp;     * that the game lobby is full.
+<i>50</i>&nbsp;     *
+<i>51</i>&nbsp;     * @param lobbyFull Event: Game lobby is full
+<i>52</i>&nbsp;     */
+<i>53</i>&nbsp;    public void update(LobbyFullEvent lobbyFull);
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    /**
+<i>56</i>&nbsp;     * Updates listener about the winning of a Player.
+<i>57</i>&nbsp;     *
+<i>58</i>&nbsp;     * @param playerWin Event: A Player won the game
+<i>59</i>&nbsp;     */
+<i>60</i>&nbsp;    public void update(PlayerWinEvent playerWin);
+<i>61</i>&nbsp;
+<i>62</i>&nbsp;    /**
+<i>63</i>&nbsp;     * Updates listener about the loss of a Player.
+<i>64</i>&nbsp;     *
+<i>65</i>&nbsp;     * @param playerLose Event: A Player lost the game
+<i>66</i>&nbsp;     */
+<i>67</i>&nbsp;    public void update(PlayerLoseEvent playerLose);
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;    /**
+<i>70</i>&nbsp;     * Updates listener about the Turn change of a Player.
+<i>71</i>&nbsp;     *
+<i>72</i>&nbsp;     * @param turnStatusChange Event: Player&#39;s Turn status was changed
+<i>73</i>&nbsp;     */
+<i>74</i>&nbsp;    public void update(TurnStatusChangedEvent turnStatusChange);
+<i>75</i>&nbsp;
+<i>76</i>&nbsp;    /**
+<i>77</i>&nbsp;     * Updates listener informing it that the Game is over.
+<i>78</i>&nbsp;     *
+<i>79</i>&nbsp;     * @param gameOver Event: Game is over
+<i>80</i>&nbsp;     */
+<i>81</i>&nbsp;    public void update(GameOverEvent gameOver);
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;    /**
+<i>84</i>&nbsp;     * Updates listener about an ongoing Game
+<i>85</i>&nbsp;     * (previously saved) that can be resumed.
+<i>86</i>&nbsp;     *
+<i>87</i>&nbsp;     * @param gameResuming Event: An ongoing Game can be resumed
+<i>88</i>&nbsp;     */
+<i>89</i>&nbsp;    public void update(GameResumingEvent gameResuming);
+<i>90</i>&nbsp;
+<i>91</i>&nbsp;    /**
+<i>92</i>&nbsp;     * Updates listener informing it that Server
+<i>93</i>&nbsp;     * is quitting the connection with its Client.
+<i>94</i>&nbsp;     *
+<i>95</i>&nbsp;     * @param serverQuit Event: Server is quitting the connection.
+<i>96</i>&nbsp;     */
+<i>97</i>&nbsp;    public void update(ServerQuitEvent serverQuit);
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;    /* Game preparation listener */
+<i>100</i>&nbsp;
+<i>101</i>&nbsp;    /**
+<i>102</i>&nbsp;     * Updates listener about the placement of a Worker.
+<i>103</i>&nbsp;     *
+<i>104</i>&nbsp;     * @param workerPlaced Event: A Worker was placed on the Board
+<i>105</i>&nbsp;     */
+<i>106</i>&nbsp;    public void update(WorkerPlacedEvent workerPlaced);
+<i>107</i>&nbsp;
+<i>108</i>&nbsp;    /**
+<i>109</i>&nbsp;     * Updates listener about the selection
+<i>110</i>&nbsp;     * of a Card performed by a Player.
+<i>111</i>&nbsp;     *
+<i>112</i>&nbsp;     * @param cardSelected Event: A Player selected a Card
+<i>113</i>&nbsp;     */
+<i>114</i>&nbsp;    public void update(CardSelectedEvent cardSelected);
+<i>115</i>&nbsp;
+<i>116</i>&nbsp;    /**
+<i>117</i>&nbsp;     * Updates listener with Cards information.
+<i>118</i>&nbsp;     *
+<i>119</i>&nbsp;     * @param cardsInformation Event: Possible Cards information
+<i>120</i>&nbsp;     */
+<i>121</i>&nbsp;    public void update(CardsInformationEvent cardsInformation);
+<i>122</i>&nbsp;
+<i>123</i>&nbsp;    /**
+<i>124</i>&nbsp;     * Updates listener asking for the
+<i>125</i>&nbsp;     * Start Player for the upcoming game.
+<i>126</i>&nbsp;     *
+<i>127</i>&nbsp;     * @param requireStartPlayer Event: Require Start Player
+<i>128</i>&nbsp;     */
+<i>129</i>&nbsp;    public void update(RequireStartPlayerEvent requireStartPlayer);
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;    /**
+<i>132</i>&nbsp;     * Updates listener asking for the Player to place his/her own Worker.
+<i>133</i>&nbsp;     *
+<i>134</i>&nbsp;     * @param requirePlaceWorkers Event: Player needs to place Workers
+<i>135</i>&nbsp;     */
+<i>136</i>&nbsp;    public void update(RequirePlaceWorkersEvent requirePlaceWorkers);
+<i>137</i>&nbsp;
+<i>138</i>&nbsp;    /* Move executed listener */
+<i>139</i>&nbsp;
+<i>140</i>&nbsp;    /**
+<i>141</i>&nbsp;     * Updates listener about the Movement of a Worker.
+<i>142</i>&nbsp;     *
+<i>143</i>&nbsp;     * @param workerMoved Event: A Worker was moved
+<i>144</i>&nbsp;     */
+<i>145</i>&nbsp;    public void update(WorkerMovedEvent workerMoved);
+<i>146</i>&nbsp;
+<i>147</i>&nbsp;    /**
+<i>148</i>&nbsp;     * Updates listener about the Construction of a block.
+<i>149</i>&nbsp;     *
+<i>150</i>&nbsp;     * @param blockBuilt Event: A block was built
+<i>151</i>&nbsp;     */
+<i>152</i>&nbsp;    public void update(BlockBuiltEvent blockBuilt);
+<i>153</i>&nbsp;
+<i>154</i>&nbsp;    /**
+<i>155</i>&nbsp;     * Updates listener about the removal of a Worker.
+<i>156</i>&nbsp;     *
+<i>157</i>&nbsp;     * @param workerRemoved Event: A Worker was removed
+<i>158</i>&nbsp;     */
+<i>159</i>&nbsp;    public void update(WorkerRemovedEvent workerRemoved);
+<i>160</i>&nbsp;
+<i>161</i>&nbsp;    /**
+<i>162</i>&nbsp;     * Updates listener about the removal of a block.
+<i>163</i>&nbsp;     *
+<i>164</i>&nbsp;     * @param blockRemoved Event: A block was removed
+<i>165</i>&nbsp;     */
+<i>166</i>&nbsp;    public void update(BlockRemovedEvent blockRemoved);
+<i>167</i>&nbsp;
+<i>168</i>&nbsp;    /**
+<i>169</i>&nbsp;     * Updates listener informing that a Worker was selected.
+<i>170</i>&nbsp;     *
+<i>171</i>&nbsp;     * @param workerSelected Event: A Worker was selected
+<i>172</i>&nbsp;     */
+<i>173</i>&nbsp;    public void update(WorkerSelectedEvent workerSelected);
+<i>174</i>&nbsp;
+<i>175</i>&nbsp;    /**
+<i>176</i>&nbsp;     * Updates listener informing that
+<i>177</i>&nbsp;     * the last performed move was undone.
+<i>178</i>&nbsp;     *
+<i>179</i>&nbsp;     * @param undoOk Event: Last performed move was undone. UndoOkEvent gives data to restore the last consistent state.
+<i>180</i>&nbsp;     */
+<i>181</i>&nbsp;    public void update(UndoOkEvent undoOk);
+<i>182</i>&nbsp;
+<i>183</i>&nbsp;    /* Message listener */
+<i>184</i>&nbsp;
+<i>185</i>&nbsp;    /**
+<i>186</i>&nbsp;     * Updates listener with a Message
+<i>187</i>&nbsp;     * generated by the Controller.
+<i>188</i>&nbsp;     *
+<i>189</i>&nbsp;     * @param message Event: Message generated by the Controller
+<i>190</i>&nbsp;     */
+<i>191</i>&nbsp;    public void update(MessageEvent message);
+<i>192</i>&nbsp;
+<i>193</i>&nbsp;    /* Error message listener */
+<i>194</i>&nbsp;
+<i>195</i>&nbsp;    /**
+<i>196</i>&nbsp;     * Updates listener with an Error message
+<i>197</i>&nbsp;     * generated by the Controller.
+<i>198</i>&nbsp;     *
+<i>199</i>&nbsp;     * @param message Event: Error message generated by the Controller
+<i>200</i>&nbsp;     */
+<i>201</i>&nbsp;    public void update(ErrorMessageEvent message);
+<i>202</i>&nbsp;
+<i>203</i>&nbsp;    /* Generic update method */
+<i>204</i>&nbsp;
+<i>205</i>&nbsp;    /**
+<i>206</i>&nbsp;     * Updates listener with a (generic) unspecified Event.
+<i>207</i>&nbsp;     *
+<i>208</i>&nbsp;     * @param o Generic and unspecified Event
+<i>209</i>&nbsp;     */
+<i>210</i>&nbsp;    public void update(Object o);
+<i>211</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 21:53</div>
+</div>
+</body>
+</html>

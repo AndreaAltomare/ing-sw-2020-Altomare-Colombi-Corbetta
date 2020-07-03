@@ -1,0 +1,124 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: TurnStatusChangedEvent</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.controller.events</a> ]
+</div>
+
+<h1>Coverage Summary for Class: TurnStatusChangedEvent (it.polimi.ingsw.controller.events)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TurnStatusChangedEvent</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/ 8)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.controller.events;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.model.player.turn.StateType;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import java.util.EventObject;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;/**
+<i>8</i>&nbsp; * Event: Player&#39;s Turn Status has changed.
+<i>9</i>&nbsp; * [MVEvent]
+<i>10</i>&nbsp; */
+<i>11</i>&nbsp;public class TurnStatusChangedEvent extends EventObject {
+<i>12</i>&nbsp;    private boolean success; // tell if the move was successful
+<i>13</i>&nbsp;    private String playerNickname;
+<i>14</i>&nbsp;    private StateType state;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    /**
+<i>17</i>&nbsp;     * Constructs a TurnStatusChangedEvent to inform the View about the event occurred.
+<i>18</i>&nbsp;     *
+<i>19</i>&nbsp;     * @param playerNickname Players associated to the Turn change event
+<i>20</i>&nbsp;     * @param state Turn state of the Player
+<i>21</i>&nbsp;     * @param success True if the Turn state for the Player was actually changed
+<i>22</i>&nbsp;     */
+<i>23</i>&nbsp;    public TurnStatusChangedEvent(String playerNickname, StateType state, boolean success) {
+<b class="fc"><i>24</i>&nbsp;        super(new Object());</b>
+<b class="fc"><i>25</i>&nbsp;        this.playerNickname = playerNickname;</b>
+<b class="fc"><i>26</i>&nbsp;        this.state = state;</b>
+<b class="fc"><i>27</i>&nbsp;        this.success = success;</b>
+<b class="fc"><i>28</i>&nbsp;    }</b>
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    public String getPlayerNickname() {
+<b class="fc"><i>31</i>&nbsp;        return playerNickname;</b>
+<i>32</i>&nbsp;    }
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    public StateType getState() {
+<b class="fc"><i>35</i>&nbsp;        return state;</b>
+<i>36</i>&nbsp;    }
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    public boolean success() {
+<b class="fc"><i>39</i>&nbsp;        return success;</b>
+<i>40</i>&nbsp;    }
+<i>41</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 21:53</div>
+</div>
+</body>
+</html>

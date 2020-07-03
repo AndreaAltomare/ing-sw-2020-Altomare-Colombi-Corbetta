@@ -1,0 +1,74 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Observer</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.observer</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Observer (it.polimi.ingsw.observer)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">Observer</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.observer;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;/**
+<i>4</i>&nbsp; * Observer Interface for Observer Pattern
+<i>5</i>&nbsp; * [Listener]
+<i>6</i>&nbsp; *
+<i>7</i>&nbsp; * @param &lt;T&gt; Type of object
+<i>8</i>&nbsp; * @see &lt;a href=&quot;https://github.com/emanueledelsozzo/ingsoft-prova-finale-2020/blob/master/ese_Socket_Serialization/TrisDistributedMVC/src/main/java/it/polimi/ingsw/observer/Observer.java&quot;&gt;github.com/emanueledelsozzo/.../Observer.java&lt;/a&gt;
+<i>9</i>&nbsp; * @author AndreaAltomare
+<i>10</i>&nbsp; */
+<i>11</i>&nbsp;public interface Observer&lt;T&gt; {
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    /**
+<i>14</i>&nbsp;     * Updates listener with a message.
+<i>15</i>&nbsp;     *
+<i>16</i>&nbsp;     * @param message Message
+<i>17</i>&nbsp;     */
+<i>18</i>&nbsp;    void update(T message);
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    /**
+<i>21</i>&nbsp;     * Updates a specific listener with a message.
+<i>22</i>&nbsp;     *
+<i>23</i>&nbsp;     * @param message Message
+<i>24</i>&nbsp;     * @param nickname Specific Player&#39;s nickname
+<i>25</i>&nbsp;     */
+<i>26</i>&nbsp;    void update(T message, String nickname); // method used to update just a certain Player [for Unicast communications]
+<i>27</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 21:53</div>
+</div>
+</body>
+</html>

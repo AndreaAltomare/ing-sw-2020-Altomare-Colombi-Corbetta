@@ -1,0 +1,141 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: TimeoutCounter</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.controller.undo</a> ]
+</div>
+
+<h1>Coverage Summary for Class: TimeoutCounter (it.polimi.ingsw.controller.undo)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TimeoutCounter</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/ 12)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.controller.undo;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.TimerTask;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;/**
+<i>6</i>&nbsp; * Timeout(s) counter class to check if a certain
+<i>7</i>&nbsp; * amount of time is elapsed and then to trigger
+<i>8</i>&nbsp; * a specified task.
+<i>9</i>&nbsp; *
+<i>10</i>&nbsp; * @author AndreaAltomare
+<i>11</i>&nbsp; */
+<i>12</i>&nbsp;public class TimeoutCounter extends TimerTask {
+<i>13</i>&nbsp;    private final int MAX_RETRIES_NUMBER;
+<i>14</i>&nbsp;    private int timeoutCounter;
+<i>15</i>&nbsp;    private final Object undoLock;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    /**
+<i>18</i>&nbsp;     * To work with this class it&#39;s necessary to provide
+<i>19</i>&nbsp;     * the maximum number of Timeouts (retries) beyond which
+<i>20</i>&nbsp;     * the [Time Expired] task is being triggered.
+<i>21</i>&nbsp;     *
+<i>22</i>&nbsp;     * @param maxRetriesNumber (Maximum number of Timeouts)
+<i>23</i>&nbsp;     * @param undoLock Lock object for undo
+<i>24</i>&nbsp;     */
+<b class="fc"><i>25</i>&nbsp;    public TimeoutCounter(int maxRetriesNumber, Object undoLock) {</b>
+<b class="fc"><i>26</i>&nbsp;        this.MAX_RETRIES_NUMBER = maxRetriesNumber;</b>
+<b class="fc"><i>27</i>&nbsp;        this.timeoutCounter = 0;</b>
+<b class="fc"><i>28</i>&nbsp;        this.undoLock = undoLock;</b>
+<b class="fc"><i>29</i>&nbsp;    }</b>
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    /**
+<i>32</i>&nbsp;     * Run() method for TimeoutCounter class.
+<i>33</i>&nbsp;     *
+<i>34</i>&nbsp;     * It defines the task executed when a time period
+<i>35</i>&nbsp;     * of a Timer elapses.
+<i>36</i>&nbsp;     */
+<i>37</i>&nbsp;    @Override
+<i>38</i>&nbsp;    public void run() {
+<i>39</i>&nbsp;        //System.out.println(&quot;Printed debug string&quot;);
+<b class="fc"><i>40</i>&nbsp;        if(check(++timeoutCounter)) {</b>
+<b class="fc"><i>41</i>&nbsp;            synchronized (undoLock) {</b>
+<b class="fc"><i>42</i>&nbsp;                undoLock.notifyAll();</b>
+<b class="fc"><i>43</i>&nbsp;                this.cancel();</b>
+<b class="fc"><i>44</i>&nbsp;            }</b>
+<i>45</i>&nbsp;        }
+<b class="fc"><i>46</i>&nbsp;    }</b>
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    /**
+<i>49</i>&nbsp;     * Check if the number of timeouts has
+<i>50</i>&nbsp;     * exceeded the threshold.
+<i>51</i>&nbsp;     *
+<i>52</i>&nbsp;     * @param i (Number of timeouts)
+<i>53</i>&nbsp;     * @return (Threshold exceeded ? true : false)
+<i>54</i>&nbsp;     */
+<i>55</i>&nbsp;    private boolean check(int i) {
+<b class="fc"><i>56</i>&nbsp;        return i &gt; MAX_RETRIES_NUMBER;</b>
+<i>57</i>&nbsp;    }
+<i>58</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 21:53</div>
+</div>
+</body>
+</html>

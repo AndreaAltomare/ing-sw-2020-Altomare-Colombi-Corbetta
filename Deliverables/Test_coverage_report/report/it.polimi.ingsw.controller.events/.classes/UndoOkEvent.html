@@ -1,0 +1,125 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: UndoOkEvent</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.controller.events</a> ]
+</div>
+
+<h1>Coverage Summary for Class: UndoOkEvent (it.polimi.ingsw.controller.events)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UndoOkEvent</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 8)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.controller.events;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.model.persistence.board.BoardState;
+<i>4</i>&nbsp;import it.polimi.ingsw.model.player.turn.StateType;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import java.util.EventObject;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;/**
+<i>9</i>&nbsp; * Event: Action-Undo confirmation.
+<i>10</i>&nbsp; * [MVEvent]
+<i>11</i>&nbsp; */
+<i>12</i>&nbsp;public class UndoOkEvent extends EventObject {
+<i>13</i>&nbsp;    private String playerNickname;
+<i>14</i>&nbsp;    private StateType stateType;
+<i>15</i>&nbsp;    private BoardState boardState;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    /**
+<i>18</i>&nbsp;     * Constructs an UndoOkEvent to inform the View about the event occurred.
+<i>19</i>&nbsp;     *
+<i>20</i>&nbsp;     * @param boardState Last state of the Board
+<i>21</i>&nbsp;     * @param playerNickname Player who undo the last action performed
+<i>22</i>&nbsp;     * @param stateType Turn state of the Player who mad the Undo
+<i>23</i>&nbsp;     */
+<i>24</i>&nbsp;    public UndoOkEvent(BoardState boardState, String playerNickname, StateType stateType) {
+<b class="nc"><i>25</i>&nbsp;        super(new Object());</b>
+<b class="nc"><i>26</i>&nbsp;        this.boardState = boardState;</b>
+<b class="nc"><i>27</i>&nbsp;        this.playerNickname = playerNickname;</b>
+<b class="nc"><i>28</i>&nbsp;        this.stateType = stateType;</b>
+<b class="nc"><i>29</i>&nbsp;    }</b>
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    public BoardState getBoardState() {
+<b class="nc"><i>32</i>&nbsp;        return boardState;</b>
+<i>33</i>&nbsp;    }
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    public String getPlayerNickname() {
+<b class="nc"><i>36</i>&nbsp;        return playerNickname;</b>
+<i>37</i>&nbsp;    }
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    public StateType getStateType() {
+<b class="nc"><i>40</i>&nbsp;        return stateType;</b>
+<i>41</i>&nbsp;    }
+<i>42</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 21:53</div>
+</div>
+</body>
+</html>

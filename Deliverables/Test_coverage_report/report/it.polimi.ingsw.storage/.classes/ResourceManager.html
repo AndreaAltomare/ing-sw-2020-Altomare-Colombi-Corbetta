@@ -1,0 +1,301 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ResourceManager</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.storage</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ResourceManager (it.polimi.ingsw.storage)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ResourceManager</td>
+<td class="coverageStat">
+  <span class="percent">
+    20%
+  </span>
+  <span class="absValue">
+    (2/ 10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    15,2%
+  </span>
+  <span class="absValue">
+    (7/ 46)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ResourceManager$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 9)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    16,7%
+  </span>
+  <span class="absValue">
+    (2/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    12,7%
+  </span>
+  <span class="absValue">
+    (7/ 55)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.storage;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.google.gson.Gson;
+<i>4</i>&nbsp;import it.polimi.ingsw.connection.ConnectionSettings;
+<i>5</i>&nbsp;import it.polimi.ingsw.model.card.CardInfo;
+<i>6</i>&nbsp;import it.polimi.ingsw.model.card.GodPower;
+<i>7</i>&nbsp;import it.polimi.ingsw.model.persistence.GameState;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import java.io.File;
+<i>10</i>&nbsp;import java.io.FileNotFoundException;
+<i>11</i>&nbsp;import java.io.IOException;
+<i>12</i>&nbsp;import java.net.URISyntaxException;
+<i>13</i>&nbsp;import java.util.ArrayList;
+<i>14</i>&nbsp;import java.util.List;
+<i>15</i>&nbsp;import java.util.concurrent.ExecutorService;
+<i>16</i>&nbsp;import java.util.concurrent.Executors;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;/**
+<i>19</i>&nbsp; * This class let resource retrieval operations
+<i>20</i>&nbsp; * simpler since it encapsulates GSON logic
+<i>21</i>&nbsp; * and instantiate directly the class needed
+<i>22</i>&nbsp; * to perform a certain task.
+<i>23</i>&nbsp; *
+<i>24</i>&nbsp; * @author AndreaAltomare
+<i>25</i>&nbsp; */
+<b class="nc"><i>26</i>&nbsp;public class ResourceManager {</b>
+<b class="fc"><i>27</i>&nbsp;    private static ExecutorService executor = Executors.newFixedThreadPool(10); // for async heavy I/O interaction</b>
+<b class="fc"><i>28</i>&nbsp;    private static String PARENT_DIRECTORY_PATH = &quot;&quot;;</b>
+<i>29</i>&nbsp;    private static final String CONNECTION_RESOURCES_PATH = &quot;connection_settings/&quot;;
+<i>30</i>&nbsp;    private static final String GAME_RESOURCES_PATH = &quot;game_resources/&quot;;
+<i>31</i>&nbsp;    private static final String CARDS_PATH = &quot;cards/&quot;;
+<i>32</i>&nbsp;    private static final String SAVES_PATH = &quot;game_saves/&quot;;
+<i>33</i>&nbsp;    /* Debug enabler */
+<i>34</i>&nbsp;    private static final boolean DEBUG = false;
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    /**
+<i>37</i>&nbsp;     * Get a Card&#39;s information and return its GodPower properties.
+<i>38</i>&nbsp;     *
+<i>39</i>&nbsp;     * @param cardName Card&#39;s name
+<i>40</i>&nbsp;     * @return GodPower&#39;s instance (Card&#39;s GodPower properties)
+<i>41</i>&nbsp;     */
+<i>42</i>&nbsp;    public static GodPower callGodPower(String cardName) {
+<b class="fc"><i>43</i>&nbsp;        String cardPath = PARENT_DIRECTORY_PATH + GAME_RESOURCES_PATH + CARDS_PATH + cardName.toLowerCase();</b>
+<b class="fc"><i>44</i>&nbsp;        FileManager fileManager = FileManager.getIstance();</b>
+<b class="fc"><i>45</i>&nbsp;        String json = fileManager.getCard(cardPath);</b>
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;        /* JSON DESERIALIZATION WITH GSON */
+<b class="fc"><i>48</i>&nbsp;        Gson gson = new Gson();</b>
+<b class="fc"><i>49</i>&nbsp;        return gson.fromJson(json, GodPower.class);</b>
+<i>50</i>&nbsp;    }
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    /**
+<i>53</i>&nbsp;     * Get a list with all Cards&#39; information
+<i>54</i>&nbsp;     *
+<i>55</i>&nbsp;     * @return (List fo CardInfo objects)
+<i>56</i>&nbsp;     */
+<i>57</i>&nbsp;    public static List&lt;CardInfo&gt; getCardsInformation() {
+<i>58</i>&nbsp;        /* 1- Get what cards are in the Game */
+<b class="nc"><i>59</i>&nbsp;        List&lt;CardInfo&gt; cards = new ArrayList&lt;&gt;();</b>
+<i>60</i>&nbsp;        List&lt;String&gt; cardNames;
+<b class="nc"><i>61</i>&nbsp;        String filePath = PARENT_DIRECTORY_PATH + GAME_RESOURCES_PATH + CARDS_PATH + &quot;gods.config&quot;;</b>
+<i>62</i>&nbsp;        GodPower god;
+<i>63</i>&nbsp;
+<b class="nc"><i>64</i>&nbsp;        FileManager fileManager = FileManager.getIstance();</b>
+<i>65</i>&nbsp;        try {
+<b class="nc"><i>66</i>&nbsp;            cardNames = fileManager.getFileRecords(filePath);</b>
+<i>67</i>&nbsp;        }
+<b class="nc"><i>68</i>&nbsp;        catch (FileNotFoundException ex) {</b>
+<b class="nc"><i>69</i>&nbsp;            cardNames = new ArrayList&lt;&gt;(); // empty List</b>
+<b class="nc"><i>70</i>&nbsp;        }</b>
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;        /* 2- Get all Card&#39;s information*/
+<b class="nc"><i>73</i>&nbsp;        for(String cardName : cardNames) {</b>
+<b class="nc"><i>74</i>&nbsp;            god = callGodPower(cardName);</b>
+<b class="nc"><i>75</i>&nbsp;            cards.add(new CardInfo(god.getName(), god.getEpithet(), god.getDescription()));</b>
+<b class="nc"><i>76</i>&nbsp;        }</b>
+<i>77</i>&nbsp;
+<b class="nc"><i>78</i>&nbsp;        return cards;</b>
+<i>79</i>&nbsp;    }
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    /**
+<i>82</i>&nbsp;     * Get connection settings for Client.
+<i>83</i>&nbsp;     *
+<i>84</i>&nbsp;     * @return ConnectionSettings&#39; instance
+<i>85</i>&nbsp;     */
+<i>86</i>&nbsp;    public static ConnectionSettings clientConnectionSettings() {
+<b class="nc"><i>87</i>&nbsp;        return getConnectionSettingsFromPath(PARENT_DIRECTORY_PATH + CONNECTION_RESOURCES_PATH + &quot;client_settings.config&quot;);</b>
+<i>88</i>&nbsp;    }
+<i>89</i>&nbsp;
+<i>90</i>&nbsp;    /**
+<i>91</i>&nbsp;     * Get connection settings for Server.
+<i>92</i>&nbsp;     *
+<i>93</i>&nbsp;     * @return ConnectionSettings&#39; instance
+<i>94</i>&nbsp;     */
+<i>95</i>&nbsp;    public static ConnectionSettings serverConnectionSettings() {
+<b class="nc"><i>96</i>&nbsp;        return getConnectionSettingsFromPath(PARENT_DIRECTORY_PATH + CONNECTION_RESOURCES_PATH + &quot;server_settings.config&quot;);</b>
+<i>97</i>&nbsp;    }
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;    /**
+<i>100</i>&nbsp;     * Get connection settings from a specified file path.
+<i>101</i>&nbsp;     *
+<i>102</i>&nbsp;     * @param filePath (Specified file path)
+<i>103</i>&nbsp;     * @return ConnectionSettings&#39; instance
+<i>104</i>&nbsp;     */
+<i>105</i>&nbsp;    private static ConnectionSettings getConnectionSettingsFromPath(String filePath) {
+<b class="nc"><i>106</i>&nbsp;        String json = &quot;&quot;;</b>
+<i>107</i>&nbsp;
+<b class="nc"><i>108</i>&nbsp;        FileManager fileManager = FileManager.getIstance();</b>
+<i>109</i>&nbsp;        try {
+<b class="nc"><i>110</i>&nbsp;            json = fileManager.getFileContent(filePath);</b>
+<i>111</i>&nbsp;        }
+<b class="nc"><i>112</i>&nbsp;        catch (FileNotFoundException ex) {</b>
+<b class="nc"><i>113</i>&nbsp;            return null;</b>
+<b class="nc"><i>114</i>&nbsp;        }</b>
+<i>115</i>&nbsp;
+<i>116</i>&nbsp;        /* JSON DESERIALIZATION WITH GSON */
+<b class="nc"><i>117</i>&nbsp;        Gson gson = new Gson();</b>
+<b class="nc"><i>118</i>&nbsp;        return gson.fromJson(json, ConnectionSettings.class);</b>
+<i>119</i>&nbsp;    }
+<i>120</i>&nbsp;
+<i>121</i>&nbsp;    /**
+<i>122</i>&nbsp;     * Saves a Game.
+<i>123</i>&nbsp;     *
+<i>124</i>&nbsp;     * @param gameState State of the game
+<i>125</i>&nbsp;     */
+<i>126</i>&nbsp;    public static void saveGameState(GameState gameState) {
+<b class="nc"><i>127</i>&nbsp;        Runnable saveTask = new Runnable() {</b>
+<i>128</i>&nbsp;            @Override
+<i>129</i>&nbsp;            public void run() {
+<b class="nc"><i>130</i>&nbsp;                String fileName = PARENT_DIRECTORY_PATH + GAME_RESOURCES_PATH + SAVES_PATH + &quot;saving.dat&quot;;</b>
+<i>131</i>&nbsp;                Gson gson;
+<i>132</i>&nbsp;                String json;
+<b class="nc"><i>133</i>&nbsp;                FileManager fileManager = FileManager.getIstance();</b>
+<i>134</i>&nbsp;
+<i>135</i>&nbsp;                /* JSON SERIALIZATION WITH GSON */
+<b class="nc"><i>136</i>&nbsp;                gson = new Gson();</b>
+<b class="nc"><i>137</i>&nbsp;                json = gson.toJson(gameState);</b>
+<i>138</i>&nbsp;
+<i>139</i>&nbsp;                /* FILE SAVING */
+<b class="nc"><i>140</i>&nbsp;                synchronized (fileManager) {</b>
+<b class="nc"><i>141</i>&nbsp;                    fileManager.saveFileContent(fileName, json);</b>
+<b class="nc"><i>142</i>&nbsp;                }</b>
+<b class="nc"><i>143</i>&nbsp;            }</b>
+<i>144</i>&nbsp;        };
+<i>145</i>&nbsp;
+<b class="nc"><i>146</i>&nbsp;        executor.submit(saveTask);</b>
+<b class="nc"><i>147</i>&nbsp;    }</b>
+<i>148</i>&nbsp;
+<i>149</i>&nbsp;    /**
+<i>150</i>&nbsp;     * Loads a Game.
+<i>151</i>&nbsp;     *
+<i>152</i>&nbsp;     * @return State of the game
+<i>153</i>&nbsp;     */
+<i>154</i>&nbsp;    public static GameState loadGameState() {
+<b class="nc"><i>155</i>&nbsp;        String fileName = PARENT_DIRECTORY_PATH + GAME_RESOURCES_PATH + SAVES_PATH + &quot;saving.dat&quot;;</b>
+<i>156</i>&nbsp;        Gson gson;
+<i>157</i>&nbsp;        String json;
+<b class="nc"><i>158</i>&nbsp;        FileManager fileManager = FileManager.getIstance();</b>
+<i>159</i>&nbsp;
+<b class="nc"><i>160</i>&nbsp;        synchronized (fileManager) {</b>
+<i>161</i>&nbsp;            try {
+<b class="nc"><i>162</i>&nbsp;                json = fileManager.getFileContent(fileName);</b>
+<b class="nc"><i>163</i>&nbsp;            } catch (FileNotFoundException ex) {</b>
+<b class="nc"><i>164</i>&nbsp;                return null;</b>
+<b class="nc"><i>165</i>&nbsp;            }</b>
+<b class="nc"><i>166</i>&nbsp;        }</b>
+<i>167</i>&nbsp;
+<i>168</i>&nbsp;        /* JSON DESERIALIZATION WITH GSON */
+<b class="nc"><i>169</i>&nbsp;        gson = new Gson();</b>
+<b class="nc"><i>170</i>&nbsp;        return gson.fromJson(json, GameState.class);</b>
+<i>171</i>&nbsp;    }
+<i>172</i>&nbsp;
+<i>173</i>&nbsp;
+<i>174</i>&nbsp;    /**
+<i>175</i>&nbsp;     * Initializes application path and, eventually,
+<i>176</i>&nbsp;     * other important information for Resource management.
+<i>177</i>&nbsp;     *
+<i>178</i>&nbsp;     * @param mainClass Main application class
+<i>179</i>&nbsp;     * @throws URISyntaxException Exception handled by the main application class
+<i>180</i>&nbsp;     * @throws IOException Exception handled by the main application class
+<i>181</i>&nbsp;     */
+<i>182</i>&nbsp;    public static void initializeResources(Class mainClass) throws URISyntaxException, IOException {
+<i>183</i>&nbsp;        /* Application path */
+<i>184</i>&nbsp;        if(!DEBUG) {
+<b class="nc"><i>185</i>&nbsp;            PARENT_DIRECTORY_PATH = new File(mainClass.getProtectionDomain().getCodeSource().getLocation().toURI()).getCanonicalFile().getParent();</b>
+<b class="nc"><i>186</i>&nbsp;            PARENT_DIRECTORY_PATH = PARENT_DIRECTORY_PATH + &quot;/&quot;;</b>
+<i>187</i>&nbsp;        }
+<i>188</i>&nbsp;        else
+<i>189</i>&nbsp;            PARENT_DIRECTORY_PATH = &quot;&quot;;
+<i>190</i>&nbsp;        /* No other information needed */
+<b class="nc"><i>191</i>&nbsp;    }</b>
+<i>192</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 21:53</div>
+</div>
+</body>
+</html>

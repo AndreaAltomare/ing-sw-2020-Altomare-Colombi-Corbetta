@@ -1,0 +1,137 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: WorkerPlacedEvent</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.controller.events</a> ]
+</div>
+
+<h1>Coverage Summary for Class: WorkerPlacedEvent (it.polimi.ingsw.controller.events)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">WorkerPlacedEvent</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/ 12)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.controller.events;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.model.player.worker.Color;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import java.util.EventObject;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;/**
+<i>8</i>&nbsp; * Event: Worker was correctly placed.
+<i>9</i>&nbsp; * [MVEvent]
+<i>10</i>&nbsp; */
+<i>11</i>&nbsp;public class WorkerPlacedEvent extends EventObject {
+<i>12</i>&nbsp;    private boolean success; // tell if the move was successful
+<i>13</i>&nbsp;    private String worker;
+<i>14</i>&nbsp;    private int x, y;
+<i>15</i>&nbsp;    private Color color;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    /**
+<i>18</i>&nbsp;     * Constructs a WorkerPlacedEvent to inform the View about the event occurred.
+<i>19</i>&nbsp;     *
+<i>20</i>&nbsp;     * @param worker Placed Worker
+<i>21</i>&nbsp;     * @param x Worker&#39;s X position on the Board
+<i>22</i>&nbsp;     * @param y Worker&#39;s Y position on the Board
+<i>23</i>&nbsp;     * @param color Worker&#39;s color
+<i>24</i>&nbsp;     * @param success True if Worker was actually placed on the Board
+<i>25</i>&nbsp;     */
+<i>26</i>&nbsp;    public WorkerPlacedEvent(String worker, int x, int y, Color color, boolean success) {
+<b class="fc"><i>27</i>&nbsp;        super(new Object());</b>
+<b class="fc"><i>28</i>&nbsp;        this.worker = worker;</b>
+<b class="fc"><i>29</i>&nbsp;        this.x = x;</b>
+<b class="fc"><i>30</i>&nbsp;        this.y = y;</b>
+<b class="fc"><i>31</i>&nbsp;        this.color = color;</b>
+<b class="fc"><i>32</i>&nbsp;        this.success = success;</b>
+<b class="fc"><i>33</i>&nbsp;    }</b>
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    public String getWorker() {
+<b class="fc"><i>36</i>&nbsp;        return worker;</b>
+<i>37</i>&nbsp;    }
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    public int getX() {
+<b class="fc"><i>40</i>&nbsp;        return x;</b>
+<i>41</i>&nbsp;    }
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    public int getY() {
+<b class="fc"><i>44</i>&nbsp;        return y;</b>
+<i>45</i>&nbsp;    }
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    public Color getColor() {
+<b class="fc"><i>48</i>&nbsp;        return color;</b>
+<i>49</i>&nbsp;    }
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    public boolean success() {
+<b class="fc"><i>52</i>&nbsp;        return success;</b>
+<i>53</i>&nbsp;    }
+<i>54</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 21:53</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,75 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: MoveExecutor</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">it.polimi.ingsw.model.card.move</a> ]
+</div>
+
+<h1>Coverage Summary for Class: MoveExecutor (it.polimi.ingsw.model.card.move)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">MoveExecutor</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package it.polimi.ingsw.model.card.move;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import it.polimi.ingsw.model.card.Card;
+<i>4</i>&nbsp;import it.polimi.ingsw.model.exceptions.OutOfBoardException;
+<i>5</i>&nbsp;import it.polimi.ingsw.model.exceptions.WinException;
+<i>6</i>&nbsp;import it.polimi.ingsw.model.move.Move;
+<i>7</i>&nbsp;import it.polimi.ingsw.model.player.worker.Worker;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;/**
+<i>10</i>&nbsp; * Functional interface.
+<i>11</i>&nbsp; * Provides an operation for executing a Movement move.
+<i>12</i>&nbsp; *
+<i>13</i>&nbsp; * @author AndreaAltomare
+<i>14</i>&nbsp; */
+<i>15</i>&nbsp;public interface MoveExecutor {
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    /**
+<i>18</i>&nbsp;     * Executes a Movement move.
+<i>19</i>&nbsp;     *
+<i>20</i>&nbsp;     * @param move Move to execute
+<i>21</i>&nbsp;     * @param worker Worker which made the move
+<i>22</i>&nbsp;     * @param parentCard Card providing the effect by which execute the move
+<i>23</i>&nbsp;     * @return True if the move was actually executed
+<i>24</i>&nbsp;     * @throws OutOfBoardException Exception thrown when trying to move out of the bounds of the Board
+<i>25</i>&nbsp;     * @throws WinException Exception thrown when the Player wins after the move was made
+<i>26</i>&nbsp;     */
+<i>27</i>&nbsp;    boolean executeMove(Move move, Worker worker, Card parentCard) throws OutOfBoardException, WinException;
+<i>28</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-07-03 21:53</div>
+</div>
+</body>
+</html>
