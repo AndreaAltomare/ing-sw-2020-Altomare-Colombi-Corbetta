@@ -63,12 +63,17 @@ You can find the related files into the **Resources_for_packages** folder into t
 ## How to run the application
 
 This is a cross-platform application, so the following instructions works with all the major operating systems.
-**WARNING**
+
+**NOTE:** You need to be in `Executables/Server` or `Executables/Client` folder when performing the instructions to run the application.
+
+**WARNING:**
 The application was built with JDK *14.0.1*, so you will probably need the corresponding JRE version (or higher) to correctly execute it.
 
-#### 1. Start the Server
+### 1. Start the Server
 
-First you need to start the Server. You can do it on your computer, on a machine in your LAN, or on a machine connected to the Internet.
+First you need to start the Server.
+
+You can do it on your computer, on a machine in your LAN, or on a machine connected to the Internet.
 Since the Client-Server communication is based on **TCP protocol** you need to specify the PORT on which the connection to your Server will occur (and be sure that you can actually connect to *that specific* port).
 You can do this by two ways: either from command line or modifying the `server_settings.config` file into `connection_settings` folder:
 ```
@@ -84,9 +89,10 @@ Now you can run the Server just by typing this command on your terminal:
 java -jar SantoriniCore.jar [port_number]
 ```
 
-#### 2. Start Client(s)
+### 2. Start Client(s)
 
 After the first step, you can run one or more Clients to start a game.
+
 You need to know the Server's IP address and PORT on which the application is listening.
 You can specify IP and PORT you want either by command line or by modifying the `client_settings.config` file into `connection_settings` folder:
 ```
@@ -108,6 +114,7 @@ java -jar SantoriniClient.jar [--cli]
 These commands will respectively open the CLI, the Terminal, and the GUI version of the Client.
 If no *interface-type* argument is specified, the GUI will be opened by default.
 You can also modify the IP address and PORT to connect to by typing `-ip` and `-port` arguments.
+
 Usage below:
 ```
 java -jar SantoriniClient.jar [-ip ip_address] [-port port]
@@ -120,4 +127,12 @@ java -jar SantoriniClient.jar [--cli] [-ip ip_address] [-port port]
                               [--gui] [-ip ip_address] [-port port]
 ```
 
-### THIS README FILE IS A WORK IN PROGRESS...
+#### Parameters
+
+- `--cli`: runs Client as a *Command Line Interface*.
+- `--terminal`: runs Client as a *Command Line Interface* compatible with Windows Command Prompt.
+- `--gui`: runs Client as a *Graphical User Interface* (same as *double-click*).
+- `-ip`: lets the user choose the IP address of the Server to connect to.
+- `-port`: lets the user choose the Port of the Server to connect to.
+
+**NOTE:** If you want to choose a different IP and/or a different Port to connect to, you need to specify both `-ip` and `-port` arguments anyway.
