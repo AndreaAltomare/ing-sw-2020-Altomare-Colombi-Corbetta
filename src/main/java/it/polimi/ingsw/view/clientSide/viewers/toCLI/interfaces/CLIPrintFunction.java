@@ -87,12 +87,12 @@ public interface CLIPrintFunction {
 
     /**
      * Method which adds spaces to <code>String</code> as long as string's length == final length.
-     * If stringLength < finalLength, it returns string
+     * If stringLength less than finalLength, it returns string
      *
      * @param string initial <code>String</code>
      * @param stringLength string's length
      * @param finalLength final length chosen
-     * @return <code>String</code> with length == finalLength, if stringLength < finalLength
+     * @return <code>String</code> with length == finalLength, if stringLength less than finalLength
      */
     static String increaseLengthWithSpace(String string, int stringLength, int finalLength) {
 

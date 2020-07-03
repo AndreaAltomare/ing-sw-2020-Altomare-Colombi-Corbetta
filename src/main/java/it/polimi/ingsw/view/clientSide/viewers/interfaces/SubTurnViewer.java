@@ -39,6 +39,8 @@ public abstract class SubTurnViewer {
 
     /**
      * Method to the Terminal's representation of this Status.
+     *
+     * @return A TerminalSubTurnViewer (actually always null)
      */
     public TerminalSubTurnViewer toTerminal() {
         return null;
@@ -46,6 +48,8 @@ public abstract class SubTurnViewer {
 
     /**
      * Method to the GUI's representation of this Status.
+     *
+     * @return A GUISubTurnViewer object (actually always null)
      */
     public GUISubTurnViewer toGUI() {
         return null;
@@ -53,6 +57,8 @@ public abstract class SubTurnViewer {
 
     /**
      * Method to the WTerminal's representation of this Status.
+     *
+     * @return A WTerminalSubTurnViewer object (actually always null)
      */
     public WTerminalSubTurnViewer toWTerminal() {
         return null;
@@ -60,6 +66,8 @@ public abstract class SubTurnViewer {
 
     /**
      * Method to the CLI's representation of this Status.
+     *
+     * @return A CLISubTurnViewer object (actually always null)
      */
     public CLISubTurnViewer toCLI() {
         return null;

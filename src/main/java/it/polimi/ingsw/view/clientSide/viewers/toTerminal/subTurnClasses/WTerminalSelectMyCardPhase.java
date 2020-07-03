@@ -44,6 +44,8 @@ public class WTerminalSelectMyCardPhase extends WTerminalSubTurnViewer {
 
     /**
      * Uses private methods to show a list with god cards to the player as long as he chooses his god card
+     *
+     * @return ViewCard object
      */
     private ViewCard showSelectInterface() {
         ViewCard selectedCard = null;

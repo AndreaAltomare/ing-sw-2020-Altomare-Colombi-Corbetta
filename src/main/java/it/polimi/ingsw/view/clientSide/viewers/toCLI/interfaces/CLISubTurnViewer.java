@@ -153,6 +153,7 @@ public abstract class CLISubTurnViewer implements SpecificSubTurnViewer {
     /**
      * Tries to set subTurn change and returns true if it can, or false if it can't, and print a message to show the result on CLI
      *
+     * @param viewSubTurn subTurn reference
      * @return (change subTurnRequest is set ? true : false)
      */
     public boolean changePlayingPhase(ViewSubTurn viewSubTurn) {

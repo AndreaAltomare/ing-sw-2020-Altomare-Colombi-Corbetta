@@ -232,7 +232,6 @@ public class ViewCell extends ViewObject {
      *
      * @param state (The <code>CellState</code> representing the state to be updated)
      * @return (true iif the event is notified in the right way)
-     * @throws WrongEventException (if the Event is not used for this object)
      */
     public boolean notifyEvent(CellState state){
         Deque<PlaceableData> x = state.getBuilding();

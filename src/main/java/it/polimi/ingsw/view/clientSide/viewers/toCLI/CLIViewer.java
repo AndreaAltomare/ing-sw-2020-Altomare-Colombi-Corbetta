@@ -138,6 +138,7 @@ public class CLIViewer extends Viewer{
      * if it is necessary
      *
      * @param queuedEvent Event to read ( after check that its Type == MESSAGE )
+     * @return True if end is reached
      */
     private boolean prepareMessage(ViewerQueuedEvent queuedEvent) {
         boolean end = false;

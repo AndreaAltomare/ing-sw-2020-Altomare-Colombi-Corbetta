@@ -161,7 +161,7 @@ public class ViewWorker extends ViewObject {
     }
 
     /**
-     * Method called with <codde>EventObject</codde> event.
+     * Method called with <code>EventObject</code> event.
      * It'll only throw a WrongEventException (because it shouldn't be called).
      *
      * @param event (the <code>EventObject</code> event).
@@ -313,6 +313,7 @@ public class ViewWorker extends ViewObject {
      * found or with default color ( nothing color ) if workers' color isn't found
      *
      * @see CLISymbols
+     * @param head A boolean
      * @return String of worker's representation chosen with workers' color if it is found
      */
     public String toCLI(boolean head){
@@ -388,6 +389,7 @@ public class ViewWorker extends ViewObject {
      * @param id (int id of the Worker)
      * @param player (id of the player owning the worker)
      * @throws NotFoundException (iif player doesn't exists)
+     * @throws WrongViewObjectException Wrong view object
      */
     public ViewWorker(int id, @NotNull String player) throws NotFoundException, WrongViewObjectException {
         this(id, (ViewPlayer)ViewPlayer.find(player));
@@ -431,6 +433,7 @@ public class ViewWorker extends ViewObject {
      * @param id (String id of the Worker)
      * @param player (id of the player owning the worker)
      * @throws NotFoundException (iif player doesn't exists)
+     * @throws WrongViewObjectException Wrong view object
      */
     public ViewWorker(String id, @NotNull String player) throws NotFoundException, WrongViewObjectException {
         this(id, findOrSearch(player));

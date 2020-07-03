@@ -55,6 +55,7 @@ public class ServerConnection {
     /**
      * Constructor (Initialization of ServerSocket).
      *
+     * @param port Port on which to listen
      * @throws IOException (Exception handled by ServerApp)
      */
     public ServerConnection(int port) throws IOException {

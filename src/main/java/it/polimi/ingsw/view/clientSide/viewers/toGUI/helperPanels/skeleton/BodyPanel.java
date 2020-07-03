@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * <class>SubPanel</class> to represent the middle panel inside the <code>GamePanel</code>.
+ * <code>SubPanel</code> to represent the middle panel inside the <code>GamePanel</code>.
  * It contains the Board and 2 side Panels, and ensures the right resize to its content.
  *
  * This class is intended to grant the correct resize to its content, and does not populate its Panels by itself a part of the board's panel.

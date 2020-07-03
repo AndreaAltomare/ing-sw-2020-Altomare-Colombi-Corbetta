@@ -3,7 +3,7 @@ package it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration;
 /**
  * Enumeration with Unicode escape used on CLI
  *
- * @autor Marco
+ * @author Marco
  */
 public enum UnicodeSymbol {
 

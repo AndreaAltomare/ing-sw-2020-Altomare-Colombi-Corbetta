@@ -7,7 +7,7 @@ import java.util.List;
  * Observable Class for Observer Pattern
  * [Subject]
  *
- * @param <T>
+ * @param <T> Type of object
  * @see <a href="https://github.com/emanueledelsozzo/ingsoft-prova-finale-2020/blob/master/ese_Socket_Serialization/TrisDistributedMVC/src/main/java/it/polimi/ingsw/observer/Observable.java">github.com/emanueledelsozzo/.../Observable.java</a>
  * @author AndreaAltomare
  */

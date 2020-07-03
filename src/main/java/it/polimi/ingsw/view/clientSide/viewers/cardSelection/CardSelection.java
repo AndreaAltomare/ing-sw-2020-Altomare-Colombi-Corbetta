@@ -157,7 +157,7 @@ public class CardSelection implements Iterator<ViewCard> {
     /**
      * Method inherited by Iterator.
      *
-     * @return (true if cardList.size()>0).
+     * @return (true if cardList.size() greater than 0).
      */
     @Override
     public boolean hasNext() {

@@ -142,7 +142,9 @@ public abstract class WTerminalSubTurnViewer implements SpecificSubTurnViewer {
 
     /**
      * Tries to change subTurn and returns true if it can, or false if it can't
-     * @return
+     *
+     * @param viewSubTurn subTurn reference
+     * @return True if the subTurn can be changed
      */
     public boolean changePlayingPhase(ViewSubTurn viewSubTurn) {
         final String CORRECT_CHANGE_PHASE_MESSAGE = "Your change turn request is correctly send";

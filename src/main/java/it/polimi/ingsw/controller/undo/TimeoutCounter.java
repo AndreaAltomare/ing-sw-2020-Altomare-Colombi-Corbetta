@@ -20,6 +20,7 @@ public class TimeoutCounter extends TimerTask {
      * the [Time Expired] task is being triggered.
      *
      * @param maxRetriesNumber (Maximum number of Timeouts)
+     * @param undoLock Lock object for undo
      */
     public TimeoutCounter(int maxRetriesNumber, Object undoLock) {
         this.MAX_RETRIES_NUMBER = maxRetriesNumber;

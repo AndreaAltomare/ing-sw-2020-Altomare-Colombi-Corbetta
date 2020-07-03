@@ -33,7 +33,7 @@ public abstract class GUISubTurnViewer implements SpecificSubTurnViewer {
     /**
      * Method that returns the subTurnPanel relatives to the subTurn to which this refers to.
      *
-     * @return (the code>JPanel</code> relative to the subTurn to which this refers to).
+     * @return the <code>JPanel</code> relative to the subTurn to which this refers to.
      */
     public JPanel getSubTurnPanel(){
         return new ImagePanel(0.9, 0.9, 0.05, 0.05, "/img/background/subTurnPanel/noActionPanel.png");

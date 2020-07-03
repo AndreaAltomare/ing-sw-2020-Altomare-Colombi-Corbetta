@@ -129,7 +129,8 @@ public enum CLISymbols {
 
     /**
      * Returns the length of UpRepresentation ( all representations have the same length for construction
-     * @return
+     *
+     * @return the length of UpRepresentation
      */
     public int getLength() {
         return upRepresentation.length();

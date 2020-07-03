@@ -51,7 +51,7 @@ public interface PrintFunction {
 
     /**
      * Prints on standard output a String at the middle of a chosen length of space using printRepeatString.
-     * Prints middleString if middleString.length > totalLength
+     * Prints middleString if middleString.length greater than totalLength
      *
      * @param middleString <code>String</code> to print
      * @param totalLength length of space where middleString id printed

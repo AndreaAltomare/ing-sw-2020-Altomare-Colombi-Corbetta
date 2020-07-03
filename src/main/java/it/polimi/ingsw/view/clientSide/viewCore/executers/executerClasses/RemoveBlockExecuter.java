@@ -44,7 +44,7 @@ public class RemoveBlockExecuter extends Executer {
      *
      * @param x (x_position of the cell).
      * @param y (y_position of the cell).
-     * @throws WrongParametersException (if x<0 || y<0)
+     * @throws WrongParametersException (if x less than 0 || y less than 0)
      */
     public void setCell(int x, int y) throws WrongParametersException {
         if(x<0||y<0) throw new WrongParametersException();

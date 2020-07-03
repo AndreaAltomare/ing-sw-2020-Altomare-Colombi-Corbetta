@@ -42,6 +42,8 @@ public abstract class StatusViewer {
 
     /**
      * Method to retrieve a map mapping the Executers (related to this Status) to Strings
+     *
+     * @return A Map mapping the Executers
      */
     public Map<String, Executer> getMyExecuters() {
         return myExecuters;
@@ -49,21 +51,29 @@ public abstract class StatusViewer {
 
     /**
      * Method to the Terminal's representation of this Status.
+     *
+     * @return A TerminalStatusViewer object
      */
     public TerminalStatusViewer toTerminal(){ return myTerminal; }
 
     /**
      * Method to the GUI's representation of this Status.
+     *
+     * @return A GUIStatusViewer object
      */
     public GUIStatusViewer toGUI(){ return myGUI; }
 
     /**
      * Method to the WTerminal's representation of this Status.
+     *
+     * @return A WTerminalStatusViewer object
      */
     public WTerminalStatusViewer toWTerminal(){ return myWTerminal; }
 
     /**
      * Method to the CLI's representation of this Status.
+     *
+     * @return A CLIStatusViewer object
      */
     public CLIStatusViewer toCLI() { return  myCLI; }
 }

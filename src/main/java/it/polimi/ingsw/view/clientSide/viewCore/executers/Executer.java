@@ -89,6 +89,8 @@ public abstract class Executer{
      * Method that sends the event to the Server.
      *
      * @param event (EventObject to be submitted to the server)
+     * @throws NullPointerException Null pointer
+     * @throws WrongEventException Wrong worker
      */
     public void send(Object event) throws NullPointerException, WrongEventException {
         if(event == null) throw new NullPointerException();

@@ -60,6 +60,7 @@ public class Controller extends Observable<Object> implements VCEventListener, R
      * interact with the Model.
      *
      * @param model (Model instance)
+     * @param players List of players
      */
     public Controller(Model model, List<String> players) {
         this.model = model;

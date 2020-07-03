@@ -106,7 +106,7 @@ public abstract class Viewer extends Thread{
     /**
      * Method that adds the viewer to the list of viewers.
      *
-     * @param viewer
+     * @param viewer Viewer object
      */
     public static void registerViewer(Viewer viewer){
         myViewers.add(viewer);

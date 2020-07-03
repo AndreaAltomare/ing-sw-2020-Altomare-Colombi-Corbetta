@@ -23,7 +23,7 @@ import java.util.EventObject;
 /**
  * Class to represent the board.
  * There will be no more than one instance in each client.
- * It extends <code>ViewObject</code>>.
+ * It extends <code>ViewObject</code>.
  *
  * This class contains the Board with all its <code>ViewCell</code> and gives also the possibility to mark a Cell as "selected".
  * No more than one Cell should be selected at the same time.

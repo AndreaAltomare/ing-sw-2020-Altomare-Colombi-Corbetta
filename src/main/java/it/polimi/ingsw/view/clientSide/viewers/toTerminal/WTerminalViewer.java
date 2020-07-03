@@ -202,6 +202,7 @@ public class WTerminalViewer extends Viewer {
      * if it is necessary
      *
      * @param queuedEvent <code>ViewerQueuedEvent</code> read ( after check that its Type == MESSAGE )
+     * @return True if end is reached
      */
     private boolean prepareMessage(ViewerQueuedEvent queuedEvent) {
         ViewMessage viewMessage = (ViewMessage) queuedEvent.getPayload();
