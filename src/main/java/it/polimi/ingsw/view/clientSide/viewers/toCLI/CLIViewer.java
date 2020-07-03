@@ -5,25 +5,24 @@ import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewBoard;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewNickname;
 import it.polimi.ingsw.view.clientSide.viewCore.data.dataClasses.ViewPlayer;
 import it.polimi.ingsw.view.clientSide.viewCore.executers.executerClasses.UndoExecuter;
-import it.polimi.ingsw.view.clientSide.viewCore.status.ViewStatus;
 import it.polimi.ingsw.view.clientSide.viewCore.status.ViewSubTurn;
 import it.polimi.ingsw.view.clientSide.viewers.cardSelection.CardSelection;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.StatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.SubTurnViewer;
 import it.polimi.ingsw.view.clientSide.viewers.interfaces.Viewer;
 import it.polimi.ingsw.view.clientSide.viewers.messages.ViewMessage;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.enumeration.ANSIStyle;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIPrintFunction;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLIStatusViewer;
 import it.polimi.ingsw.view.clientSide.viewers.toCLI.interfaces.CLISubTurnViewer;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.*;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.CLICheckWrite;
-import it.polimi.ingsw.view.clientSide.viewers.toCLI.undoUtility.CLIStopTimeScanner;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.CLIChooseCardsPhase;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.CLILoosePhase;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.CLISelectMyCardPhase;
+import it.polimi.ingsw.view.clientSide.viewers.toCLI.subTurnClasses.CLIWinPhase;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.EmptyQueueException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 
-import java.util.Scanner;
+import java.io.IOException;
 
 /**
  * Class which extend <code>Viewer</code> and menage the CLI interface
@@ -185,16 +184,47 @@ public class CLIViewer extends Viewer{
      */
     private void undo() {
 
-        CLICheckWrite cliCheckWrite = new CLICheckWrite();
+        //CLICheckWrite cliCheckWrite = new CLICheckWrite();
         final String UNDO_ACTIVE_MESSAGE = "Undo request is correctly sent";
         final String UNDO_REJECT_MESSAGE = "The play continues";
         int waitingTime = 5; // in sec
-        Thread stopScannerThread = new Thread( new CLIStopTimeScanner(cliCheckWrite, waitingTime));
+        //Thread stopScannerThread = new Thread( new CLIStopTimeScanner(cliCheckWrite, waitingTime));
 
         ViewBoard.getBoard().toCLI();       // print the board to see last move1
 
 
-        CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
+        System.out.printf("Press ENTER bottom in %d second to undo your move:\n", waitingTime);
+        Object obj = new Object();
+
+        synchronized (obj){
+            try {
+                obj.wait(4000);
+            } catch (InterruptedException ignore) {
+            }
+            try {
+                if(System.in.available()>0){
+                    try {
+                        UndoExecuter.undoIt();
+                        CLIPrintFunction.printCheck(UNDO_ACTIVE_MESSAGE);
+                        return;
+                    } catch (CannotSendEventException e) {
+                        CLIPrintFunction.printError(e.getErrorMessage());
+                    }
+                }
+            } catch (IOException ignore) {
+            }
+
+            CLIPrintFunction.printCheck(UNDO_REJECT_MESSAGE);
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException ignored) {
+            }
+            if (!this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN)) {
+                this.setSubTurnViewer(ViewSubTurn.getActual().getSubViewer());
+            }
+        }
+
+        /*CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
         stopScannerThread.start();
         System.out.printf("Press ENTER bottom in %d second to undo your move:\n", waitingTime);
         CLIPrintFunction.printRepeatString(ANSIStyle.RESET, " ", CLIPrintFunction.STARTING_SPACE);
@@ -216,7 +246,7 @@ public class CLIViewer extends Viewer{
             if (!this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN)) {
                 this.setSubTurnViewer(ViewSubTurn.getActual().getSubViewer());
             }
-        }
+        }*/
     }
 
     /**

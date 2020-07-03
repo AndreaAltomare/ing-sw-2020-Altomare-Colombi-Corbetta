@@ -17,13 +17,11 @@ import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTermin
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTerminalLoosePhase;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTerminalSelectMyCardPhase;
 import it.polimi.ingsw.view.clientSide.viewers.toTerminal.subTurnClasses.WTerminalWinPhase;
-import it.polimi.ingsw.view.clientSide.viewers.toTerminal.undoUtility.WTerminalCheckWrite;
-import it.polimi.ingsw.view.clientSide.viewers.toTerminal.undoUtility.WTerminalStopTimeScanner;
 import it.polimi.ingsw.view.exceptions.CannotSendEventException;
 import it.polimi.ingsw.view.exceptions.EmptyQueueException;
 import it.polimi.ingsw.view.exceptions.NotFoundException;
 
-import java.util.Scanner;
+import java.io.IOException;
 
 
 /**
@@ -132,15 +130,49 @@ public class WTerminalViewer extends Viewer {
      */
     private void undo() {
 
-        WTerminalCheckWrite wTerminalCheckWrite = new WTerminalCheckWrite();
+//        WTerminalCheckWrite wTerminalCheckWrite = new WTerminalCheckWrite();
         final String UNDO_ACTIVE_MESSAGE = "Undo request is correctly sent";
         final String UNDO_REJECT_MESSAGE = "The play continues";
         int waitingTime = 5; // in sec
-        Thread stopScannerThread = new Thread( new WTerminalStopTimeScanner(wTerminalCheckWrite, waitingTime));
+        //Thread stopScannerThread = new Thread( new WTerminalStopTimeScanner(wTerminalCheckWrite, waitingTime));
 
         ViewBoard.getBoard().toWTerminal();       // print the board to see last move1
 
+        System.out.printf("Press ENTER bottom in %d second to undo your move:\n", waitingTime);
         PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
+
+        Object obj = new Object();
+
+        synchronized (obj){
+            try {
+                obj.wait(4000);
+            } catch (InterruptedException ignore) {
+            }
+            try {
+                if(System.in.available()>0){
+                    try {
+                        UndoExecuter.undoIt();
+                        PrintFunction.printCheck(UNDO_ACTIVE_MESSAGE);
+                        return;
+                    } catch (CannotSendEventException e) {
+                        PrintFunction.printError(e.getErrorMessage());
+                    }
+                }
+            } catch (IOException ignore) {
+            }
+
+            PrintFunction.printCheck(UNDO_REJECT_MESSAGE);
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException ignored) {
+            }
+            if (!this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN)) {
+                this.setSubTurnViewer(ViewSubTurn.getActual().getSubViewer());
+            }
+        }
+
+
+        /*PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
         stopScannerThread.start();
         System.out.printf("Press ENTER bottom in %d second to undo your move:\n", waitingTime);
         PrintFunction.printRepeatString(" ", PrintFunction.STARTING_SPACE);
@@ -162,7 +194,7 @@ public class WTerminalViewer extends Viewer {
             if (!this.isEnqueuedType(ViewerQueuedEvent.ViewerQueuedEventType.SET_SUBTURN)) {
                 this.setSubTurnViewer(ViewSubTurn.getActual().getSubViewer());
             }
-        }
+        }*/
     }
 
     /**

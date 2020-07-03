@@ -84,7 +84,7 @@ public class UndoExecuter extends Executer {
      * Method to notify all the listeners the undo is available (with the call of the light method).
      */
     private void notifyLOn(){
-        Viewer.setAllUndo();
+
         for (UndoExecuterListenerUpdate l: myListener) {
             l.undoLightAvailable();
         }
@@ -124,10 +124,13 @@ public class UndoExecuter extends Executer {
             Thread t1 = thread;
             thread = null;
             t1.interrupt();
-            notifyOff();
+            //notifyOff();
+        }else{
+            Viewer.setAllUndo();
         }
-
         notifyLOn();
+
+
         thread = new Thread(){
             @Override
             public void run() {
