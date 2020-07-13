@@ -1,5 +1,17 @@
+![Grade A+](https://img.shields.io/badge/Grade-A%2B-green?color=009F00)
 # Prova Finale Ingegneria del Software 2020
 # ing-sw-2020-Altomare-Colombi-Corbetta
+
+This is one of the three project for BSc thesis at **Politecnico di Milano**.  
+The related course for this project is _"Ingegneria del Software"_ (i.e. Software Engineering).
+
+Aim of this project is to design, develop, test and deploy a distributed application: a digital version of the board game "_Santorini_" from Roxley Games.
+
+**IMPORTANT:** WE DO NOT OWN ANY OF THE RESOURCES USED TO REPRODUCE THIS GAME. Every resource, from the rule set to the images, belong to **Roxley Games** and the game creators.  
+What we own is the code we wrote the software with.
+
+More info about the software design and architecture can be found here: [documentation](Deliverables/Communication_protocol.pdf)  
+Other project resources such as UMLs, Javadoc, test coverage report can be found into **Deliverables** folder.
 
 ## Gruppo AM42
 
@@ -28,7 +40,7 @@
 
 ## Project lifecycle
 
-This is a Maven project, so its lifecycle can be entirely run with Maven and its plugins.
+This is a **Maven project**, so its lifecycle can be entirely run with Maven and its plugins.
 
 To execute (the main) Maven goals, just run the following commands:
 
@@ -136,3 +148,6 @@ java -jar SantoriniClient.jar [--cli] [-ip ip_address] [-port port]
 - `-port`: lets the user choose the Port of the Server to connect to.
 
 **NOTE:** If you want to choose a different IP and/or a different Port to connect to, you need to specify both `-ip` and `-port` arguments anyway.
+
+##### Final grade: 30 cum Laude / 30
+###### Academic Year: 2019/2020
