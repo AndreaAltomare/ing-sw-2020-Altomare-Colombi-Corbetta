@@ -11,7 +11,7 @@ Aim of this project is to design, develop, test and deploy a distributed applica
 What we own is the code which we wrote the software with.
 
 More info about the software design and architecture can be found here: [documentation](Deliverables/Communication_protocol.pdf)  
-Other project resources such as UMLs, Javadoc, test coverage report can be found into **Deliverables** folder.
+Other project resources such as UMLs, Javadoc and test coverage report can be found into **Deliverables** folder.
 
 ## Gruppo AM42
 
