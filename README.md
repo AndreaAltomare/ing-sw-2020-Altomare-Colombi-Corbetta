@@ -7,7 +7,7 @@ The related course for this project is _"Ingegneria del Software"_ (i.e. Softwar
 
 Aim of this project is to design, develop, test and deploy a distributed application: a digital version of the board game "_Santorini_" from Roxley Games.
 
-**IMPORTANT:** WE DO NOT OWN ANY OF THE RESOURCES USED TO REPRODUCE THIS GAME. Every resource, from the rule set to the images, belong to **Roxley Games** and the game creators.  
+**DISCLAIMER:** WE DO NOT OWN ANY OF THE RESOURCES USED TO REPRODUCE THIS GAME. Every resource, from the rule set to the images, belong to **Roxley Games** and the game creators.  
 What we own is the code we wrote the software with.
 
 More info about the software design and architecture can be found here: [documentation](Deliverables/Communication_protocol.pdf)  
