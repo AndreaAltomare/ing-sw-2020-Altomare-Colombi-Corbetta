@@ -149,5 +149,7 @@ java -jar SantoriniClient.jar [--cli] [-ip ip_address] [-port port]
 
 **NOTE:** If you want to choose a different IP and/or a different Port to connect to, you need to specify both `-ip` and `-port` arguments anyway.
 
-##### Final grade: 30 cum Laude / 30
+---
+
+### Final grade: 30 cum Laude / 30
 ###### Academic Year: 2019/2020
