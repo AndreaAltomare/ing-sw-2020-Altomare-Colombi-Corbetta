@@ -10,7 +10,7 @@ Aim of this project is to design, develop, test and deploy a distributed applica
 **DISCLAIMER:** WE DO NOT OWN ANY OF THE RESOURCES USED TO REPRODUCE THIS GAME. Every resource, from the rule set to the images, belong to **Roxley Games** and the game creators.  
 What we own is the code which we wrote the software with.
 
-More info about the software design and architecture can be found here: [documentation](Deliverables/Communication_protocol.pdf)  
+More info about the software design and architecture can be found here: [documentation](Deliverables/Communication_protocol.pdf).  
 Other project resources such as UMLs, Javadoc and test coverage report can be found into **Deliverables** folder.
 
 ## Gruppo AM42
